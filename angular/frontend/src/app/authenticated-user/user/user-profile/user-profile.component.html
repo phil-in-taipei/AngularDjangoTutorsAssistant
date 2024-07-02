@@ -1,0 +1,67 @@
+<div>
+    <ng-container *ngIf="{value: usrProfileLoaded$ | async} as context">
+      <div *ngIf="!context.value">
+        <div class="text-center">
+          <div class="spinner-border text-secondary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <br />
+        </div>
+        <br />
+      </div>
+    </ng-container>
+    <div *ngIf="usrProfile$ | async as profile" class="container">
+        <div *ngIf="userProfileSubmitErrMsg$ | async as errMsg">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <h4 class="text-danger">{{ errMsg }}</h4>
+              <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+              data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          </div>
+          
+          <div *ngIf="userProfileSubmitSuccessMsg$ | async as successMsg">
+            <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+              <h6>{{ successMsg }}</h6>
+              <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+              data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          </div>
+        <div class="table-responsive">
+            <div class="container mt-1 pt-1">
+                <h1>Profile of: {{ profile.user.username[0] | uppercase }}{{ profile.user.username.substring(1) }}</h1>
+            </div>
+            <hr />
+            <table class="profile-table" style="width:100%">
+                <tr>
+                    <th><h3>Name</h3></th>
+                    <td>
+                          <h3>
+                            {{ profile.given_name }} {{ profile.surname }}
+                          </h3>
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <h3>Email</h3>
+                    </th>
+                    <td>
+                        <h3>{{ profile.contact_email }}</h3>
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" type="button" (click)="toggleForm()">
+                  {{ showForm ? "No thanks, I'll Edit My Profile Later" : "Edit Profile" }}
+                </button>
+            </div>
+            <hr />
+            <div [hidden]="!showForm">
+                <app-edit-profile-form [profile]=profile
+                (closeEvent)="closeFormHander($event)">
+                </app-edit-profile-form>
+            </div>
+            <br />
+        </div>
+    </div>
+</div>

@@ -1,0 +1,159 @@
+<app-unauthenticated-header></app-unauthenticated-header>
+<div class="container content">
+    <div class="color-frame rounded">
+        <div class="mt-4 p-5 rounded">
+          <div *ngIf='passwordErrorMsg'>
+            <div 
+              data-testid="password-confirmation-failure-msg"
+              class="alert alert-danger alert-dismissible fade show" role="alert"
+            >
+              <h3>{{ passwordErrorMsg }}</h3>
+              <button type="button" class="btn-close" (click)="onClearFormPasswordError()"
+              data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          </div>
+          <div *ngIf='apiErrorMsg'>
+            <div 
+              data-testid="registration-api-failure-msg"
+              class="alert alert-danger alert-dismissible fade show" role="alert"
+            >
+              <h3>{{ apiErrorMsg }}</h3>
+              <button type="button" class="btn-close" (click)="onClearApiError()"
+              data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          </div>
+          <div *ngIf="apiSuccessResponse" class="container">
+            <div *ngIf="apiSuccessResponse.message == 'Account successfully created for user'">
+                <div data-testid="registration-success-msg"
+                  class="alert alert-primary alert-dismissible fade show" 
+                  role="alert">
+                  <h3>{{ apiSuccessResponse.message }}</h3>
+                  <button type="button" class="btn-close" (click)="onClearApiSuccessResponse()"
+                  data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              </div>
+          </div>
+          <div>
+            <h1>Register</h1>
+            <div>
+              <form (submit)="onSubmitRegistrationForm(registrationForm)" 
+                  #registrationForm="ngForm" data-testid="registration-form">                <div>
+                      <label>Username</label>
+                      <input
+                      class="form-control"
+                      name="username"
+                      type="text"
+                      required
+                      text
+                      minlength="4"
+                      ngModel
+                      placeholder="Username"
+                      #username="ngModel"
+                      >
+                      <div *ngIf="username.touched && username.invalid">
+                        Please enter a username
+                      </div>
+                    </div>
+                <br />
+                <div>
+                  <label>Password</label>
+                  <input
+                  class="form-control"
+                  type="password"
+                  minlength="5"
+                  rows="4"
+                  name="password"
+                  ngModel
+                  required
+                  placeholder="Password"
+                  #password="ngModel"
+                  >
+                  <div *ngIf="password.touched && password.invalid">
+                    Please enter a password.
+                  </div>
+                </div>
+                <br />
+                <div>
+                  <label>Confirm Password</label>
+                  <input
+                  class="form-control"
+                  type="password"
+                  minlength="5"
+                  rows="4"
+                  name="re_password"
+                  ngModel
+                  required
+                  placeholder="Password Confirmation"
+                  #re_password="ngModel"
+                  >
+                  <div *ngIf="re_password.touched && re_password.invalid">
+                    Please enter a confirmation password.
+                  </div>
+                </div>
+                <br />
+                <div>
+                  <label>Surname</label>
+                  <input
+                  class="form-control"
+                  type="text"
+                  minlength="5"
+                  rows="4"
+                  name="surname"
+                  ngModel
+                  required
+                  placeholder="Surname"
+                  #surname="ngModel"
+                  >
+                  <div *ngIf="surname.touched && surname.invalid">
+                    Please enter your surname.
+                  </div>
+                </div>
+                <br />
+                <div>
+                  <label>Given Name</label>
+                  <input
+                  class="form-control"
+                  type="text"
+                  minlength="5"
+                  rows="4"
+                  name="given_name"
+                  ngModel
+                  required
+                  placeholder="Given Name"
+                  #given_name="ngModel"
+                  >
+                  <div *ngIf="given_name.touched && given_name.invalid">
+                    Please enter your given name.
+                  </div>
+                </div>
+                <br />
+                <div>
+                  <label>Email</label>
+                  <input
+                  class="form-control"
+                  type="email"
+                  minlength="5"
+                  rows="4"
+                  name="contact_email"
+                  ngModel
+                  required
+                  placeholder="Email"
+                  #contact_email="ngModel"
+                  >
+                  <div *ngIf="contact_email.touched && contact_email.invalid">
+                    Please enter your email.
+                  </div>
+                </div>
+                <br />
+                <div>
+                  <button class="btn btn-outline-secondary" 
+                  type="submit" data-testid="registration-submit"
+                  >Sign Up!</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>
+<app-unauthenticated-footer></app-unauthenticated-footer>
