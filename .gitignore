@@ -1,0 +1,6 @@
+# Environments
+django/backend/backend/.env
+
+#virtualenv
+django/venv
+
