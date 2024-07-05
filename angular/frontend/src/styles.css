@@ -1,11 +1,30 @@
 /* You can add global styles to this file, and also import other style files */
+body {
+  color: #758d97;
+  background-color: black;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
 .color-frame {
-    background-color: White;
+    background-color: black;
     border: #0098da solid 1px !important;
     outline: #010b3e solid 5px !important;
-    color: Black !important;
   }
   
 .content {
     padding-top: 70px;
+    color: #758d97;
+}
+
+.footer-styles {
+  flex-shrink: 0;   
+  justify-content: center;
+  background-color: black;
+}
+
+.main {
+  flex: 1 0 auto;
+  color: black;
 }
