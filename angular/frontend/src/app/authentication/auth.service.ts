@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 //import * as CryptoJS from 'crypto-js';
-import {Store} from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { environment } from '../../environments/environment';
 import { AuthDataModel } from '../models/auth-data.model';
 import { 

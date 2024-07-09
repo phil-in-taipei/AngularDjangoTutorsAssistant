@@ -7,10 +7,12 @@ import {
 export const userRegistrationData: UserRegistrationModel = {
     "username": "UserDude",
     "password": "testpassword",
-    "passwordConfirmation": "testpassword",
-    "givenName": "User",
-    "surname": "Dude",
-    "email": "testmail@gmx.com",
+    "re_password": "testpassword",
+    "profile": {
+        "contact_email": "testmail@gmx.com",
+        "surname": "Surname",
+        "given_name": "GivenName",
+    } 
 }
 
 export const httpRegistrationResponseFailure1: UserRegistrationResponseModel = {

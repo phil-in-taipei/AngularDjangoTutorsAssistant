@@ -41,7 +41,7 @@ fdescribe('UserService', () => {
 
     const request = httpTestingController.expectOne({
       method: 'GET',
-      url:`${environment.apiUrl}/api/user/authenticated`,
+      url:`${environment.apiUrl}/api/profiles/user-profile/`,
     });
 
     request.flush(userProfileData);
@@ -50,9 +50,9 @@ fdescribe('UserService', () => {
   it('should return an updated user profile after submitting edited profile', 
     fakeAsync(() => {
     authServiceSpy.getAuthToken.and.returnValue(authData.token);
-    userProfileData.email = userProfileEditData.email;
+    userProfileData.contact_email = userProfileEditData.contact_email;
     userProfileData.surname = userProfileEditData.surname;
-    userProfileData.givenName = userProfileEditData.givenName;
+    userProfileData.given_name = userProfileEditData.given_name;
 
     service.editUserProfile(userProfileEditData).subscribe(response => {
       expect(response).toEqual(userProfileData);
@@ -60,7 +60,7 @@ fdescribe('UserService', () => {
 
     const request = httpTestingController.expectOne({
       method: 'PATCH',
-      url:`${environment.apiUrl}/api/user/edit`,
+      url:`${environment.apiUrl}/api/profiles/user-profile/`,
     });
 
     request.flush(userProfileData);
@@ -70,9 +70,9 @@ fdescribe('UserService', () => {
     + ' profile with incorrect data', 
     fakeAsync(() => {
     authServiceSpy.getAuthToken.and.returnValue(authData.token);
-    userProfileData.email = userProfileEditData.email;
+    userProfileData.contact_email = userProfileEditData.contact_email;
     userProfileData.surname = userProfileEditData.surname;
-    userProfileData.givenName = userProfileEditData.givenName;
+    userProfileData.given_name = userProfileEditData.given_name;
 
     service.editUserProfile(userProfileEditData).subscribe({
       next: () => {},
@@ -84,7 +84,7 @@ fdescribe('UserService', () => {
 
     const request = httpTestingController.expectOne({
       method: 'PATCH',
-      url:`${environment.apiUrl}/api/user/edit`,
+      url:`${environment.apiUrl}/api/profiles/user-profile/`,
     });
 
     request.flush(
@@ -97,9 +97,9 @@ fdescribe('UserService', () => {
     + 'profile for non-existant user', 
     fakeAsync(() => {
     authServiceSpy.getAuthToken.and.returnValue(authData.token);
-    userProfileData.email = userProfileEditData.email;
+    userProfileData.contact_email = userProfileEditData.contact_email;
     userProfileData.surname = userProfileEditData.surname;
-    userProfileData.givenName = userProfileEditData.givenName;
+    userProfileData.given_name = userProfileEditData.given_name;
 
     service.editUserProfile(userProfileEditData).subscribe({
       next: () => {},
@@ -111,7 +111,7 @@ fdescribe('UserService', () => {
 
     const request = httpTestingController.expectOne({
       method: 'PATCH',
-      url:`${environment.apiUrl}/api/user/edit`,
+      url:`${environment.apiUrl}/api/profiles/user-profile/`,
     });
 
     request.flush(

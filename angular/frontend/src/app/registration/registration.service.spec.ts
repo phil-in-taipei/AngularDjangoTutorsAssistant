@@ -59,7 +59,7 @@ describe('RegistrationService', () => {
   it('should return a failure message upon unsuccessfully submitting ' +
     'new user registration due to mismatched passwords', 
       fakeAsync(() => {
-        userRegistrationData.passwordConfirmation = 'anotherpassword';
+        userRegistrationData.re_password = 'anotherpassword';
         service.submitUserRegistration(userRegistrationData).subscribe({
           next: () => {},
           error: (error: HttpErrorResponse) => {

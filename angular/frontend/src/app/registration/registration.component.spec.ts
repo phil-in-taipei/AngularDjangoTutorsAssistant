@@ -66,10 +66,10 @@ describe('RegistrationComponent', () => {
         value: {
           username: userRegistrationData.username,
           password: userRegistrationData.password,
-          re_password: userRegistrationData.passwordConfirmation,
-          contact_email: userRegistrationData.email,
-          surname: userRegistrationData.surname,
-          given_name: userRegistrationData.givenName,
+          re_password: userRegistrationData.re_password,
+          contact_email: userRegistrationData.profile.contact_email,
+          surname: userRegistrationData.profile.surname,
+          given_name: userRegistrationData.profile.given_name,
         },
         reset: () => {}, // Mock the reset method
       };
@@ -95,10 +95,10 @@ describe('RegistrationComponent', () => {
         value: {
           username: userRegistrationData.username,
           password: userRegistrationData.password,
-          re_password: userRegistrationData.passwordConfirmation,
-          contact_email: userRegistrationData.email,
-          surname: userRegistrationData.surname,
-          given_name: userRegistrationData.givenName,
+          re_password: userRegistrationData.re_password,
+          contact_email: userRegistrationData.profile.contact_email,
+          surname: userRegistrationData.profile.surname,
+          given_name: userRegistrationData.profile.given_name,
         },
         reset: () => {}, // Mock the reset method
       };
@@ -122,10 +122,10 @@ describe('RegistrationComponent', () => {
         value: {
           username: userRegistrationData.username,
           password: userRegistrationData.password,
-          re_password: userRegistrationData.passwordConfirmation,
-          contact_email: userRegistrationData.email,
-          surname: userRegistrationData.surname,
-          given_name: userRegistrationData.givenName,
+          re_password: userRegistrationData.re_password,
+          contact_email: userRegistrationData.profile.contact_email,
+          surname: userRegistrationData.profile.surname,
+          given_name: userRegistrationData.profile.given_name,
         },
         reset: () => {}, // Mock the reset method
       };
@@ -150,10 +150,10 @@ describe('RegistrationComponent', () => {
         value: {
           username: userRegistrationData.username,
           password: userRegistrationData.password,
-          re_password: userRegistrationData.passwordConfirmation,
-          contact_email: userRegistrationData.email,
-          surname: userRegistrationData.surname,
-          given_name: userRegistrationData.givenName,
+          re_password: userRegistrationData.re_password,
+          contact_email: userRegistrationData.profile.contact_email,
+          surname: userRegistrationData.profile.surname,
+          given_name: userRegistrationData.profile.given_name,
         },
         reset: () => {}, // Mock the reset method
       };
@@ -174,9 +174,9 @@ describe('RegistrationComponent', () => {
           username: userRegistrationData.username,
           password: userRegistrationData.password,
           re_password: "differentPassword",
-          contact_email: userRegistrationData.email,
-          surname: userRegistrationData.surname,
-          given_name: userRegistrationData.givenName,
+          contact_email: userRegistrationData.profile.contact_email,
+          surname: userRegistrationData.profile.surname,
+          given_name: userRegistrationData.profile.given_name,
         },
         reset: () => {}, // Mock the reset method
       };
