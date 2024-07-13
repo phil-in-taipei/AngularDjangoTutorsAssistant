@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'djoser',
     'authapp',
 
+    'school',
+    'student_account',
     'user_profiles',
 ]
 
