@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('authapp.urls')),
     path('api/profiles/', include('user_profiles.urls')),
+    path('api/schools/', include('school.urls')),
     re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),
 ]

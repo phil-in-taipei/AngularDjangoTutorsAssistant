@@ -5,5 +5,8 @@ from .models import School
 class SchoolSerializer(serializers.ModelSerializer):
     class Meta:
         model = School
-        fields = '__all__'
+        fields = (
+            'id', 'school_name', 'address_line_1',
+            'address_line_2', 'contact_phone', 'other_information'
+        )
 
