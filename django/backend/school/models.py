@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.validators import RegexValidator
 
+from user_profiles.models import UserProfile
+
 
 class School(models.Model):
     school_name = models.CharField(max_length=200, unique=True)
@@ -16,9 +18,13 @@ class School(models.Model):
         ]
     )
     other_information = models.TextField(editable=True, default='', blank=True)
+    scheduling_teacher = models.ForeignKey(
+        UserProfile, on_delete=models.CASCADE,
+        related_name='scheduling_teacher',
+    )
 
     def __str__(self):
-        return self.school_name
+        return F"{self.scheduling_teacher}: {self.school_name}"
 
     class Meta:
-        ordering = ['school_name']
+        ordering = ['scheduling_teacher', 'school_name']

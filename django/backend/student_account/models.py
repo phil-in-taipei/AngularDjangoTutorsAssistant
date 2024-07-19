@@ -74,7 +74,6 @@ class StudentOrClass(models.Model):
         ]
 
 
-
 @receiver(pre_save, sender=StudentOrClass)
 def pre_save_account_id_and_slug(sender, **kwargs):
     random_string = random_string_generator()
