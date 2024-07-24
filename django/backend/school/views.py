@@ -24,9 +24,9 @@ class SchoolEditAndDeleteView(
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        id = instance.id
+        deleted_object_id = instance.id
         self.perform_destroy(instance)
-        return Response(data={"id": id,
+        return Response(data={"id": deleted_object_id,
                         "message": "School successfully deleted!"})
 
     def patch(self, request, *args, **kwargs):

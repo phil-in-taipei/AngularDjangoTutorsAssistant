@@ -76,6 +76,9 @@ class StudentOrClass(models.Model):
 
 @receiver(pre_save, sender=StudentOrClass)
 def pre_save_account_id_and_slug(sender, **kwargs):
-    random_string = random_string_generator()
-    kwargs['instance'].account_id = random_string
-    kwargs['instance'].slug = random_string
+    # it will only create and save slug/account_id
+    # fields for the post request because id == None
+    if kwargs['instance'].id is None:
+        random_string = random_string_generator()
+        kwargs['instance'].account_id = random_string
+        kwargs['instance'].slug = random_string

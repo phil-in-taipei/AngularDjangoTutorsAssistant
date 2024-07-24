@@ -133,8 +133,8 @@ DJOSER = {
 # for testing and debugging
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Token',),
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1), #minutes=5
-    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=3), #minutes=360
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=360), #this is 6 hours
 }
 
 

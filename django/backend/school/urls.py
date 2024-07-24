@@ -6,8 +6,10 @@ app_name = "school"
 
 
 urlpatterns = [
-    path('users-schools/', SchoolListView.as_view(),
-         name="users-schools"),
-    path('users-school/<int:id>/',
-         SchoolEditAndDeleteView.as_view(), name="expense"),
+    path(
+        'users-schools/', SchoolListView.as_view(), name="users-schools"
+    ),
+    path(
+        'users-school/<int:id>/', SchoolEditAndDeleteView.as_view(), name="school"
+    ),
 ]
