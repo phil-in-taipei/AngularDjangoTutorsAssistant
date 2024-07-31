@@ -5,6 +5,25 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { AuthenticatedUserRoutingModule } from './authenticated-user-routing.module';
 
+import { 
+  CreateSchoolComponent 
+} from './schools/create/create-school/create-school.component';
+import { 
+  CreateSchoolFormComponent 
+} from './schools/create/create-school-form/create-school-form.component';
+import { 
+  SchoolDetailComponent 
+} from './schools/detail/school-detail/school-detail.component';
+import { 
+  SchoolEditFormComponent 
+} from './schools/detail/school-edit-form/school-edit-form.component';
+import { 
+  SchoolListComponent 
+} from './schools/list/school-list/school-list.component';
+import { 
+  SingleSchoolComponent 
+} from './schools/list/single-school/single-school.component';
+
 import { UserEffects } from './user/user-state/user.effects';
 import { userProfileReducer } from './user/user-state/user.reducers';
 
@@ -14,9 +33,15 @@ import {
 import { 
   AuthenticatedHeaderComponent 
 } from './authenticated-layout/authenticated-header/authenticated-header.component';
-import { AuthenticatedUserComponent } from './authenticated-user/authenticated-user.component';
-import { UserProfileComponent } from './user/user-profile/user-profile.component';
-import { EditProfileFormComponent } from './user/edit-profile-form/edit-profile-form.component';
+import { 
+  AuthenticatedUserComponent 
+} from './authenticated-user/authenticated-user.component';
+import { 
+  UserProfileComponent 
+} from './user/user-profile/user-profile.component';
+import { 
+  EditProfileFormComponent 
+} from './user/edit-profile-form/edit-profile-form.component';
 
 
 @NgModule({
@@ -24,7 +49,13 @@ import { EditProfileFormComponent } from './user/edit-profile-form/edit-profile-
     AuthenticatedFooterComponent,
     AuthenticatedHeaderComponent,
     AuthenticatedUserComponent,
+    CreateSchoolComponent,
+    CreateSchoolFormComponent,
     EditProfileFormComponent,
+    SchoolDetailComponent,
+    SchoolEditFormComponent,
+    SchoolListComponent,
+    SingleSchoolComponent,
     UserProfileComponent
   ],
   imports: [
