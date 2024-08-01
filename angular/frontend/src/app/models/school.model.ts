@@ -6,4 +6,4 @@ export interface SchoolModel {
     address_line_2: string;
     contact_phone: string;
     other_information: string;
-  }
+}
