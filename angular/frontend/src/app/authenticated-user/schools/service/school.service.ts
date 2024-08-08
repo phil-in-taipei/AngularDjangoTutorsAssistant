@@ -13,7 +13,7 @@ import {
 @Injectable({
   providedIn: 'root'
 })
-export class SchoolServiceService {
+export class SchoolService {
 
   constructor(
     private http: HttpClient,
@@ -33,7 +33,7 @@ export class SchoolServiceService {
 
   editSchool(id: number,
     submissionForm: SchoolCreateAndEditModel
-    ): Observable<SchoolCreateAndEditModel> {
+    ): Observable<SchoolModel> {
     let token = this.authService.getAuthToken();
     return this.http.patch<SchoolModel>(
       `${environment.apiUrl}/api/schools/users-school/${id}`, submissionForm,
