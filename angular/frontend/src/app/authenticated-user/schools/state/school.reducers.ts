@@ -38,7 +38,7 @@ export const initialSchoolsState: SchoolsState = adapter.getInitialState({
     successMessage: undefined
 });
 
-export function singleTasksReducer(
+export function schoolsReducer(
     state = initialSchoolsState,
     action: SchoolActions): SchoolsState {
 
