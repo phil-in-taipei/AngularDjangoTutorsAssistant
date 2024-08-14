@@ -130,7 +130,7 @@ export function schoolsReducer(
             return adapter.upsertMany(action.payload.schools, {...state,
                 errorMessage: reducerErrorMessage,
                 fetchingSchoolsInProgress: false,
-                schoolsLoaded: false,
+                schoolsLoaded: true,
                 successMessage: reducerSuccessMessage
             });   
 

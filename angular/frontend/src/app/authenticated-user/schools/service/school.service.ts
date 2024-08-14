@@ -44,6 +44,7 @@ export class SchoolService {
 
   fetchUsersSchools(): Observable<SchoolModel[]> {
     let token = this.authService.getAuthToken();
+    console.log('******fetching users schools******')
     return this.http.get<SchoolModel[]>(
       `${environment.apiUrl}/api/schools/users-schools/`,
         {

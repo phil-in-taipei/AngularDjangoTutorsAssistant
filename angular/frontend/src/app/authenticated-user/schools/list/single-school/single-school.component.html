@@ -1,1 +1,45 @@
-<p>single-school works!</p>
+<tr class="row" >
+    <th class="col">
+        <h5>
+            {{ school.school_name }}
+        </h5>
+    </th>
+    <th class="col">
+      <h5>
+        {{ school.address_line_1 }}
+      </h5>
+    </th>
+    <th class="col">
+      <div *ngIf="!deletionPopupVisible; else delWeeklyTask" class="col text-left">
+        <h5>
+          <button
+            class="btn btn-sm btn-dark"
+            (click)="showDeletionPopup()"
+            >
+            Remove
+          </button>
+        </h5>
+      </div>
+      <ng-template #delWeeklyTask class="row">
+        <div class="col">
+          <h5>
+            <button
+              class="btn btn-sm btn-dark"
+              (click)="hideDeletionPopup()">
+              Cancel Deletion
+            </button>
+          </h5>
+        </div>
+        <div class="col">
+          <h5>
+            <button
+              class="btn btn-sm btn-outline-danger"
+              (click)="onRemoveSchool()"
+              >
+              Confirm Removal
+            </button>
+          </h5>
+        </div>
+      </ng-template>
+    </th>
+</tr>

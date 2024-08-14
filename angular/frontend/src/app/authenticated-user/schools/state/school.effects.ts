@@ -8,7 +8,6 @@ import { catchError, filter, map,
 
 import { AppState } from 'src/app/reducers';
 
-
 import {
     SchoolActionTypes, SchoolCreatedAdded,
     SchoolCreateSubmitted, SchoolCreationCancelled,
@@ -43,8 +42,7 @@ export class SchoolsEffects {
                             )
                     )
             )
-        });
-
+    });
 
     editSchool$ = createEffect(() => {
         return this.actions$
@@ -72,8 +70,6 @@ export class SchoolsEffects {
             )
     });
     
-     
-   
     fetchUsersSchools$ = createEffect(() => {
         return this.actions$
           .pipe(

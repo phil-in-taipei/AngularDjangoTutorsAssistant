@@ -24,6 +24,9 @@ import {
   SingleSchoolComponent 
 } from './schools/list/single-school/single-school.component';
 
+import { SchoolsEffects } from './schools/state/school.effects';
+import { schoolsReducer } from './schools/state/school.reducers';
+
 import { UserEffects } from './user/user-state/user.effects';
 import { userProfileReducer } from './user/user-state/user.reducers';
 
@@ -64,6 +67,8 @@ import {
     AuthenticatedUserRoutingModule,
     StoreModule.forFeature('user', userProfileReducer),
     EffectsModule.forFeature([UserEffects]),
+    StoreModule.forFeature('schools', schoolsReducer),
+    EffectsModule.forFeature([SchoolsEffects]),
   ]
 })
 export class AuthenticatedUserModule { }
