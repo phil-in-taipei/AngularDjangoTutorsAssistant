@@ -16,6 +16,7 @@ body {
 .content {
     padding-top: 70px;
     color: #758d97;
+    background-color: black;
 }
 
 .footer-styles {
@@ -26,5 +27,32 @@ body {
 
 .main {
   flex: 1 0 auto;
-  color: black;
+  background-color: black;
+}
+
+.table {
+  color: #758d97;
+  background-color: black;
+  border-collapse: collapse;
+  padding: 1em;
+  text-align: center;
+}
+
+table tr {
+  padding: 1em;
+}
+
+.table > thead {
+  color: #758d97;
+  background-color: black;
+  vertical-align: bottom;
+  border-top: 1px #758d97;
+}
+
+.table td {
+  color: #758d97;
+  background-color: black;
+  border-left: 1px solid #758d97;
+  border-right: 1px solid #758d97;
+  padding: 1em;
 }
