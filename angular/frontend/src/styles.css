@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 body {
-  color: #758d97;
-  background-color: black;
+  color: #758d97 !important;
+  background-color: black !important;
   display: flex;
   height: 100%;
   flex-direction: column;
@@ -14,9 +14,9 @@ body {
   }
   
 .content {
-    padding-top: 70px;
-    color: #758d97;
-    background-color: black;
+    padding-top: 40px;
+    color: #758d97 !important;
+    background-color: black !important;
 }
 
 .footer-styles {
@@ -27,32 +27,6 @@ body {
 
 .main {
   flex: 1 0 auto;
-  background-color: black;
-}
-
-.table {
-  color: #758d97;
-  background-color: black;
-  border-collapse: collapse;
-  padding: 1em;
-  text-align: center;
-}
-
-table tr {
-  padding: 1em;
-}
-
-.table > thead {
-  color: #758d97;
-  background-color: black;
-  vertical-align: bottom;
-  border-top: 1px #758d97;
-}
-
-.table td {
-  color: #758d97;
-  background-color: black;
-  border-left: 1px solid #758d97;
-  border-right: 1px solid #758d97;
-  padding: 1em;
+  color: #758d97 !important;
+  background-color: black !important;
 }

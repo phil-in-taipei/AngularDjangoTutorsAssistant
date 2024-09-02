@@ -11,20 +11,20 @@
   </ng-container>
   
   <div *ngIf="schools$ | async as schools" class="container content">
-      <div class="mx-5 pd-2">
+      <div class="mx-5 pd-1">
         <hr class="thick-br"/>
         <h3>User's Schools</h3>
         <h5>{{ schools.length }} School(s)</h5>
         <hr class="thick-br"/>
         <table class="table">
-            <thead class="table">
+            <thead class="table-bg-dark">
               <tr class="row">
                 <th class="col"><h5>School Name</h5></th>
                 <th class="col"><h5>Address</h5></th>
                 <th class="col"><h5>Delete</h5></th>
               </tr>
             </thead>
-            <tbody class="table-border-less">
+            <tbody class="table">
               <div *ngFor="let school of schools; trackBy: trackByFn" >
                 <app-single-school [school]=school>
                 </app-single-school>
