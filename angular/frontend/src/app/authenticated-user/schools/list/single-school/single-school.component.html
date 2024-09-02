@@ -1,15 +1,15 @@
-<tr class="row" >
-    <th class="col">
+<tr class="row list" >
+    <th class="col list">
         <h5>
             {{ school.school_name }}
         </h5>
     </th>
-    <th class="col">
+    <th class="col list">
       <h5>
         {{ school.address_line_1 }}
       </h5>
     </th>
-    <th class="col">
+    <th class="col list">
       <div *ngIf="!deletionPopupVisible; else delWeeklyTask" class="col text-left">
         <h5>
           <button
@@ -21,7 +21,7 @@
         </h5>
       </div>
       <ng-template #delWeeklyTask class="row">
-        <div class="col">
+        <div class="col list">
           <h5>
             <button
               class="btn btn-sm btn-dark"
