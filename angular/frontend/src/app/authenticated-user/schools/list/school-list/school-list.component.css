@@ -1,25 +1,37 @@
 h1, h3, h4, h5, h6 {
     text-align: center;
+    background-color: black;
+    color: #758d97 
 }
 
 table {
     border-collapse: collapse;
 }
 
+.table {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
 .table th.list {
     background-color: black;
 }
 
-table tr {
-    padding: 1em;
+.table tr.list {
+    background-color: black;
 }
 
-table th {
-    padding: 1em;
+.row {
+    background-color: black;
+    color: #758d97 
+}
+
+.col {
+    background-color: black;
+    color: #758d97 
 }
 
 table td {
-    padding: 1em;
     background-color: black;
 }
   
