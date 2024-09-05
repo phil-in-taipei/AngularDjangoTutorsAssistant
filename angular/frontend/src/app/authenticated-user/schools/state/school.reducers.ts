@@ -4,7 +4,6 @@ import { SchoolActions, SchoolActionTypes } from './school.actions';
 import { SchoolModel } from 'src/app/models/school.model';
 
 
-
 function compareSchoolsByName(
     a:SchoolModel, b:SchoolModel) {
     const schoolA = a.school_name;
@@ -49,14 +48,14 @@ export function schoolsReducer(
 
         case SchoolActionTypes.SchoolCreatedAdded:
             reducerErrorMessage = undefined;
-            reducerSuccessMessage = 'Task successfully submitted!';
+            reducerSuccessMessage = 'New school successfully submitted!';
             return adapter.addOne(action.payload.school, {...state,
                 errorMessage: reducerErrorMessage,
                 successMessage: reducerSuccessMessage
             });
 
         case SchoolActionTypes.SchoolCreationCancelled:
-            reducerErrorMessage = "Error submitting weekly task scheduler!";
+            reducerErrorMessage = "Error submitting new school!";
             reducerSuccessMessage = undefined;
             if (action.payload.err.error.message) {
                 reducerErrorMessage = action.payload.err.error.message;
@@ -103,7 +102,7 @@ export function schoolsReducer(
         
         case SchoolActionTypes.SchoolEditUpdated:
             reducerErrorMessage = undefined;
-            reducerSuccessMessage = 'School information edtied!';
+            reducerSuccessMessage = 'School information edited!';
             return adapter.updateOne(action.payload.school, 
                 {
                     ...state,

@@ -1,1 +1,29 @@
-<p>create-school works!</p>
+<br />
+<div class="m-3 p-2">
+  <div class="container">
+    <h3>Create School</h3>
+  </div>
+  <div *ngIf="errMsg$ | async as errMsg" class="container">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <h4 class="text-danger">{{ errMsg }}</h4>
+      <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+      data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
+  
+  <div *ngIf="successMsg$ | async as successMsg" class="container">
+    <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+      <h6>{{ successMsg }}</h6>
+      <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+      data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
+  <div class="container">
+      <div>
+        <hr class="thick-br"/>
+        <app-create-school-form>
+        </app-create-school-form>
+        <hr class="thick-br"/>
+    </div>
+  </div>  
+</div>

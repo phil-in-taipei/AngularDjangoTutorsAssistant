@@ -8,8 +8,25 @@
           <li><a class="nav-link" 
             [routerLink]="['user-profile']">Profile</a>
           </li>
-          <li><a class="nav-link" 
+          <!--<li><a class="nav-link" 
             [routerLink]="['users-schools']">Schools</a>
+          </li> -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle mydropnav"
+              href="#" id="navbarDropdown" role="button" 
+              data-bs-toggle="dropdown" aria-expanded="false"
+            >
+              Schools
+            </a>
+            <ul class="dropdown-menu mydropnav bg-dark" 
+              aria-labelledby="navbarDropdown">
+              <li><a class="nav-link" 
+                [routerLink]="['create-school']">Create</a>
+              </li>
+              <li><a class="nav-link" 
+                [routerLink]="['users-schools']">List</a>
+              </li>
+            </ul>
           </li>
           <li>
             <a class="nav-link" href="#" (click)="onLogout()">Logout</a>
