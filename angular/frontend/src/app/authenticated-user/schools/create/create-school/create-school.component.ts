@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Observable, of } from "rxjs";
 
 import { SchoolsState } from '../../state/school.reducers';
-import { 
+import {
   schoolsErrorMsg, schoolsSuccessMsg 
 } from '../../state/school.selectors';
 import { SchoolsMessagesCleared } from '../../state/school.actions';
@@ -14,7 +14,7 @@ import { SchoolsMessagesCleared } from '../../state/school.actions';
   templateUrl: './create-school.component.html',
   styleUrl: './create-school.component.css'
 })
-export class CreateSchoolComponent {
+export class CreateSchoolComponent implements OnInit {
 
   errMsg$: Observable<string | undefined> = of(undefined);
   successMsg$: Observable<string | undefined> = of(undefined);

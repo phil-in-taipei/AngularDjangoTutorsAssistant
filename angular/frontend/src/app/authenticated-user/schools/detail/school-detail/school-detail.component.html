@@ -1,1 +1,94 @@
-<p>school-detail works!</p>
+<br />
+<div *ngIf="errMsg$ | async as errMsg" class="p-1 m-1">
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <h3>{{ errMsg }}</h3>
+    <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+    data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  <hr class="thick-br"/>
+</div>
+
+<div *ngIf="successMsg$ | async as successMsg" class="p-1 m-1">
+  <hr class="thick-br"/>
+  <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+    <h6>{{ successMsg }}</h6>
+    <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+    data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  <hr class="thick-br"/>
+</div>
+<div *ngIf="(school$ | async) as school; else homepage_link">
+    <div class="mt-1 p-3 rounded">
+        <div class="p-3 rounded-lg m-1">
+            <div class="container text-center">
+              <hr class="thick-br" />
+                <h1>School Details</h1>
+                <hr class="thick-br" />
+                <div class="table-responsive">
+                    <div class="container mt-1 pt-1">
+                        <h1>{{ school.school_name[0] | uppercase }}{{ school.school_name.substring(1) }}</h1>
+                    </div>
+                    <hr />
+                    <table class="profile-table" style="width:100%">
+                        <tr>
+                            <th><h3>Address</h3></th>
+                            <td>
+                                  <h3>
+                                    {{ school.address_line_1 }}
+                                  </h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <h3>District/City</h3>
+                            </th>
+                            <td>
+                                <h3>{{ school.address_line_2 }}</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <h3>Telephon</h3>
+                            </th>
+                            <td>
+                                <h3>{{ school.contact_phone }}</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <h3>Information</h3>
+                            </th>
+                            <td>
+                                <h3>{{ school.other_information }}</h3>
+                            </td>
+                        </tr>
+                    </table>
+                    <hr />
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-sm btn-outline-secondary" type="button" (click)="toggleForm()">
+                          {{ formVisible ? "No thanks, I'll Edit It Later" : "Edit School" }}
+                        </button>
+                    </div>
+                    <hr />
+                    <div [hidden]="!formVisible">
+                        <app-school-edit-form [school]=school
+                        (closeEvent)="closeFormHander($event)">
+                        </app-school-edit-form>
+                    </div>
+                    <br />
+                </div>
+            </div>
+            <br />
+        </div>
+    </div>
+</div>
+<ng-template #homepage_link>
+    <hr class="thick-br"/>
+    <div class="text-center">
+      <button class="btn btn-sm btn-dark text"
+      [routerLink]="['/authenticated-user/landing']">
+          Return to Homepage
+      </button>
+    </div>
+    <hr class="thick-br"/>
+</ng-template>

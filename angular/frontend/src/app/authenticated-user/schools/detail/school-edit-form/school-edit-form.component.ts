@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Store} from '@ngrx/store';
 
@@ -19,6 +19,7 @@ import {
 export class SchoolEditFormComponent {
 
   @Input() school: SchoolModel;
+  @Output() closeEvent = new EventEmitter<boolean>();
 
   constructor(private store: Store<SchoolsState>) { }
 
@@ -44,6 +45,7 @@ export class SchoolEditFormComponent {
       {  id: this.school.id, school: editedSchoolData }
     ));
     form.resetForm();
+    this.closeEvent.emit(false);
   }
 
 

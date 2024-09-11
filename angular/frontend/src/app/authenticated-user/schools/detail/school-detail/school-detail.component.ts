@@ -20,6 +20,7 @@ import { SchoolsMessagesCleared } from '../../state/school.actions';
 export class SchoolDetailComponent implements OnInit {
 
   errMsg$: Observable<string | undefined> = of(undefined);
+  formVisible: boolean = false;
   idFromRouteData:number;
   school$: Observable<SchoolModel | undefined>;
   successMsg$: Observable<string | undefined> = of(undefined);
@@ -41,6 +42,18 @@ export class SchoolDetailComponent implements OnInit {
     this.successMsg$ = this.store.pipe(
       select(schoolsSuccessMsg)
     );
+  }
+
+  toggleForm() {
+    if (this.formVisible) {
+      this.formVisible = false;
+    } else {
+      this.formVisible = true;
+    }
+  }
+
+  closeFormHander($event: boolean) {
+    this.formVisible = $event;
   }
 
   onClearStatusMsgs() {
