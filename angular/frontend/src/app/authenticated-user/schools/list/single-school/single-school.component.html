@@ -1,7 +1,9 @@
 <tr class="row list" >
     <th class="col list">
         <h5>
-            {{ school.school_name }}
+            <a [routerLink]="['/authenticated-user/school', school.id]">
+              {{ school.school_name }}
+            </a>
         </h5>
     </th>
     <th class="col list">

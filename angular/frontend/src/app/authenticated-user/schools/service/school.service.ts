@@ -31,12 +31,13 @@ export class SchoolService {
         })
   }
 
-  editSchool(id: number,
+  editSchool(
+    id: number,
     submissionForm: SchoolCreateAndEditModel
     ): Observable<SchoolModel> {
     let token = this.authService.getAuthToken();
     return this.http.patch<SchoolModel>(
-      `${environment.apiUrl}/api/schools/users-school/${id}`, submissionForm,
+      `${environment.apiUrl}/api/schools/users-school/${id}/`, submissionForm,
       {
         headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
       });

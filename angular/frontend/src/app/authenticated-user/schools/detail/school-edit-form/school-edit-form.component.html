@@ -1,1 +1,90 @@
-<p>school-edit-form works!</p>
+<form (submit)="onSubmitEditedSchool(editSchoolForm)" #editSchoolForm="ngForm">
+    <div>
+        <label>School Name</label>
+        <input
+        class="form-control"
+        type="text"
+        minlength="2"
+        rows="4"
+        name="school_name"
+        ngModel
+        required
+        placeholder="{{school.school_name}}"
+        #school_name="ngModel"
+        >
+      <div *ngIf="school_name.touched && school_name.invalid">Please enter the school name.</div>
+    </div>
+    <br />
+    <div>
+        <label>Street Address</label>
+        <input
+        class="form-control"
+        type="text"
+        minlength="2"
+        rows="4"
+        name="address_line_1"
+        ngModel
+        required
+        placeholder="{{school.address_line_1}}"
+        #address_line_1="ngModel"
+        >
+      <div *ngIf="address_line_1.touched && address_line_1.invalid">Please enter the street address.</div>
+    </div>
+    <br />
+    <div>
+        <label>District and City</label>
+        <input
+        class="form-control"
+        type="text"
+        minlength="2"
+        rows="4"
+        name="address_line_2"
+        ngModel
+        required
+        placeholder="{{school.address_line_2}}"
+        #address_line_2="ngModel"
+        >
+      <div *ngIf="address_line_2.touched && address_line_2.invalid">Please enter the district and city.</div>
+    </div>
+    <br />
+    <br />
+    <div>
+        <label>Phone Number</label>
+        <input
+        class="form-control"
+        type="text"
+        min="10"
+        max="10"
+        rows="4"
+        name="contact_phone"
+        ngModel
+        required
+        placeholder="{{school.contact_phone}}"
+        #contact_phone="ngModel"
+        >
+      <div *ngIf="contact_phone.touched && contact_phone.invalid">Please enter the valid phone number.</div>
+    </div>
+    <br />
+    <div>
+        <label>Other Information</label>
+        <textarea
+            class="form-control"
+            name="other_information"
+            type="text"
+            required
+            text
+            minlength="5"
+            rows="3"
+            ngModel
+            placeholder="{{school.other_information}}"
+            #other_information="ngModel"
+        ></textarea>
+      <div *ngIf="other_information.touched && other_information.invalid">Please enter any additional information.</div>
+      </div>
+    <hr class="thick-br"/>
+    <div>
+      <button class="btn btn-dark" type="submit"
+      >Submit</button>
+    </div>
+    <br />
+</form>

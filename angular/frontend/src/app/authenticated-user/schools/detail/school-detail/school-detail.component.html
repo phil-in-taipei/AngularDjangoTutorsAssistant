@@ -18,10 +18,9 @@
   <hr class="thick-br"/>
 </div>
 <div *ngIf="(school$ | async) as school; else homepage_link">
-    <div class="mt-1 p-3 rounded">
-        <div class="p-3 rounded-lg m-1">
+    <div class="mt-1 p-1 rounded">
+        <div class="p-1 rounded-lg m-1">
             <div class="container text-center">
-              <hr class="thick-br" />
                 <h1>School Details</h1>
                 <hr class="thick-br" />
                 <div class="table-responsive">
@@ -48,7 +47,7 @@
                         </tr>
                         <tr>
                             <th>
-                                <h3>Telephon</h3>
+                                <h3>Telephone</h3>
                             </th>
                             <td>
                                 <h3>{{ school.contact_phone }}</h3>
