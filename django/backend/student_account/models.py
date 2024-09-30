@@ -51,6 +51,17 @@ class StudentOrClass(models.Model):
     account_id = models.CharField(max_length=10, null=True, blank=True)
     slug = models.SlugField(max_length=50, blank=True, null=True)
 
+    def __str__(self):
+        if self.school:
+            return "School ({}): {}".format(
+                self.school.school_name,
+                str(self.student_or_class_name).title(),
+            )
+        else:
+            return "Freelance student: {}".format(
+                str(self.student_or_class_name).title()
+            )
+
     class Meta:
         unique_together = ('teacher', 'student_or_class_name')
         ordering = ('teacher__surname', 'student_or_class_name')
