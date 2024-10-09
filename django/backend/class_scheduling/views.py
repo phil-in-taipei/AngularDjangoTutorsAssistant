@@ -9,14 +9,47 @@ from rest_framework.views import APIView
 from .models import ScheduledClass
 from .pagination import SmallSetPagination
 from .serializers import ScheduledClassSerializer
-from .utils import get_double_booked_by_user
+from .utils import (
+    determine_transaction_type,
+    determine_duration_of_class_time,
+    get_double_booked_by_user
+)
 from user_profiles.models import UserProfile
 from utilities.permissions import IsOwnerOrReadOnly
 
 
+class ScheduledClassStatusConfirmationViewSet(APIView):
+    permission_classes = (
+        IsAuthenticated,  # IsOwnerOrReadOnly
+    )
+
+    def patch(self, request, *args, **kwargs):
+        class_id = request.data['id']
+        class_status = request.data['class_status']
+        scheduled_class = get_object_or_404(ScheduledClass, id=class_id)
+        print("--------------------------------------------------------------------------------")
+        print(scheduled_class)
+        print("--------------------------------------------------------------------------------")
+        print(class_status)
+        print(scheduled_class.class_status)
+        transaction_type = determine_transaction_type(
+            previous_class_status=scheduled_class.class_status,
+            updated_class_status=class_status
+        )
+        print(transaction_type)
+        print("--------------------------------------------------------------------------------")
+        determine_duration_of_class_time(scheduled_class.start_time, scheduled_class.finish_time)
+        return Response(
+            ScheduledClassSerializer(scheduled_class).data,
+            status=status.HTTP_202_ACCEPTED
+        )
+
+
+
+
 class ScheduledClassViewSet(viewsets.ModelViewSet):
     permission_classes = (
-        #IsAuthenticated, #IsOwnerOrReadOnly
+        IsAuthenticated, #IsOwnerOrReadOnly
     )
 
     def create(self, request, *args, **kwargs):

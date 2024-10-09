@@ -1,3 +1,27 @@
+import datetime
+
+
+def determine_transaction_type(previous_class_status, updated_class_status):
+    if previous_class_status == "scheduled" and updated_class_status == "completed":
+        return "deduct"
+    elif previous_class_status == "scheduled" and updated_class_status == "same_day_cancellation":
+        return "deduct"
+    elif previous_class_status == "completed" and updated_class_status == "scheduled":
+        return "refund"
+    elif previous_class_status == "completed" and updated_class_status == "cancelled":
+        return "refund"
+    elif previous_class_status == "same_day_cancellation" and updated_class_status == "scheduled":
+        return "refund"
+    elif previous_class_status == "same_day_cancellation" and updated_class_status == "cancelled":
+        return "refund"
+    else:
+        return "unchanged"
+
+
+def determine_duration_of_class_time(start_time, finish_time):
+    print(start_time)
+    print(finish_time)
+
 
 
 def get_double_booked_by_user(obj_id, queried_user, student_or_teacher,

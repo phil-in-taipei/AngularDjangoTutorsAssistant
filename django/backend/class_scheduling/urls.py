@@ -2,7 +2,7 @@ from django.urls import path, include
 
 from rest_framework.routers import DefaultRouter
 
-from .views import ScheduledClassViewSet, ScheduledClassByTeacherByMonthViewSet
+from .views import ScheduledClassStatusConfirmationViewSet, ScheduledClassViewSet, ScheduledClassByTeacherByMonthViewSet
 
 app_name = "class_scheduling"
 
@@ -16,4 +16,9 @@ urlpatterns = [
         ScheduledClassByTeacherByMonthViewSet.as_view(),
         name='class-scheduling-by-teacher-month-year'
     ),
+    path(
+        'class-status-confirmation/',
+        ScheduledClassStatusConfirmationViewSet.as_view(),
+        name='class-status-confirmation'
+    )
 ]
