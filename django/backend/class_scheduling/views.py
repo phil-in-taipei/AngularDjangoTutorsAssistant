@@ -38,7 +38,10 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
         )
         print(transaction_type)
         print("--------------------------------------------------------------------------------")
-        determine_duration_of_class_time(scheduled_class.start_time, scheduled_class.finish_time)
+        duration = determine_duration_of_class_time(
+            scheduled_class.start_time, scheduled_class.finish_time
+        )
+        print(duration)
         return Response(
             ScheduledClassSerializer(scheduled_class).data,
             status=status.HTTP_202_ACCEPTED

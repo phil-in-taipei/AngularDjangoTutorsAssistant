@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, time, timedelta
 
 
 def determine_transaction_type(previous_class_status, updated_class_status):
@@ -18,10 +18,43 @@ def determine_transaction_type(previous_class_status, updated_class_status):
         return "unchanged"
 
 
+def add_minute_to_datetime_obj(datetime_obj):
+    # Create a dummy date to combine with the time
+    dummy_date = datetime(1, 1, 1)
+
+    # Combine the dummy date with the given time
+    dt = datetime.combine(dummy_date, datetime_obj)
+
+    # Add one minute
+    dt_plus_1min = dt + timedelta(minutes=1)
+
+    # Extract and return the new time
+    return dt_plus_1min.time()
+
+
+def time_to_hours(td, decimals=2):
+    # Convert timedelta to hours
+    hours = td.total_seconds() / 3600
+    return round(hours, decimals)
+
+
 def determine_duration_of_class_time(start_time, finish_time):
     print(start_time)
     print(finish_time)
+    # calibrate time by adding one minute to the finish time
+    calibrated_finish_time = add_minute_to_datetime_obj(datetime_obj=finish_time)
+    print(calibrated_finish_time)
+    # Convert time objects to timedelta, using only hours and minutes
+    delta1 = timedelta(
+        hours=start_time.hour, minutes=start_time.minute
+    )
+    delta2 = timedelta(
+        hours=calibrated_finish_time.hour,
+        minutes=calibrated_finish_time.minute
+    )
 
+    # Calculate the difference and return in number of hours to 2nd decimal point
+    return time_to_hours(abs(delta1 - delta2))
 
 
 def get_double_booked_by_user(obj_id, queried_user, student_or_teacher,
