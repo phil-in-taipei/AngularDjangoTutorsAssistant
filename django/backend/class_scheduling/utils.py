@@ -1,10 +1,15 @@
-from datetime import datetime, time, timedelta
+from datetime import datetime, timedelta
+import decimal
 
 
 def determine_transaction_type(previous_class_status, updated_class_status):
     if previous_class_status == "scheduled" and updated_class_status == "completed":
         return "deduct"
     elif previous_class_status == "scheduled" and updated_class_status == "same_day_cancellation":
+        return "deduct"
+    elif previous_class_status == "cancelled" and updated_class_status == "completed":
+        return "deduct"
+    elif previous_class_status == "cancelled" and updated_class_status == "same_day_cancellation":
         return "deduct"
     elif previous_class_status == "completed" and updated_class_status == "scheduled":
         return "refund"
@@ -36,6 +41,23 @@ def time_to_hours(td, decimals=2):
     # Convert timedelta to hours
     hours = td.total_seconds() / 3600
     return round(hours, decimals)
+
+
+def is_freelance_account(student_or_class):
+    return student_or_class.account_type == "freelance"
+
+
+def number_of_hours_purchased_should_be_updated(transaction_type):
+    return transaction_type is not "unchanged"
+
+
+def adjust_number_of_hours_purchased(
+        transaction_type, duration, previous_number_of_hours_purchased
+):
+    if transaction_type == "deduct":
+        return previous_number_of_hours_purchased - decimal.Decimal(str(duration))
+    elif transaction_type == "refund":
+        return previous_number_of_hours_purchased + decimal.Decimal(str(duration))
 
 
 def determine_duration_of_class_time(start_time, finish_time):

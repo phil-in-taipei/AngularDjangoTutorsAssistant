@@ -10,9 +10,12 @@ from .models import ScheduledClass
 from .pagination import SmallSetPagination
 from .serializers import ScheduledClassSerializer
 from .utils import (
+    adjust_number_of_hours_purchased,
     determine_transaction_type,
     determine_duration_of_class_time,
-    get_double_booked_by_user
+    get_double_booked_by_user,
+    is_freelance_account,
+    number_of_hours_purchased_should_be_updated
 )
 from user_profiles.models import UserProfile
 from utilities.permissions import IsOwnerOrReadOnly
@@ -28,20 +31,45 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
         class_status = request.data['class_status']
         scheduled_class = get_object_or_404(ScheduledClass, id=class_id)
         print("--------------------------------------------------------------------------------")
+        print('the is the scheduled class')
         print(scheduled_class)
         print("--------------------------------------------------------------------------------")
-        print(class_status)
+        print(scheduled_class.student_or_class.account_type)
+        print("Is a freelance account")
+        print(is_freelance_account(scheduled_class.student_or_class))
+        print("--------------------------------------------------------------------------------")
+        print('this is the previous class status')
         print(scheduled_class.class_status)
+        print("This is the new class status:")
+        print(class_status)
         transaction_type = determine_transaction_type(
             previous_class_status=scheduled_class.class_status,
             updated_class_status=class_status
         )
+        scheduled_class.class_status = class_status
+        scheduled_class.save()
+        print("Transaction type:")
         print(transaction_type)
+        print("Hours should be updated:")
+        print(number_of_hours_purchased_should_be_updated(transaction_type))
         print("--------------------------------------------------------------------------------")
-        duration = determine_duration_of_class_time(
-            scheduled_class.start_time, scheduled_class.finish_time
-        )
-        print(duration)
+        print("This is the previous number of scheduled hours:")
+        print(scheduled_class.student_or_class.purchased_class_hours)
+        if is_freelance_account(scheduled_class.student_or_class) and number_of_hours_purchased_should_be_updated(transaction_type):
+            print("******Account must be adjusted*******")
+            student_or_class = scheduled_class.student_or_class
+            duration = determine_duration_of_class_time(
+                scheduled_class.start_time, scheduled_class.finish_time
+            )
+            print(duration)
+            new_number_of_purchased_hours = adjust_number_of_hours_purchased(
+                    transaction_type, duration, student_or_class.purchased_class_hours
+            )
+            print("This is the new number of purchased hours:")
+            print(new_number_of_purchased_hours)
+            student_or_class.purchased_class_hours = new_number_of_purchased_hours
+            student_or_class.save()
+            print("updated")
         return Response(
             ScheduledClassSerializer(scheduled_class).data,
             status=status.HTTP_202_ACCEPTED
