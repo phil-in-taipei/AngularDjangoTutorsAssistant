@@ -48,6 +48,13 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
         )
         scheduled_class.class_status = class_status
         scheduled_class.save()
+        response = {
+          "scheduled_class": {
+              "id": scheduled_class.id,
+              "class_status": scheduled_class.class_status
+          },
+          "student_or_class": None
+        }
         print("Transaction type:")
         print(transaction_type)
         print("Hours should be updated:")
@@ -70,8 +77,13 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
             student_or_class.purchased_class_hours = new_number_of_purchased_hours
             student_or_class.save()
             print("updated")
+            response['student_or_class'] = {
+              "id": student_or_class.id,
+              "purchased_class_hours": student_or_class.purchased_class_hours
+             }
         return Response(
-            ScheduledClassSerializer(scheduled_class).data,
+            #ScheduledClassSerializer(scheduled_class).data,
+            response,
             status=status.HTTP_202_ACCEPTED
         )
 
