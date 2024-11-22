@@ -1,4 +1,5 @@
 import datetime
+from bisect import insort
 
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status, viewsets
@@ -11,6 +12,7 @@ from .pagination import SmallSetPagination
 from .serializers import ScheduledClassSerializer
 from .utils import (
     adjust_number_of_hours_purchased,
+    class_is_double_booked,
     determine_transaction_type,
     determine_duration_of_class_time,
     get_double_booked_by_user,
@@ -82,52 +84,27 @@ class ScheduledClassViewSet(viewsets.ModelViewSet):
         start_time = serializer.validated_data['start_time']
         finish_time = serializer.validated_data['finish_time']
         booked_teacher = serializer.validated_data['teacher']
-        booked_student = serializer.validated_data['student_or_class']
-        obj_id = None
-        '''
-                concurrent_booked_classes = (
-            ScheduledClass.custom_query.already_booked_classes_during_date_and_time(
+        classes_booked_on_date = (
+            ScheduledClass.custom_query.teacher_already_booked_classes_on_date(
                 query_date=date,
+                teacher_id=booked_teacher
+            )
+        )
+        if class_is_double_booked(
+                classes_booked_on_date=classes_booked_on_date,
                 starting_time=start_time,
                 finishing_time=finish_time
-            )
-        )
-        unavailable_teachers = get_double_booked_by_user(
-            obj_id=obj_id,
-            student_or_teacher='teacher',
-            queried_user=booked_teacher,
-            concurrent_booked_classes=concurrent_booked_classes
-        )
-        unavailable_students = get_double_booked_by_user(
-            obj_id=obj_id,
-            student_or_teacher='student',
-            queried_user=booked_student,
-            concurrent_booked_classes=concurrent_booked_classes
-        )
-        if booked_teacher in unavailable_teachers:
-            return Response(
-                {"Error": "The teacher is unavailable for this time frame!"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        elif booked_student in unavailable_students:
-            return Response(
-                {"Error": "The student is unavailable for this time frame!"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        '''
-        if ScheduledClass.custom_query.teacher_already_booked_classes_during_date_and_time(
-                        query_date=date,
-                        starting_time=start_time,
-                        finishing_time=finish_time,
-                        teacher_id=booked_teacher
         ):
             return Response(
                 {"Error": "The teacher is unavailable for this time frame!"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         else:
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            new_class = serializer.save()
+            daily_classes_list = list(classes_booked_on_date)
+            insort(daily_classes_list, new_class, key=lambda x: x.start_time)
+            serialized_data = ScheduledClassSerializer(daily_classes_list, many=True).data
+            return Response(serialized_data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
@@ -138,58 +115,29 @@ class ScheduledClassViewSet(viewsets.ModelViewSet):
         start_time = serializer.validated_data['start_time']
         finish_time = serializer.validated_data['finish_time']
         booked_teacher = serializer.validated_data['teacher']
-        booked_student = serializer.validated_data['student_or_class']
-        '''
-                obj_id = instance.id
-        concurrent_booked_classes = (
-            ScheduledClass.
-            custom_query.already_booked_classes_during_date_and_time(
-                        query_date=date,
-                        starting_time=start_time,
-                        finishing_time=finish_time
-            )
-        )
-        unavailable_teachers = get_double_booked_by_user(
-            obj_id=obj_id,
-            student_or_teacher='teacher',
-            queried_user=booked_teacher,
-            concurrent_booked_classes=concurrent_booked_classes
-        )
-        unavailable_students = get_double_booked_by_user(
-            obj_id=obj_id,
-            student_or_teacher='student',
-            queried_user=booked_student,
-            concurrent_booked_classes=concurrent_booked_classes
-        )
-        '''
+        obj_id = instance.id
 
-        #if booked_teacher in unavailable_teachers:
-        if ScheduledClass.custom_query.teacher_already_booked_classes_during_date_and_time(
-                        query_date=date,
-                        starting_time=start_time,
-                        finishing_time=finish_time,
-                        teacher_id=booked_teacher
+        classes_booked_on_date = (
+            ScheduledClass.custom_query.teacher_already_booked_classes_on_date(
+                query_date=date,
+                teacher_id=booked_teacher
+            ).exclude(id=obj_id)
+        )
+        if class_is_double_booked(
+                classes_booked_on_date=classes_booked_on_date,
+                starting_time=start_time,
+                finishing_time=finish_time
         ):
             return Response(
                 {"Error": "The teacher is unavailable for this time frame!"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         else:
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-        #elif booked_student in unavailable_students:
-        '''
-                elif ScheduledClass.custom_query.student_or_class_already_booked_classes_during_date_and_time(
-                        query_date=date,
-                        starting_time=start_time,
-                        finishing_time=finish_time,
-                        student_or_class_id=booked_student
-            ):
-            return Response(
-                {"Error": "The student is unavailable for this time frame!"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        '''
+            new_class = serializer.save()
+            daily_classes_list = list(classes_booked_on_date)
+            insort(daily_classes_list, new_class, key=lambda x: x.start_time)
+            serialized_data = ScheduledClassSerializer(daily_classes_list, many=True).data
+            return Response(serialized_data, status=status.HTTP_202_ACCEPTED)
 
     queryset = ScheduledClass.objects.all()
     serializer_class = ScheduledClassSerializer

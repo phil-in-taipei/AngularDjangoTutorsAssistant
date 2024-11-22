@@ -106,3 +106,33 @@ def get_double_booked_by_user(obj_id, queried_user, student_or_teacher,
     else:
         user_unavailable = []
     return user_unavailable
+
+
+def class_is_double_booked(
+        classes_booked_on_date, starting_time, finishing_time
+):
+    class_starts_during_time_frame = [
+        scheduled_class for scheduled_class in classes_booked_on_date
+        if starting_time <= scheduled_class.start_time <= finishing_time
+    ]
+
+    class_finishes_during_time_frame = [
+        scheduled_class for scheduled_class in classes_booked_on_date
+        if starting_time <= scheduled_class.finish_time <= finishing_time
+    ]
+
+    time_frame_occurs_during_a_booked_class = [
+        scheduled_class for scheduled_class in classes_booked_on_date
+        if starting_time >= scheduled_class.start_time
+        and finishing_time <= scheduled_class.finish_time
+    ]
+
+    classes_during_date_and_time = [
+        scheduled_class for scheduled_class in classes_booked_on_date
+        if scheduled_class in class_starts_during_time_frame or
+        scheduled_class in class_finishes_during_time_frame or
+        scheduled_class in time_frame_occurs_during_a_booked_class
+    ]
+    print(classes_during_date_and_time)
+
+    return len(classes_during_date_and_time) > 0

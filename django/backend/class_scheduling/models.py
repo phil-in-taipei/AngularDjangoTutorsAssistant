@@ -112,6 +112,14 @@ class ScheduledClassManager(models.Manager):
 
         return len(classes_during_date_and_time) > 0
 
+    def teacher_already_booked_classes_on_date(
+            self, query_date, teacher_id
+    ):
+        return self.get_queryset().filter(
+            date=query_date,
+            teacher_id=teacher_id
+        )
+
 
 class ScheduledClass(models.Model):
     custom_query = ScheduledClassManager()
