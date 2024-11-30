@@ -15,6 +15,7 @@ const routes: Routes = [
       { path: "**", redirectTo: '/user-profile' }
     ] 
   },
+  { path: 'scheduling', loadChildren: () => import('./scheduling/scheduling.module').then(m => m.SchedulingModule) },
   
 ];
 
