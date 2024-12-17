@@ -31,6 +31,8 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
     def patch(self, request, *args, **kwargs):
         class_id = request.data['id']
         class_status = request.data['class_status']
+        teacher_notes = request.data['teacher_notes']
+        class_content = request.data['class_content']
         scheduled_class = get_object_or_404(ScheduledClass, id=class_id)
 
         transaction_type = determine_transaction_type(
@@ -38,14 +40,21 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
             updated_class_status=class_status
         )
         scheduled_class.class_status = class_status
+        scheduled_class.teacher_notes = teacher_notes
+        scheduled_class.class_content = class_content
         scheduled_class.save()
         student_or_class = scheduled_class.student_or_class
         response = {
           "scheduled_class": {
               "id": scheduled_class.id,
-              "class_status": scheduled_class.class_status
+              "class_status": scheduled_class.class_status,
+              "teacher_notes": scheduled_class.teacher_notes,
+              "class_content": scheduled_class.class_content
           },
-          "student_or_class": student_or_class.purchased_class_hours
+          "student_or_class": {
+              "id": student_or_class.id,
+              "purchased_class_hours": student_or_class.purchased_class_hours
+           }
         }
 
         if is_freelance_account(scheduled_class.student_or_class) and number_of_hours_purchased_should_be_updated(transaction_type):
