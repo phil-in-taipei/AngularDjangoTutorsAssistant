@@ -10,3 +10,8 @@ export interface StudentOrClassModel {
     account_id: string;
     slug: string;
 }
+
+export interface StudentOrClassConfirmationModificationResponse {
+    id: number;
+    purchased_class_hours: number | undefined;
+}

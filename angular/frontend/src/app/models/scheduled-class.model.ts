@@ -1,3 +1,12 @@
+import { StudentOrClassConfirmationModificationResponse } from "./student-or-class.model";
+
+export interface CreateScheduledClassModel {
+    date: string;
+    start_time: string;
+    finish_time: string;
+    student_or_class: number;
+    teacher: number;
+}
 
 export interface ModifyClassStatusModel {
     id: number;
@@ -7,8 +16,8 @@ export interface ModifyClassStatusModel {
 }
 
 export interface ModifyClassStatusResponse {
-    scheduled_class: ModifyClassStatusModel;
-    student_or_class: number;
+    scheduled_class: ScheduledClassModel;
+    student_or_class: StudentOrClassConfirmationModificationResponse;
 }
 
 export interface RescheduleClassModel {
@@ -31,3 +40,4 @@ export interface ScheduledClassModel {
     teacher_notes: string;
     class_content: string;
   }
+

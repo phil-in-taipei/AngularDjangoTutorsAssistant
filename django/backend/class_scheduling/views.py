@@ -44,18 +44,6 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
         scheduled_class.class_content = class_content
         scheduled_class.save()
         student_or_class = scheduled_class.student_or_class
-        response = {
-          "scheduled_class": {
-              "id": scheduled_class.id,
-              "class_status": scheduled_class.class_status,
-              "teacher_notes": scheduled_class.teacher_notes,
-              "class_content": scheduled_class.class_content
-          },
-          "student_or_class": {
-              "id": student_or_class.id,
-              "purchased_class_hours": student_or_class.purchased_class_hours
-           }
-        }
 
         if is_freelance_account(scheduled_class.student_or_class) and number_of_hours_purchased_should_be_updated(transaction_type):
             print("******Account must be adjusted*******")
@@ -71,10 +59,13 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
             student_or_class.purchased_class_hours = new_number_of_purchased_hours
             student_or_class.save()
             print("updated")
-            response['student_or_class'] = {
+        response = {
+          "scheduled_class": ScheduledClassSerializer(scheduled_class).data,
+          "student_or_class": {
               "id": student_or_class.id,
               "purchased_class_hours": student_or_class.purchased_class_hours
-             }
+           }
+        }
         return Response(
             response,
             status=status.HTTP_202_ACCEPTED
@@ -114,6 +105,15 @@ class ScheduledClassViewSet(viewsets.ModelViewSet):
             insort(daily_classes_list, new_class, key=lambda x: x.start_time)
             serialized_data = ScheduledClassSerializer(daily_classes_list, many=True).data
             return Response(serialized_data, status=status.HTTP_201_CREATED)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        id = instance.id
+        self.perform_destroy(instance)
+        return Response(data={
+            "id": id,
+            "message": "Class successfully deleted!"}
+        )
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
