@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-body {
+body, html {
   color: #758d97 !important;
   background-color: black !important;
   display: flex;

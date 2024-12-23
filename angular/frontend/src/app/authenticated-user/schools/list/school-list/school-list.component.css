@@ -6,19 +6,26 @@ h1, h3, h4, h5, h6 {
 
 table {
     border-collapse: collapse;
+    background-color: black !important;
 }
 
 .table {
     padding-left: 0px;
     padding-right: 0px;
+    background-attachment: black !important;
 }
 
-.table th.list {
+
+table .tr {
+    background-color: black !important;
+}
+
+table .td {
     background-color: black;
 }
 
-.table tr.list {
-    background-color: black;
+table .th {
+    background-color: black !important;
 }
 
 .row {
@@ -31,9 +38,6 @@ table {
     color: #758d97 
 }
 
-table td {
-    background-color: black;
-}
   
 .small-scr-tbl {
     display: none;
