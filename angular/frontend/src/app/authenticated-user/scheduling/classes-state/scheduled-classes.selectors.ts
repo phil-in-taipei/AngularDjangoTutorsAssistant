@@ -30,7 +30,7 @@ export const fetchingClassesInProgress = createSelector(
     scheduledClassesState => scheduledClassesState.fetchingClassesInProgress
 );
               
-export const landingPageTasksLoaded = createSelector(
+export const landingPageScheduleLoaded = createSelector(
     selectScheduledClassesState,
     scheduledClassesState => scheduledClassesState.landingPageScheduledClassesLoaded
 );
