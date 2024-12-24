@@ -2,8 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-monthly-view',
-  standalone: true,
-  imports: [],
+  standalone: false,
   templateUrl: './monthly-view.component.html',
   styleUrl: './monthly-view.component.css'
 })
