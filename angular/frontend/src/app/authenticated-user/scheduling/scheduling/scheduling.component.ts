@@ -7,4 +7,8 @@ import { Component } from '@angular/core';
 })
 export class SchedulingComponent {
 
+  ngOnInit(): void {
+    console.log('scheduling component initialized')
+  }
+
 }

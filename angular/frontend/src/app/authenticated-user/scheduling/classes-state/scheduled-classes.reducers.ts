@@ -108,6 +108,9 @@ export function scheduledClassesReducer(
                     ...state,  successMessage: undefined,
                     errorMessage: landingPageErrorMessage
                 }
+
+            case ScheduledClassesActionTypes.ScheduledClassesCleared:
+                    return initialScheduledClassesState;
         
         
             default: {

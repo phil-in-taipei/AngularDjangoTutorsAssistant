@@ -12,6 +12,10 @@ import {
 } from '../models/auth-login.model';
 import { AppState } from './../reducers';
 import { 
+  ScheduledClassesCleared 
+} from '../authenticated-user/scheduling/classes-state/scheduled-classes.actions';
+import { SchoolsCleared } from '../authenticated-user/schools/state/school.actions';
+import { 
   UserProfileCleared 
 } from '../authenticated-user/user/user-state/user.actions';
 
@@ -59,7 +63,8 @@ export class AuthService {
             console.log('reseting timer ....')
             this.setAuthTimer(timeUntilTokenExp); // if the value is negative, the timer will
                                                   // immediately trigger refreshTokenOrLogout();
-            this.router.navigate(['authenticated-user', 'user-profile']);
+            //this.router.navigate(['authenticated-user', 'user-profile']);
+            this.router.navigate(['authenticated-user', 'scheduling', 'landing']);
           } else {
             console.log('refresh token expired. Logging out...')
             this.logout();
@@ -90,6 +95,8 @@ export class AuthService {
   }
 
   private clearNgrxStore():void {
+    this.store.dispatch(new ScheduledClassesCleared());
+    this.store.dispatch(new SchoolsCleared());
     this.store.dispatch(new UserProfileCleared());
   }
 
@@ -206,7 +213,8 @@ export class AuthService {
           console.log(dtRfrshTken);
           this.saveAuthData(this.refresh, this.refreshExpTime,
             this.token, this.tokenExpTime);
-          this.router.navigate(['authenticated-user', 'user-profile']);
+          //this.router.navigate(['authenticated-user', 'user-profile']);
+          this.router.navigate(['authenticated-user', 'scheduling', 'landing']);
         } else {
           console.log('the tokens are not in the response:')
           console.log(response);

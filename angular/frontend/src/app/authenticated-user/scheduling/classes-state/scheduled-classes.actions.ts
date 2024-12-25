@@ -10,6 +10,7 @@ export enum ScheduledClassesActionTypes {
     LandingPageScheduleLoaded = '[User Landing Page] Landing Page Daily Scheduled Classes Loaded',
     LandingPageScheduleRequestCancelled = '[User Landing Page] Landing Page Scheduled Classes Request Cancelled',    
     LandingPageScheduleRequested = '[User Landing Page] Landing Daily Scheduled Classes Requested',
+    ScheduledClassesCleared = '[View User Logout] All Scheduled Classes Removed',
 }
 
 export class DailyClassesLoaded implements Action {
@@ -51,7 +52,12 @@ export class LandingPageScheduleRequested implements Action {
     readonly type = ScheduledClassesActionTypes.LandingPageScheduleRequested;
 }
 
+export class ScheduledClassesCleared implements Action {
+    readonly type = ScheduledClassesActionTypes.ScheduledClassesCleared;
+}
+
 export type ScheduledClassesActions = 
     DailyClassesLoaded | DailyClassesRequestCancelled | 
     DailyClassesRequested | LandingPageScheduleLoaded | 
-    LandingPageScheduleRequestCancelled | LandingPageScheduleRequested;
+    LandingPageScheduleRequestCancelled | LandingPageScheduleRequested | 
+    ScheduledClassesCleared;
