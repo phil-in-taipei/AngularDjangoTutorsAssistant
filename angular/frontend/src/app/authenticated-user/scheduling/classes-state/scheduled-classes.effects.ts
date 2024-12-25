@@ -6,7 +6,6 @@ import { catchError, filter, map,
     mergeMap, withLatestFrom 
 } from "rxjs/operators";
 
-import { AppState } from 'src/app/reducers'; // try just ScheduledClassesState
 import { 
     DailyClassesLoaded, DailyClassesRequestCancelled, 
     DailyClassesRequested, LandingPageScheduleLoaded,
@@ -15,6 +14,7 @@ import {
 } from './scheduled-classes.actions';
 import { landingPageScheduleLoaded } from './scheduled-classes.selectors';
 import { ClassesService } from '../classes-service/classes.service';
+import { ScheduledClassesState } from './scheduled-classes.reducers';
 
 
 
@@ -24,7 +24,7 @@ export class ScheduledClassesEffects {
     constructor(
         private actions$: Actions, 
         private scheduledClassesService: ClassesService, 
-        private store: Store<AppState> // try just ScheduledClassesState
+        private store: Store<ScheduledClassesState>
     ) {}
 
     fetchDailyClasses$ = createEffect(() => {

@@ -3,12 +3,12 @@ import {select, Store} from '@ngrx/store';
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
 
-import { AppState } from 'src/app/reducers';
 import { getDateString } from 'src/app/shared-utils/date-time.util';
 import { 
   LandingPageScheduleRequested 
 } from '../../classes-state/scheduled-classes.actions';
 import { ScheduledClassModel } from 'src/app/models/scheduled-class.model';
+import { ScheduledClassesState } from '../../classes-state/scheduled-classes.reducers';
 import { 
   selectScheduledClassesByDate 
 } from '../../classes-state/scheduled-classes.selectors';
@@ -32,7 +32,7 @@ export class LandingPageComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private store: Store<AppState>
+    private store: Store<ScheduledClassesState>
   ) {}
 
   ngOnInit(): void {
