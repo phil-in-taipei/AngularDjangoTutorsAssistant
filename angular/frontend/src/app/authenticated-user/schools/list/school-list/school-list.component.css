@@ -13,18 +13,28 @@ table {
     padding-left: 0px;
     padding-right: 0px;
     background-attachment: black !important;
-}
-
-
-table .tr {
     background-color: black !important;
 }
 
-table .td {
+tr .shaded th {
+    background-color: black !important;
+}
+
+tr .highlight th {
+    background-color: black !important;
+}
+
+
+
+.table .tr {
+    background-color: black !important;
+}
+
+.table .td {
     background-color: black;
 }
 
-table .th {
+.table .th {
     background-color: black !important;
 }
 

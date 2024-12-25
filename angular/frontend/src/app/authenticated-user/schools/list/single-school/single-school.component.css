@@ -3,19 +3,19 @@ h5 {
 }
 
 .table th.list {
-    background-color: black;
+    background-color: black !important;
 }
 
 .table tr.list {
-    background-color: black;
+    background-color: black !important;
 }
 
 .row {
-    background-color: black;
+    background-color: black !important;
     color: #758d97 
 }
 
 .col {
-    background-color: black;
+    background-color: black !important;
     color: #758d97 
 }
