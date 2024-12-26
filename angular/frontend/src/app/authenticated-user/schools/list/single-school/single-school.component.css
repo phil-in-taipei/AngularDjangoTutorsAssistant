@@ -2,20 +2,8 @@ h5 {
     text-align: center;
 }
 
-.table th.list {
-    background-color: black !important;
-}
-
-.table tr.list {
-    background-color: black !important;
-}
 
 .row {
-    background-color: black !important;
     color: #758d97 
 }
 
-.col {
-    background-color: black !important;
-    color: #758d97 
-}

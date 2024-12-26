@@ -1,7 +1,7 @@
 h1, h3, h4, h5, h6 {
     text-align: center;
-    background-color: black;
-    color: #758d97 
+    color: #758d97; 
+    background-color: black !important;
 }
 
 table {
@@ -12,19 +12,8 @@ table {
 .table {
     padding-left: 0px;
     padding-right: 0px;
-    background-attachment: black !important;
     background-color: black !important;
 }
-
-tr .shaded th {
-    background-color: black !important;
-}
-
-tr .highlight th {
-    background-color: black !important;
-}
-
-
 
 .table .tr {
     background-color: black !important;
@@ -39,13 +28,13 @@ tr .highlight th {
 }
 
 .row {
-    background-color: black;
-    color: #758d97 
+    background-color: black !important;
+    color: #758d97; 
 }
 
 .col {
     background-color: black;
-    color: #758d97 
+    color: #758d97; 
 }
 
   

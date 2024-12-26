@@ -1,17 +1,17 @@
-<tr class="row list" >
-    <th class="col list">
+<tr class="row" > 
+    <th class="col">
         <h5>
             <a [routerLink]="['/authenticated-user/school', school.id]">
               {{ school.school_name }}
             </a>
         </h5>
     </th>
-    <th class="col list">
+    <th class="col">
       <h5>
         {{ school.address_line_1 }}
       </h5>
     </th>
-    <th class="col list">
+    <th class="col">
       <div *ngIf="!deletionPopupVisible; else delWeeklyTask" class="col text-left">
         <h5>
           <button
@@ -23,7 +23,7 @@
         </h5>
       </div>
       <ng-template #delWeeklyTask class="row">
-        <div class="col list">
+        <div class="col">
           <h5>
             <button
               class="btn btn-sm btn-dark"
@@ -32,7 +32,7 @@
             </button>
           </h5>
         </div>
-        <div class="col list">
+        <div class="col">
           <h5>
             <button
               class="btn btn-sm btn-outline-danger"
