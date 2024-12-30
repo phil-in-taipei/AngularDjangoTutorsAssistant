@@ -112,7 +112,25 @@ export function scheduledClassesReducer(
             case ScheduledClassesActionTypes.ScheduledClassesCleared:
                     return initialScheduledClassesState;
         
-        
+            case ScheduledClassesActionTypes.ScheduledClassDeletionCancelled:
+                let deletionErrMsg: string = "Error! Task Deletion Failed!";
+                if (action.payload.err.error.Error) {
+                    deletionErrMsg = action.payload.err.error.Error;
+                }
+                return {
+                    ...state,  successMessage: undefined,
+                    errorMessage: deletionErrMsg
+                }
+                
+            case ScheduledClassesActionTypes.ScheduledClassDeletionSaved:
+                return adapter.removeOne(action.payload.id, 
+                    { 
+                        ...state,
+                        errorMessage: undefined,
+                        successMessage: action.payload.message
+                    }
+                );
+            
             default: {
                 return state
             }

@@ -10,7 +10,8 @@ import {
     DailyClassesLoaded, DailyClassesRequestCancelled, 
     DailyClassesRequested, LandingPageScheduleLoaded,
     LandingPageScheduleRequestCancelled, LandingPageScheduleRequested, 
-    ScheduledClassesActionTypes
+    ScheduledClassesActionTypes, ScheduledClassDeletionCancelled,
+    ScheduledClassDeletionRequested, ScheduledClassDeletionSaved
 } from './scheduled-classes.actions';
 import { landingPageScheduleLoaded } from './scheduled-classes.selectors';
 import { ClassesService } from '../classes-service/classes.service';
@@ -26,6 +27,31 @@ export class ScheduledClassesEffects {
         private scheduledClassesService: ClassesService, 
         private store: Store<ScheduledClassesState>
     ) {}
+
+ 
+    deleteScheduledClass$ = createEffect(() => {
+      return this.actions$
+          .pipe(
+              ofType<ScheduledClassDeletionRequested>(
+                ScheduledClassesActionTypes.ScheduledClassDeletionRequested),
+                  mergeMap(action => this.scheduledClassesService
+                      .deleteSingleClass(action.payload.id)
+                          .pipe(
+                              map(deletionResponse => new ScheduledClassDeletionSaved(
+                                  deletionResponse)
+                              ),
+                              catchError(err => {
+                                  this.store.dispatch(
+                                      new ScheduledClassDeletionCancelled({ err })
+                                  );
+                                  return of();
+                              })
+                          )
+                  )
+          )
+      });
+
+
 
     fetchDailyClasses$ = createEffect(() => {
         return this.actions$
