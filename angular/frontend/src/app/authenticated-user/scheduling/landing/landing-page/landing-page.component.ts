@@ -68,4 +68,7 @@ export class LandingPageComponent implements OnInit {
     );
   }
 
+  trackByFn(index: number, item: any) {
+    return item.id;
+  }
 }

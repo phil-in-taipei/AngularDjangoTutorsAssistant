@@ -1,1 +1,70 @@
-<p>landing-page works!</p>
+<br/><br/>
+<div class="container date-search">
+    <div class="text-center">
+      <form class="form-inline">
+        <div class="form-group">
+          <div class="input-group">
+            <input class="form-control" placeholder="yyyy-mm-dd"
+                   name="dp" [(ngModel)]="dateModel" ngbDatepicker #d="ngbDatepicker">
+            <br />
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button">
+                Search Date
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+</div>
+<br />
+<div class="text-center">
+    <button class="btn btn-sm btn btn-dark middle"
+      (click)="navToSelectedDate()">Go To Scheduled Date
+    </button>
+  </div>
+  <div *ngIf="todaysClasses$ | async as todaysClasses" class="container">
+    <div class="m-3 p-2">
+  
+    </div>
+    
+    <hr class="thick-br"/>
+    <h3>Today's Schedule</h3>
+    <h5>{{ todaysClasses.length }} Class(es) Scheduled Today</h5>
+    <h5>
+      <button class="btn btn-dark" type="button"
+        data-bs-toggle="collapse" data-bs-target="#collapseDailyTasks"
+        aria-expanded="false" aria-controls="collapseExample">
+        View Today's Schedule
+      </button>
+    </h5>
+    <div *ngIf="todaysClasses.length > 0"
+      id="collapseDailyTasks"
+      class="collapse table-responsive m-3 p-2"
+    >
+      <hr class="thick-br"/>
+      <table class="table bg-transparent">
+        <thead class="table bg-transparent">
+          <tr class="row">
+            <th class="col"><h5>Time</h5></th>
+            <th class="col"><h5>Student/Class</h5></th>
+            <th class="col"><h5>Delete</h5></th>
+          </tr>
+        </thead>
+        <tbody class="table bg-transparent">
+          <div 
+            class="bg-transparent" 
+            *ngFor="let scheduledClass of todaysClasses trackBy: trackByFn"
+          >
+            <app-scheduled-class [scheduledClass]=scheduledClass class="bg-transparent">
+            </app-scheduled-class>
+          </div>
+        </tbody>
+      </table>
+    </div>
+    <hr class="thick-br"/>
+    <div>
+      <app-unconfirmed-classes></app-unconfirmed-classes>
+    </div>
+  </div>
+  <br/><br/>

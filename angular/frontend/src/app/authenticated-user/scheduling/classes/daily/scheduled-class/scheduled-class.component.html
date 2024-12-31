@@ -1,1 +1,48 @@
-<p>scheduled-class works!</p>
+<tr class="row" >
+    <th class="col">
+        <h5 class>
+            <a [routerLink]="['/authenticated-user/schedule/classes-daily', scheduledClass.date]">
+              {{ scheduledClass.date }}
+            </a>
+        </h5>
+    </th>
+    <th class="col">
+      <h5 *ngIf="scheduledClass.class_status==='CANCELLED'; else not_completed" 
+        class="cross-out">
+        {{ scheduledClass.student_or_class }}
+      </h5>
+      <ng-template #not_completed>
+        <h5>
+          {{ scheduledClass.student_or_class }}
+        </h5>
+      </ng-template>
+    </th>
+    <th class="col">
+      <div *ngIf="!deletionPopupVisible; else delAccount" 
+        class="col text-left">
+        <button
+          class="btn btn-sm btn-outline-secondary"
+          (click)="showDeletionPopup()"
+          >
+          Remove
+        </button>
+      </div>
+      <ng-template #delAccount class="row">
+        <div class="col text-secondary">
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            (click)="hideDeletionPopup()">
+            Cancel Deletion
+          </button>
+        </div>
+        <div class="col text-secondary">
+          <button
+            class="btn btn-sm btn-outline-danger"
+            (click)="onScheduledClassDeletion()"
+            >
+            Confirm Removal
+          </button>
+        </div>
+      </ng-template>
+    </th>
+</tr>
