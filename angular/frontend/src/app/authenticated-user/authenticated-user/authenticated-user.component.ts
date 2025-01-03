@@ -3,6 +3,9 @@ import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/reducers';
 
 import { SchoolsRequested } from '../schools/state/school.actions';
+import { 
+  StudentsOrClassesRequested 
+} from '../student-or-class/state/student-or-class.actions';
 import { UserProfileRequested } from '../user/user-state/user.actions';
 
 @Component({
@@ -19,6 +22,7 @@ export class AuthenticatedUserComponent implements OnInit {
   ngOnInit(): void {
     console.log('initializing the authenticated user component now...')
     this.store.dispatch(new SchoolsRequested());
+    this.store.dispatch(new StudentsOrClassesRequested());
     this.store.dispatch(new UserProfileRequested());
   }
 

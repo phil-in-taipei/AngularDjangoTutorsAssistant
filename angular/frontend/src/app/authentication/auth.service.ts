@@ -16,6 +16,9 @@ import {
 } from '../authenticated-user/scheduling/classes-state/scheduled-classes.actions';
 import { SchoolsCleared } from '../authenticated-user/schools/state/school.actions';
 import { 
+  StudentsOrClassesCleared 
+} from '../authenticated-user/student-or-class/state/student-or-class.actions';
+import { 
   UserProfileCleared 
 } from '../authenticated-user/user/user-state/user.actions';
 
@@ -97,6 +100,7 @@ export class AuthService {
   private clearNgrxStore():void {
     this.store.dispatch(new ScheduledClassesCleared());
     this.store.dispatch(new SchoolsCleared());
+    this.store.dispatch(new StudentsOrClassesCleared());
     this.store.dispatch(new UserProfileCleared());
   }
 
