@@ -97,7 +97,7 @@ export class StudentsOrClassesLoaded implements Action {
     readonly type = StudentOrClassActionTypes.StudentsOrClassesLoaded;
 
     constructor(
-      public payload: { studentOrClasses: StudentOrClassModel[] }
+      public payload: { studentsOrClasses: StudentOrClassModel[] }
     ) {}
   }
 
