@@ -12,6 +12,12 @@ import {
   CreateSchoolFormComponent 
 } from './schools/create/create-school-form/create-school-form.component';
 import { 
+  CreateStudentOrClassComponent 
+} from './student-or-class/create/create-student-or-class/create-student-or-class.component';
+import { 
+  CreateStudentOrClassFormComponent 
+} from './student-or-class/create/create-student-or-class-form/create-student-or-class-form.component';
+import { 
   SchoolDetailComponent 
 } from './schools/detail/school-detail/school-detail.component';
 import { 
@@ -23,9 +29,28 @@ import {
 import { 
   SingleSchoolComponent 
 } from './schools/list/single-school/single-school.component';
+import { 
+  StudentOrClassDetailComponent 
+} from './student-or-class/detail/student-or-class-detail/student-or-class-detail.component';
+import { 
+  StudentOrClassEditFormComponent 
+} from './student-or-class/detail/student-or-class-edit-form/student-or-class-edit-form.component';
+import { 
+  StudentOrClassListComponent 
+} from './student-or-class/list/student-or-class-list/student-or-class-list.component';
+import { 
+  SingleStudentOrClassComponent 
+} from './student-or-class/list/single-student-or-class/single-student-or-class.component';
 
 import { SchoolsEffects } from './schools/state/school.effects';
 import { schoolsReducer } from './schools/state/school.reducers';
+
+import { 
+  StudentsOrClassesEffects 
+} from './student-or-class/state/student-or-class.effects';
+import { 
+  studentsOrClassesReducer 
+} from './student-or-class/state/student-or-class.reducers';
 
 import { UserEffects } from './user/user-state/user.effects';
 import { userProfileReducer } from './user/user-state/user.reducers';
@@ -54,10 +79,16 @@ import {
     AuthenticatedUserComponent,
     CreateSchoolComponent,
     CreateSchoolFormComponent,
+    CreateStudentOrClassComponent,
+    CreateStudentOrClassFormComponent,
     EditProfileFormComponent,
     SchoolDetailComponent,
     SchoolEditFormComponent,
     SchoolListComponent,
+    StudentOrClassDetailComponent,
+    StudentOrClassEditFormComponent,
+    StudentOrClassListComponent,
+    SingleStudentOrClassComponent,
     SingleSchoolComponent,
     UserProfileComponent
   ],
@@ -69,6 +100,8 @@ import {
     EffectsModule.forFeature([UserEffects]),
     StoreModule.forFeature('schools', schoolsReducer),
     EffectsModule.forFeature([SchoolsEffects]),
+    StoreModule.forFeature('studentsOrClasses', studentsOrClassesReducer),
+    EffectsModule.forFeature([StudentsOrClassesEffects]),
   ]
 })
 export class AuthenticatedUserModule { }
