@@ -1,1 +1,55 @@
-<p>single-student-or-class works!</p>
+<tr class="row" > 
+    <th class="col">
+      <h5>
+        {{ studentOrClass.student_or_class_name }}
+      </h5>
+    </th>
+    <th class="col">
+        <h5 *ngIf="studentOrClass.school; else freelance_info">
+            <a [routerLink]="['/authenticated-user/school', studentOrClass.school]">
+                <app-school-template-string 
+                [schoolId]=studentOrClass.school class="bg-transparent"
+                >
+                </app-school-template-string>
+            </a>
+        </h5>
+        <ng-template #freelance_info>
+            <h5>
+                Freelance
+            </h5>        
+        </ng-template>
+    </th>
+    <th class="col">
+      <div *ngIf="!deletionPopupVisible; else delWeeklyTask" class="col text-left">
+        <h5>
+          <button
+            class="btn btn-sm btn-dark"
+            (click)="showDeletionPopup()"
+            >
+            Remove
+          </button>
+        </h5>
+      </div>
+      <ng-template #delWeeklyTask class="row">
+        <div class="col">
+          <h5>
+            <button
+              class="btn btn-sm btn-dark"
+              (click)="hideDeletionPopup()">
+              Cancel Deletion
+            </button>
+          </h5>
+        </div>
+        <div class="col">
+          <h5>
+            <button
+              class="btn btn-sm btn-outline-danger"
+              (click)="onRemoveStudentOrClass()"
+              >
+              Confirm Removal
+            </button>
+          </h5>
+        </div>
+      </ng-template>
+    </th>
+</tr>
