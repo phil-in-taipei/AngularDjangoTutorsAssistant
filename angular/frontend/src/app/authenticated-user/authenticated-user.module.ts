@@ -27,6 +27,9 @@ import {
   SchoolListComponent 
 } from './schools/list/school-list/school-list.component';
 import { 
+  SchoolTemplateStringComponent 
+} from './schools/school-template-string/school-template-string.component';
+import { 
   SingleSchoolComponent 
 } from './schools/list/single-school/single-school.component';
 import { 
@@ -85,6 +88,7 @@ import {
     SchoolDetailComponent,
     SchoolEditFormComponent,
     SchoolListComponent,
+    SchoolTemplateStringComponent,
     StudentOrClassDetailComponent,
     StudentOrClassEditFormComponent,
     StudentOrClassListComponent,

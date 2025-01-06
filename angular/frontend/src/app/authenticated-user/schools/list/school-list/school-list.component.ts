@@ -14,13 +14,10 @@ import { selectAllSchools, fetchingSchoolsInProgress } from '../../state/school.
 })
 export class SchoolListComponent implements OnInit {
 
-
   schools$: Observable<SchoolModel[] | undefined> = of(undefined);
   fetchingSchoolsInProgress$: Observable<boolean> = of(false);
 
-
   constructor(private store: Store<SchoolsState>) { }
-
 
   ngOnInit(): void {
     this.schools$ = this.store.pipe(

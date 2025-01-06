@@ -22,15 +22,21 @@
               href="#" id="navbarDropdown" role="button" 
               data-bs-toggle="dropdown" aria-expanded="false"
             >
-              Schools
+              Students/Schools
             </a>
             <ul class="dropdown-menu mydropnav bg-dark" 
               aria-labelledby="navbarDropdown">
               <li><a class="nav-link" 
-                [routerLink]="['create-school']">Create</a>
+                [routerLink]="['create-school']">New School</a>
               </li>
               <li><a class="nav-link" 
-                [routerLink]="['users-schools']">List</a>
+                [routerLink]="['users-schools']">Schools</a>
+              </li>
+              <li><a class="nav-link" 
+                [routerLink]="['create-student-or-class']">New Student/Class</a>
+              </li>
+              <li><a class="nav-link" 
+                [routerLink]="['users-students-or-classes']">Students/Classes</a>
               </li>
             </ul>
           </li>

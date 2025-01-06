@@ -1,1 +1,40 @@
-<p>student-or-class-list works!</p>
+<ng-container *ngIf="{ value: fetchingStudentsOrClassesInProgress$ | async } as context">
+    <div *ngIf="context.value">
+      <div class="text-center">
+        <div class="spinner-border text-secondary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <br />
+      </div>
+      <br />
+    </div>
+  </ng-container>
+  
+  <div *ngIf="studentsOrClasses$ | async as studentsOrClasses" class="container content">
+      <div class="mx-5 pd-0">
+        <hr class="thick-br"/>
+        <h3>Students Or Classes</h3>
+        <hr class="thick-br"/>
+        <table class="table bg-transparent">
+            <thead class="table bg-transparent">
+              <tr class="row list">
+                <th class="col list"><h5>Student Or Class Name</h5></th>
+                <th class="col list"><h5>Account Type</h5></th>
+                <th class="col list"><h5>School Name</h5></th>
+                <th class="col list"><h5>Delete</h5></th>
+              </tr>
+            </thead>
+            <tbody class="bg-transparent">
+              <div class="bg-transparent" 
+              *ngFor="let studentOrClass of studentsOrClasses; trackBy: trackByFn" 
+              >
+                <app-single-student-or-class 
+                [studentOrClass]=studentOrClass class="bg-transparent"
+                >
+                </app-single-student-or-class>
+              </div>
+            </tbody>
+        </table>
+        <hr class="thick-br"/>
+    </div>
+  </div>

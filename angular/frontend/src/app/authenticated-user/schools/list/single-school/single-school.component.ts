@@ -17,7 +17,6 @@ export class SingleSchoolComponent {
 
   deletionPopupVisible: boolean = false;
 
-
   constructor(private store: Store<SchoolsState>) { }
 
   showDeletionPopup() {
@@ -34,6 +33,5 @@ export class SingleSchoolComponent {
       new SchoolDeletionRequested(payload)
     );
   }
-
 
 }
