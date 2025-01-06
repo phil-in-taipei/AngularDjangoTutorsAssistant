@@ -1,6 +1,10 @@
 h1 {
     text-align: center;
 }
+
+h3 {
+    text-align: left;
+}
   
 table {
       border:1px solid #758d97;

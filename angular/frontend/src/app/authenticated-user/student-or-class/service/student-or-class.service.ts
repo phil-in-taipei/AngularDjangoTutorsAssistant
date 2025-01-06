@@ -6,7 +6,8 @@ import { AuthService } from 'src/app/authentication/auth.service';
 import { DeletionResponse } from 'src/app/models/deletion-response';
 import { environment } from 'src/environments/environment';
 import { 
-  StudentOrClassCreateAndEditModel, StudentOrClassModel, 
+  StudentOrClassCreateAndEditModel, StudentOrClassEditModel, 
+  StudentOrClassModel, 
   StudentOrClassConfirmationModificationResponse 
 } from 'src/app/models/student-or-class.model';
 
@@ -33,7 +34,7 @@ export class StudentOrClassService {
 
   editStudentOrClass(
     id: number,
-    submissionForm: StudentOrClassCreateAndEditModel
+    submissionForm: StudentOrClassEditModel
   ): Observable<StudentOrClassModel> {
     let token = this.authService.getAuthToken();
     return this.http.patch<StudentOrClassModel>(

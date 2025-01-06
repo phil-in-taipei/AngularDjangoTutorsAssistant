@@ -2,7 +2,7 @@ import { Action} from "@ngrx/store";
 import { Update } from "@ngrx/entity";
 
 import { 
-    StudentOrClassCreateAndEditModel, 
+    StudentOrClassCreateAndEditModel, StudentOrClassEditModel,
     StudentOrClassConfirmationModificationResponse,
     StudentOrClassModel 
 } from "src/app/models/student-or-class.model";
@@ -77,7 +77,7 @@ export class StudentOrClassEditSubmitted implements Action {
     constructor(
         public payload:
             {
-                id: number, studentOrClass: StudentOrClassCreateAndEditModel
+                id: number, studentOrClass: StudentOrClassEditModel
             }
     ) {}
 }

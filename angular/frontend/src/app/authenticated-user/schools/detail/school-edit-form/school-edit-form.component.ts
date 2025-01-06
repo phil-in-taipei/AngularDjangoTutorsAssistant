@@ -23,7 +23,6 @@ export class SchoolEditFormComponent {
 
   constructor(private store: Store<SchoolsState>) { }
 
-
   onSubmitEditedSchool(form: NgForm) {
     console.log(form.value)
     if (form.invalid) {

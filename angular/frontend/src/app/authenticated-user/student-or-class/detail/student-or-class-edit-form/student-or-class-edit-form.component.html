@@ -1,1 +1,66 @@
-<p>student-or-class-edit-form works!</p>
+<form 
+    (submit)="onSubmitEditedStudentOrClass(editStudentOrClassForm)" 
+    #editStudentOrClassForm="ngForm"
+>
+    <div>
+        <label>Student Or Class Name</label>
+        <input
+        class="form-control"
+        type="text"
+        minlength="2"
+        rows="4"
+        name="student_or_class_name"
+        ngModel
+        required
+        placeholder="{{ studentOrClass.student_or_class_name }}"
+        #student_or_class_name="ngModel"
+        >
+        <div *ngIf="student_or_class_name.touched && student_or_class_name.invalid">
+            Please enter the student or class name.
+        </div>
+    </div>
+    <br />
+    <div>
+        <label>Comments</label>
+        <input
+        class="form-control"
+        type="text"
+        minlength="2"
+        rows="4"
+        name="comments"
+        ngModel
+        required
+        placeholder="{{ studentOrClass.comments }}"
+        #comments="ngModel"
+        >
+        <div *ngIf="comments.touched && comments.invalid">
+            Please enter comments.
+        </div>
+    </div>
+    <br />
+    <div>
+        <label>Hourly Tuition</label>
+        <input
+        class="form-control"
+        type="number"
+        min="500"
+        max="2000"
+        rows="4"
+        name="tuition_per_hour"
+        ngModel
+        required
+        placeholder="NT${{ studentOrClass.tuition_per_hour }}"
+        #tuition_per_hour="ngModel"
+        >
+        <div *ngIf="tuition_per_hour.touched && tuition_per_hour.invalid">
+            Please enter the hourly tuition rate.
+        </div>
+    </div>
+    <br />
+    <hr class="thick-br"/>
+    <div>
+      <button class="btn btn-dark" type="submit"
+      >Submit</button>
+    </div>
+    <br />
+</form>

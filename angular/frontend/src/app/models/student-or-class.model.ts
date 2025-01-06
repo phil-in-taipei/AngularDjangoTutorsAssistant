@@ -7,6 +7,12 @@ export interface StudentOrClassCreateAndEditModel {
     tuition_per_hour: number;
 }
 
+export interface StudentOrClassEditModel {
+    student_or_class_name: string;
+    comments: string;
+    tuition_per_hour: number;
+}
+
 export interface StudentOrClassModel {
     id: number;
     student_or_class_name: string;
