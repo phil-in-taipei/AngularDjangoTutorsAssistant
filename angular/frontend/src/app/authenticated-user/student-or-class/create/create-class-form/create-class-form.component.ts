@@ -28,6 +28,7 @@ import { StudentsOrClassesState } from '../../state/student-or-class.reducers';
 export class CreateClassFormComponent {
 
   schools$: Observable<SchoolModel[] | undefined> = of(undefined);
+  accountTypes:string[] = ["Freelance", "School"]
 
   constructor(
     private schoolStore: Store<SchoolsState>,
@@ -40,4 +41,32 @@ export class CreateClassFormComponent {
     );
   }
 
+  onSubmitClass(form: NgForm) {
+    if (form.invalid) {
+      this.studentsOrClassesStore.dispatch(
+        new StudentOrClassCreationCancelled(
+          { err: {
+              error: {
+                message: "The form values were not properly filled in!"
+              }
+            }
+          } 
+      )
+    );
+      form.reset();
+    }
+    let submissionForm: StudentOrClassCreateAndEditModel = {
+        student_or_class_name: form.value.student_or_class_name,
+        account_type: form.value.account_type.toLowerCase(),
+        school: form.value.school,
+        tuition_per_hour: +form.value.tuition_per_hour,
+        comments: form.value.comments,
+        purchased_class_hours: undefined,
+    }
+    console.log(submissionForm);
+    this.studentsOrClassesStore.dispatch(new StudentOrClassCreateSubmitted(
+      { studentOrClass: submissionForm }
+    ));
+    form.reset();
+    }
 }

@@ -1,1 +1,103 @@
-<p>create-class-form works!</p>
+
+<div *ngIf="schools$ | async as schools">
+  <form (submit)="onSubmitClass(submitClassForm)" #submitClassForm="ngForm">
+    <div>
+        <label>Name of Class</label>
+        <textarea
+        class="form-control"
+        name="student_or_class_name"
+        type="text"
+        required
+        text
+        minlength="5"
+        rows="3"
+        ngModel
+        placeholder="Name of Class"
+        #student_or_class_name="ngModel"
+      ></textarea>
+      <div *ngIf="student_or_class_name.touched && student_or_class_name.invalid">
+        Please enter a class name.
+    </div>
+    </div>
+    <br />
+    <div>
+        <label>Account type</label>
+        <select
+        name="account_type"
+        class="form-control"
+        ngModel
+        required
+        #account_type="ngModel"
+        >
+        <option *ngFor="let accountType of accountTypes"
+            [value]=accountType
+        >{{ accountType }}
+        </option>
+        </select>
+        <div *ngIf="account_type.touched && account_type.invalid">
+          Please select a valid account type
+        </div>
+      </div>
+      <br />
+    <div>
+      <label>Schools</label>
+      <select
+      name="school"
+      class="form-control"
+      ngModel
+      required
+      #school="ngModel"
+      >
+      <option *ngFor="let school of schools"
+          [value]=school.id
+      >{{ school.school_name }}
+      </option>
+      </select>
+      <div *ngIf="school.touched && school.invalid">
+        Please select a valid school
+      </div>
+    </div>
+    <br />
+    <div>
+        <label>Tuition Per Hour</label>
+        <input
+        class="form-control"
+        type="number"
+        min="500"
+        max="2000"
+        rows="4"
+        name="tuition_per_hour"
+        ngModel
+        required
+        placeholder="number"
+        #tuition_per_hour="ngModel"
+        >
+      <div *ngIf="tuition_per_hour.touched && tuition_per_hour.invalid">
+        Please enter a tuition rate.
+      </div>
+    </div>
+    <br />
+    <div>
+        <label>Comments</label>
+        <textarea
+        class="form-control"
+        name="comments"
+        type="text"
+        required
+        text
+        minlength="5"
+        rows="3"
+        ngModel
+        placeholder="Account Description"
+        #comments="ngModel"
+      ></textarea>
+      <div *ngIf="comments.touched && comments.invalid">Please enter a description.</div>
+    </div>
+    <br />
+    <div>
+      <button class="btn btn-outline-dark" type="submit">
+        Submit
+      </button>
+    </div>
+  </form>
+</div>
