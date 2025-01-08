@@ -6,6 +6,12 @@ import { StoreModule } from '@ngrx/store';
 import { AuthenticatedUserRoutingModule } from './authenticated-user-routing.module';
 
 import { 
+  CreateClassFormComponent 
+} from './student-or-class/create/create-class-form/create-class-form.component';
+import { 
+  CreateFreelanceStudentFormComponent 
+} from './student-or-class/create/create-freelance-student-form/create-freelance-student-form.component';
+import { 
   CreateSchoolComponent 
 } from './schools/create/create-school/create-school.component';
 import { 
@@ -14,9 +20,6 @@ import {
 import { 
   CreateStudentOrClassComponent 
 } from './student-or-class/create/create-student-or-class/create-student-or-class.component';
-import { 
-  CreateStudentOrClassFormComponent 
-} from './student-or-class/create/create-student-or-class-form/create-student-or-class-form.component';
 import { 
   SchoolDetailComponent 
 } from './schools/detail/school-detail/school-detail.component';
@@ -80,10 +83,11 @@ import {
     AuthenticatedFooterComponent,
     AuthenticatedHeaderComponent,
     AuthenticatedUserComponent,
+    CreateClassFormComponent,
+    CreateFreelanceStudentFormComponent,
     CreateSchoolComponent,
     CreateSchoolFormComponent,
     CreateStudentOrClassComponent,
-    CreateStudentOrClassFormComponent,
     EditProfileFormComponent,
     SchoolDetailComponent,
     SchoolEditFormComponent,

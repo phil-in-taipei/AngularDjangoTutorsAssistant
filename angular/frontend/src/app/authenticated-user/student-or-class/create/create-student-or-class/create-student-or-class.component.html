@@ -1,1 +1,48 @@
-<p>create-student-or-class works!</p>
+
+<div class="container">
+    <div class=" m-3 p-2">
+      <hr class="thick-br"/>
+      <h2>Create New Freelance Student Or Class</h2>
+      <hr class="thick-br"/>
+      <div class="text-center">
+        <button class="btn btn-sm btn-dark" type="button"
+          (click)="toggleClassSubmitForm()">
+          {{ showClassSubmitForm ? "Never Mind, I'll submit one next time for "
+          : "Click Here to create new a class in a school " }}
+        </button>
+        <br />
+      </div>
+      <hr class="thick-br"/>
+    </div>
+    
+    <div [hidden]="!showClassSubmitForm"
+      [style.opacity]="!showClassSubmitForm ? '0' : '1'"
+      [style.visibility]="!showClassSubmitForm ? 'hidden' : 'visible'"
+      class="m-3 p-2"
+    >
+      <app-create-class-form>
+      </app-create-class-form>
+      <hr class="thick-br"/>
+
+    </div>
+    
+    <div class="text-center">
+        <button class="btn btn-sm btn-dark" type="button"
+          (click)="toggleFreelanceStudentSubmitForm()">
+          {{ showFreelanceStudentSubmitForm ? "Never Mind, I'll submit one next time for "
+          : "Click Here to create new a freelance student " }}
+        </button>
+        <br />
+    </div>
+    <hr class="thick-br"/>
+    <div [hidden]="!showFreelanceStudentSubmitForm"
+      [style.opacity]="!showFreelanceStudentSubmitForm ? '0' : '1'"
+      [style.visibility]="!showFreelanceStudentSubmitForm ? 'hidden' : 'visible'"
+      class="m-3 p-2"
+    >
+      <app-create-freelance-student-form>
+      </app-create-freelance-student-form>
+      <hr class="thick-br"/>
+    </div>
+  </div>
+  
