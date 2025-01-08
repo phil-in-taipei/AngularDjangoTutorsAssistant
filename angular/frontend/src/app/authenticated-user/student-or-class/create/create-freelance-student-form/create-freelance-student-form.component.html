@@ -1,1 +1,66 @@
-<p>create-freelance-student-form works!</p>
+
+<div>
+    <form (submit)="onSubmitClass(submitClassForm)" #submitClassForm="ngForm">
+      <div>
+          <label>Name of Freelance Student</label>
+          <textarea
+          class="form-control"
+          name="student_or_class_name"
+          type="text"
+          required
+          text
+          minlength="5"
+          rows="1"
+          ngModel
+          placeholder="Freelance Student's Name"
+          #student_or_class_name="ngModel"
+        ></textarea>
+        <div *ngIf="student_or_class_name.touched && student_or_class_name.invalid">
+          Please enter a student name.
+        </div>
+      </div>
+      <br />
+      <div>
+          <label>Tuition Per Hour</label>
+          <input
+          class="form-control"
+          type="number"
+          min="500"
+          max="2000"
+          rows="4"
+          name="tuition_per_hour"
+          ngModel
+          required
+          placeholder="Tuition amount"
+          #tuition_per_hour="ngModel"
+          >
+        <div *ngIf="tuition_per_hour.touched && tuition_per_hour.invalid">
+          Please enter a tuition rate.
+        </div>
+      </div>
+      <br />
+      <div>
+          <label>Comments</label>
+          <textarea
+          class="form-control"
+          name="comments"
+          type="text"
+          required
+          text
+          minlength="5"
+          rows="3"
+          ngModel
+          placeholder="Account Description"
+          #comments="ngModel"
+        ></textarea>
+        <div *ngIf="comments.touched && comments.invalid">Please enter a description.</div>
+      </div>
+      <br />
+      <div>
+        <button class="btn btn-outline-dark" type="submit">
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
+  

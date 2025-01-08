@@ -10,36 +10,17 @@
         required
         text
         minlength="5"
-        rows="3"
+        rows="1"
         ngModel
         placeholder="Name of Class"
         #student_or_class_name="ngModel"
       ></textarea>
       <div *ngIf="student_or_class_name.touched && student_or_class_name.invalid">
         Please enter a class name.
-    </div>
-    </div>
-    <br />
-    <div>
-        <label>Account type</label>
-        <select
-        name="account_type"
-        class="form-control"
-        ngModel
-        required
-        #account_type="ngModel"
-        >
-        <option *ngFor="let accountType of accountTypes"
-            [value]=accountType
-        >{{ accountType }}
-        </option>
-        </select>
-        <div *ngIf="account_type.touched && account_type.invalid">
-          Please select a valid account type
         </div>
-      </div>
-      <br />
+    </div>
     <div>
+    <br />
       <label>Schools</label>
       <select
       name="school"
@@ -69,7 +50,7 @@
         name="tuition_per_hour"
         ngModel
         required
-        placeholder="number"
+        placeholder="Tuition amount"
         #tuition_per_hour="ngModel"
         >
       <div *ngIf="tuition_per_hour.touched && tuition_per_hour.invalid">

@@ -25,10 +25,9 @@ import { StudentsOrClassesState } from '../../state/student-or-class.reducers';
   templateUrl: './create-class-form.component.html',
   styleUrl: './create-class-form.component.css'
 })
-export class CreateClassFormComponent {
+export class CreateClassFormComponent implements OnInit{
 
   schools$: Observable<SchoolModel[] | undefined> = of(undefined);
-  accountTypes:string[] = ["Freelance", "School"]
 
   constructor(
     private schoolStore: Store<SchoolsState>,
@@ -57,7 +56,7 @@ export class CreateClassFormComponent {
     }
     let submissionForm: StudentOrClassCreateAndEditModel = {
         student_or_class_name: form.value.student_or_class_name,
-        account_type: form.value.account_type.toLowerCase(),
+        account_type: "School",
         school: form.value.school,
         tuition_per_hour: +form.value.tuition_per_hour,
         comments: form.value.comments,
