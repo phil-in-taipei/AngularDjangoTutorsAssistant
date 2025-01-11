@@ -51,6 +51,16 @@ class StudentOrClass(models.Model):
     account_id = models.CharField(max_length=10, null=True, blank=True)
     slug = models.SlugField(max_length=50, blank=True, null=True)
 
+    @property
+    def template_str(self):
+        if self.school:
+            return "{} ({})".format(
+                str(self.student_or_class_name).title(),
+                self.school.school_name,
+            )
+        else:
+            return str(self.student_or_class_name).title()
+
     def __str__(self):
         if self.school:
             return "School ({}): {}".format(

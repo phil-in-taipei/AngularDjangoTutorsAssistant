@@ -9,11 +9,21 @@
     <th class="col">
       <h5 *ngIf="scheduledClass.class_status==='CANCELLED'; else not_completed" 
         class="cross-out">
-        {{ scheduledClass.student_or_class }}
+        <a [routerLink]="['/authenticated-user/student-or-class', scheduledClass.student_or_class]">
+          <app-student-or-class-template-string 
+          [studentOrClassId]=scheduledClass.student_or_class class="bg-transparent"
+          >
+          </app-student-or-class-template-string>
+        </a>
       </h5>
       <ng-template #not_completed>
         <h5>
-          {{ scheduledClass.student_or_class }}
+          <a [routerLink]="['/authenticated-user/student-or-class', scheduledClass.student_or_class]">
+            <app-student-or-class-template-string 
+            [studentOrClassId]=scheduledClass.student_or_class class="bg-transparent"
+            >
+            </app-student-or-class-template-string>
+          </a>
         </h5>
       </ng-template>
     </th>

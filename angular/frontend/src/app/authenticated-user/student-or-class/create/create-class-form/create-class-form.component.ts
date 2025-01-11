@@ -56,7 +56,7 @@ export class CreateClassFormComponent implements OnInit{
     }
     let submissionForm: StudentOrClassCreateAndEditModel = {
         student_or_class_name: form.value.student_or_class_name,
-        account_type: "School",
+        account_type: "school",
         school: form.value.school,
         tuition_per_hour: +form.value.tuition_per_hour,
         comments: form.value.comments,

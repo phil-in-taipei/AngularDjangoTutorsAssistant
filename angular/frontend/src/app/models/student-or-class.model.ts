@@ -23,6 +23,7 @@ export interface StudentOrClassModel {
     tuition_per_hour: number;
     account_id: string;
     slug: string;
+    template_str: string;
 }
 
 export interface StudentOrClassConfirmationModificationResponse {
