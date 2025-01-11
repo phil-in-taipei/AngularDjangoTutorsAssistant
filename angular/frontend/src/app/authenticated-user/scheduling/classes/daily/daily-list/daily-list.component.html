@@ -1,1 +1,85 @@
-<p>daily-list works!</p>
+<br />
+<div class="large-scr row bg-transparent">
+    <div class="col text-center">
+      <button class="btn btn-sm btn-dark middle"
+        (click)="navToYsdtrdy()">Previous Day</button>
+    </div>
+    <div class="col">
+    <h3>Daily Schedule: {{ dateFromRouteData }}
+      </h3>
+    </div>
+    <div class="col text-center">
+      <button class="btn btn-sm btn-dark middle"
+      (click)="navToTmrrow()">Upcoming Day</button>
+    </div>
+  </div>
+  <div class="small-scr">
+    <h3>Daily Schedule: {{ dateFromRouteData }}</h3>
+    <div class="row">
+      <div class="col">
+        <div class="container">
+          <div class="d-grid gap-2">
+              <button class="btn btn-sm btn-outline-dark middle"
+              (click)="navToYsdtrdy()">Prev</button>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="container">
+          <div class="d-grid gap-2">
+            <button class="btn btn-sm btn-outline-dark middle"
+            (click)="navToTmrrow()">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<ng-container *ngIf="{value: fetchingClasses$ | async} as context">
+  <div *ngIf="context.value">
+    <div class="text-center">
+      <div class="spinner-border text-secondary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <br />
+    </div>
+    <br />
+  </div>
+</ng-container>
+
+<div *ngIf="dailyScheduledClasses$ | async as todaysClasses" class="container">
+    <hr class="thick-br"/>
+    <h5>{{ todaysClasses.length }} Class(es) Scheduled</h5>
+    <div *ngIf="todaysClasses.length > 0; else no_daily"
+        class="table-responsive"
+      >
+      <hr class="thick-br"/>
+      <table class="table bg-transparent">
+        <thead class="table bg-transparent">
+          <tr class="row">
+            <th class="col"><h5>Time</h5></th>
+            <th class="col"><h5>Student/Class</h5></th>
+            <th class="col"><h5>Delete</h5></th>
+          </tr>
+        </thead>
+        <tbody class="table bg-transparent">
+          <div 
+            class="bg-transparent" 
+            *ngFor="let scheduledClass of todaysClasses trackBy: trackByFn"
+          >
+            <app-scheduled-class [scheduledClass]=scheduledClass class="bg-transparent">
+            </app-scheduled-class>
+          </div>
+        </tbody>
+      </table>
+      </div>
+      <ng-template #no_daily>
+        <div class="text-center m-3 p-2">
+          <button class="btn btn-md btn-dark text" id="forwardDateButton" 
+          [routerLink]="['/', 'authenticated-user', 'scheduling', 'create-class']">
+              Click to Schedule a Class
+          </button>
+        </div>
+      </ng-template>
+      <hr class="thick-br"/>
+</div>

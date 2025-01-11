@@ -62,9 +62,10 @@ export class LandingPageComponent implements OnInit {
       this.dateModel.day,
       this.dateModel.month,
       this.dateModel.year
-    );
+    ); // this.router.navigate(['authenticated-user', 'scheduling', 'landing']);
+    console.log(`This is the date string: ${dateString}`)
     this.router.navigate(
-      ['/', 'authenticated-user', 'scheduling', 'schedule-daily',  dateString]
+      ['authenticated-user', 'scheduling', 'schedule-daily',  dateString]
     );
   }
 
