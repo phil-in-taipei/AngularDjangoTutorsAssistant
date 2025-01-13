@@ -26,8 +26,8 @@ import {
 import { StudentsOrClassesEffects } from '../student-or-class/state/student-or-class.effects';
 import { studentsOrClassesReducer } from '../student-or-class/state/student-or-class.reducers';
 import { UnconfirmedClassesComponent } from './landing/unconfirmed-classes/unconfirmed-classes.component';
-
-
+import { UserEffects } from '../user/user-state/user.effects';
+import { userProfileReducer } from '../user/user-state/user.reducers';
 
 @NgModule({
   declarations: [
@@ -53,6 +53,8 @@ import { UnconfirmedClassesComponent } from './landing/unconfirmed-classes/uncon
     EffectsModule.forFeature([ScheduledClassesEffects]),
     StoreModule.forFeature('studentsOrClasses', studentsOrClassesReducer),
     EffectsModule.forFeature([StudentsOrClassesEffects]),
+    StoreModule.forFeature('user', userProfileReducer),
+    EffectsModule.forFeature([UserEffects]),
     SchedulingRoutingModule
   ]
 })

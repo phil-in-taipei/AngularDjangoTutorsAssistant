@@ -22,6 +22,7 @@ export enum ScheduledClassesActionTypes {
     ScheduledClassDeletionCancelled = '[Scheduled Classes API] Removal of Scheduled Class Cancelled',
     ScheduledClassDeletionRequested = '[Scheduled Classes Daily Page/Landing Page]  Removal of Scheduled Class Requested',
     ScheduledClassDeletionSaved = '[Scheduled Classes Daily Page/Landing Page] Scheduled Class Removed',
+    ScheduledClassesMessagesCleared = '[Scheduled Class Edit Status, Reschedule and Schedule Pages] Scheduled Classes Messages Cleared',
 }
 
 export class DailyClassesLoaded implements Action {
@@ -127,6 +128,10 @@ export class ScheduledClassDeletionSaved implements Action {
     constructor(public payload: { id: number, message: string }) {}
 }
 
+export class ScheduledClassesMessagesCleared implements Action {
+    readonly type = ScheduledClassesActionTypes.ScheduledClassesMessagesCleared;
+}
+
 export type ScheduledClassesActions = 
     DailyClassesLoaded | DailyClassesRequestCancelled | 
     DailyClassesRequested | LandingPageScheduleLoaded | 
@@ -135,4 +140,5 @@ export type ScheduledClassesActions =
     RescheduledClassUpdated | ScheduleSingleClassSubmitted |
     ScheduleSingleClassCancelled | ScheduledSingleClassWithDailyBatchAdded |
     ScheduledClassesCleared | ScheduledClassDeletionCancelled |
-    ScheduledClassDeletionRequested | ScheduledClassDeletionSaved;
+    ScheduledClassDeletionRequested | ScheduledClassDeletionSaved | 
+    ScheduledClassesMessagesCleared;

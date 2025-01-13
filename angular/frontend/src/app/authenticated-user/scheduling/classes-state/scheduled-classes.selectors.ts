@@ -34,3 +34,14 @@ export const landingPageScheduleLoaded = createSelector(
     selectScheduledClassesState,
     scheduledClassesState => scheduledClassesState.landingPageScheduledClassesLoaded
 );
+
+
+export const scheduledClassesErrorMsg = createSelector(
+    selectScheduledClassesState,
+    scheduledClassesState => scheduledClassesState.errorMessage
+);
+  
+export const scheduledClassesSuccessMsg = createSelector(
+    selectScheduledClassesState,
+    scheduledClassesState => scheduledClassesState.successMessage
+);

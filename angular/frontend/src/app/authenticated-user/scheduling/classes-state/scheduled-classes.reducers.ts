@@ -151,7 +151,7 @@ export function scheduledClassesReducer(
                     return initialScheduledClassesState;
         
             case ScheduledClassesActionTypes.ScheduledClassDeletionCancelled:
-                let deletionErrMsg: string = "Error! Task Deletion Failed!";
+                let deletionErrMsg: string = "Error! Scheduled Class Deletion Failed!";
                 if (action.payload.err.error.Error) {
                     deletionErrMsg = action.payload.err.error.Error;
                 }
@@ -168,6 +168,14 @@ export function scheduledClassesReducer(
                         successMessage: action.payload.message
                     }
                 );
+
+     
+            case ScheduledClassesActionTypes.ScheduledClassesMessagesCleared:
+                return {
+                    ...state,  successMessage: undefined,
+                    errorMessage: undefined
+            }
+                
             
             default: {
                 return state
