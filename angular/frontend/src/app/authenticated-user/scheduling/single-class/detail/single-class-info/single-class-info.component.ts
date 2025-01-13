@@ -2,8 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-single-class-info',
-  standalone: true,
-  imports: [],
+  standalone: false,
   templateUrl: './single-class-info.component.html',
   styleUrl: './single-class-info.component.css'
 })

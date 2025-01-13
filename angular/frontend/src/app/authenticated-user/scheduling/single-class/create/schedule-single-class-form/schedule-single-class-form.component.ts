@@ -2,8 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-schedule-single-class-form',
-  standalone: true,
-  imports: [],
+  standalone: false,
   templateUrl: './schedule-single-class-form.component.html',
   styleUrl: './schedule-single-class-form.component.css'
 })

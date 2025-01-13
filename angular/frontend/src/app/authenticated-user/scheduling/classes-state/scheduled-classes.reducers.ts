@@ -109,6 +109,44 @@ export function scheduledClassesReducer(
                     errorMessage: landingPageErrorMessage
                 }
 
+            case ScheduledClassesActionTypes.RescheduleClassCancelled:
+                let rescheduleErrMessage: string = "Error! Rescheduling Failed!";
+                if (action.payload.err.error.Error) {
+                    console.log(action.payload.err.error.Error)
+                    rescheduleErrMessage = action.payload.err.error.Error;
+                }
+                return {
+                    ...state,  successMessage: undefined,
+                    errorMessage: rescheduleErrMessage
+                }
+    
+            case ScheduledClassesActionTypes.RescheduledClassUpdated:
+                return adapter.updateOne(action.payload.scheduledClass, 
+                    {
+                        ...state,
+                        errorMessage: undefined,
+                        successMessage: 'You have successfully rescheduled the class!'
+                    }
+                );
+                                         
+            case ScheduledClassesActionTypes.ScheduleSingleClassCancelled:
+                console.log(action.payload);
+                let userErrorMessage: string = "Error scheduling class!";
+                if (action.payload.err.error.message) {
+                    userErrorMessage = action.payload.err.error.message;
+                }
+                return {
+                    ...state,  successMessage: undefined,
+                    errorMessage: userErrorMessage
+                }
+                            
+    
+            case ScheduledClassesActionTypes.ScheduledSingleClassWithDailyBatchAdded:
+                return adapter.upsertMany(action.payload.scheduledClasses, {...state,
+                    errorMessage: undefined,
+                    successMessage: 'Class scheduling successfully submitted!'
+                });
+
             case ScheduledClassesActionTypes.ScheduledClassesCleared:
                     return initialScheduledClassesState;
         

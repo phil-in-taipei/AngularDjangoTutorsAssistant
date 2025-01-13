@@ -2,8 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-edit-class-status-form',
-  standalone: true,
-  imports: [],
+  standalone: false,
   templateUrl: './edit-class-status-form.component.html',
   styleUrl: './edit-class-status-form.component.css'
 })
