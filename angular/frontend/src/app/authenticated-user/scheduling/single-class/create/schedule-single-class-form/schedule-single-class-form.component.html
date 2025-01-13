@@ -1,1 +1,99 @@
-<p>schedule-single-class-form works!</p>
+
+<div>
+    <form (submit)="onSubmitClass(singleClassForm)" #singleClassForm="ngForm">
+      <div class="input-group">
+        <input class="form-control" placeholder="yyyy-mm-dd"
+               name="date" [(ngModel)]="dateModel" ngbDatepicker #date="ngbDatepicker">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary calendar" (click)="date.toggle()" type="button">
+          Select Date</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label>Hour</label>
+          <input
+          class="form-control"
+          type="number"
+          min="01"
+          max="23"
+          rows="4"
+          name="hour"
+          ngModel
+          required
+          placeholder="13"
+          #hour="ngModel"
+          >
+          <div *ngIf="hour.touched && hour.invalid">
+            Please enter an hour.
+          </div>
+        </div>
+        <div class="col">
+          <label>Minute</label>
+          <input
+          class="form-control"
+          type="number"
+          min="00"
+          max="59"
+          rows="4"
+          name="minute"
+          ngModel
+          required
+          step='01'
+          placeholder="59"
+          #minute="ngModel"
+          >
+          <div *ngIf="minute.touched && minute.invalid">
+            Please enter minutes.
+          </div>
+        </div>
+      </div>
+      <br />
+      <div>
+        <label>Class Duration</label>
+          <select
+          class="form-control"
+          name="duration"
+          class="form-control"
+          ngModel
+          required
+          #duration="ngModel"
+          >
+          <option *ngFor="let opt of classDurationOptions"
+              [value]=opt.timeArr
+          >{{ opt.stringVal }}</option>
+          </select>
+          <div *ngIf="duration.touched && duration.invalid">
+            Please enter duration.
+          </div>
+        </div>
+        <br />
+        <div>
+          <label>Student or Class</label>
+            <select
+            class="form-control"
+            name="student_or_class"
+            class="form-control"
+            ngModel
+            required
+            #student_or_class="ngModel"
+            >
+            <option *ngFor="let studentOrClass of studentsOrClasses"
+                [value]=studentOrClass.id
+            >{{ studentOrClass.template_str }}
+            </option>
+            </select>
+            <div *ngIf="student_or_class.touched && student_or_class.invalid">
+              Please enter a student or class.
+            </div>
+          </div>
+          <br />
+ 
+        <div>
+        <button class="btn btn-outline-secondary" type="submit">
+          Submit
+        </button>
+      </div>
+    </form>
+    <br />
+  </div>

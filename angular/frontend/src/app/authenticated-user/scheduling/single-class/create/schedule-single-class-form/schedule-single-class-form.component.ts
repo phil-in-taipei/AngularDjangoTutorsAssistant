@@ -36,32 +36,21 @@ export class ScheduleSingleClassFormComponent implements OnInit{
   }
 
   onSubmitClass(form: NgForm) {
-    console.log('submit single class now ...')
-    console.log(form.value);
     if (form.invalid) {
-      console.log('single class sumit form is invalid')
-      console.log(form.errors);
       this.store.dispatch(new ScheduleSingleClassCancelled({err: {
         error: {
           message: "The form values were not properly filled in!"
         }
       }} ));
+      form.reset();
       return;
     }
-    console.log('valid!')
-    console.log(this.dateModel);
     let startTimeStr = getFormattedTime(form.value.hour, form.value.minute);
     let durationArr = form.value.duration.split(',')
-    console.log(durationArr);
-    console.log(`This is the start time: ${startTimeStr}`);
     let dt = new Date();
     dt.setHours(form.value.hour);
     dt.setMinutes(form.value.minute);
-    console.log('this is a date:')
-    console.log(dt);
     let finishTimeStr = getFinishTime(dt, durationArr);
-    console.log('this is the finish time:')
-    console.log(finishTimeStr);
     let submissionForm: CreateScheduledClassModel = {
       student_or_class: form.value.student_or_class,
       teacher: this.userProfile.id,
@@ -69,11 +58,10 @@ export class ScheduleSingleClassFormComponent implements OnInit{
       start_time: startTimeStr,
       finish_time: finishTimeStr,
     }
-    console.log(submissionForm);
     this.store.dispatch(new ScheduleSingleClassSubmitted(
         { scheduledClass: submissionForm }
       )
     );
+    form.resetForm()
   }  
-
 }

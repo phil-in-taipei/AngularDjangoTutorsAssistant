@@ -78,7 +78,7 @@ export class ClassesService {
     return this.http.patch<ModifyClassStatusResponse>(
       `${environment.apiUrl}/api/scheduling/class-status-confirmation/`, submissionForm,
         {
-          headers: new HttpHeaders({ 'Authorization': `Bearer ${token}` })
+          headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
         })
     }
 
@@ -89,7 +89,7 @@ export class ClassesService {
     return this.http.post<ScheduledClassModel[]>(
       `${environment.apiUrl}/api/scheduling/class/submit/${submissionForm.id}/`, submissionForm,
         {
-          headers: new HttpHeaders({ 'Authorization': `Bearer ${token}` })
+          headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
         });
     }
 
@@ -100,7 +100,7 @@ export class ClassesService {
     return this.http.post<ScheduledClassModel[]>(
       `${environment.apiUrl}/api/scheduling/class/submit/`, submissionForm,
       {
-        headers: new HttpHeaders({ 'Authorization': `Bearer ${token}` })
+        headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
       });
   }
 

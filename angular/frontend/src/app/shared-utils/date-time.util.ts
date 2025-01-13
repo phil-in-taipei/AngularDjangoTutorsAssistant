@@ -77,7 +77,8 @@ export function getFinishTime(
     finishTimeDate.getHours(), finishTimeDate.getMinutes()
   )
 }  
-  export function getFirstDateofMonthStr(month: number, year: number): string {
+  
+export function getFirstDateofMonthStr(month: number, year: number): string {
     let dateStr: string;
     if (month < 10) {
       dateStr = `${year}-0${month}-01`;
