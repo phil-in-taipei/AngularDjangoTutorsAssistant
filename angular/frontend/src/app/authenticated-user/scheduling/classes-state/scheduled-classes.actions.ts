@@ -1,7 +1,9 @@
 import { Action} from "@ngrx/store";
 import { Update } from "@ngrx/entity";
 
-import { ScheduledClassModel } from "src/app/models/scheduled-class.model";
+import { 
+    CreateScheduledClassModel, RescheduleClassModel, ScheduledClassModel 
+} from "src/app/models/scheduled-class.model";
 
 export enum ScheduledClassesActionTypes {
     DailyClassesLoaded = '[Daily Classes API] Daily Batch Loaded',
@@ -10,6 +12,12 @@ export enum ScheduledClassesActionTypes {
     LandingPageScheduleLoaded = '[User Landing Page] Landing Page Daily Scheduled Classes Loaded',
     LandingPageScheduleRequestCancelled = '[User Landing Page] Landing Page Scheduled Classes Request Cancelled',    
     LandingPageScheduleRequested = '[User Landing Page] Landing Daily Scheduled Classes Requested',
+    RescheduleClassCancelled= '[Reschedule Class Form Page] Reschedule Class Cancelled',
+    RescheduleClassSubmitted = '[Reschedule Class Form Page] Rescheduled Class Submitted',
+    RescheduledClassUpdated = '[Single Class Detail Page] Rescheduled Single Class Updated',    
+    ScheduleSingleClassSubmitted = '[Schedule Single Class Page] Single Class Submitted',
+    ScheduleSingleClassCancelled = '[Schedule Single Class Page] Schedule Single Class Cancelled',        
+    ScheduledSingleClassWithDailyBatchAdded = '[Schedule Single Class Page] Newly Scheduled Class with Daily Batch Added',
     ScheduledClassesCleared = '[View User Logout] All Scheduled Classes Removed',
     ScheduledClassDeletionCancelled = '[Scheduled Classes API] Removal of Scheduled Class Cancelled',
     ScheduledClassDeletionRequested = '[Scheduled Classes Daily Page/Landing Page]  Removal of Scheduled Class Requested',
@@ -55,6 +63,48 @@ export class LandingPageScheduleRequested implements Action {
     readonly type = ScheduledClassesActionTypes.LandingPageScheduleRequested;
 }
 
+export class RescheduleClassCancelled implements Action {
+    readonly type = ScheduledClassesActionTypes.RescheduleClassCancelled;
+  
+    constructor(public payload: {  err: any }) {}
+}
+
+export class RescheduleClassSubmitted implements Action {
+    readonly type = ScheduledClassesActionTypes.RescheduleClassSubmitted;
+
+    constructor(public payload: 
+        {  id: number, scheduledClass: RescheduleClassModel }) {}
+}
+
+export class RescheduledClassUpdated implements Action {
+    readonly type = ScheduledClassesActionTypes.RescheduledClassUpdated;
+  
+    constructor(public payload: {  scheduledClass: Update<ScheduledClassModel> }) {
+    }
+}
+
+export class ScheduleSingleClassSubmitted implements Action {
+    readonly type = ScheduledClassesActionTypes.ScheduleSingleClassSubmitted;
+  
+    constructor(
+        public payload: { scheduledClass: CreateScheduledClassModel }
+    ){}
+};
+
+export class ScheduleSingleClassCancelled implements Action {
+    readonly type = ScheduledClassesActionTypes.ScheduleSingleClassCancelled;
+  
+    constructor(public payload: {  err: any }) {}
+}
+
+export class ScheduledSingleClassWithDailyBatchAdded implements Action {
+    readonly type = ScheduledClassesActionTypes.ScheduledSingleClassWithDailyBatchAdded;
+  
+    constructor(
+        public payload: { scheduledClasses: ScheduledClassModel[] }
+    ) {}
+}
+
 export class ScheduledClassesCleared implements Action {
     readonly type = ScheduledClassesActionTypes.ScheduledClassesCleared;
 }
@@ -81,5 +131,8 @@ export type ScheduledClassesActions =
     DailyClassesLoaded | DailyClassesRequestCancelled | 
     DailyClassesRequested | LandingPageScheduleLoaded | 
     LandingPageScheduleRequestCancelled | LandingPageScheduleRequested | 
+    RescheduleClassCancelled | RescheduleClassSubmitted |
+    RescheduledClassUpdated | ScheduleSingleClassSubmitted |
+    ScheduleSingleClassCancelled | ScheduledSingleClassWithDailyBatchAdded |
     ScheduledClassesCleared | ScheduledClassDeletionCancelled |
     ScheduledClassDeletionRequested | ScheduledClassDeletionSaved;
