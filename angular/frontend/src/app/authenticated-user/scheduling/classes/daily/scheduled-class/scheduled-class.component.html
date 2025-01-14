@@ -1,8 +1,8 @@
 <tr class="row" >
     <th class="col">
         <h5 class>
-            <a [routerLink]="['/authenticated-user/schedule/classes-daily', scheduledClass.date]">
-              {{ scheduledClass.date }}
+            <a [routerLink]="['/authenticated-user/scheduling/single-class', scheduledClass.id]">
+              {{ scheduledClass.start_time.slice(0, -3) }} - {{ scheduledClass.finish_time.slice(0, -3) }}
             </a>
         </h5>
     </th>

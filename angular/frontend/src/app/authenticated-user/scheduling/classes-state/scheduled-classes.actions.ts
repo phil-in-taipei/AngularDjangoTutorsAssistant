@@ -14,7 +14,7 @@ export enum ScheduledClassesActionTypes {
     LandingPageScheduleRequested = '[User Landing Page] Landing Daily Scheduled Classes Requested',
     RescheduleClassCancelled= '[Reschedule Class Form Page] Reschedule Class Cancelled',
     RescheduleClassSubmitted = '[Reschedule Class Form Page] Rescheduled Class Submitted',
-    RescheduledClassUpdated = '[Single Class Detail Page] Rescheduled Single Class Updated',    
+    RescheduledClassUpdatedWithDailyBatchAdded = '[Single Class Detail Page] Rescheduled Single Class Updated',    
     ScheduleSingleClassSubmitted = '[Schedule Single Class Page] Single Class Submitted',
     ScheduleSingleClassCancelled = '[Schedule Single Class Page] Schedule Single Class Cancelled',        
     ScheduledSingleClassWithDailyBatchAdded = '[Schedule Single Class Page] Newly Scheduled Class with Daily Batch Added',
@@ -77,10 +77,10 @@ export class RescheduleClassSubmitted implements Action {
         {  id: number, scheduledClass: RescheduleClassModel }) {}
 }
 
-export class RescheduledClassUpdated implements Action {
-    readonly type = ScheduledClassesActionTypes.RescheduledClassUpdated;
+export class RescheduledClassUpdatedWithDailyBatchAdded implements Action {
+    readonly type = ScheduledClassesActionTypes.RescheduledClassUpdatedWithDailyBatchAdded;
   
-    constructor(public payload: {  scheduledClass: Update<ScheduledClassModel> }) {
+    constructor(public payload: {  scheduledClasses: ScheduledClassModel[] }) {
     }
 }
 
@@ -137,7 +137,7 @@ export type ScheduledClassesActions =
     DailyClassesRequested | LandingPageScheduleLoaded | 
     LandingPageScheduleRequestCancelled | LandingPageScheduleRequested | 
     RescheduleClassCancelled | RescheduleClassSubmitted |
-    RescheduledClassUpdated | ScheduleSingleClassSubmitted |
+    RescheduledClassUpdatedWithDailyBatchAdded | ScheduleSingleClassSubmitted |
     ScheduleSingleClassCancelled | ScheduledSingleClassWithDailyBatchAdded |
     ScheduledClassesCleared | ScheduledClassDeletionCancelled |
     ScheduledClassDeletionRequested | ScheduledClassDeletionSaved | 

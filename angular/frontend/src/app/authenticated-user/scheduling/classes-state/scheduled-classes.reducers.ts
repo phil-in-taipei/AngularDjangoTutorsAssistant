@@ -112,7 +112,7 @@ export function scheduledClassesReducer(
             case ScheduledClassesActionTypes.RescheduleClassCancelled:
                 let rescheduleErrMessage: string = "Error! Rescheduling Failed!";
                 if (action.payload.err.error.Error) {
-                    console.log(action.payload.err.error.Error)
+                    //console.log(action.payload.err.error.Error)
                     rescheduleErrMessage = action.payload.err.error.Error;
                 }
                 return {
@@ -120,11 +120,10 @@ export function scheduledClassesReducer(
                     errorMessage: rescheduleErrMessage
                 }
     
-            case ScheduledClassesActionTypes.RescheduledClassUpdated:
-                return adapter.updateOne(action.payload.scheduledClass, 
+            case ScheduledClassesActionTypes.RescheduledClassUpdatedWithDailyBatchAdded:
+                return adapter.upsertMany(action.payload.scheduledClasses, 
                     {
-                        ...state,
-                        errorMessage: undefined,
+                        ...state, errorMessage: undefined,
                         successMessage: 'You have successfully rescheduled the class!'
                     }
                 );

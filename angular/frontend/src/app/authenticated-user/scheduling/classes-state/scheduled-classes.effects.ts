@@ -10,6 +10,8 @@ import {
     DailyClassesLoaded, DailyClassesRequestCancelled, 
     DailyClassesRequested, LandingPageScheduleLoaded,
     LandingPageScheduleRequestCancelled, LandingPageScheduleRequested, 
+    RescheduleClassCancelled, RescheduleClassSubmitted, 
+    RescheduledClassUpdatedWithDailyBatchAdded,
     ScheduleSingleClassCancelled, ScheduleSingleClassSubmitted,
     ScheduledSingleClassWithDailyBatchAdded,
     ScheduledClassesActionTypes, ScheduledClassDeletionCancelled,
@@ -99,6 +101,30 @@ export class ScheduledClassesEffects {
             )
           )
       });
+
+      submitRescheduledClass$ = createEffect(() => {
+        return this.actions$
+            .pipe(
+                ofType<RescheduleClassSubmitted>(
+                    ScheduledClassesActionTypes.RescheduleClassSubmitted),
+                    mergeMap(action => this.scheduledClassesService
+                        .submitRescheduledClass(
+                            action.payload.scheduledClass,
+                            ).pipe(catchError(err => {
+                                this.store.dispatch(
+                                    new RescheduleClassCancelled({ err })
+                                );
+                                return of();
+                            }),
+                        )
+                  ),
+                  map(
+                    scheduledClasses => new RescheduledClassUpdatedWithDailyBatchAdded(
+                            { scheduledClasses }
+                        ),
+                  )
+            )
+    });
 
       submitScheduledClass$ = createEffect(() => {
         return this.actions$

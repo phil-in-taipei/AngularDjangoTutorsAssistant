@@ -1,1 +1,93 @@
-<p>single-class-info works!</p>
+<br />
+<div *ngIf="classSubmitErrMsg$ | async as classErrMsg" class="p-1 m-1">
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <h3>{{ classErrMsg }}</h3>
+    <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+    data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  <hr class="thick-br"/>
+</div>
+
+<div *ngIf="classSubmitSuccess$ | async as classSuccessMsg" class="p-1 m-1">
+  <hr class="thick-br"/>
+  <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+    <h6>{{ classSuccessMsg }}</h6>
+    <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+    data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+</div>
+
+<div *ngIf="(scheduledClass$ | async) as scheduledClass; else calendar_link">
+    <div class="text-center">
+      <button class="btn btn-sm btn-outline-secondary text"
+      [routerLink]="['/authenticated-user/scheduling/schedule-daily', scheduledClass.date]">
+          Return to {{ scheduledClass.date }} Schedule
+      </button>
+    </div>
+    <div class="table-responsive">
+      <br />
+        <div id="profile_details">
+            <div class="container">
+              <h3>
+                <a [routerLink]="['/', 'authenticated-user', 'student-or-class', scheduledClass.student_or_class]">
+                    <app-student-or-class-template-string 
+                    [studentOrClassId]=scheduledClass.student_or_class class="bg-transparent"
+                    >
+                    </app-student-or-class-template-string>
+                </a>
+            </h3>
+        </div>
+        <hr class="thick-br"/>
+        <div class="container">
+          <table class="profile-table" style="width:100%">
+              <tr>
+                  <th><h4>Date</h4></th>
+                  <td><h4>{{ scheduledClass.date }}</h4></td>
+              </tr>
+              <tr>
+                  <th><h4>Time</h4></th>
+                  <td><h4>{{ scheduledClass.start_time.slice(0, -3) }} -
+                    {{scheduledClass.finish_time.slice(0, -3) }}</h4></td>
+              </tr>
+              <tr>
+                <th><h4>Status</h4></th>
+                <td>
+                  <h4
+                  *ngIf="scheduledClass.class_status==='cancellation_request'"
+                  class="errMsg capitalize">
+                  {{ scheduledClass.class_status.split('_').join(' ') }}
+                  </h4>
+                  <h4 class="capitalize"
+                  *ngIf="scheduledClass.class_status!=='cancellation_request'">
+                  {{ scheduledClass.class_status.split('_').join(' ') }}
+                  </h4>
+                </td>
+              </tr>
+              <tr *ngIf="scheduledClass.class_content">
+                <th><h4>Content</h4></th>
+                <td><h4>
+                    {{ scheduledClass.class_content }}
+                </h4></td>
+              </tr>
+              <tr *ngIf="scheduledClass.teacher_notes">
+                <th><h4>Notes</h4></th>
+                <td><h4>
+                    {{ scheduledClass.teacher_notes }}
+                </h4></td>
+              </tr>
+          </table>
+        </div>
+        <hr class="thick-br"/>
+        </div>
+      </div>
+</div>
+<ng-template #calendar_link>
+    <hr class="thick-br"/>
+    <div class="text-center">
+      <button class="btn btn-sm btn-outline-secondary text"
+      [routerLink]="['/user/scheduling/calendar']">
+          Return to Calendar
+      </button>
+    </div>
+    <hr class="thick-br"/>
+  </ng-template>
