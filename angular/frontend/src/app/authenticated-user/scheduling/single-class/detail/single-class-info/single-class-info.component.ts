@@ -42,7 +42,18 @@ export class SingleClassInfoComponent implements OnInit{
     this.scheduledClass$ = this.store.pipe(select(
       selectScheduledClassById(this.idFromRouteData)
     ));
+    this.classSubmitErrMsg$ = this.store.pipe(
+      select(scheduledClassesErrorMsg)
+    );
+    this.classSubmitSuccess$ = this.store.pipe(
+      select(scheduledClassesSuccessMsg)
+    );
   }
+
+  closeFormHander($event: boolean) {
+    this.editStatusFormVisible = $event;
+    this.rescheduleFormVisible = $event;
+  };
 
   onClearStatusMsgs() {
     this.store.dispatch(new ScheduledClassesMessagesCleared());

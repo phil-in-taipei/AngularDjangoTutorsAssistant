@@ -38,7 +38,7 @@
             </h3>
         </div>
         <hr class="thick-br"/>
-        <div class="container">
+        <div class="container" [hidden]="rescheduleFormVisible || editStatusFormVisible">
           <table class="profile-table" style="width:100%">
               <tr>
                   <th><h4>Date</h4></th>
@@ -78,6 +78,57 @@
           </table>
         </div>
         <hr class="thick-br"/>
+        </div>
+        <div>
+          <div class="text-center container">
+            <div class="d-grid gap-2">
+              <button class="btn btn-sm btn-dark" type="button"
+                (click)="toggleRescheduleForm()">
+                {{ rescheduleFormVisible ? "Never Mind, I'll submit one next time for "
+                : "Click Here to reschedule the class " }}
+              </button>
+            </div>
+
+            <br />
+          </div>
+          <hr class="thick-br"/>
+        </div>
+        
+        <div [hidden]="!rescheduleFormVisible"
+          [style.opacity]="!rescheduleFormVisible ? '0' : '1'"
+          [style.visibility]="!rescheduleFormVisible ? 'hidden' : 'visible'"
+          class="m-3 p-2"
+        >
+          <app-reschedule-class-form 
+            [scheduledClass]=scheduledClass
+            (closeFormEvent)="closeFormHander($event)"
+          >
+          </app-reschedule-class-form>
+          <hr class="thick-br"/>
+        </div>
+        
+        <div class="container text-center">
+          <div class=" d-grid gap-2">
+            <button class="btn btn-sm btn-dark" type="button"
+              (click)="toggleEditStatusForm()">
+              {{ editStatusFormVisible ? "Never Mind, I'll submit one next time for "
+              : "Click Here to edit the class status " }}
+            </button>
+          </div>
+            <br />
+        </div>
+        <hr class="thick-br"/>
+        <div [hidden]="!editStatusFormVisible"
+          [style.opacity]="!editStatusFormVisible ? '0' : '1'"
+          [style.visibility]="!editStatusFormVisible ? 'hidden' : 'visible'"
+          class="m-3 p-2"
+        >
+          <app-edit-class-status-form 
+            [scheduledClass]=scheduledClass
+            (closeFormEvent)="closeFormHander($event)"
+          >
+          </app-edit-class-status-form>
+          <hr class="thick-br"/>
         </div>
       </div>
 </div>

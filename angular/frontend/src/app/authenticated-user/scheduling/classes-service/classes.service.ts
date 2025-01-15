@@ -86,7 +86,7 @@ export class ClassesService {
     submissionForm: RescheduleClassModel
     ): Observable<ScheduledClassModel[]> {
     let token = this.authService.getAuthToken();
-    return this.http.post<ScheduledClassModel[]>(
+    return this.http.patch<ScheduledClassModel[]>(
       `${environment.apiUrl}/api/scheduling/class/submit/${submissionForm.id}/`, submissionForm,
         {
           headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
