@@ -18,6 +18,7 @@ export enum StudentOrClassActionTypes {
     StudentOrClassEditCancelled= '[Student Or Class Detail Page] Edit Student Or Class Cancelled',
     StudentOrClassEditSubmitted = '[Student Or Class Detail Page] Edited Student Or Class Submitted',
     StudentOrClassEditUpdated = '[Student Or Class Detail Page] Edited Student Or Class Updated',
+    StudentOrClassPurchasedHoursUpdated = '[Scheduled Class Detail Page] Freelance Student Purchased Hours Updated',
     StudentsOrClassesMessagesCleared = '[Students Or Classes List, Detail, and Submission Pages] Students Or Classes Messages Cleared',
     StudentsOrClassesCleared = '[View User Logout] All Students Or Classes Removed',
     StudentsOrClassesLoaded = '[StudentOrClasses API] Students Or Classes Loaded',
@@ -89,6 +90,14 @@ export class StudentOrClassEditUpdated implements Action {
     }
 }
 
+
+export class StudentOrClassPurchasedHoursUpdated implements Action {
+    readonly type = StudentOrClassActionTypes.StudentOrClassPurchasedHoursUpdated;
+
+    constructor(public payload: {  studentOrClass: Update<StudentOrClassModel> }) {
+    }
+}
+
 export class StudentsOrClassesCleared implements Action {
     readonly type = StudentOrClassActionTypes.StudentsOrClassesCleared;
 }
@@ -120,4 +129,5 @@ export type StudentOrClassActions = StudentOrClassCreatedAdded | StudentOrClassC
     StudentOrClassDeletionRequested | StudentOrClassDeletionSaved |
     StudentOrClassEditCancelled |StudentOrClassEditSubmitted | StudentOrClassEditUpdated |
     StudentsOrClassesCleared | StudentsOrClassesLoaded | StudentsOrClassesMessagesCleared |
-    StudentsOrClassesRequestCancelled | StudentsOrClassesRequested;
+    StudentsOrClassesRequestCancelled | StudentsOrClassesRequested  | 
+    StudentOrClassPurchasedHoursUpdated;

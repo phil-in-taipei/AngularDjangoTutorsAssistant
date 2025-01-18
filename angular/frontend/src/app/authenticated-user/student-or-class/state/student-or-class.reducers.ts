@@ -112,6 +112,18 @@ export function studentsOrClassesReducer(
                 }
             );
 
+        case StudentOrClassActionTypes.StudentOrClassPurchasedHoursUpdated:
+            console.log('this is the new account balance:')
+            console.log(action.payload.studentOrClass.id);
+            console.log(action.payload.studentOrClass.changes.purchased_class_hours);
+            return adapter.updateOne(
+                action.payload.studentOrClass,
+                {
+                    ...state, errorMessage:undefined,
+                    successMessage: 'You have successfully updated the account info!'
+                }
+            );
+
         case StudentOrClassActionTypes.StudentsOrClassesMessagesCleared:
             reducerErrorMessage = undefined;
             reducerSuccessMessage = undefined;
