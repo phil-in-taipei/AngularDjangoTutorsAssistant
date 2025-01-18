@@ -17,7 +17,7 @@ export interface ModifyClassStatusModel {
 
 export interface ModifyClassStatusResponse {
     scheduled_class: ScheduledClassModel;
-    student_or_class: StudentOrClassConfirmationModificationResponse;
+    student_or_class_update: StudentOrClassConfirmationModificationResponse;
 }
 
 export interface RescheduleClassModel {
