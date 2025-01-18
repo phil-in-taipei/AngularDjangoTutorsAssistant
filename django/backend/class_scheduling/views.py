@@ -61,9 +61,11 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
             print("updated")
         response = {
           "scheduled_class": ScheduledClassSerializer(scheduled_class).data,
-          "student_or_class": {
+          "student_or_class_update": {
               "id": student_or_class.id,
-              "purchased_class_hours": student_or_class.purchased_class_hours
+              "changes": {
+                  "purchased_class_hours": student_or_class.purchased_class_hours
+              }
            }
         }
         return Response(
