@@ -7,10 +7,16 @@ import { StoreModule } from '@ngrx/store';
 
 import { CalendarScheduleComponent } from './classes/monthly/calendar-schedule/calendar-schedule.component';
 import { EditClassStatusFormComponent } from './single-class/detail/edit-class-status-form/edit-class-status-form.component';
+import { 
+  EditClassStatusResponseComponent 
+} from './single-class/detail/edit-class-status-response/edit-class-status-response.component';
 import { DailyListComponent } from './classes/daily/daily-list/daily-list.component';
 import { LandingPageComponent } from './landing/landing-page/landing-page.component';
 import { MonthlyViewComponent } from './classes/monthly/monthly-view/monthly-view.component';
 import { RescheduleClassFormComponent } from './single-class/detail/reschedule-class-form/reschedule-class-form.component';
+import { 
+  RevisedPurchasedHoursComponent 
+} from './single-class/detail/revised-purchased-hours/revised-purchased-hours.component';
 import { ScheduleSingleClassComponent } from './single-class/create/schedule-single-class/schedule-single-class.component';
 import { ScheduleSingleClassFormComponent } from './single-class/create/schedule-single-class-form/schedule-single-class-form.component';
 import { ScheduledClassComponent } from './classes/daily/scheduled-class/scheduled-class.component';
@@ -34,9 +40,11 @@ import { userProfileReducer } from '../user/user-state/user.reducers';
     CalendarScheduleComponent,
     DailyListComponent,
     EditClassStatusFormComponent,
+    EditClassStatusResponseComponent,
     LandingPageComponent,
     MonthlyViewComponent,
     RescheduleClassFormComponent,
+    RevisedPurchasedHoursComponent,
     ScheduleSingleClassComponent,
     ScheduleSingleClassFormComponent,
     SingleClassInfoComponent,
