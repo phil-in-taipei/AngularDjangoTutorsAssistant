@@ -7,6 +7,8 @@ import { catchError, filter, map,
 } from "rxjs/operators";
 
 import { 
+    ClassStatusUpdateCancelled,
+    ClassStatusUpdateSaved, ClassStatusUpdateSubmitted,
     DailyClassesLoaded, DailyClassesRequestCancelled, 
     DailyClassesRequested, LandingPageScheduleLoaded,
     LandingPageScheduleRequestCancelled, LandingPageScheduleRequested, 
@@ -102,6 +104,30 @@ export class ScheduledClassesEffects {
           )
       });
 
+      submitEditedClassStatus$ = createEffect(() => {
+        return this.actions$
+            .pipe(
+                ofType<ClassStatusUpdateSubmitted>(
+                    ScheduledClassesActionTypes.ClassStatusUpdateSubmitted),
+                    mergeMap(action => this.scheduledClassesService
+                        .modifyClassStatus(
+                            action.payload.scheduledClass,
+                            ).pipe(catchError(err => {
+                                this.store.dispatch(
+                                    new ClassStatusUpdateCancelled({ err })
+                                );
+                                return of();
+                            }),
+                        )
+                  ),
+                  map(
+                    scheduledClassUpdateResponse => new ClassStatusUpdateSaved(
+                            { scheduledClassUpdateResponse }
+                        ),
+                  )
+            )
+    });
+
       submitRescheduledClass$ = createEffect(() => {
         return this.actions$
             .pipe(
@@ -126,7 +152,7 @@ export class ScheduledClassesEffects {
             )
     });
 
-      submitScheduledClass$ = createEffect(() => {
+    submitScheduledClass$ = createEffect(() => {
         return this.actions$
             .pipe(
                 ofType<ScheduleSingleClassSubmitted>(

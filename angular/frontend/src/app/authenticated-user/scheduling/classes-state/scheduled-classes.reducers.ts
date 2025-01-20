@@ -1,4 +1,8 @@
-import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
+import {
+    createEntityAdapter, EntityAdapter, 
+    EntityState, Update
+} from '@ngrx/entity';
+
 
 import { 
     getFirstDateofMonthStr, getLastDateOfMonthStr 
@@ -7,6 +11,9 @@ import {
     ScheduledClassesActions, ScheduledClassesActionTypes 
 } from './scheduled-classes.actions';
 import { ScheduledClassModel } from 'src/app/models/scheduled-class.model';
+import { 
+    StudentOrClassConfirmationModificationResponse 
+} from 'src/app/models/student-or-class.model';
 
 
 function compareByDateAndTime(
@@ -40,6 +47,7 @@ export interface ScheduledClassesState extends EntityState<ScheduledClassModel> 
     monthlyScheduledClassesLoaded: boolean,
     landingPageScheduledClassesLoaded: boolean,
     successMessage: string | undefined,
+    updatedPurchasedHours: StudentOrClassConfirmationModificationResponse | undefined;
 };
 
 
@@ -55,9 +63,12 @@ export const initialScheduledClassesState: ScheduledClassesState =
         fetchingClassesInProgress: false,
         monthlyScheduledClassesLoaded: false,
         landingPageScheduledClassesLoaded: false,
-        successMessage: undefined
+        successMessage: undefined,
+        updatedPurchasedHours: undefined
     });
 
+    //ClassStatusUpdateCancelled |
+    //ClassStatusUpdateSaved | ClassStatusUpdateSubmitted
 
 export function scheduledClassesReducer(
         state = initialScheduledClassesState,
@@ -65,12 +76,34 @@ export function scheduledClassesReducer(
     ): ScheduledClassesState {
         switch(action.type) {
 
+            case ScheduledClassesActionTypes.ClassStatusUpdateCancelled:
+                let statusEditErrMessage: string = "Error! Class Status Update Failed!";
+                if (action.payload.err.error.Error) {
+                    //console.log(action.payload.err.error.Error)
+                    statusEditErrMessage = action.payload.err.error.Error;
+                }
+                return {
+                    ...state,  successMessage: undefined,
+                    errorMessage: statusEditErrMessage
+                } 
+
+            case ScheduledClassesActionTypes.ClassStatusUpdateSaved:
+                let updatedScheduledClass: ScheduledClassModel = action.payload.scheduledClassUpdateResponse.scheduled_class;
+
+                return adapter.updateOne(
+                    { id: updatedScheduledClass.id, changes: updatedScheduledClass }, 
+                    {
+                        ...state, errMsg:undefined,
+                        successMsg: 'You have successfully edited a class!',
+                        updatedScheduledClass: action.payload.scheduledClassUpdateResponse.student_or_class_update
+                    }
+                ); 
+
             case ScheduledClassesActionTypes.DailyClassesRequested:
                 return {
                     ...state, 
                     fetchingClassesInProgress: true
                 }
-    
     
             case ScheduledClassesActionTypes.DailyClassesLoaded:
                 return adapter.upsertMany(action.payload.scheduledClasses, 
@@ -139,7 +172,7 @@ export function scheduledClassesReducer(
                     errorMessage: userErrorMessage
                 }
                             
-    
+
             case ScheduledClassesActionTypes.ScheduledSingleClassWithDailyBatchAdded:
                 return adapter.upsertMany(action.payload.scheduledClasses, {...state,
                     errorMessage: undefined,

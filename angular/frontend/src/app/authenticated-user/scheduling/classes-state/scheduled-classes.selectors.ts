@@ -35,7 +35,6 @@ export const landingPageScheduleLoaded = createSelector(
     scheduledClassesState => scheduledClassesState.landingPageScheduledClassesLoaded
 );
 
-
 export const scheduledClassesErrorMsg = createSelector(
     selectScheduledClassesState,
     scheduledClassesState => scheduledClassesState.errorMessage
@@ -44,4 +43,9 @@ export const scheduledClassesErrorMsg = createSelector(
 export const scheduledClassesSuccessMsg = createSelector(
     selectScheduledClassesState,
     scheduledClassesState => scheduledClassesState.successMessage
+);
+
+export const updatedPurchasedHours = createSelector(
+    selectScheduledClassesState,
+    scheduledClassesState => scheduledClassesState.updatedPurchasedHours
 );

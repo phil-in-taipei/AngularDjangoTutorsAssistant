@@ -2,10 +2,15 @@ import { Action} from "@ngrx/store";
 import { Update } from "@ngrx/entity";
 
 import { 
-    CreateScheduledClassModel, RescheduleClassModel, ScheduledClassModel 
+    CreateScheduledClassModel, ModifyClassStatusModel, 
+    ModifyClassStatusResponse,
+    RescheduleClassModel, ScheduledClassModel 
 } from "src/app/models/scheduled-class.model";
 
 export enum ScheduledClassesActionTypes {
+    ClassStatusUpdateCancelled= '[Edit Class Status Form Page] Update Class Status Cancelled',
+    ClassStatusUpdateSaved = '[Scheduled Class Detail Page] Single Class Status Updated',    
+    ClassStatusUpdateSubmitted = '[Edit Class Status Form Page] Updated Class Status Submitted',
     DailyClassesLoaded = '[Daily Classes API] Daily Batch Loaded',
     DailyClassesRequestCancelled= '[Daily Classes Page] Daily Batch Request Cancelled',
     DailyClassesRequested = '[Daily Classes Page] Daily Batch Requested',
@@ -23,6 +28,30 @@ export enum ScheduledClassesActionTypes {
     ScheduledClassDeletionRequested = '[Scheduled Classes Daily Page/Landing Page]  Removal of Scheduled Class Requested',
     ScheduledClassDeletionSaved = '[Scheduled Classes Daily Page/Landing Page] Scheduled Class Removed',
     ScheduledClassesMessagesCleared = '[Scheduled Class Edit Status, Reschedule and Schedule Pages] Scheduled Classes Messages Cleared',
+}
+
+export class ClassStatusUpdateCancelled implements Action {
+    readonly type = ScheduledClassesActionTypes.ClassStatusUpdateCancelled;
+  
+    constructor(public payload: {  err: any }) {}
+}
+
+export class ClassStatusUpdateSaved implements Action {
+    readonly type = ScheduledClassesActionTypes.ClassStatusUpdateSaved;
+  
+    constructor(
+        public payload: { 
+            scheduledClassUpdateResponse: ModifyClassStatusResponse 
+        }
+    ) {}
+}
+
+export class ClassStatusUpdateSubmitted implements Action {
+    readonly type = ScheduledClassesActionTypes.ClassStatusUpdateSubmitted;
+  
+    constructor(
+        public payload: { scheduledClass: ModifyClassStatusModel }
+    ) {}
 }
 
 export class DailyClassesLoaded implements Action {
@@ -132,7 +161,8 @@ export class ScheduledClassesMessagesCleared implements Action {
     readonly type = ScheduledClassesActionTypes.ScheduledClassesMessagesCleared;
 }
 
-export type ScheduledClassesActions = 
+export type ScheduledClassesActions = ClassStatusUpdateCancelled |
+    ClassStatusUpdateSaved | ClassStatusUpdateSubmitted |
     DailyClassesLoaded | DailyClassesRequestCancelled | 
     DailyClassesRequested | LandingPageScheduleLoaded | 
     LandingPageScheduleRequestCancelled | LandingPageScheduleRequested | 
