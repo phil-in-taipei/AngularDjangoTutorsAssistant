@@ -13,8 +13,12 @@ import {
 import { 
   scheduledClassesErrorMsg, 
   scheduledClassesSuccessMsg, 
-  selectScheduledClassById 
+  selectScheduledClassById,
+  updatedPurchasedHours 
 } from '../../../classes-state/scheduled-classes.selectors';
+import { 
+  StudentOrClassConfirmationModificationResponse 
+} from 'src/app/models/student-or-class.model';
 
 @Component({
   selector: 'app-single-class-info',
@@ -30,6 +34,7 @@ export class SingleClassInfoComponent implements OnInit{
   idFromRouteData:number;
   rescheduleFormVisible: boolean = false;
   scheduledClass$: Observable<ScheduledClassModel | undefined>;
+  updatedPurchasedHours$: Observable<StudentOrClassConfirmationModificationResponse | undefined>;
 
   constructor(
     private route: ActivatedRoute, 
@@ -47,6 +52,9 @@ export class SingleClassInfoComponent implements OnInit{
     );
     this.classSubmitSuccess$ = this.store.pipe(
       select(scheduledClassesSuccessMsg)
+    );
+    this.updatedPurchasedHours$ = this.store.pipe(
+      select(updatedPurchasedHours)
     );
   }
 
