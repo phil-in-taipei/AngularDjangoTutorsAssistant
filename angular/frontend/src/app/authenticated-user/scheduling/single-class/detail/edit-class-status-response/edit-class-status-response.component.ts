@@ -1,4 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { AppState } from '../../../../../reducers';
+import { select, Store } from '@ngrx/store';
+import { 
+  ModifyClassStatusResponse, ScheduledClassModel
+ } from '../../../../../models/scheduled-class.model';
+
 
 @Component({
   selector: 'app-edit-class-status-response',

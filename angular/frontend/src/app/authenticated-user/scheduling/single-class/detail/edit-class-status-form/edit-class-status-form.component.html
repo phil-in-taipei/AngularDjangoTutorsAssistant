@@ -1,1 +1,64 @@
-<p>edit-class-status-form works!</p>
+<div>
+    <form (submit)="onSubmitClassStatusUpdate(editClassStatusForm)" #editClassStatusForm="ngForm">
+      <br />
+      <div>
+        <label>Class Status</label>
+          <select
+          class="form-control"
+          name="class_status"
+          class="form-control"
+          ngModel
+          required
+          #class_status="ngModel"
+          >
+            <option value="scheduled">Scheduled</option>
+            <option value="completed">Completed</option>
+            <!-- <option value="cancellation_request">Cancellation Request</option> -->
+            <option value="cancelled">Cancelled</option>
+            <option value="same_day_cancellation">Same Day Cancellation</option>
+          </select>
+          <div *ngIf="class_status.touched && class_status.invalid">
+            Please enter class status.
+          </div>
+      </div>
+      <br />
+      <div>
+        <label>Teacher's Notes</label>
+        <textarea
+        class="form-control"
+        name="teacher_notes"
+        type="text"
+        text
+        maxlength="200"
+        rows="3"
+        ngModel
+        placeholder="{{ scheduledClass.teacher_notes }}"
+        #teacher_notes="ngModel"
+      ></textarea>
+        <div *ngIf="teacher_notes.touched && teacher_notes.invalid">Please enter teacher notes.</div>
+      </div>
+      <br />
+      <div>
+        <label>Class Content</label>
+        <textarea
+        class="form-control"
+        name="class_content"
+        type="text"
+        text
+        maxlength="200"
+        rows="3"
+        ngModel
+        placeholder="{{ scheduledClass.class_content }}"
+        #class_content="ngModel"
+      ></textarea>
+        <div *ngIf="class_content.touched && class_content.invalid">Please enter class content.</div>
+      </div>
+      <br />
+      <div>
+        <button class="btn btn-outline-secondary" type="submit">
+          Submit
+        </button>
+      </div>
+    </form>
+    <br />
+  </div>

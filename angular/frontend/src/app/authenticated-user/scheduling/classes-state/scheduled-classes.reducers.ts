@@ -94,8 +94,8 @@ export function scheduledClassesReducer(
                     { id: updatedScheduledClass.id, changes: updatedScheduledClass }, 
                     {
                         ...state, errMsg:undefined,
-                        successMsg: 'You have successfully edited a class!',
-                        updatedScheduledClass: action.payload.scheduledClassUpdateResponse.student_or_class_update
+                        successMessage: 'You have successfully edited the class status!',
+                        updatedPurchasedHours: action.payload.scheduledClassUpdateResponse.student_or_class_update
                     }
                 ); 
 
