@@ -1,1 +1,10 @@
-<p>revised-purchased-hours works!</p>
+<div *ngIf="studentsOrClassesSuccessMsg$ | async as accountSuccessMsg">
+    <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+      <h6>{{ accountSuccessMsg }}</h6>
+      <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+      data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div>
+      <h4>Purchased Class Hours: {{ studentOrClassHoursUpdate.changes.purchased_class_hours }}</h4>
+    </div>
+</div>

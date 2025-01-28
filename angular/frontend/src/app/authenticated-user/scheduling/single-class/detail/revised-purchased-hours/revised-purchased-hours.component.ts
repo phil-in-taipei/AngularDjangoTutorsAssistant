@@ -1,4 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { select, Store } from '@ngrx/store';
+import { Observable, of } from 'rxjs';
+
+import { 
+  selectStudentOrClassById, studentsOrClassesSuccessMsg 
+} from 'src/app/authenticated-user/student-or-class/state/student-or-class.selectors';
+import { StudentOrClassModel } from 'src/app/models/student-or-class.model';
+import { StudentOrClassConfirmationModificationResponse } from 'src/app/models/student-or-class.model';
+import { 
+  StudentsOrClassesState 
+} from 'src/app/authenticated-user/student-or-class/state/student-or-class.reducers';
+import { 
+  StudentsOrClassesMessagesCleared, StudentOrClassPurchasedHoursUpdated 
+} from 'src/app/authenticated-user/student-or-class/state/student-or-class.actions';
 
 @Component({
   selector: 'app-revised-purchased-hours',
@@ -8,4 +22,28 @@ import { Component } from '@angular/core';
 })
 export class RevisedPurchasedHoursComponent {
 
+    @Input() studentOrClassHoursUpdate: StudentOrClassConfirmationModificationResponse;
+    studentsOrClassesSuccessMsg$: Observable<string | undefined> = of(undefined);
+    //studentOrClass$: Observable<StudentOrClassModel | undefined> = of(undefined);
+
+    constructor(
+      private store: Store<StudentsOrClassesState>
+    ) { }
+  
+    ngOnInit(): void {
+      let payload = { studentOrClass: this.studentOrClassHoursUpdate };
+      this.store.dispatch(
+        new StudentOrClassPurchasedHoursUpdated(payload)
+      );
+      this.studentsOrClassesSuccessMsg$ = this.store.pipe(
+        select(studentsOrClassesSuccessMsg)
+      );
+      //this.studentOrClass$ = this.store.pipe(
+      //  select(selectStudentOrClassById(this.studentOrClassHoursUpdate.id))
+      //)
+    }
+
+    onClearStatusMsgs() {
+      this.store.dispatch(new StudentsOrClassesMessagesCleared());
+    }
 }

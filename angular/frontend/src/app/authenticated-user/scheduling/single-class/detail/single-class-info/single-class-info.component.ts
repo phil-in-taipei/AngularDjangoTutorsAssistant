@@ -34,7 +34,7 @@ export class SingleClassInfoComponent implements OnInit{
   idFromRouteData:number;
   rescheduleFormVisible: boolean = false;
   scheduledClass$: Observable<ScheduledClassModel | undefined>;
-  updatedPurchasedHours$: Observable<StudentOrClassConfirmationModificationResponse | undefined>;
+  studentOrClassModificationResponse$: Observable<StudentOrClassConfirmationModificationResponse | undefined>;
 
   constructor(
     private route: ActivatedRoute, 
@@ -53,7 +53,7 @@ export class SingleClassInfoComponent implements OnInit{
     this.classSubmitSuccess$ = this.store.pipe(
       select(scheduledClassesSuccessMsg)
     );
-    this.updatedPurchasedHours$ = this.store.pipe(
+    this.studentOrClassModificationResponse$ = this.store.pipe(
       select(updatedPurchasedHours)
     );
   }
