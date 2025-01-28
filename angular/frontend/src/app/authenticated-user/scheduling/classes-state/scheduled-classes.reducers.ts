@@ -67,9 +67,6 @@ export const initialScheduledClassesState: ScheduledClassesState =
         updatedPurchasedHours: undefined
     });
 
-    //ClassStatusUpdateCancelled |
-    //ClassStatusUpdateSaved | ClassStatusUpdateSubmitted
-
 export function scheduledClassesReducer(
         state = initialScheduledClassesState,
         action: ScheduledClassesActions
@@ -207,7 +204,11 @@ export function scheduledClassesReducer(
                     ...state,  successMessage: undefined,
                     errorMessage: undefined
             }
-                
+
+            case ScheduledClassesActionTypes.UpdatedPurchasedHoursCleared:
+                return {
+                    ...state, updatedPurchasedHours: undefined
+                }         
             
             default: {
                 return state

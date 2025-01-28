@@ -1,14 +1,13 @@
-<p>{{ studentOrClassModificationResponse.id }}</p>
 <div *ngIf="studentOrClassModificationResponse.changes.purchased_class_hours">
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
         <h3>Freelance Class Updated</h3>
-         <!-- (click)="onClearStatusMsgs()" -->
         <button type="button" class="btn-close" 
-        data-bs-dismiss="alert" aria-label="Close"></button>
+            (click)="onClearUpdatedClassStatusResponseData()"
+            data-bs-dismiss="alert" aria-label="Close">
+        </button>
       </div>
       <app-revised-purchased-hours
-      [studentOrClassHoursUpdate]=studentOrClassModificationResponse>
+        [studentOrClassHoursUpdate]=studentOrClassModificationResponse>
       </app-revised-purchased-hours>
 </div>
-<p>{{ studentOrClassModificationResponse.changes.purchased_class_hours }}</p>
-
+{{ studentOrClassModificationResponse.id }}

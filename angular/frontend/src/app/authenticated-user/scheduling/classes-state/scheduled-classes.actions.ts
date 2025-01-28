@@ -28,6 +28,7 @@ export enum ScheduledClassesActionTypes {
     ScheduledClassDeletionRequested = '[Scheduled Classes Daily Page/Landing Page]  Removal of Scheduled Class Requested',
     ScheduledClassDeletionSaved = '[Scheduled Classes Daily Page/Landing Page] Scheduled Class Removed',
     ScheduledClassesMessagesCleared = '[Scheduled Class Edit Status, Reschedule and Schedule Pages] Scheduled Classes Messages Cleared',
+    UpdatedPurchasedHoursCleared = '[Scheduled Class Detail Page (Edit Class Status Child)] Updated Purchased Hours Data Removed'
 }
 
 export class ClassStatusUpdateCancelled implements Action {
@@ -161,6 +162,10 @@ export class ScheduledClassesMessagesCleared implements Action {
     readonly type = ScheduledClassesActionTypes.ScheduledClassesMessagesCleared;
 }
 
+export class UpdatedPurchasedHoursCleared implements Action {
+    readonly type = ScheduledClassesActionTypes.UpdatedPurchasedHoursCleared;
+}
+
 export type ScheduledClassesActions = ClassStatusUpdateCancelled |
     ClassStatusUpdateSaved | ClassStatusUpdateSubmitted |
     DailyClassesLoaded | DailyClassesRequestCancelled | 
@@ -171,4 +176,4 @@ export type ScheduledClassesActions = ClassStatusUpdateCancelled |
     ScheduleSingleClassCancelled | ScheduledSingleClassWithDailyBatchAdded |
     ScheduledClassesCleared | ScheduledClassDeletionCancelled |
     ScheduledClassDeletionRequested | ScheduledClassDeletionSaved | 
-    ScheduledClassesMessagesCleared;
+    ScheduledClassesMessagesCleared | UpdatedPurchasedHoursCleared;

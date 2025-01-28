@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 
@@ -20,11 +20,11 @@ import {
   templateUrl: './revised-purchased-hours.component.html',
   styleUrl: './revised-purchased-hours.component.css'
 })
-export class RevisedPurchasedHoursComponent {
+export class RevisedPurchasedHoursComponent implements OnInit{
 
     @Input() studentOrClassHoursUpdate: StudentOrClassConfirmationModificationResponse;
     studentsOrClassesSuccessMsg$: Observable<string | undefined> = of(undefined);
-    //studentOrClass$: Observable<StudentOrClassModel | undefined> = of(undefined);
+    private timeoutId: any;
 
     constructor(
       private store: Store<StudentsOrClassesState>
@@ -38,12 +38,16 @@ export class RevisedPurchasedHoursComponent {
       this.studentsOrClassesSuccessMsg$ = this.store.pipe(
         select(studentsOrClassesSuccessMsg)
       );
-      //this.studentOrClass$ = this.store.pipe(
-      //  select(selectStudentOrClassById(this.studentOrClassHoursUpdate.id))
-      //)
+      this.timeoutId = setTimeout(() => this.onClearStatusMsgs(), 1800);    
     }
 
     onClearStatusMsgs() {
       this.store.dispatch(new StudentsOrClassesMessagesCleared());
+    }
+
+    ngOnDestroy(): void {
+      if (this.timeoutId) {
+        clearTimeout(this.timeoutId);
+      }
     }
 }

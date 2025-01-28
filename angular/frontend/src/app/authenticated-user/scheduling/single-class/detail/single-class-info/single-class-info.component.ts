@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
-import { Observable, map } from "rxjs";
+import { Observable } from "rxjs";
 import {select, Store } from '@ngrx/store';
 
 import { ScheduledClassModel } from 'src/app/models/scheduled-class.model';
