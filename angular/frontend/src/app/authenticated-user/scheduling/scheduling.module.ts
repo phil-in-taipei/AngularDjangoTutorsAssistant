@@ -14,6 +14,7 @@ import { DailyListComponent } from './classes/daily/daily-list/daily-list.compon
 import { LandingPageComponent } from './landing/landing-page/landing-page.component';
 import { MonthlyViewComponent } from './classes/monthly/monthly-view/monthly-view.component';
 import { RescheduleClassFormComponent } from './single-class/detail/reschedule-class-form/reschedule-class-form.component';
+import { ReselectMonthlyComponent } from './classes/monthly/reselect-monthly/reselect-monthly.component';
 import { 
   RevisedPurchasedHoursComponent 
 } from './single-class/detail/revised-purchased-hours/revised-purchased-hours.component';
@@ -25,6 +26,7 @@ import { SchedulingComponent } from './scheduling/scheduling.component';
 
 import { ScheduledClassesEffects } from './classes-state/scheduled-classes.effects';
 import { scheduledClassesReducer } from './classes-state/scheduled-classes.reducers';
+import { SelectMonthlyComponent } from './classes/monthly/select-monthly/select-monthly.component';
 import { SingleClassInfoComponent } from './single-class/detail/single-class-info/single-class-info.component';
 import { 
   StudentOrClassTemplateStringComponent 
@@ -44,9 +46,11 @@ import { userProfileReducer } from '../user/user-state/user.reducers';
     LandingPageComponent,
     MonthlyViewComponent,
     RescheduleClassFormComponent,
+    ReselectMonthlyComponent,
     RevisedPurchasedHoursComponent,
     ScheduleSingleClassComponent,
     ScheduleSingleClassFormComponent,
+    SelectMonthlyComponent,
     SingleClassInfoComponent,
     ScheduledClassComponent,
     SchedulingComponent,
