@@ -1,1 +1,42 @@
-<p>select-monthly works!</p>
+<div class="container">
+    <form (submit)="onSubmitMonthlySelectorForm(selectScheduleMonthForm)"
+      #selectScheduleMonthForm="ngForm">
+      <div>
+        <label>Month</label>
+          <select
+          class="form-control"
+          name="month"
+          class="form-control"
+          ngModel
+          required
+          #month="ngModel"
+          >
+          <option *ngFor="let opt of monthsAndIntegers"
+              [value]=opt[1]
+          >{{ opt[0] }}</option>
+          </select>
+      </div>
+      <br />
+      <div>
+        <label>Year</label>
+          <select
+          class="form-control"
+          name="year"
+          class="form-control"
+          ngModel
+          required
+          #year="ngModel"
+          >
+          <option *ngFor="let year of years"
+            [value]=year
+          >{{ year }}</option>
+          </select>
+      </div>
+      <br />
+      <div>
+        <button class="btn btn-dark" type="submit">
+            Submit
+        </button>
+      </div>
+    </form>
+  </div>

@@ -1,1 +1,46 @@
-<p>monthly-view works!</p>
+<div *ngIf="showMonthlySelectForm" class="container content">
+    <div>
+      <hr class="thick-br"/>
+      <div *ngIf="monthlyDateRange$ | async as monthlyDateRange;else no_previous_dates">
+        <h5>Reselect Monthly Schedule</h5>
+          <app-reselect-monthly
+            [monthlyDateRange]=monthlyDateRange
+            (closeMonthlySelectFormEvent)="closeMonthlySelectFormHander($event)">
+          </app-reselect-monthly>
+      </div>
+      <ng-template #no_previous_dates>
+        <h5>Select Monthly Schedule</h5>
+          <app-select-monthly
+            (closeMonthlySelectFormEvent)="closeMonthlySelectFormHander($event)">
+          </app-select-monthly>
+      </ng-template>
+      <hr class="thick-br"/>
+    </div>
+</div>
+
+<div *ngIf="!showMonthlySelectForm">
+    <div class="text-center">
+      <button class="btn btn-sm btn-outline-secondary" type="button"
+        (click)="toggleMonthlySelectForm()">
+        Click Here to View Another Month
+      </button>
+      <br />
+      <br />
+    </div>
+  
+    <ng-container *ngIf="{value: classesLoaded$ | async} as context">
+      <div *ngIf="context.value">
+        <div class="text-center">
+          <div class="spinner-border text-secondary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <br />
+        </div>
+        <br />
+      </div>
+    </ng-container>
+    <div *ngIf="scheduledClasses$ | async as scheduledClasses">
+        {{ scheduledClasses.length }}
+        classes loaded
+    </div>
+</div>
