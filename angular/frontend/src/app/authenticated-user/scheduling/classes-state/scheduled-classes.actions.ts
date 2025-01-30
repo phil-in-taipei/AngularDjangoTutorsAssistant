@@ -17,6 +17,9 @@ export enum ScheduledClassesActionTypes {
     LandingPageScheduleLoaded = '[User Landing Page] Landing Page Daily Scheduled Classes Loaded',
     LandingPageScheduleRequestCancelled = '[User Landing Page] Landing Page Scheduled Classes Request Cancelled',    
     LandingPageScheduleRequested = '[User Landing Page] Landing Daily Scheduled Classes Requested',
+    MonthlyClassesRequested = '[Monthly Classes Select Page] Monthly Batch Requested',
+    MonthlyClassesRequestCancelled= '[Monthly Classes Page] Monthly Batch Request Cancelled',
+    MonthlyClassesLoaded = '[Monthly Classes API] Monthly Batch Loaded',     
     RescheduleClassCancelled= '[Reschedule Class Form Page] Reschedule Class Cancelled',
     RescheduleClassSubmitted = '[Reschedule Class Form Page] Rescheduled Class Submitted',
     RescheduledClassUpdatedWithDailyBatchAdded = '[Single Class Detail Page] Rescheduled Single Class Updated',    
@@ -92,6 +95,28 @@ export class LandingPageScheduleRequestCancelled implements Action {
 
 export class LandingPageScheduleRequested implements Action {
     readonly type = ScheduledClassesActionTypes.LandingPageScheduleRequested;
+}
+
+export class MonthlyClassesRequested implements Action {
+    readonly type = ScheduledClassesActionTypes.MonthlyClassesRequested;
+  
+    constructor(
+        public payload: { month: number, year: number 
+    }) {}
+}
+
+export class MonthlyClassesRequestCancelled implements Action {
+    readonly type = ScheduledClassesActionTypes.MonthlyClassesRequestCancelled;
+  
+    constructor(public payload: {  err: any }) {}
+}
+
+export class MonthlyClassesLoaded implements Action {
+    readonly type = ScheduledClassesActionTypes.MonthlyClassesLoaded;
+  
+    constructor(
+        public payload: { scheduledClasses: ScheduledClassModel[] }
+    ) {}
 }
 
 export class RescheduleClassCancelled implements Action {
@@ -171,6 +196,8 @@ export type ScheduledClassesActions = ClassStatusUpdateCancelled |
     DailyClassesLoaded | DailyClassesRequestCancelled | 
     DailyClassesRequested | LandingPageScheduleLoaded | 
     LandingPageScheduleRequestCancelled | LandingPageScheduleRequested | 
+    MonthlyClassesRequested | MonthlyClassesRequestCancelled |
+    MonthlyClassesLoaded |
     RescheduleClassCancelled | RescheduleClassSubmitted |
     RescheduledClassUpdatedWithDailyBatchAdded | ScheduleSingleClassSubmitted |
     ScheduleSingleClassCancelled | ScheduledSingleClassWithDailyBatchAdded |

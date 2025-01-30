@@ -25,6 +25,17 @@ export const selectScheduledClassesByDate = (date: string) => createSelector(
     }
 );
 
+export const selectMonthlyDateRange = createSelector(
+    selectScheduledClassesState,
+    scheduledClassesState => scheduledClassesState.dateRange
+  );
+ 
+ // check if selector below still necessary 
+export const selectScheduledClassesByMonthLoaded = createSelector(
+    selectScheduledClassesState,
+    scheduledClassesState => scheduledClassesState.monthlyScheduledClassesLoaded
+);
+
 export const fetchingClassesInProgress = createSelector(
     selectScheduledClassesState,
     scheduledClassesState => scheduledClassesState.fetchingClassesInProgress

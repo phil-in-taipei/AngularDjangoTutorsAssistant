@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
 import { of } from 'rxjs';
-import { catchError, filter, map,
+import { 
+    catchError, filter, map,
     mergeMap, withLatestFrom 
 } from "rxjs/operators";
 
@@ -12,6 +13,7 @@ import {
     DailyClassesLoaded, DailyClassesRequestCancelled, 
     DailyClassesRequested, LandingPageScheduleLoaded,
     LandingPageScheduleRequestCancelled, LandingPageScheduleRequested, 
+    MonthlyClassesRequested, MonthlyClassesRequestCancelled, MonthlyClassesLoaded,
     RescheduleClassCancelled, RescheduleClassSubmitted, 
     RescheduledClassUpdatedWithDailyBatchAdded,
     ScheduleSingleClassCancelled, ScheduleSingleClassSubmitted,
@@ -34,7 +36,6 @@ export class ScheduledClassesEffects {
         private store: Store<ScheduledClassesState>
     ) {}
 
- 
     deleteScheduledClass$ = createEffect(() => {
       return this.actions$
           .pipe(
@@ -56,8 +57,6 @@ export class ScheduledClassesEffects {
                   )
           )
       });
-
-
 
     fetchDailyClasses$ = createEffect(() => {
         return this.actions$
@@ -81,8 +80,7 @@ export class ScheduledClassesEffects {
           )
       });
 
-   
-      fetchLandingPageClasses$ = createEffect(() => {
+    fetchLandingPageClasses$ = createEffect(() => {
         return this.actions$
           .pipe(
             ofType<LandingPageScheduleRequested>(
@@ -104,7 +102,29 @@ export class ScheduledClassesEffects {
           )
       });
 
-      submitEditedClassStatus$ = createEffect(() => {
+    fetchMonthlyClassse$ = createEffect(() => {
+        return this.actions$
+          .pipe(
+            ofType<MonthlyClassesRequested>(ScheduledClassesActionTypes
+              .MonthlyClassesRequested),
+                  mergeMap(({payload}) => this.scheduledClassesService
+                    .fetchClassesByMonth(payload.month, payload.year)
+                        .pipe(
+                            map(scheduledClasses => new MonthlyClassesLoaded(
+                                { scheduledClasses })
+                            ),
+                            catchError(err => {
+                                this.store.dispatch(
+                                  new MonthlyClassesRequestCancelled({ err })
+                                );
+                                return of();
+                            })
+                        )
+                )
+          )
+      });
+
+    submitEditedClassStatus$ = createEffect(() => {
         return this.actions$
             .pipe(
                 ofType<ClassStatusUpdateSubmitted>(
@@ -128,7 +148,7 @@ export class ScheduledClassesEffects {
             )
     });
 
-      submitRescheduledClass$ = createEffect(() => {
+    submitRescheduledClass$ = createEffect(() => {
         return this.actions$
             .pipe(
                 ofType<RescheduleClassSubmitted>(
@@ -175,7 +195,5 @@ export class ScheduledClassesEffects {
                   )
             )
     });
-
-
 
 }

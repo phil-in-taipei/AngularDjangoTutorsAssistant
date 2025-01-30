@@ -139,6 +139,34 @@ export function scheduledClassesReducer(
                     errorMessage: landingPageErrorMessage
                 }
 
+            case ScheduledClassesActionTypes.MonthlyClassesRequested:
+                let month:number = +action.payload.month;
+                let year:number = +action.payload.year;
+                let firstDate = getFirstDateofMonthStr(month, year);
+                let lastDate = getLastDateOfMonthStr(month, year);
+                return {
+                    ...state,  dateRange: [firstDate, lastDate],
+                    fetchingClassesInProgress: true
+                }
+        
+            case ScheduledClassesActionTypes.MonthlyClassesRequestCancelled:
+                let monthlyPageErrorMessage: string = "Error fetching monthly schedule!";
+                if (action.payload.err.error.message) {
+                    monthlyPageErrorMessage = action.payload.err.error.message;
+                }
+                return {
+                    ...state,  successMessage: undefined,
+                    errorMessage: monthlyPageErrorMessage,
+                    fetchingClassesInProgress: false
+                }
+
+            case ScheduledClassesActionTypes.MonthlyClassesLoaded:
+                return adapter.upsertMany(action.payload.scheduledClasses, {...state,
+                    errorMessage: undefined,
+                    monthlyScheduledClassesLoaded: true,
+                    fetchingClassesInProgress: false
+                });
+        
             case ScheduledClassesActionTypes.RescheduleClassCancelled:
                 let rescheduleErrMessage: string = "Error! Rescheduling Failed!";
                 if (action.payload.err.error.Error) {
