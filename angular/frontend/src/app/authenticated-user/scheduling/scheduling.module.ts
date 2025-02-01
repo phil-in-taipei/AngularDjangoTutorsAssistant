@@ -5,6 +5,11 @@ import { FormsModule } from '@angular/forms';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 
+import { FullCalendarModule } from '@fullcalendar/angular';
+import interactionPlugin from '@fullcalendar/interaction';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+
 import { CalendarScheduleComponent } from './classes/monthly/calendar-schedule/calendar-schedule.component';
 import { EditClassStatusFormComponent } from './single-class/detail/edit-class-status-form/edit-class-status-form.component';
 import { 
@@ -59,6 +64,7 @@ import { userProfileReducer } from '../user/user-state/user.reducers';
   ],
   imports: [
     CommonModule,
+    FullCalendarModule,
     FormsModule,
     NgbModule,
     StoreModule.forFeature('scheduledClasses', scheduledClassesReducer),

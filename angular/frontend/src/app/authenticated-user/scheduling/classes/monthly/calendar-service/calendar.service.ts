@@ -16,19 +16,21 @@ export class CalendarService {
   }
 
   formatCalendarEvents(
-    scheduledClassesInfo: ScheduledClassModel[] | undefined,
+    scheduledClasses: ScheduledClassModel[] | undefined,
     //lowBillingAccntHrs: number[]
   ) {
+    console.log('**********calling the format method**********')
+    console.log(scheduledClasses);
     let i;
     let events = [];
-    if (scheduledClassesInfo) {
-      for (i=0; i < scheduledClassesInfo.length; i++) {
+    if (scheduledClasses) {
+      for (i=0; i < scheduledClasses.length; i++) {
         var schedulingObj = {
-          title: `${scheduledClassesInfo[i].student_or_class}
-          ${scheduledClassesInfo[i].student_or_class}`,
-          date: scheduledClassesInfo[i].date,
-          start: `${scheduledClassesInfo[i].date}T${scheduledClassesInfo[i].start_time}`,
-          end: `${scheduledClassesInfo[i].date}T${scheduledClassesInfo[i].finish_time}`,
+          title: `${scheduledClasses[i].student_or_class}
+          ${scheduledClasses[i].student_or_class}`,
+          date: scheduledClasses[i].date,
+          start: `${scheduledClasses[i].date}T${scheduledClasses[i].start_time}`,
+          end: `${scheduledClasses[i].date}T${scheduledClasses[i].finish_time}`,
           allDay : false,
           color: '#0098da',
         }

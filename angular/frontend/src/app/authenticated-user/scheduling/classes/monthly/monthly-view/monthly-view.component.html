@@ -19,6 +19,7 @@
 </div>
 
 <div *ngIf="!showMonthlySelectForm">
+  <hr />
     <div class="text-center">
       <button class="btn btn-sm btn-outline-secondary" type="button"
         (click)="toggleMonthlySelectForm()">
@@ -42,5 +43,15 @@
     <div *ngIf="scheduledClasses$ | async as scheduledClasses">
         {{ scheduledClasses.length }}
         classes loaded
+        <div *ngIf="monthlyDateRange$ | async as monthlyDateRange">
+          <div *ngIf="scheduledClasses.length > 0">
+            <app-calendar-schedule
+            [scheduledClasses]=scheduledClasses
+            [monthlyDateRange]=monthlyDateRange>
+            </app-calendar-schedule>
+          </div>
+        </div>
     </div>
+    <hr />
 </div>
+

@@ -1,0 +1,11 @@
+p {
+    text-align: center;
+  }
+  
+  a {
+      color: #0098da;
+  }
+  
+  a:hover {
+    color: #010b3e;
+  }
