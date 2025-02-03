@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CalendarOptions } from '@fullcalendar/core';
+import { DateClickArg } from '@fullcalendar/interaction';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -28,8 +29,6 @@ export class CalendarScheduleComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log('in the calendar component, these are the scheduled classes:')
-    console.log(this.scheduledClasses);
     this.Events = this.calendarService.formatCalendarEvents(this.scheduledClasses);
     this.calendarOptions = {
       plugins: [
@@ -44,8 +43,7 @@ export class CalendarScheduleComponent implements OnInit {
       },
       eventTextColor: 'black',
       initialView: 'dayGridMonth',
-      //datesSet: this.onDateClick.bind(this),  
-      dateClick: (arg) => {  // Use this syntax
+      dateClick: (arg) => { 
         this.onDateClick(arg);
       },
       validRange: {
@@ -54,21 +52,10 @@ export class CalendarScheduleComponent implements OnInit {
       },
       events: this.Events,
     };
-   console.log(this.calendarOptions);
-   console.log(this.Events);
   }
 
-  onDateClick(res: any) {
-    //alert('Clicked on date : ' + res.dateStr);
-    console.log(res)
-    this.router.navigate(['/', 'authenticated-user', 'scheduling', 'schedule-daily', res.dateStr]);
-  }
-
-  setDefaultDate() {
-    this.calendarOptions.validRange = {
-      start: this.monthlyDateRange[0],
-      end: this.monthlyDateRange[1]
-    }
+  onDateClick(arg: DateClickArg) {
+    this.router.navigate(['/', 'authenticated-user', 'scheduling', 'schedule-daily', arg.dateStr]);
   }
 
 }

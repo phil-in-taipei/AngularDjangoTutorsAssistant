@@ -41,13 +41,11 @@
       </div>
     </ng-container>
     <div *ngIf="scheduledClasses$ | async as scheduledClasses">
-        {{ scheduledClasses.length }}
-        classes loaded
         <div *ngIf="monthlyDateRange$ | async as monthlyDateRange">
           <div *ngIf="scheduledClasses.length > 0">
             <app-calendar-schedule
-            [scheduledClasses]=scheduledClasses
-            [monthlyDateRange]=monthlyDateRange>
+              [scheduledClasses]=scheduledClasses
+              [monthlyDateRange]=monthlyDateRange>
             </app-calendar-schedule>
           </div>
         </div>

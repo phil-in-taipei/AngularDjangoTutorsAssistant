@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-//import { Dictionary } from '@ngrx/entity';
-import { select, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { first } from 'rxjs';
 
 import { ScheduledClassModel } from 'src/app/models/scheduled-class.model';
@@ -22,22 +21,10 @@ export class CalendarService {
   formatCalendarEvents(
     scheduledClasses: ScheduledClassModel[] | undefined,
   ) {
-    console.log('**********calling the format method**********')
-    console.log(scheduledClasses);
-    let i;
     let events = [];
     if (scheduledClasses) {
-      for (i=0; i < scheduledClasses.length; i++) {
-        let studentOrClass: StudentOrClassModel | undefined;
-        this.store
-        .select(selectStudentOrClassById(scheduledClasses[i].student_or_class))
-        .pipe(first()) // Automatically unsubscribes after the first value
-        .subscribe((res) => {
-          studentOrClass = res; // Assuming 'this.studentOrClass' is a class property
-        })
-        console.log(studentOrClass);
-
-        var schedulingObj = {
+      for (let i=0; i < scheduledClasses.length; i++) {
+        let schedulingObj = {
           title: `Inactive Account`,
           date: scheduledClasses[i].date,
           start: `${scheduledClasses[i].date}T${scheduledClasses[i].start_time}`,
@@ -45,10 +32,16 @@ export class CalendarService {
           allDay : false,
           color: '#0098da',
         }
+        let studentOrClass: StudentOrClassModel | undefined;
+        this.store.select(selectStudentOrClassById(
+          scheduledClasses[i].student_or_class)
+        ).pipe(first()).subscribe((res) => {
+          studentOrClass = res;
+        })
         if (studentOrClass) {
           schedulingObj.title = studentOrClass.template_str;
           if (studentOrClass.purchased_class_hours) {
-            if (studentOrClass.purchased_class_hours < 4) {
+            if (studentOrClass.purchased_class_hours <= 3) {
               schedulingObj.color = '#dc3545';
             }
           }

@@ -17,11 +17,6 @@ export const selectAllStudentsOrClasses = createSelector(
         fromStudentsOrClasses.selectAll
     );
 
-export const selectAllStudentsOrClassesEntities = createSelector(
-    selectStudentsOrClassesState,
-    fromStudentsOrClasses.selectEntities
-);
-
 export const selectStudentOrClassById = (id: number) => createSelector(
     selectStudentsOrClassesState,
     state => state.entities[id]
