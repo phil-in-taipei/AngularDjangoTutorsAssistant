@@ -7,13 +7,13 @@ import { ScheduledClassesState } from '../../../classes-state/scheduled-classes.
 import { 
   selectAllScheduledClasses, selectMonthlyDateRange, fetchingClassesInProgress 
 } from '../../../classes-state/scheduled-classes.selectors';
-import { 
-  selectAllStudentsOrClassesEntities 
-} from 'src/app/authenticated-user/student-or-class/state/student-or-class.selectors';
-import { StudentOrClassModel } from 'src/app/models/student-or-class.model';
-import { 
-  StudentsOrClassesState 
-} from 'src/app/authenticated-user/student-or-class/state/student-or-class.reducers';
+//import { 
+//  selectAllStudentsOrClassesEntities 
+//} from 'src/app/authenticated-user/student-or-class/state/student-or-class.selectors';
+//import { StudentOrClassModel } from 'src/app/models/student-or-class.model';
+//import { 
+//  StudentsOrClassesState 
+//} from 'src/app/authenticated-user/student-or-class/state/student-or-class.reducers';
 import { ScheduledClassModel } from 'src/app/models/scheduled-class.model';
 
 
@@ -29,17 +29,17 @@ export class MonthlyViewComponent implements OnInit {
   classesLoaded$: Observable<boolean> = of(false);
   monthlyDateRange$: Observable<[string, string] | undefined> = of(undefined);
   showMonthlySelectForm: Boolean = true;
-  studentsOrClassesDict$: Observable<Dictionary<StudentOrClassModel> | undefined> = of(undefined);
+  //studentsOrClassesDict$: Observable<Dictionary<StudentOrClassModel> | undefined> = of(undefined);
 
   constructor(
     private scheduledClassesStore: Store<ScheduledClassesState>,
-    private studentsOrClassesStore: Store<StudentsOrClassesState>
+    //private studentsOrClassesStore: Store<StudentsOrClassesState>
   ) { }
 
   ngOnInit(): void {
-    this.studentsOrClassesDict$ = this.studentsOrClassesStore.pipe(
-      select(selectAllStudentsOrClassesEntities)
-    );
+    //this.studentsOrClassesDict$ = this.studentsOrClassesStore.pipe(
+    //  select(selectAllStudentsOrClassesEntities)
+    //);
 
     this.scheduledClasses$ = this.scheduledClassesStore.pipe(
       select(selectAllScheduledClasses)
