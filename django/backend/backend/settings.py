@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'authapp',
 
     'class_scheduling',
+    'recurring_scheduling',
     'school',
     'student_account',
     'user_profiles',
