@@ -53,8 +53,19 @@ MONTH_INTEGERS = (
     (DECEMBER, 'December'),
     )
 
+class RecurringScheduledClassManager(models.Manager):
+    def teacher_already_booked_classes_on_day_of_week(
+            self, query_day_of_week, teacher_id
+    ):
+        return self.get_queryset().filter(
+            recurring_day_of_week=query_day_of_week,
+            teacher_id=teacher_id
+        )
+
 
 class RecurringScheduledClass(models.Model):
+    custom_query = RecurringScheduledClassManager()
+    objects = models.Manager()
     recurring_start_time = models.TimeField(blank=True, null=True)
     recurring_finish_time = models.TimeField(blank=True, null=True)
     recurring_day_of_week = models.SmallIntegerField(choices=DAYS_OF_WEEK_INTEGERS)
