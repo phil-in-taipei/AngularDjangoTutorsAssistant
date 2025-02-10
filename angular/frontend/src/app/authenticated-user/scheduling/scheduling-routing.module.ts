@@ -15,7 +15,8 @@ const routes: Routes = [{ path: '', component: SchedulingComponent, children: [
   { path: 'schedule-daily/:date', component: DailyListComponent },
   { path: 'schedule-single-class', component: ScheduleSingleClassComponent },
   { path: 'single-class/:id', component: SingleClassInfoComponent },
-] }];
+] },
+  { path: 'recurring-schedule', loadChildren: () => import('./recurring-schedule/recurring-schedule.module').then(m => m.RecurringScheduleModule) }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
