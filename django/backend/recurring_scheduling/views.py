@@ -24,13 +24,13 @@ class RecurringScheduledClassViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        day_of_week = serializer.validated_data['day_of_week']
+        recurring_day_of_week = serializer.validated_data['recurring_day_of_week']
         recurring_start_time = serializer.validated_data['recurring_start_time']
         recurring_finish_time = serializer.validated_data['recurring_finish_time']
         booked_teacher = serializer.validated_data['teacher']
         recurring_classes_booked_on_day_of_week =  (
             RecurringScheduledClass.custom_query.teacher_already_booked_classes_on_day_of_week(
-                query_day_of_week=day_of_week,
+                query_day_of_week=recurring_day_of_week,
                 teacher_id=booked_teacher
             )
         )
