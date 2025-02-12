@@ -26,7 +26,7 @@ export class RecurringClassesLoaded implements Action {
   readonly type = RecurringClassesActionTypes.RecurringClassesLoaded;
 
   constructor(
-    public payload: { monthlyTasks: RecurringClassModel[] }
+    public payload: { recurringClasses: RecurringClassModel[] }
   ) {}
 }
 
@@ -44,7 +44,7 @@ export class RecurringClassCreateSubmitted implements Action {
   readonly type = RecurringClassesActionTypes.RecurringClassCreateSubmitted;
 
   constructor(
-    public payload: { monthlyTask: RecurringClassCreateModel }
+    public payload: { recurringClass: RecurringClassCreateModel }
   ){}
 };
 

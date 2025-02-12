@@ -18,18 +18,19 @@ export interface RecurringClassAppliedMonthlyDeletionResponse {
 }
 
 export interface RecurringClassCreateModel {
-    recurring_day_of_week: number;
-    recurring_finish_time: string;
     recurring_start_time: string;
+    recurring_finish_time: string;
+    recurring_day_of_week: number;
     student_or_class: number;
     teacher: number;
 }
 
 export interface RecurringClassModel {
     id: number;
-    recurring_day_of_week: number;
-    recurring_finish_time: string;
     recurring_start_time: string;
+    recurring_finish_time: string;
+    recurring_day_of_week: number;
     student_or_class: number;
     teacher: number;
+    day_of_week_string: string;
 }

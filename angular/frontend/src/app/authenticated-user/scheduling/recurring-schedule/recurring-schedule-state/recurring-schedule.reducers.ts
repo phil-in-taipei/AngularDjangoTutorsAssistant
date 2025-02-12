@@ -71,6 +71,8 @@ function compareRecurringClasses(
         return initialRecurringClassesState;
   
       case RecurringClassesActionTypes.RecurringClassesRequestCancelled:
+        console.log("******ERROR***********")
+        console.log(action.payload.err);
         let recurringClassesErrorMessage: string = "Error fetching recurring classes!";
         if (action.payload.err.error.message) {
           recurringClassesErrorMessage = action.payload.err.error.message;
@@ -100,7 +102,7 @@ function compareRecurringClasses(
         );
   
       case RecurringClassesActionTypes.RecurringClassesLoaded:
-        return adapter.upsertMany(action.payload.monthlyTasks, { ...state,
+        return adapter.upsertMany(action.payload.recurringClasses, { ...state,
           errorMessage: undefined,
           recurringClassesLoaded: true
         });

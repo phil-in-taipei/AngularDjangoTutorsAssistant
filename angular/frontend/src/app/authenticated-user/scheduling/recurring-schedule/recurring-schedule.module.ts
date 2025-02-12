@@ -13,6 +13,10 @@ import {
 } from './list/recurring-classes/recurring-classes.component';
 import { RecurringScheduleRoutingModule } from './recurring-schedule-routing.module';
 import { RecurringScheduleComponent } from './recurring_schedule/recurring-schedule.component';
+import { recurringClassesReducer } from './recurring-schedule-state/recurring-schedule.reducers';
+import { RecurringClassesEffects } from './recurring-schedule-state/recurring-schedule.effects';
+import { StudentsOrClassesEffects } from '../../student-or-class/state/student-or-class.effects';
+import { studentsOrClassesReducer } from '../../student-or-class/state/student-or-class.reducers';
 
 
 @NgModule({
@@ -25,7 +29,11 @@ import { RecurringScheduleComponent } from './recurring_schedule/recurring-sched
     CommonModule,
     FormsModule,
     NgbModule,
-    RecurringScheduleRoutingModule
+    RecurringScheduleRoutingModule,
+    StoreModule.forFeature('recurringClasses', recurringClassesReducer),
+    EffectsModule.forFeature([RecurringClassesEffects]),
+    StoreModule.forFeature('studentsOrClasses', studentsOrClassesReducer),
+    EffectsModule.forFeature([StudentsOrClassesEffects]),
   ]
 })
 export class RecurringScheduleModule { }

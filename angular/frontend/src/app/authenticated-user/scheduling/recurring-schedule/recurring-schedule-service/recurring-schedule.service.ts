@@ -33,7 +33,7 @@ export class RecurringScheduleService {
   fetchRecurringClasses(): Observable<RecurringClassModel[]> {
     let token = this.authService.getAuthToken();
     return this.http.get<RecurringClassModel[]>(
-      `${environment.apiUrl}/api/recurring/recurring-classes/`,
+      `${environment.apiUrl}/api/recurring/schedule/by-teacher/`,
       {
         headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
       });

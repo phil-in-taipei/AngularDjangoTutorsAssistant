@@ -12,6 +12,9 @@ import {
 } from '../models/auth-login.model';
 import { AppState } from './../reducers';
 import { 
+  RecurringClassesCleared 
+} from '../authenticated-user/scheduling/recurring-schedule/recurring-schedule-state/recurring-schedule.actions';
+import { 
   ScheduledClassesCleared 
 } from '../authenticated-user/scheduling/classes-state/scheduled-classes.actions';
 import { SchoolsCleared } from '../authenticated-user/schools/state/school.actions';
@@ -98,6 +101,7 @@ export class AuthService {
   }
 
   private clearNgrxStore():void {
+    this.store.dispatch(new RecurringClassesCleared());
     this.store.dispatch(new ScheduledClassesCleared());
     this.store.dispatch(new SchoolsCleared());
     this.store.dispatch(new StudentsOrClassesCleared());

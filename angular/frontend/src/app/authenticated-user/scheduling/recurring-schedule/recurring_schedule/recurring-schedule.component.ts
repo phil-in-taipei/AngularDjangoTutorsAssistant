@@ -1,4 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+
+import { RecurringClassesState } from '../recurring-schedule-state/recurring-schedule.reducers';
+import { RecurringClassesRequested } from '../recurring-schedule-state/recurring-schedule.actions';
 
 @Component({
   selector: 'app-recurring-schedule',
@@ -6,6 +10,10 @@ import { Component } from '@angular/core';
   templateUrl: './recurring-schedule.component.html',
   styleUrl: './recurring-schedule.component.css'
 })
-export class RecurringScheduleComponent {
+export class RecurringScheduleComponent implements OnInit {
+  constructor(private store: Store<RecurringClassesState>) { }
 
+  ngOnInit(): void {
+    this.store.dispatch(new RecurringClassesRequested());
+  }
 }

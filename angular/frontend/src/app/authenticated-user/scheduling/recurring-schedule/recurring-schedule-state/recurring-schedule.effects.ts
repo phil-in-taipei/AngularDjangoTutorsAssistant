@@ -57,7 +57,7 @@ export class RecurringClassesEffects {
         filter(([action, recurringClassesLoaded]) => !recurringClassesLoaded),
         mergeMap(action => this.recurringClassService.fetchRecurringClasses()
           .pipe(
-            map(recurringClasses => new RecurringClassesLoaded({ monthlyTasks: recurringClasses })),
+            map(recurringClasses => new RecurringClassesLoaded({ recurringClasses: recurringClasses })),
             catchError(err => {
               this.store.dispatch(
                 new RecurringClassesRequestCancelled({ err })
@@ -77,7 +77,7 @@ export class RecurringClassesEffects {
         ),
         mergeMap(action => this.recurringClassService
           .submitRecurringClass(
-            action.payload.monthlyTask,
+            action.payload.recurringClass,
           ).pipe(catchError(err => {
             this.store.dispatch(
               new RecurringClassCreationCancelled({ err })
