@@ -14,11 +14,10 @@
       <div class="mx-5 pd-2">
         <hr class="thick-br"/>
         <h3>Recurring Classes</h3>
-        <h5>{{ classes.length }} Recurring Class(es)</h5>
         <hr class="thick-br"/>
         <div class="large-scr-tbl">
-          <table class="table">
-            <thead>
+          <table class="table bg-transparent">
+            <thead class="table bg-transparent">
               <tr class="row">
                 <th class="col"><h5>Day of Week</h5></th>
                 <th class="col"><h5>Time</h5></th>
@@ -26,9 +25,14 @@
                 <th class="col"><h5>Delete</h5></th>
               </tr>
             </thead>
-            <tbody>
-              <div *ngFor="let recurringClass of classes; trackBy: trackByFn">
-                <app-recurring-class [recurringClass]=recurringClass>
+            <tbody class="bg-transparent">
+              <div class="bg-transparent"
+              *ngFor="let recurringClass of classes; 
+              trackBy: trackByFn" 
+              >
+                <app-recurring-class 
+                  class="bg-transparent" 
+                  [recurringClass]=recurringClass>
                 </app-recurring-class>
               </div>
             </tbody>

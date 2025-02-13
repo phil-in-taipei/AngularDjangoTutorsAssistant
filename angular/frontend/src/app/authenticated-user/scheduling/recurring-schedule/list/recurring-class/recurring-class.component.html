@@ -6,7 +6,11 @@
     </th>
     <th class="col">
         <h5>
-          {{ recurringClass.recurring_start_time }}-{{ recurringClass.recurring_finish_time}}
+          {{ 
+            recurringClass.recurring_start_time.slice(0, -3) 
+          }}-{{ 
+            recurringClass.recurring_finish_time.slice(0, -3) 
+          }}
         </h5>
       </th>
     <th class="col">
