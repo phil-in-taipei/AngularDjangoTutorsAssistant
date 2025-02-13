@@ -1,1 +1,39 @@
-<p>recurring-classes works!</p>
+<ng-container *ngIf="{value: recurringClassesLoaded$ | async} as context">
+    <div *ngIf="!context.value">
+      <div class="text-center">
+        <div class="spinner-border text-secondary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <br />
+      </div>
+      <br />
+    </div>
+  </ng-container>
+  
+  <div *ngIf="recurringClasses$ | async as classes" class="container content">
+      <div class="mx-5 pd-2">
+        <hr class="thick-br"/>
+        <h3>Recurring Classes</h3>
+        <h5>{{ classes.length }} Recurring Class(es)</h5>
+        <hr class="thick-br"/>
+        <div class="large-scr-tbl">
+          <table class="table">
+            <thead>
+              <tr class="row">
+                <th class="col"><h5>Day of Week</h5></th>
+                <th class="col"><h5>Time</h5></th>
+                <th class="col"><h5>Student Or Class</h5></th>
+                <th class="col"><h5>Delete</h5></th>
+              </tr>
+            </thead>
+            <tbody>
+              <div *ngFor="let recurringClass of classes; trackBy: trackByFn">
+                <app-recurring-class [recurringClass]=recurringClass>
+                </app-recurring-class>
+              </div>
+            </tbody>
+          </table>
+          <hr class="thick-br"/>
+        </div>
+      </div>
+    </div>

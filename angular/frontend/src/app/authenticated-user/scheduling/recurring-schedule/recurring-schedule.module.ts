@@ -15,6 +15,7 @@ import { RecurringScheduleRoutingModule } from './recurring-schedule-routing.mod
 import { RecurringScheduleComponent } from './recurring_schedule/recurring-schedule.component';
 import { recurringClassesReducer } from './recurring-schedule-state/recurring-schedule.reducers';
 import { RecurringClassesEffects } from './recurring-schedule-state/recurring-schedule.effects';
+import { StudentOrClassTemplateStringComponent } from './student-or-class-template-string/student-or-class-template-string.component';   
 import { StudentsOrClassesEffects } from '../../student-or-class/state/student-or-class.effects';
 import { studentsOrClassesReducer } from '../../student-or-class/state/student-or-class.reducers';
 
@@ -23,7 +24,8 @@ import { studentsOrClassesReducer } from '../../student-or-class/state/student-o
   declarations: [
     RecurringClassComponent,
     RecurringClassesComponent,
-    RecurringScheduleComponent
+    RecurringScheduleComponent,
+    StudentOrClassTemplateStringComponent
   ],
   imports: [
     CommonModule,

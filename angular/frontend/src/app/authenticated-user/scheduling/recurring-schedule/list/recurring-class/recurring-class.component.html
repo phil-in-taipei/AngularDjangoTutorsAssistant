@@ -1,1 +1,56 @@
-<p>recurring-class works!</p>
+<tr class="row" > 
+    <th class="col">
+      <h5>
+        {{ recurringClass.day_of_week_string }}
+      </h5>
+    </th>
+    <th class="col">
+        <h5>
+          {{ recurringClass.recurring_start_time }}-{{ recurringClass.recurring_finish_time}}
+        </h5>
+      </th>
+    <th class="col">
+        <h5>
+            <a [routerLink]="['/authenticated-user/student-or-class', recurringClass.student_or_class]">
+                <app-student-or-class-template-string 
+                [studentOrClassId]=recurringClass.student_or_class class="bg-transparent"
+                >
+                </app-student-or-class-template-string>
+            </a>
+        </h5>
+
+    </th>
+    <th class="col">
+      <div *ngIf="!deletionPopupVisible; else delWeeklyTask" class="col text-left">
+        <h5>
+          <button
+            class="btn btn-sm btn-dark"
+            (click)="showDeletionPopup()"
+            >
+            Remove
+          </button>
+        </h5>
+      </div>
+      <ng-template #delWeeklyTask class="row">
+        <div class="col">
+          <h5>
+            <button
+              class="btn btn-sm btn-dark"
+              (click)="hideDeletionPopup()">
+              Cancel Deletion
+            </button>
+          </h5>
+        </div>
+        <div class="col">
+          <h5>
+            <button
+              class="btn btn-sm btn-outline-danger"
+              (click)="onRemoveRecurringClass()"
+              >
+              Confirm Removal
+            </button>
+          </h5>
+        </div>
+      </ng-template>
+    </th>
+</tr>
