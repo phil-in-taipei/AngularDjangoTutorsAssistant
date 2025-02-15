@@ -3,6 +3,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from .views import (ScheduledClassStatusConfirmationViewSet,
+                    ScheduledClassBatchDeletionView,
                     ScheduledClassViewSet, ScheduledClassByTeacherByDateViewSet,
                     ScheduledClassByTeacherByMonthViewSet, UnconfirmedStatusClassesViewSet)
 
@@ -13,6 +14,11 @@ router.register(r'class/submit', ScheduledClassViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path(
+        'classes/batch-delete/',
+        ScheduledClassBatchDeletionView.as_view(),
+        name='class-batch-delete'
+    ),
     path(
         'classes/by-teacher/by-date/<str:date>/',
         ScheduledClassByTeacherByDateViewSet.as_view(),

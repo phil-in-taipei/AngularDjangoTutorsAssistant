@@ -23,6 +23,30 @@ from user_profiles.models import UserProfile
 from utilities.permissions import IsOwnerOrReadOnly
 
 
+class ScheduledClassBatchDeletionView(APIView):
+    permission_classes = (
+        IsAuthenticated,
+    )
+
+    def delete(self, request, *args, **kwargs):
+        obsolete_scheduled_class_ids = request.data['obsolete_class_ids']
+        qs = ScheduledClass.objects.filter(id__in=obsolete_scheduled_class_ids)
+        #obsolete_scheduled_class_strings = [str(obj) for obj in qs]
+        if qs.count() > 0:
+            for obj in qs:
+                obj.delete()
+            return Response({
+                "ids": obsolete_scheduled_class_ids,
+                "message": "Batch Deletion Successful!"
+                #"message": "Successfully deleted: "
+                #           + ', '.join(obsolete_scheduled_class_strings)
+            })
+        else:
+            return Response({"Error": "The classes for deletion do not exist, "
+                                      "or have already been deleted!"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
 class ScheduledClassStatusConfirmationViewSet(APIView):
     permission_classes = (
         IsAuthenticated,  # IsOwnerOrReadOnly
