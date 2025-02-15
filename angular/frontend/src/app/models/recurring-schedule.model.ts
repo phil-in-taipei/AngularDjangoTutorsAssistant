@@ -1,3 +1,6 @@
+import { S } from "@fullcalendar/core/internal-common";
+import { ScheduledClassBatchDeletionDataModel } from "./scheduled-class.model";
+
 export interface RecurringClassAppliedMonthlyCreateModel {
     scheduling_month: number;
     scheduling_year: number;
@@ -12,9 +15,9 @@ export interface RecurringClassAppliedMonthlyModel {
 }  
   
 export interface RecurringClassAppliedMonthlyDeletionResponse {
+    id: number;
     message: string;
-    obsolete_class_strings: string;
-    obsolete_class_ids: number[];
+    scheduled_class_batch_deletion_data: ScheduledClassBatchDeletionDataModel;
 }
 
 export interface RecurringClassCreateModel {

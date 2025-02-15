@@ -29,6 +29,11 @@ export interface RescheduleClassModel {
     teacher: number;
 }
 
+export interface ScheduledClassBatchDeletionDataModel {
+    obsolete_class_strings: string;
+    obsolete_class_ids: number[];
+}
+
 export interface ScheduledClassModel {
     id: number;
     date: string;

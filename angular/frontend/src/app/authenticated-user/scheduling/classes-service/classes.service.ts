@@ -4,14 +4,17 @@ import { Observable } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/authentication/auth.service';
-import { DeletionResponse } from 'src/app/models/deletion-response';
+import { 
+  BatchDeletionResponse, DeletionResponse 
+} from 'src/app/models/deletion-response';
 import { getDateString } from 'src/app/shared-utils/date-time.util';
 import { 
   CreateScheduledClassModel, 
   ModifyClassStatusModel,
   ModifyClassStatusResponse,
   RescheduleClassModel,
-  ScheduledClassModel 
+  ScheduledClassModel, 
+  ScheduledClassBatchDeletionDataModel 
 } from 'src/app/models/scheduled-class.model';
 
 
@@ -24,6 +27,23 @@ export class ClassesService {
     private http: HttpClient,
     private authService: AuthService,
   ) { }
+
+  deleteBatchOfScheduledClasses(
+    obsolete_class_data: ScheduledClassBatchDeletionDataModel
+  ): Observable<BatchDeletionResponse> {
+    let token = this.authService.getAuthToken();
+    let options = {
+      headers: new HttpHeaders({
+         'Authorization': `Token ${token}`
+      }),
+      body: {
+          obsolete_class_ids: obsolete_class_data.obsolete_class_ids,
+      },
+    };
+    return this.http.delete<BatchDeletionResponse>(
+      `${environment.apiUrl}/api/scheduling/classes/batch-delete/`, options
+    )
+  }
 
   deleteSingleClass(id: number): Observable<DeletionResponse> {
     let token = this.authService.getAuthToken();
