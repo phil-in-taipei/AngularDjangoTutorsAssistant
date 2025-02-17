@@ -2,9 +2,6 @@ from calendar import monthrange
 from datetime import datetime, timedelta
 
 from class_scheduling.models import ScheduledClass
-#ScheduledClass.custom_query.teacher_already_booked_classes_during_date_and_time(
-#            query_date, starting_time, finishing_time, teacher_id
-#    )
 
 
 def create_date_list(year, month, day_of_week):
@@ -28,8 +25,8 @@ def book_classes_for_specified_month(date_list, recurring_class):
             date=date,
             start_time=recurring_class.recurring_start_time,
             finish_time=recurring_class.recurring_finish_time,
-            student=recurring_class.recurring_student,
-            teacher=recurring_class.recurring_teacher
+            student_or_class=recurring_class.student_or_class,
+            teacher=recurring_class.teacher
             )
         #print(new_booking_obj)
         #print(created)
@@ -44,8 +41,8 @@ def get_classes_for_deletion_for_specified_month(date_list, recurring_class):
             date=date,
             start_time=recurring_class.recurring_start_time,
             finish_time=recurring_class.recurring_finish_time,
-            student=recurring_class.recurring_student,
-            teacher=recurring_class.recurring_teacher
+            student_or_class=recurring_class.student_or_class,
+            teacher=recurring_class.teacher
         ).first()
         #print(booking_obj_for_deletion)
         if booking_obj_for_deletion:
