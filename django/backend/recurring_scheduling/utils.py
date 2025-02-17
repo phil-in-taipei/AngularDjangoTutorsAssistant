@@ -1,3 +1,56 @@
+from calendar import monthrange
+from datetime import datetime, timedelta
+
+from class_scheduling.models import ScheduledClass
+#ScheduledClass.custom_query.teacher_already_booked_classes_during_date_and_time(
+#            query_date, starting_time, finishing_time, teacher_id
+#    )
+
+
+def create_date_list(year, month, day_of_week):
+    delta = timedelta(days=1)
+    start = datetime(year, month, 1)
+    finish = datetime(year, month, (monthrange(year, month)[1]))
+    list_of_dates_on_day_in_given_month = []
+    while start <= finish:
+        if start.weekday() == day_of_week:
+            list_of_dates_on_day_in_given_month.append(start.date())
+        start += delta
+    #print('These are the dates for that period:')
+    #print(list_of_dates_on_day_in_given_month)
+    return list_of_dates_on_day_in_given_month
+
+
+def book_classes_for_specified_month(date_list, recurring_class):
+    for date in date_list:
+        #print('booking new classes:')
+        new_booking_obj, created = ScheduledClass.objects.get_or_create(
+            date=date,
+            start_time=recurring_class.recurring_start_time,
+            finish_time=recurring_class.recurring_finish_time,
+            student=recurring_class.recurring_student,
+            teacher=recurring_class.recurring_teacher
+            )
+        #print(new_booking_obj)
+        #print(created)
+        if created:
+            new_booking_obj.save()
+
+
+def recurring_class_applied_monthly_has_scheduling_conflict(
+        list_of_dates_on_day_in_given_month,
+        recurring_class
+):
+    for date in list_of_dates_on_day_in_given_month:
+        print(date)
+        if ScheduledClass.custom_query.teacher_already_booked_classes_during_date_and_time(
+            query_date=date, 
+            starting_time=recurring_class.recurring_start_time, 
+            finishing_time=recurring_class.recurring_finish_time, 
+            teacher_id=recurring_class.teacher
+        ):
+            return True
+    return False
 
 def recurring_class_is_double_booked(
         recurring_classes_booked_on_day_of_week, recurring_start_time, recurring_finish_time

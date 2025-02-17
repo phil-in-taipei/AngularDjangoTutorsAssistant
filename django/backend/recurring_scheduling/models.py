@@ -91,3 +91,29 @@ class RecurringScheduledClass(models.Model):
                                                self.recurring_start_time,
                                                self.recurring_finish_time
                                                )
+
+
+
+class RecurringClassAppliedMonthly(models.Model):
+    scheduling_month = models.SmallIntegerField(choices=MONTH_INTEGERS)
+    scheduling_year = models.SmallIntegerField(default=datetime.now().year,
+                                               validators=[MinValueValidator(2025),
+                                                           MaxValueValidator(2035)])
+    recurring_class = models.ForeignKey(RecurringScheduledClass, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['-scheduling_year', '-scheduling_month',
+                    'recurring_class__teacher__user__username',
+                    'recurring_class__student_or_class__student_or_class_name']
+        unique_together = ('scheduling_month', 'scheduling_year', 'recurring_class',)
+
+    @property
+    def month_string(self):
+        month_string = [month[1] for month in MONTH_INTEGERS
+                        if month[0] == self.scheduling_month][0]
+        return month_string
+
+    def __str__(self):
+        month_string = [month[1] for month in MONTH_INTEGERS
+                        if month[0] == self.scheduling_month][0]
+        return "{} {} for {}".format(month_string, self.scheduling_year, self.recurring_class)

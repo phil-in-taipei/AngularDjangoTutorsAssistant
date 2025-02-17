@@ -1,4 +1,3 @@
-import { S } from "@fullcalendar/core/internal-common";
 import { ScheduledClassBatchDeletionDataModel } from "./scheduled-class.model";
 
 export interface RecurringClassAppliedMonthlyCreateModel {
