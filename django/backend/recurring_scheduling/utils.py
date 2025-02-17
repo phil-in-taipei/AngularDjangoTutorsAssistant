@@ -37,6 +37,22 @@ def book_classes_for_specified_month(date_list, recurring_class):
             new_booking_obj.save()
 
 
+def get_classes_for_deletion_for_specified_month(date_list, recurring_class):
+    objs_for_deletion = []
+    for date in date_list:
+        booking_obj_for_deletion = ScheduledClass.objects.filter(
+            date=date,
+            start_time=recurring_class.recurring_start_time,
+            finish_time=recurring_class.recurring_finish_time,
+            student=recurring_class.recurring_student,
+            teacher=recurring_class.recurring_teacher
+        ).first()
+        #print(booking_obj_for_deletion)
+        if booking_obj_for_deletion:
+            objs_for_deletion.append(booking_obj_for_deletion)
+    return objs_for_deletion
+
+
 def recurring_class_applied_monthly_has_scheduling_conflict(
         list_of_dates_on_day_in_given_month,
         recurring_class

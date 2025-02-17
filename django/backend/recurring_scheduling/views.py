@@ -9,6 +9,7 @@ from .serializers import RecurringClassSerializer, RecurringClassAppliedMonthlyS
 from .utils import (
     create_date_list,
     book_classes_for_specified_month,
+    get_classes_for_deletion_for_specified_month,
     recurring_class_applied_monthly_has_scheduling_conflict,
     recurring_class_is_double_booked
 )
@@ -55,7 +56,33 @@ class RecurringClassAppliedMonthlyViewSet(viewsets.ModelViewSet):
             # trigger api call on front end to get newly booked classes
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-
+    def destroy(self, request, *args, **kwargs):
+        #finds the corresponding booked classes to the monthly recurring being deleted
+        #sends back to the user, and user can determine whether or not to batch delete them
+        recurring_for_specific_month_obj = self.get_object()
+        deleted_recurring_applied_monthly_id=recurring_for_specific_month_obj.id
+        monthly_booking_date_list = create_date_list(
+            year=recurring_for_specific_month_obj.scheduling_year, 
+            month=recurring_for_specific_month_obj.scheduling_month, 
+            day_of_week=recurring_class.day_of_week
+        )
+        obsolete_classes_to_be_deleted = get_classes_for_deletion_for_specified_month(
+            date_list=monthly_booking_date_list,
+            recurring_class=recurring_for_specific_month_obj.recurring_class
+        )
+        list_of_classes_to_be_deleted_strings = [str(obj) for obj in obsolete_classes_to_be_deleted]
+        list_of_classes_to_be_deleted_ids = [obj.id for obj in obsolete_classes_to_be_deleted]
+        recurring_for_specific_month_obj.delete()
+        return Response(
+                {
+                    "message": "Recurring monthly class successfully deleted",
+                    "id": deleted_recurring_applied_monthly_id,
+                    "scheduled_class_batch_deletion_data": {
+                        "obsolete_class_strings": ', '.join(list_of_classes_to_be_deleted_strings),
+                        "obsolete_class_ids": list_of_classes_to_be_deleted_ids
+                    }            
+                }
+            )
 
     def update(self, request,  *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
