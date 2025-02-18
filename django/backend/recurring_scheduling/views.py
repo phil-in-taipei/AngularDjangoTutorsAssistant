@@ -29,12 +29,14 @@ class RecurringClassAppliedMonthlyViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         scheduling_month = serializer.validated_data['scheduling_month']
         scheduling_year = serializer.validated_data['scheduling_year']
-        recurring_class_id = serializer.validated_data['recurring_class']
-        recurring_class = get_object_or_404(RecurringClass, id=recurring_class_id)
+        recurring_class = serializer.validated_data['recurring_class']
+        print('****************this is the recurring class id:******************')
+        print(recurring_class)
+       #recurring_class = get_object_or_404(RecurringScheduledClass, id=recurring_class_id)
 
         monthly_booking_date_list = create_date_list(
             year=scheduling_year, month=scheduling_month, 
-            day_of_week=recurring_class.day_of_week
+            day_of_week=recurring_class.recurring_day_of_week
         )
 
         if recurring_class_applied_monthly_has_scheduling_conflict(
@@ -49,8 +51,7 @@ class RecurringClassAppliedMonthlyViewSet(viewsets.ModelViewSet):
             serializer.save()
             # pass function to book classes in the dates for the pay period
             book_classes_for_specified_month(
-                year=scheduling_year,
-                month=scheduling_month,
+                date_list=monthly_booking_date_list,
                 recurring_class=recurring_class
             )
             # trigger api call on front end to get newly booked classes
