@@ -1,1 +1,28 @@
-<p>create-recurring-class works!</p>
+<h3>Schedule a Recurring Class</h3>
+<div *ngIf="errorMessage$ | async as classErrMsg">
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <h4 class="text-danger">{{ classErrMsg }}</h4>
+    <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+    data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+</div>
+
+<div *ngIf="successMessage$ | async as classSuccessMsg">
+  <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+    <h6>{{ classSuccessMsg }}</h6>
+    <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+    data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+</div>
+<div *ngIf="studentsOrClasses$ | async as studentsOrClasses">
+    hello
+  <div *ngIf="userProfile$ | async as userProfile">
+    <hr class="thick-br"/>
+    <app-create-recurring-class-form
+      [studentsOrClasses]=studentsOrClasses
+      [userProfile]=userProfile
+    >
+    </app-create-recurring-class-form>
+    <hr class="thick-br"/>
+  </div>
+</div>

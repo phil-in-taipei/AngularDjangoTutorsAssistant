@@ -7,7 +7,7 @@ import { StudentOrClassModel } from 'src/app/models/student-or-class.model';
 import { StudentsOrClassesState } from 'src/app/authenticated-user/student-or-class/state/student-or-class.reducers';
 
 @Component({
-  selector: 'app-student-or-class-template-string',
+  selector: 'app-student-or-class-templ-string',
   standalone: false,
   templateUrl: './student-or-class-template-string.component.html',
   styleUrl: './student-or-class-template-string.component.css'

@@ -1,1 +1,111 @@
-<p>create-recurring-class-form works!</p>
+<h4>Submit a Recurring Class</h4>
+<div>
+  <form (submit)="onSubmitRecurringClass(recurringClassForm)" #recurringClassForm="ngForm">
+    <div>
+      <label>Day of the Week</label>
+      <select
+      name="day_of_week"
+      class="form-control"
+      ngModel
+      required
+      #day_of_week="ngModel"
+      >
+        <option [value]=0>Monday</option>
+        <option [value]=1>Tuesday</option>
+        <option [value]=2>Wednesday</option>
+        <option [value]=3>Thursday</option>
+        <option [value]=4>Friday</option>
+        <option [value]=5>Saturday</option>
+        <option [value]=6>Sunday</option>
+      </select>
+      <div *ngIf="day_of_week.touched && day_of_week.invalid">
+        Day of week is invalid.
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <label>Hour</label>
+        <input
+        class="form-control"
+        type="number"
+        min="01"
+        max="23"
+        rows="4"
+        name="hour"
+        ngModel
+        required
+        placeholder="13"
+        #hour="ngModel"
+        >
+        <div *ngIf="hour.touched && hour.invalid">
+          Please enter an hour.
+        </div>
+      </div>
+      <div class="col">
+        <label>Minute</label>
+        <input
+        class="form-control"
+        type="number"
+        min="00"
+        max="59"
+        rows="4"
+        name="minute"
+        ngModel
+        required
+        step='01'
+        placeholder="59"
+        #minute="ngModel"
+        >
+        <div *ngIf="minute.touched && minute.invalid">
+          Please enter minutes.
+        </div>
+      </div>
+    </div>
+    <br />
+    <div>
+      <label>Class Duration</label>
+        <select
+        class="form-control"
+        name="duration"
+        class="form-control"
+        ngModel
+        required
+        #duration="ngModel"
+        >
+        <option *ngFor="let opt of classDurationOptions"
+            [value]=opt.timeArr
+        >{{ opt.stringVal }}</option>
+        </select>
+        <div *ngIf="duration.touched && duration.invalid">
+          Please enter duration.
+        </div>
+      </div>
+      <br />
+      <div>
+        <label>Student or Class</label>
+          <select
+          class="form-control"
+          name="student_or_class"
+          class="form-control"
+          ngModel
+          required
+          #student_or_class="ngModel"
+          >
+          <option *ngFor="let studentOrClass of studentsOrClasses"
+              [value]=studentOrClass.id
+          >{{ studentOrClass.template_str }}
+          </option>
+          </select>
+          <div *ngIf="student_or_class.touched && student_or_class.invalid">
+            Please enter a student or class.
+          </div>
+        </div>
+        <br />
+      <div>
+      <button class="btn btn-outline-secondary" type="submit">
+        Submit
+      </button>
+    </div>
+  </form>
+  <br />
+</div>

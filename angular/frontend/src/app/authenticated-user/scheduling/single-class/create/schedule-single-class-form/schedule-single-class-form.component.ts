@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { NgForm, NgModel } from '@angular/forms';
+import { NgForm } from '@angular/forms';
 import { Store } from '@ngrx/store';
 
 import { CreateScheduledClassModel } from 'src/app/models/scheduled-class.model';
