@@ -24,7 +24,8 @@ import { RecurringClassesEffects } from './state/recurring-schedule-state/recurr
 import { StudentOrClassTemplateStringComponent } from './student-or-class-template-string/student-or-class-template-string.component';   
 import { StudentsOrClassesEffects } from '../../student-or-class/state/student-or-class.effects';
 import { studentsOrClassesReducer } from '../../student-or-class/state/student-or-class.reducers';
-
+import { UserEffects } from '../../user/user-state/user.effects';
+import { userProfileReducer } from '../../user/user-state/user.reducers';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,8 @@ import { studentsOrClassesReducer } from '../../student-or-class/state/student-o
     EffectsModule.forFeature([RecurringClassesEffects]),
     StoreModule.forFeature('studentsOrClasses', studentsOrClassesReducer),
     EffectsModule.forFeature([StudentsOrClassesEffects]),
+    StoreModule.forFeature('user', userProfileReducer),
+    EffectsModule.forFeature([UserEffects]),
   ]
 })
 export class RecurringScheduleModule { }

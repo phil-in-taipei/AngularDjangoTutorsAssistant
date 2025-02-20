@@ -22,21 +22,21 @@
               href="#" id="navbarDropdown" role="button" 
               data-bs-toggle="dropdown" aria-expanded="false"
             >
-              Students/Schools
+              Students
             </a>
             <ul class="dropdown-menu mydropnav bg-dark" 
               aria-labelledby="navbarDropdown">
               <li><a class="nav-link" 
-                [routerLink]="['create-school']">New School</a>
+                [routerLink]="['create-school']">Create School</a>
               </li>
               <li><a class="nav-link" 
-                [routerLink]="['users-schools']">Schools</a>
+                [routerLink]="['users-schools']">View Schools</a>
               </li>
               <li><a class="nav-link" 
-                [routerLink]="['create-student-or-class']">New Student/Class</a>
+                [routerLink]="['create-student-or-class']">Create Class</a>
               </li>
               <li><a class="nav-link" 
-                [routerLink]="['users-students-or-classes']">Students/Classes</a>
+                [routerLink]="['users-students-or-classes']">View Classes</a>
               </li>
             </ul>
           </li>
@@ -51,15 +51,15 @@
               aria-labelledby="navbarDropdown">
               <li><a class="dropdown-item bg-dark link-style" 
                 routerLink="/authenticated-user/scheduling/schedule-single-class" routerLinkActive 
-                >Single Class</a>
-              </li>
-              <li><a class="dropdown-item bg-dark link-style" 
-                routerLink="/authenticated-user/scheduling/recurring-schedule/list" routerLinkActive 
-                >Recurring Classes</a>
+                >Schedule Single</a>
               </li>
               <li><a class="dropdown-item bg-dark link-style" 
                 routerLink="/authenticated-user/scheduling/recurring-schedule/create" routerLinkActive 
-                >Create Recurring</a>
+                >Schedule Recurring</a>
+              </li>
+              <li><a class="dropdown-item bg-dark link-style" 
+                routerLink="/authenticated-user/scheduling/recurring-schedule/list" routerLinkActive 
+                >Recurring Schedule</a>
               </li>
             </ul>
           </li>          

@@ -1,5 +1,6 @@
+<br />
 <h3>Schedule a Class</h3>
-<div *ngIf="classSubmitErrMsg$ | async as classErrMsg">
+<div *ngIf="classSubmitErrMsg$ | async as classErrMsg" class="container">
   <div class="alert alert-danger alert-dismissible fade show" role="alert">
     <h4 class="text-danger">{{ classErrMsg }}</h4>
     <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
@@ -7,7 +8,7 @@
   </div>
 </div>
 
-<div *ngIf="classSubmitSuccess$ | async as classSuccessMsg">
+<div *ngIf="classSubmitSuccess$ | async as classSuccessMsg" class="container">
   <div class="alert alert-secondary alert-dismissible fade show" role="alert">
     <h6>{{ classSuccessMsg }}</h6>
     <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
@@ -15,7 +16,7 @@
   </div>
 </div>
 <div *ngIf="studentsOrClasses$ | async as studentsOrClasses">
-  <div *ngIf="userProfile$ | async as userProfile">
+  <div *ngIf="userProfile$ | async as userProfile" class="container">
     <hr class="thick-br"/>
     <app-schedule-single-class-form
       [studentsOrClasses]=studentsOrClasses

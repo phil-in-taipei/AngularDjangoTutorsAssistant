@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 
@@ -33,7 +33,7 @@ import {
   templateUrl: './create-recurring-class.component.html',
   styleUrl: './create-recurring-class.component.css'
 })
-export class CreateRecurringClassComponent {
+export class CreateRecurringClassComponent implements OnInit {
 
   errorMessage$: Observable<string | undefined> = of(undefined);
   successMessage$: Observable<string | undefined> = of(undefined);
@@ -46,7 +46,7 @@ export class CreateRecurringClassComponent {
     private userStore: Store<UserProfileState>
   ) {}
 
-  ngOnit(): void {
+  ngOnInit(): void {
     this.recurringClassesStore.dispatch(
       new RecurringClassesMessagesCleared()
     )

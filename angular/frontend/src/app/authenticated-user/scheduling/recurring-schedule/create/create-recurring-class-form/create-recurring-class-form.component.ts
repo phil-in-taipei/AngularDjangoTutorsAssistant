@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { NgForm } from '@angular/forms';
 
@@ -24,7 +24,7 @@ import { UserProfileModel } from 'src/app/models/user-profile.model';
   templateUrl: './create-recurring-class-form.component.html',
   styleUrl: './create-recurring-class-form.component.css'
 })
-export class CreateRecurringClassFormComponent {
+export class CreateRecurringClassFormComponent implements OnInit {
 
   @Input() studentsOrClasses: StudentOrClassModel[];
   @Input() userProfile: UserProfileModel;
@@ -34,7 +34,7 @@ export class CreateRecurringClassFormComponent {
     private store: Store<RecurringClassesState>
   ) {}
 
-  ngOnit(): void {
+  ngOnInit(): void {
     this.classDurationOptions = getClassDurationsOptions();
   }
 
