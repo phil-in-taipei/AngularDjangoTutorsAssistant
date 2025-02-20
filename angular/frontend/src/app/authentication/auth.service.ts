@@ -13,7 +13,7 @@ import {
 import { AppState } from './../reducers';
 import { 
   RecurringClassesCleared 
-} from '../authenticated-user/scheduling/recurring-schedule/recurring-schedule-state/recurring-schedule.actions';
+} from '../authenticated-user/scheduling/recurring-schedule/state/recurring-schedule-state/recurring-schedule.actions';
 import { 
   ScheduledClassesCleared 
 } from '../authenticated-user/scheduling/classes-state/scheduled-classes.actions';

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 
-import { RecurringClassesState } from '../recurring-schedule-state/recurring-schedule.reducers';
-import { RecurringClassesRequested } from '../recurring-schedule-state/recurring-schedule.actions';
+import { RecurringClassesState } from '../state/recurring-schedule-state/recurring-schedule.reducers';
+import { RecurringClassesRequested } from '../state/recurring-schedule-state/recurring-schedule.actions';
 
 @Component({
   selector: 'app-recurring-schedule',

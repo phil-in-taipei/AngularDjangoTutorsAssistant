@@ -3,11 +3,11 @@ import { Store } from '@ngrx/store';
 
 import { 
   RecurringClassesState
- } from '../../recurring-schedule-state/recurring-schedule.reducers';
+ } from '../../state/recurring-schedule-state/recurring-schedule.reducers';
 import { RecurringClassModel } from 'src/app/models/recurring-schedule.model';
 import { 
   RecurringClassDeletionRequested 
-} from '../../recurring-schedule-state/recurring-schedule.actions';
+} from '../../state/recurring-schedule-state/recurring-schedule.actions';
 
 @Component({
   selector: 'app-recurring-class',

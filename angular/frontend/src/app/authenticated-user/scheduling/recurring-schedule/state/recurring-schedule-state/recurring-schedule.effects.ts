@@ -19,7 +19,7 @@ import {
   RecurringClassesRequestCancelled,
   RecurringClassesRequested
 } from './recurring-schedule.actions';
-import { RecurringScheduleService } from '../recurring-schedule-service/recurring-schedule.service';
+import { RecurringScheduleService } from '../../recurring-schedule-service/recurring-schedule.service';
 
 @Injectable()
 export class RecurringClassesEffects {

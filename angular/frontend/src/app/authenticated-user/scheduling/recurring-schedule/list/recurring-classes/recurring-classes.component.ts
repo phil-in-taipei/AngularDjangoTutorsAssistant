@@ -4,11 +4,11 @@ import { select, Store } from '@ngrx/store';
 
 import { 
   RecurringClassesState
- } from '../../recurring-schedule-state/recurring-schedule.reducers';
+ } from '../../state/recurring-schedule-state/recurring-schedule.reducers';
 import { RecurringClassModel } from 'src/app/models/recurring-schedule.model';
 import { 
   selectAllRecurringClasses, selectRecurringClassesLoaded 
-} from '../../recurring-schedule-state/recurring-schedule.selectors';
+} from '../../state/recurring-schedule-state/recurring-schedule.selectors';
 
 @Component({
   selector: 'app-recurring-classes',
