@@ -29,3 +29,8 @@ export const recurringClassAppliedMonthysSuccessMsg = createSelector(
   selectRecurringClassesAppliedMonthlyState,
   state => state.successMessage
 );
+
+export const optionalScheduledClassBatchDeletionData = createSelector(
+  selectRecurringClassesAppliedMonthlyState,
+  state => state.optionalBatchDeletionData
+);

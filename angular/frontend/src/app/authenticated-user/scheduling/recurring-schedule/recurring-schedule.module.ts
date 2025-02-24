@@ -34,8 +34,13 @@ import {
 import { 
   recurringClassAppliedMonthlysReducer 
 } from './state/recurring-classes-applied-monthly-state/recurring-class-applied-monthly.reducers';
+import { 
+  RecurringClassDeletionResponseComponent 
+} from './list/recurring-class-deletion-response/recurring-class-deletion-response.component';
 import { recurringClassesReducer } from './state/recurring-schedule-state/recurring-schedule.reducers';
 import { RecurringClassesEffects } from './state/recurring-schedule-state/recurring-schedule.effects';
+import { ScheduledClassesEffects } from '../classes-state/scheduled-classes.effects';
+import { scheduledClassesReducer } from '../classes-state/scheduled-classes.reducers';
 import { 
   SelectMonthAndYearComponent 
 } from './applied-monthly/select-month-and-year/select-month-and-year.component';
@@ -52,6 +57,7 @@ import { userProfileReducer } from '../../user/user-state/user.reducers';
     CreateRecurringClassFormComponent,
     RecurringClassAppliedMonthlyComponent,
     RecurringClassComponent,
+    RecurringClassDeletionResponseComponent,
     RecurringClassesAppliedMonthlyComponent,
     RecurringClassesComponent,
     RecurringScheduleComponent,
@@ -67,6 +73,8 @@ import { userProfileReducer } from '../../user/user-state/user.reducers';
     EffectsModule.forFeature([RecurringClassAppliedMonthlysEffects]),
     StoreModule.forFeature('recurringClasses', recurringClassesReducer),
     EffectsModule.forFeature([RecurringClassesEffects]),
+    StoreModule.forFeature('scheduledClasses', scheduledClassesReducer),
+    EffectsModule.forFeature([ScheduledClassesEffects]),
     StoreModule.forFeature('studentsOrClasses', studentsOrClassesReducer),
     EffectsModule.forFeature([StudentsOrClassesEffects]),
     StoreModule.forFeature('user', userProfileReducer),
