@@ -8,6 +8,11 @@ import { environment } from 'src/environments/environment';
 import { 
   RecurringClassCreateModel, RecurringClassModel 
 } from 'src/app/models/recurring-schedule.model';
+import { 
+  RecurringClassAppliedMonthlyCreateModel,
+  RecurringClassAppliedMonthlyModel,
+  RecurringClassAppliedMonthlyDeletionResponse 
+} from 'src/app/models/recurring-schedule.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +23,19 @@ export class RecurringScheduleService {
     private http: HttpClient,
     private authService: AuthService,
   ) { }
+
+
+  applyRecurringClassToMonthAndYear(
+    submissionForm: RecurringClassAppliedMonthlyCreateModel
+  ): Observable<RecurringClassAppliedMonthlyModel>  {
+    let token = this.authService.getAuthToken();
+    return this.http.post<RecurringClassAppliedMonthlyModel>(
+      `${environment.apiUrl}/api/recurring/applied-monthly`, submissionForm,
+      {
+        headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
+      });
+  }
+    
 
   deleteRecurringClass(
     id: number
@@ -30,6 +48,19 @@ export class RecurringScheduleService {
       })
     }
 
+
+  deleteRecurringClassAppliedMonthly(
+    id: number
+  ): Observable<DeletionResponse> {
+    let token = this.authService.getAuthToken();
+    return this.http.delete<RecurringClassAppliedMonthlyDeletionResponse>(
+      `${environment.apiUrl}/api/monthly/applied-monthly/${id}`,
+        {
+          headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
+        })
+    }
+  
+
   fetchRecurringClasses(): Observable<RecurringClassModel[]> {
     let token = this.authService.getAuthToken();
     return this.http.get<RecurringClassModel[]>(
@@ -38,6 +69,19 @@ export class RecurringScheduleService {
         headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
       });
   }
+
+
+  fetchRecurringClassAppliedMonthlysByMonthAndYear(
+    month: string, year: number
+  ): Observable<RecurringClassAppliedMonthlyModel[]> {
+    let token = this.authService.getAuthToken();
+    return this.http.get<RecurringClassAppliedMonthlyModel[]>(
+      `${environment.apiUrl}/api/recurring/monthly/recurring/by-teacher/${month}/${year}/`,
+      {
+        headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
+      });
+  }
+  
 
   submitRecurringClass(
     submissionForm: RecurringClassCreateModel

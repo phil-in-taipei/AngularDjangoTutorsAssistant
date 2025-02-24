@@ -4,6 +4,12 @@ import { RecurringClassAppliedMonthlyModel } from 'src/app/models/recurring-sche
 import { 
     RecurringClassAppliedMonthlyActionTypes, RecurringClassAppliedMonthlyActions 
 } from './recurring-class-applied-monthly.actions';
+import { 
+  RecurringClassAppliedMonthlyDeletionResponse 
+} from 'src/app/models/recurring-schedule.model';
+import { 
+  ScheduledClassBatchDeletionDataModel 
+} from 'src/app/models/scheduled-class.model';
 
 export interface RecurringClassAppliedMonthlysState 
     extends EntityState<RecurringClassAppliedMonthlyModel> {
@@ -13,6 +19,8 @@ export interface RecurringClassAppliedMonthlysState
         recurringClassAppliedMonthlysLoaded: boolean,
         
         successMessage: string | undefined,
+
+        optionalBatchDeletionData: RecurringClassAppliedMonthlyDeletionResponse | undefined
     
     };
     
@@ -27,7 +35,9 @@ export const initialRecurringClassAppliedMonthlysState:
     
     recurringClassAppliedMonthlysLoaded: false,
     
-    successMessage: undefined
+    successMessage: undefined,
+
+    optionalBatchDeletionData: undefined
 
 });
 
