@@ -82,8 +82,9 @@ export class RecurringClassAppliedMonthlyDeletionRequested implements Action {
 
 export class RecurringClassAppliedMonthlyDeletionSaved implements Action {
     readonly type = RecurringClassAppliedMonthlyActionTypes.RecurringClassAppliedMonthlyDeletionSaved;
-
-    constructor(public payload: RecurringClassAppliedMonthlyDeletionResponse) {}
+    constructor(public payload: {
+        recurringClassAppliedMonthlyDeletionResponse:  RecurringClassAppliedMonthlyDeletionResponse
+    }) {}
 }
 
 export class RecurringClassesAppliedMonthlyMessagesCleared implements Action {

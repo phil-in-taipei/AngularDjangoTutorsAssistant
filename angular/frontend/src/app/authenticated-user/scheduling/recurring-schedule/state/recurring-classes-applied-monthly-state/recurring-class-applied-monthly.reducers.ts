@@ -20,7 +20,7 @@ export interface RecurringClassAppliedMonthlysState
         
         successMessage: string | undefined,
 
-        optionalBatchDeletionData: RecurringClassAppliedMonthlyDeletionResponse | undefined
+        optionalBatchDeletionData: ScheduledClassBatchDeletionDataModel | undefined
     
     };
     
@@ -91,12 +91,15 @@ export function recurringClassAppliedMonthlysReducer(
             }
        
         case RecurringClassAppliedMonthlyActionTypes.RecurringClassAppliedMonthlyDeletionSaved:
+          let deletionResponseData: RecurringClassAppliedMonthlyDeletionResponse = 
+            action.payload.recurringClassAppliedMonthlyDeletionResponse
             return adapter.removeOne(
-              action.payload.id,
+              deletionResponseData.id,
               {
                 ...state,
                 errorMessage: undefined,
-                successMessage: action.payload.message
+                successMessage: deletionResponseData.message,
+                optionalBatchDeletionData: deletionResponseData.scheduled_class_batch_deletion_data
               }
             );
        

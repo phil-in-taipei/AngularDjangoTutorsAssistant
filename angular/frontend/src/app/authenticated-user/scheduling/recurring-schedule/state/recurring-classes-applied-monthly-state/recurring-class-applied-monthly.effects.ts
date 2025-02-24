@@ -24,7 +24,7 @@ import {
 
 @Injectable()
 export class RecurringClassAppliedMonthlysEffects {
-/*
+
     deleteRecurringClassAppliedMonthly$ = createEffect(() => {
         return this.actions$
           .pipe(
@@ -32,10 +32,10 @@ export class RecurringClassAppliedMonthlysEffects {
               RecurringClassAppliedMonthlyActionTypes.RecurringClassAppliedMonthlyDeletionRequested
             ),
             mergeMap(action => this.recurringScheduleService
-              .deleteMonthlyTaskSchedulerAppliedQuarterly(action.payload.id)
+              .deleteRecurringClassAppliedMonthly(action.payload.id)
               .pipe(
                 map(recurringClassAppliedMonthlyDeletionResponse => new RecurringClassAppliedMonthlyDeletionSaved(
-                    recurringClassAppliedMonthlyDeletionResponse
+                  { recurringClassAppliedMonthlyDeletionResponse }
                 )),
                 catchError(err => {
                   this.store.dispatch(
@@ -47,7 +47,7 @@ export class RecurringClassAppliedMonthlysEffects {
             )
           )
       });
-
+    
     fetchRecurringClassesAppliedMonthlys$ = createEffect(() => {
         return this.actions$
           .pipe(
@@ -55,7 +55,7 @@ export class RecurringClassAppliedMonthlysEffects {
                 RecurringClassAppliedMonthlyActionTypes.RecurringClassAppliedMonthlysRequested
             ),
             mergeMap(action => this.recurringScheduleService
-                .fetchMonthyTaskAppliedQuarterlysByQuarter(
+                .fetchRecurringClassAppliedMonthlysByMonthAndYear(
                     action.payload.month, action.payload.year
                 )
               .pipe(
@@ -80,7 +80,7 @@ export class RecurringClassAppliedMonthlysEffects {
                 RecurringClassAppliedMonthlyActionTypes.RecurringClassAppliedMonthlyCreateSubmitted
             ),
             mergeMap(action => this.recurringScheduleService
-              .applyMonthlySchedulerToQuarterAndYear(
+              .applyRecurringClassToMonthAndYear(
                 action.payload.recurringClassAppliedMonthly,
               ).pipe(catchError(err => {
                 this.store.dispatch(
@@ -96,7 +96,7 @@ export class RecurringClassAppliedMonthlysEffects {
             )
           )
       });
-    */
+
       constructor(
         private actions$: Actions,
         private recurringScheduleService: RecurringScheduleService,

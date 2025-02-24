@@ -51,7 +51,7 @@ export class RecurringScheduleService {
 
   deleteRecurringClassAppliedMonthly(
     id: number
-  ): Observable<DeletionResponse> {
+  ): Observable<RecurringClassAppliedMonthlyDeletionResponse> {
     let token = this.authService.getAuthToken();
     return this.http.delete<RecurringClassAppliedMonthlyDeletionResponse>(
       `${environment.apiUrl}/api/monthly/applied-monthly/${id}`,
@@ -72,7 +72,7 @@ export class RecurringScheduleService {
 
 
   fetchRecurringClassAppliedMonthlysByMonthAndYear(
-    month: string, year: number
+    month: number, year: number
   ): Observable<RecurringClassAppliedMonthlyModel[]> {
     let token = this.authService.getAuthToken();
     return this.http.get<RecurringClassAppliedMonthlyModel[]>(
