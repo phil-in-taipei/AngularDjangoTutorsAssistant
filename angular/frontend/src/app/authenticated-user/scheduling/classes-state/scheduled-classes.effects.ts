@@ -15,7 +15,8 @@ import {
     LandingPageScheduleRequestCancelled, LandingPageScheduleRequested, 
     MonthlyClassesRequested, MonthlyClassesRequestCancelled, MonthlyClassesLoaded,
     RescheduleClassCancelled, RescheduleClassSubmitted, 
-    RescheduledClassUpdatedWithDailyBatchAdded,
+    RescheduledClassUpdatedWithDailyBatchAdded, ScheduledClassesBatchDeletionCancelled, 
+    ScheduledClassesBatchDeletionSaved, ScheduledClassesBatchDeletionSubmitted,
     ScheduleSingleClassCancelled, ScheduleSingleClassSubmitted,
     ScheduledSingleClassWithDailyBatchAdded,
     ScheduledClassesActionTypes, ScheduledClassDeletionCancelled,
@@ -57,6 +58,30 @@ export class ScheduledClassesEffects {
                   )
           )
       });
+
+      deleteBatchOfScheduledClasses$ = createEffect(() => {
+        return this.actions$
+            .pipe(
+                ofType<ScheduledClassesBatchDeletionSubmitted>(
+                  ScheduledClassesActionTypes.ScheduledClassesBatchDeletionSubmitted),
+                    mergeMap(action => this.scheduledClassesService
+                        .deleteBatchOfScheduledClasses(action.payload.obsolete_class_data)
+                            .pipe(
+                                map(
+                                    batchDeletionResponse => new ScheduledClassesBatchDeletionSaved(
+                                        batchDeletionResponse
+                                    )
+                                ),
+                                catchError(err => {
+                                    this.store.dispatch(
+                                        new ScheduledClassesBatchDeletionCancelled({ err })
+                                    );
+                                    return of();
+                                })
+                            )
+                    )
+            )
+        });
 
     fetchDailyClasses$ = createEffect(() => {
         return this.actions$
