@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import {select, Store} from '@ngrx/store';
 
@@ -24,7 +24,7 @@ import {
   templateUrl: './recurring-class-deletion-response.component.html',
   styleUrl: './recurring-class-deletion-response.component.css'
 })
-export class RecurringClassDeletionResponseComponent {
+export class RecurringClassDeletionResponseComponent implements OnInit {
 
   @Input() scheduledClassesOptionalDeletionData: ScheduledClassBatchDeletionDataModel;
   batchDeletionErrMsg$: Observable<string | undefined> = of(undefined);

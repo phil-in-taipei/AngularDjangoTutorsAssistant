@@ -1,10 +1,10 @@
 import { Action} from "@ngrx/store";
-import { Update } from "@ngrx/entity";
+//import { Update } from "@ngrx/entity";
 
 import { 
     CreateScheduledClassModel, ModifyClassStatusModel, 
-    ModifyClassStatusResponse,
-    RescheduleClassModel, ScheduledClassModel 
+    ModifyClassStatusResponse, RescheduleClassModel, 
+    ScheduledClassModel, ScheduledClassBatchDeletionDataModel
 } from "src/app/models/scheduled-class.model";
 
 export enum ScheduledClassesActionTypes {
@@ -26,6 +26,9 @@ export enum ScheduledClassesActionTypes {
     ScheduleSingleClassSubmitted = '[Schedule Single Class Page] Single Class Submitted',
     ScheduleSingleClassCancelled = '[Schedule Single Class Page] Schedule Single Class Cancelled',        
     ScheduledSingleClassWithDailyBatchAdded = '[Schedule Single Class Page] Newly Scheduled Class with Daily Batch Added',
+    ScheduledClassesBatchDeletionCancelled = '[Recurring Classes Applied Monthly Page] Monthly Batch Deletion of Scheduled Class Cancelled',
+    ScheduledClassesBatchDeletionSubmitted = '[Recurring Classes Applied Monthly Page] Monthy Batch Deletion of Scheduled Class Submitted',
+    ScheduledClassesBatchDeletionSaved = '[Recurring Classes Applied Monthly Page] Monthly Batch Deletion of Scheduled Class Saved',
     ScheduledClassesCleared = '[View User Logout] All Scheduled Classes Removed',
     ScheduledClassDeletionCancelled = '[Scheduled Classes API] Removal of Scheduled Class Cancelled',
     ScheduledClassDeletionRequested = '[Scheduled Classes Daily Page/Landing Page]  Removal of Scheduled Class Requested',
@@ -165,6 +168,25 @@ export class ScheduledClassesCleared implements Action {
     readonly type = ScheduledClassesActionTypes.ScheduledClassesCleared;
 }
 
+export class ScheduledClassesBatchDeletionCancelled implements Action {
+    readonly type = ScheduledClassesActionTypes.ScheduledClassesBatchDeletionCancelled;
+  
+    constructor(public payload: {  err: any }) {}
+}
+
+export class ScheduledClassesBatchDeletionSubmitted implements Action {
+    readonly type = ScheduledClassesActionTypes.ScheduledClassesBatchDeletionSubmitted;
+    constructor(public payload: { 
+        obsolete_class_data: ScheduledClassBatchDeletionDataModel 
+    }) {}
+}
+
+export class ScheduledClassesBatchDeletionSaved implements Action {
+    readonly type = ScheduledClassesActionTypes.ScheduledClassesBatchDeletionSaved;
+  
+    constructor(public payload: { ids: number[], message: string }) {}
+}
+
 export class ScheduledClassDeletionCancelled implements Action {
     readonly type = ScheduledClassesActionTypes.ScheduledClassDeletionCancelled;
   
@@ -197,10 +219,11 @@ export type ScheduledClassesActions = ClassStatusUpdateCancelled |
     DailyClassesRequested | LandingPageScheduleLoaded | 
     LandingPageScheduleRequestCancelled | LandingPageScheduleRequested | 
     MonthlyClassesRequested | MonthlyClassesRequestCancelled |
-    MonthlyClassesLoaded |
-    RescheduleClassCancelled | RescheduleClassSubmitted |
-    RescheduledClassUpdatedWithDailyBatchAdded | ScheduleSingleClassSubmitted |
-    ScheduleSingleClassCancelled | ScheduledSingleClassWithDailyBatchAdded |
-    ScheduledClassesCleared | ScheduledClassDeletionCancelled |
+    MonthlyClassesLoaded | RescheduleClassCancelled | 
+    RescheduleClassSubmitted | RescheduledClassUpdatedWithDailyBatchAdded | 
+    ScheduleSingleClassSubmitted | ScheduleSingleClassCancelled | 
+    ScheduledSingleClassWithDailyBatchAdded | ScheduledClassesCleared | 
+    ScheduledClassDeletionCancelled | ScheduledClassesBatchDeletionCancelled | 
+    ScheduledClassesBatchDeletionSubmitted | ScheduledClassesBatchDeletionSaved |
     ScheduledClassDeletionRequested | ScheduledClassDeletionSaved | 
     ScheduledClassesMessagesCleared | UpdatedPurchasedHoursCleared;

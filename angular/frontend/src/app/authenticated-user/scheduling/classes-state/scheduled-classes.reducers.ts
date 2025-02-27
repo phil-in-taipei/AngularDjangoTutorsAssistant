@@ -225,7 +225,25 @@ export function scheduledClassesReducer(
                         successMessage: action.payload.message
                     }
                 );
-
+        
+            case ScheduledClassesActionTypes.ScheduledClassesBatchDeletionCancelled:
+                    let batchDeletionErrMsg: string = "Error! Batch Deletion Failed!";
+                    if (action.payload.err.error.Error) {
+                        batchDeletionErrMsg = action.payload.err.error.Error;
+                    }
+                    return {
+                        ...state,  successMessage: undefined,
+                        errorMessage: batchDeletionErrMsg
+                    }
+                                    
+            case ScheduledClassesActionTypes.ScheduledClassesBatchDeletionSaved:
+                return adapter.removeMany(action.payload.ids,  
+                    { 
+                        ...state,
+                        errorMessage: undefined,
+                        successMessage: action.payload.message
+                    }
+                );
      
             case ScheduledClassesActionTypes.ScheduledClassesMessagesCleared:
                 return {
