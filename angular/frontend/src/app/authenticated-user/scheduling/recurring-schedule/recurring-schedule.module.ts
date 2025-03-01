@@ -36,7 +36,7 @@ import {
 } from './state/recurring-classes-applied-monthly-state/recurring-class-applied-monthly.reducers';
 import { 
   RecurringClassDeletionResponseComponent 
-} from './list/recurring-class-deletion-response/recurring-class-deletion-response.component';
+} from './applied-monthly/recurring-class-deletion-response/recurring-class-deletion-response.component';
 import { recurringClassesReducer } from './state/recurring-schedule-state/recurring-schedule.reducers';
 import { RecurringClassesEffects } from './state/recurring-schedule-state/recurring-schedule.effects';
 import { ScheduledClassesEffects } from '../classes-state/scheduled-classes.effects';

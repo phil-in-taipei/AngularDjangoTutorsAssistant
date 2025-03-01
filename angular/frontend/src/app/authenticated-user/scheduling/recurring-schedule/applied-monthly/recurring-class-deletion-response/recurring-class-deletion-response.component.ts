@@ -2,12 +2,18 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import {select, Store} from '@ngrx/store';
 
-//import { 
-//  RecurringClassesAppliedMonthlyMessagesCleared 
-//} from '../../state/recurring-classes-applied-monthly-state/recurring-class-applied-monthly.actions';
+import { 
+  RecurringClassesAppliedMonthlyMessagesCleared 
+} from '../../state/recurring-classes-applied-monthly-state/recurring-class-applied-monthly.actions';
+import { 
+  RecurringClassAppliedMonthlysState 
+} from '../../state/recurring-classes-applied-monthly-state/recurring-class-applied-monthly.reducers';
 import { 
   ScheduledClassBatchDeletionDataModel 
 } from 'src/app/models/scheduled-class.model';
+import { 
+  ScheduledClassesBatchDeletionSubmitted 
+} from '../../../classes-state/scheduled-classes.actions';
 import { 
   ScheduledClassesMessagesCleared 
 } from '../../../classes-state/scheduled-classes.actions';
@@ -30,27 +36,32 @@ export class RecurringClassDeletionResponseComponent implements OnInit {
   batchDeletionErrMsg$: Observable<string | undefined> = of(undefined);
   batchDeletionSuccessMsg$: Observable<string | undefined> = of(undefined);
 
-  constructor(private store: Store<ScheduledClassesState>) { }
+  constructor(
+    private recurringClassAppliedMonthlysStore: Store<RecurringClassAppliedMonthlysState>,
+    private scheduledClassesStore: Store<ScheduledClassesState>
+  ) { }
 
   ngOnInit(): void {
-    this.batchDeletionErrMsg$ = this.store.pipe(
+    this.batchDeletionErrMsg$ = this.scheduledClassesStore.pipe(
       select(scheduledClassesErrorMsg)
     );
-    this.batchDeletionSuccessMsg$ = this.store.pipe(
+    this.batchDeletionSuccessMsg$ = this.scheduledClassesStore.pipe(
       select(scheduledClassesSuccessMsg)
     );
   }
 
   onClearStatusMsgs() {
-    this.store.dispatch(new ScheduledClassesMessagesCleared());
+    this.scheduledClassesStore.dispatch(new ScheduledClassesMessagesCleared());
+    this.recurringClassAppliedMonthlysStore.dispatch(new RecurringClassesAppliedMonthlyMessagesCleared())
   }
 
   onDeleteMonthlyBatch() {
     console.log(this.scheduledClassesOptionalDeletionData.obsolete_class_ids);
     console.log(this.scheduledClassesOptionalDeletionData.obsolete_class_strings);
     let payload = {
-      obsolete_class_ids: this.scheduledClassesOptionalDeletionData.obsolete_class_ids
+      obsolete_class_data: this.scheduledClassesOptionalDeletionData
     }
+    this.scheduledClassesStore.dispatch(new ScheduledClassesBatchDeletionSubmitted(payload));
   }
 
 }

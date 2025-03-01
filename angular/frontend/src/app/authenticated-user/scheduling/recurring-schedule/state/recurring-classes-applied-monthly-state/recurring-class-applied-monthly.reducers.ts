@@ -117,7 +117,8 @@ export function recurringClassAppliedMonthlysReducer(
             return {
               ...state,
               successMessage: undefined,
-              errorMessage: undefined
+              errorMessage: undefined,
+              optionalBatchDeletionData: undefined
             }
        
         default: {
