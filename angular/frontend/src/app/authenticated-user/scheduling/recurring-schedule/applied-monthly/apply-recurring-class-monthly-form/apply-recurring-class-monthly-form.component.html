@@ -1,1 +1,54 @@
-<p>apply-recurring-class-monthly-form works!</p>
+<div *ngIf="errorMsg$ | async as monthlyErrMsg">
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <h6 class="text-danger">{{ monthlyErrMsg }}</h6>
+    <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+    data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+</div>
+
+<div *ngIf="successMsg$ | async as monthySuccessMsg">
+  <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+    <h4>{{ monthySuccessMsg }}</h4>
+    <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+    data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+</div>
+
+<h5>Apply a Recurring Class</h5>
+<div *ngIf="recurringClasses$ | async as recurringClasses">
+  <form (submit)="onSubmitRCAM(rCAMForm)" #rCAMForm="ngForm">
+    <div>
+      <label>Recurring Class</label>
+      <select
+      name="recurring_class"
+      class="form-control"
+      ngModel
+      required
+      #recurring_class="ngModel"
+      >
+      <option *ngFor="let recurringClass of recurringClasses"
+          [value]=recurringClass.id
+      >
+      <app-student-or-class-templ-string
+          [studentOrClassId]=recurringClass.student_or_class
+      >
+      </app-student-or-class-templ-string>
+       at
+      {{ recurringClass.recurring_start_time.slice(0, -3) }} --
+      {{ recurringClass.recurring_finish_time.slice(0, -3) }} on
+      {{ recurringClass.day_of_week_string }}
+   
+      </option>
+      </select>
+      <div *ngIf="recurring_class.touched && recurring_class.invalid">
+        Recurring Class is invalid.
+      </div>
+    </div>
+    <br />
+    <div>
+      <button class="btn btn-outline-secondary" type="submit">
+        Submit
+      </button>
+    </div>
+  </form>
+</div>

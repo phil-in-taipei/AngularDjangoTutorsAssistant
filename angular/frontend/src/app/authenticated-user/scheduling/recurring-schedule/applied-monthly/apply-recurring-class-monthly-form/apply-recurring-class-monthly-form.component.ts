@@ -37,7 +37,7 @@ export class ApplyRecurringClassMonthlyFormComponent implements OnInit {
   recurringClasses$: Observable<RecurringClassModel[] | undefined> = of(undefined);
   @Input() month:number;
   @Input() year:number;
-  errMsg$: Observable<string | undefined>;
+  errorMsg$: Observable<string | undefined>;
   successMsg$: Observable<string | undefined>;
 
 
@@ -51,7 +51,7 @@ export class ApplyRecurringClassMonthlyFormComponent implements OnInit {
     this.rCAMStore.dispatch(
       new RecurringClassesAppliedMonthlyMessagesCleared()
     );
-    this.errMsg$ = this.rCAMStore.pipe(
+    this.errorMsg$ = this.rCAMStore.pipe(
       select(recurringClassAppliedMonthlysErrorMsg)
     );
     this.successMsg$ = this.rCAMStore.pipe(
