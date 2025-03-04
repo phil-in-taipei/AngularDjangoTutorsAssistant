@@ -30,7 +30,7 @@ export class RecurringScheduleService {
   ): Observable<RecurringClassAppliedMonthlyModel>  {
     let token = this.authService.getAuthToken();
     return this.http.post<RecurringClassAppliedMonthlyModel>(
-      `${environment.apiUrl}/api/recurring/applied-monthly`, submissionForm,
+      `${environment.apiUrl}/api/recurring/applied-monthly/`, submissionForm,
       {
         headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
       });

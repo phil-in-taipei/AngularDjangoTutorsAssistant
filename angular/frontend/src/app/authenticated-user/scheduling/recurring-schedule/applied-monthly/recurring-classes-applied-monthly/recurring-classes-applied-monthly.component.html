@@ -1,1 +1,56 @@
-<p>recurring-classes-applied-monthly works!</p>
+<div class="text-center">
+    <button class="btn btn-sm btn-outline-secondary text"
+    [routerLink]="['/user/scheduling/monthly']">
+        Select Another Month
+    </button>
+  </div>
+  <hr class="thick-br"/>
+  <h2>
+    Batch Booking for {{ monthsAndIntegers[monthFromRouteData - 1][0] }} {{ yearFromRouteData }}
+</h2>
+  <div *ngIf="rCAMs$ | async as recurringClasses" class="container content">
+    <div class="text-center">
+      <button class="btn btn-sm btn-outline-secondary" type="button"
+        (click)="toggleApplySchedulerSubmitForm()">
+        {{ showApplyRecurringClassSubmitForm ? "Never Mind, I'll submit one next time for "
+        : "Click Here to apply a Recurring Class to " }} {{ monthsAndIntegers[monthFromRouteData - 1][0] }}
+      </button>
+      <br />
+    </div>
+    <div [hidden]="!showApplyRecurringClassSubmitForm"
+    [style.opacity]="!showApplyRecurringClassSubmitForm ? '0' : '1'"
+    [style.visibility]="!showApplyRecurringClassSubmitForm ? 'hidden' : 'visible'">
+      <hr class="thick-br"/>
+      <app-apply-recurring-class-monthly-form
+        [month]=monthFromRouteData
+        [year]=yearFromRouteData>
+      </app-apply-recurring-class-monthly-form>
+    </div>
+    <hr class="thick-br"/>
+</div>
+
+<div *ngIf="rCAMs$ | async as recurringClassesAppliedMonthly" class="container content">
+  <div class="large-scr-tbl">
+    <div class="container">
+      <table class="table">
+          <thead>
+            <tr class="row">
+              <th class="col"><h5>Day</h5></th>
+              <th class="col"><h5>Start</h5></th>
+              <th class="col"><h5>End</h5></th>
+              <th class="col"><h5>Student</h5></th>
+              <th class="col" id="edit"><h5>Remove</h5></th>
+            </tr>
+          </thead>
+          <tbody>
+          <div *ngFor="let recurringClassAppliedMonthly of recurringClassesAppliedMonthly" >
+            <app-recurring-class-applied-monthly [recurringClassAppliedMonthly]=recurringClassAppliedMonthly>
+            </app-recurring-class-applied-monthly>
+          </div>
+          </tbody>
+        </table>
+    </div>
+  </div>
+</div>
+
+  

@@ -3,6 +3,9 @@ import { Observable, of } from 'rxjs';
 import { ActivatedRoute } from "@angular/router";
 import { select, Store } from '@ngrx/store';
 
+import { 
+  monthsAndIntegers 
+} from 'src/app/shared-utils/date-time.util';
 import { RecurringClassAppliedMonthlyModel } from 'src/app/models/recurring-schedule.model';
 import { 
   RecurringClassAppliedMonthlysCleared,
@@ -31,6 +34,7 @@ export class RecurringClassesAppliedMonthlyComponent implements OnInit {
   rCAMs$: Observable<RecurringClassAppliedMonthlyModel[] | undefined> = of(undefined);
   monthFromRouteData:number;
   yearFromRouteData:number;
+  monthsAndIntegers: [string, number][] = monthsAndIntegers;
   showApplyRecurringClassSubmitForm:boolean = false;
 
 
@@ -61,5 +65,10 @@ export class RecurringClassesAppliedMonthlyComponent implements OnInit {
       this.showApplyRecurringClassSubmitForm = true;
     }
   }
+
+
+  trackByFn(index: number, item: any) {
+    return item.id;
+  }  
 
 }
