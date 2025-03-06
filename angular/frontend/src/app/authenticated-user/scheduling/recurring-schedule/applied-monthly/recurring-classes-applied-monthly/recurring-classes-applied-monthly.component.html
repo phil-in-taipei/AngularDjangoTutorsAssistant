@@ -1,13 +1,14 @@
+<br />
 <div class="text-center">
     <button class="btn btn-sm btn-outline-secondary text"
-    [routerLink]="['/user/scheduling/monthly']">
+    [routerLink]="['/authenticated-user/scheduling/recurring-schedule/select-month-year']">
         Select Another Month
     </button>
   </div>
   <hr class="thick-br"/>
-  <h2>
+  <h3>
     Batch Booking for {{ monthsAndIntegers[monthFromRouteData - 1][0] }} {{ yearFromRouteData }}
-</h2>
+  </h3>
   <div *ngIf="rCAMs$ | async as recurringClasses" class="container content">
     <div class="text-center">
       <button class="btn btn-sm btn-outline-secondary" type="button"
@@ -29,11 +30,23 @@
     <hr class="thick-br"/>
 </div>
 
+<ng-container *ngIf="{value: rCAMsLoaded$ | async} as context">
+  <div *ngIf="!context.value">
+    <div class="text-center">
+      <div class="spinner-border text-secondary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <br />
+    </div>
+    <br />
+  </div>
+</ng-container>
+
 <div *ngIf="rCAMs$ | async as recurringClassesAppliedMonthly" class="container content">
   <div class="large-scr-tbl">
     <div class="container">
-      <table class="table">
-          <thead>
+      <table class="table bg-transparent">
+          <thead class="table bg-transparent">
             <tr class="row">
               <th class="col"><h5>Day</h5></th>
               <th class="col"><h5>Start</h5></th>
@@ -42,9 +55,13 @@
               <th class="col" id="edit"><h5>Remove</h5></th>
             </tr>
           </thead>
-          <tbody>
-          <div *ngFor="let recurringClassAppliedMonthly of recurringClassesAppliedMonthly" >
-            <app-recurring-class-applied-monthly [recurringClassAppliedMonthly]=recurringClassAppliedMonthly>
+          <tbody class="bg-transparent">
+          <div class="bg-transparent"
+            *ngFor="let recurringClassAppliedMonthly of recurringClassesAppliedMonthly" 
+          >
+            <app-recurring-class-applied-monthly 
+              class="bg-transparent"
+              [recurringClassAppliedMonthly]=recurringClassAppliedMonthly>
             </app-recurring-class-applied-monthly>
           </div>
           </tbody>

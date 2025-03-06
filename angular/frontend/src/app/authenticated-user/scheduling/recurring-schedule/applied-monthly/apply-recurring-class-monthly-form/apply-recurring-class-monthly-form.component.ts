@@ -77,9 +77,9 @@ export class ApplyRecurringClassMonthlyFormComponent implements OnInit {
       form.reset();
     }
     let submissionForm: RecurringClassAppliedMonthlyCreateModel = {
-        recurring_class: form.value.monthlyScheduler,
         scheduling_month: this.month,
-        scheduling_year: this.year
+        scheduling_year: this.year,
+        recurring_class: form.value.recurring_class,
     }
     console.log(submissionForm);
     this.rCAMStore.dispatch(new RecurringClassAppliedMonthlyCreateSubmitted(

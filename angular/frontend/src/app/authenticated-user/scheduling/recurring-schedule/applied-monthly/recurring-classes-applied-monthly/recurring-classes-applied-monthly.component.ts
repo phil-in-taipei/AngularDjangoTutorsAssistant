@@ -19,7 +19,7 @@ import {
   ScheduledClassesCleared 
 } from '../../../classes-state/scheduled-classes.actions';
 import { 
-  selectAllRecurringClassAppliedMonthlys 
+  selectAllRecurringClassAppliedMonthlys, selectRecurringClassAppliedMonthlysLoaded 
 } from '../../state/recurring-classes-applied-monthly-state/recurring-class-applied-monthly.selectors';
 
 
@@ -32,6 +32,7 @@ import {
 export class RecurringClassesAppliedMonthlyComponent implements OnInit {
 
   rCAMs$: Observable<RecurringClassAppliedMonthlyModel[] | undefined> = of(undefined);
+  rCAMsLoaded$: Observable<boolean> = of(false);
   monthFromRouteData:number;
   yearFromRouteData:number;
   monthsAndIntegers: [string, number][] = monthsAndIntegers;
@@ -55,6 +56,9 @@ export class RecurringClassesAppliedMonthlyComponent implements OnInit {
     }));
     this.rCAMs$ = this.rCAMStore.pipe(
       select(selectAllRecurringClassAppliedMonthlys)
+    );
+    this.rCAMsLoaded$ = this.rCAMStore.pipe(
+      select(selectRecurringClassAppliedMonthlysLoaded)
     );
   }
 
