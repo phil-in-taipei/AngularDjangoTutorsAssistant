@@ -14,12 +14,15 @@ import {
 import { 
   RecurringClassAppliedMonthlysState 
 } from '../../state/recurring-classes-applied-monthly-state/recurring-class-applied-monthly.reducers';
+import { ScheduledClassBatchDeletionDataModel } from 'src/app/models/scheduled-class.model';
 import { ScheduledClassesState } from '../../../classes-state/scheduled-classes.reducers';
 import { 
   ScheduledClassesCleared 
 } from '../../../classes-state/scheduled-classes.actions';
 import { 
-  selectAllRecurringClassAppliedMonthlys, selectRecurringClassAppliedMonthlysLoaded 
+  optionalScheduledClassBatchDeletionData,
+  selectAllRecurringClassAppliedMonthlys, 
+  selectRecurringClassAppliedMonthlysLoaded 
 } from '../../state/recurring-classes-applied-monthly-state/recurring-class-applied-monthly.selectors';
 
 
@@ -35,6 +38,7 @@ export class RecurringClassesAppliedMonthlyComponent implements OnInit {
   rCAMsLoaded$: Observable<boolean> = of(false);
   monthFromRouteData:number;
   yearFromRouteData:number;
+  batchDeletionData$: Observable<ScheduledClassBatchDeletionDataModel | undefined> = of(undefined);
   monthsAndIntegers: [string, number][] = monthsAndIntegers;
   showApplyRecurringClassSubmitForm:boolean = false;
 
@@ -60,6 +64,9 @@ export class RecurringClassesAppliedMonthlyComponent implements OnInit {
     this.rCAMsLoaded$ = this.rCAMStore.pipe(
       select(selectRecurringClassAppliedMonthlysLoaded)
     );
+    this.batchDeletionData$ = this.rCAMStore.pipe(
+      select(optionalScheduledClassBatchDeletionData)
+    )
   }
 
   toggleApplySchedulerSubmitForm() {

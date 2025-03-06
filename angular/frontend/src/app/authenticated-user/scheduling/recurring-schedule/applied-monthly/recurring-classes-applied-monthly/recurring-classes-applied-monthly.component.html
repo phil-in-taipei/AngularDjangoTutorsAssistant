@@ -30,6 +30,12 @@
     <hr class="thick-br"/>
 </div>
 
+<div *ngIf="batchDeletionData$ | async as batchDeletionData" class="container content">
+    <app-recurring-class-deletion-response 
+      [scheduledClassesOptionalDeletionData]=batchDeletionData>
+    </app-recurring-class-deletion-response>
+</div>
+
 <ng-container *ngIf="{value: rCAMsLoaded$ | async} as context">
   <div *ngIf="!context.value">
     <div class="text-center">

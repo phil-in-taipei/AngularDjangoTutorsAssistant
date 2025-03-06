@@ -54,7 +54,7 @@ export class RecurringScheduleService {
   ): Observable<RecurringClassAppliedMonthlyDeletionResponse> {
     let token = this.authService.getAuthToken();
     return this.http.delete<RecurringClassAppliedMonthlyDeletionResponse>(
-      `${environment.apiUrl}/api/monthly/applied-monthly/${id}`,
+      `${environment.apiUrl}/api/recurring/applied-monthly/${id}/`,
         {
           headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
         })
