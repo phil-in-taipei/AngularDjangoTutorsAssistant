@@ -1,1 +1,21 @@
-<p>recurring-class-deletion-response works!</p>
+<h4 class="text-danger">Monthly Class Deleted!</h4>
+<h4 class="text-danger">Would you like to remove the following classes from the schedule?</h4>
+<h6 class="text-danger">
+    {{ scheduledClassesOptionalDeletionData.obsolete_class_strings }}
+</h6>
+<div class="row">
+  <div class="text-center col">
+    <button class="btn btn-sm btn-outline-danger" type="button"
+      (click)="onDeleteMonthlyBatch()">
+      Yes! Delete from Schedule
+    </button>
+    <br />
+  </div>
+  <div class="text-center col">
+    <button class="btn btn-sm btn-outline-secondary" type="button"
+      (click)="onClearStatusMsgs()">
+      No, Thank You
+    </button>
+    <br />
+  </div>
+</div>

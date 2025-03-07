@@ -9,7 +9,8 @@ import {
 import { RecurringClassAppliedMonthlyModel } from 'src/app/models/recurring-schedule.model';
 import { 
   RecurringClassAppliedMonthlysCleared,
-  RecurringClassAppliedMonthlysRequested 
+  RecurringClassAppliedMonthlysRequested, 
+  RecurringClassesAppliedMonthlyMessagesCleared 
 } from '../../state/recurring-classes-applied-monthly-state/recurring-class-applied-monthly.actions';
 import { 
   RecurringClassAppliedMonthlysState 
@@ -17,8 +18,11 @@ import {
 import { ScheduledClassBatchDeletionDataModel } from 'src/app/models/scheduled-class.model';
 import { ScheduledClassesState } from '../../../classes-state/scheduled-classes.reducers';
 import { 
-  ScheduledClassesCleared 
+  ScheduledClassesCleared, ScheduledClassesMessagesCleared 
 } from '../../../classes-state/scheduled-classes.actions';
+import { 
+  scheduledClassesSuccessMsg, scheduledClassesErrorMsg 
+} from '../../../classes-state/scheduled-classes.selectors';
 import { 
   optionalScheduledClassBatchDeletionData,
   selectAllRecurringClassAppliedMonthlys, 
@@ -39,6 +43,8 @@ export class RecurringClassesAppliedMonthlyComponent implements OnInit {
   monthFromRouteData:number;
   yearFromRouteData:number;
   batchDeletionData$: Observable<ScheduledClassBatchDeletionDataModel | undefined> = of(undefined);
+  batchDeletionErrMsg$: Observable<string | undefined> = of(undefined);
+  batchDeletionSuccessMsg$: Observable<string | undefined> = of(undefined);
   monthsAndIntegers: [string, number][] = monthsAndIntegers;
   showApplyRecurringClassSubmitForm:boolean = false;
 
@@ -66,7 +72,19 @@ export class RecurringClassesAppliedMonthlyComponent implements OnInit {
     );
     this.batchDeletionData$ = this.rCAMStore.pipe(
       select(optionalScheduledClassBatchDeletionData)
-    )
+    );
+    this.batchDeletionErrMsg$ = this.scheduledClassesStore.pipe(
+      select(scheduledClassesErrorMsg)
+    );
+    this.batchDeletionSuccessMsg$ = this.scheduledClassesStore.pipe(
+      select(scheduledClassesSuccessMsg)
+    );
+  }
+
+
+  onClearStatusMsgs() {
+    this.scheduledClassesStore.dispatch(new ScheduledClassesMessagesCleared());
+    this.rCAMStore.dispatch(new RecurringClassesAppliedMonthlyMessagesCleared())
   }
 
   toggleApplySchedulerSubmitForm() {

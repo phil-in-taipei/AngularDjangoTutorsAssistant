@@ -30,6 +30,22 @@
     <hr class="thick-br"/>
 </div>
 
+<div *ngIf="batchDeletionErrMsg$ | async as classErrMsg" class="container">
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <h4 class="text-danger">{{ classErrMsg }}</h4>
+    <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+    data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+</div>
+
+<div *ngIf="batchDeletionSuccessMsg$ | async as classSuccessMsg" class="container">
+  <div class="alert alert-primary alert-dismissible fade show" role="alert">
+    <h6>{{ classSuccessMsg }}</h6>
+    <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+    data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+</div>
+
 <div *ngIf="batchDeletionData$ | async as batchDeletionData" class="container content">
     <app-recurring-class-deletion-response 
       [scheduledClassesOptionalDeletionData]=batchDeletionData>

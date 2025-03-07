@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import {select, Store} from '@ngrx/store';
+import { Store } from '@ngrx/store';
 
 import { 
   RecurringClassesAppliedMonthlyMessagesCleared 
@@ -15,14 +14,9 @@ import {
   ScheduledClassesBatchDeletionSubmitted 
 } from '../../../classes-state/scheduled-classes.actions';
 import { 
-  ScheduledClassesMessagesCleared 
-} from '../../../classes-state/scheduled-classes.actions';
-import { 
   ScheduledClassesState 
 } from '../../../classes-state/scheduled-classes.reducers';
-import { 
-  scheduledClassesSuccessMsg, scheduledClassesErrorMsg 
-} from '../../../classes-state/scheduled-classes.selectors';
+
 
 @Component({
   selector: 'app-recurring-class-deletion-response',
@@ -33,8 +27,6 @@ import {
 export class RecurringClassDeletionResponseComponent implements OnInit {
 
   @Input() scheduledClassesOptionalDeletionData: ScheduledClassBatchDeletionDataModel;
-  batchDeletionErrMsg$: Observable<string | undefined> = of(undefined);
-  batchDeletionSuccessMsg$: Observable<string | undefined> = of(undefined);
 
   constructor(
     private recurringClassAppliedMonthlysStore: Store<RecurringClassAppliedMonthlysState>,
@@ -42,16 +34,10 @@ export class RecurringClassDeletionResponseComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.batchDeletionErrMsg$ = this.scheduledClassesStore.pipe(
-      select(scheduledClassesErrorMsg)
-    );
-    this.batchDeletionSuccessMsg$ = this.scheduledClassesStore.pipe(
-      select(scheduledClassesSuccessMsg)
-    );
+
   }
 
   onClearStatusMsgs() {
-    this.scheduledClassesStore.dispatch(new ScheduledClassesMessagesCleared());
     this.recurringClassAppliedMonthlysStore.dispatch(new RecurringClassesAppliedMonthlyMessagesCleared())
   }
 
@@ -62,6 +48,7 @@ export class RecurringClassDeletionResponseComponent implements OnInit {
       obsolete_class_data: this.scheduledClassesOptionalDeletionData
     }
     this.scheduledClassesStore.dispatch(new ScheduledClassesBatchDeletionSubmitted(payload));
+    this.onClearStatusMsgs();
   }
 
 }
