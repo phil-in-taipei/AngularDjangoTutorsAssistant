@@ -65,7 +65,7 @@ class RecurringClassAppliedMonthlyViewSet(viewsets.ModelViewSet):
         monthly_booking_date_list = create_date_list(
             year=recurring_for_specific_month_obj.scheduling_year, 
             month=recurring_for_specific_month_obj.scheduling_month, 
-            day_of_week=recurring_class.day_of_week
+            day_of_week=recurring_for_specific_month_obj.recurring_class.recurring_day_of_week
         )
         obsolete_classes_to_be_deleted = get_classes_for_deletion_for_specified_month(
             date_list=monthly_booking_date_list,
@@ -76,7 +76,7 @@ class RecurringClassAppliedMonthlyViewSet(viewsets.ModelViewSet):
         recurring_for_specific_month_obj.delete()
         return Response(
                 {
-                    "message": "Recurring monthly class successfully deleted",
+                    "message": "Recurring class applied monthly successfully deleted",
                     "id": deleted_recurring_applied_monthly_id,
                     "scheduled_class_batch_deletion_data": {
                         "obsolete_class_strings": ', '.join(list_of_classes_to_be_deleted_strings),
