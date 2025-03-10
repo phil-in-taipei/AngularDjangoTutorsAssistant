@@ -235,9 +235,21 @@ class UnconfirmedStatusClassesViewSet(generics.ListAPIView):
 
     def get_queryset(self):
         today = datetime.date.today()
-        queryset = self.model.objects.filter(
+        # First, get all dates before today that have at least one 'scheduled' class
+        dates_with_scheduled_classes = self.model.objects.filter(
             teacher__user=self.request.user,
             date__lt=today,
             class_status='scheduled'
+        ).values_list('date', flat=True).distinct()
+
+        # Then, get all classes on those dates, regardless of status
+        queryset = self.model.objects.filter(
+            teacher__user=self.request.user,
+            date__in=dates_with_scheduled_classes
         )
+        #queryset = self.model.objects.filter(
+        #    teacher__user=self.request.user,
+        #    date__lt=today,
+        #    class_status='scheduled'
+        #)
         return queryset.order_by('date', 'start_time')
