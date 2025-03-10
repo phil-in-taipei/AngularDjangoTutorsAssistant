@@ -18,11 +18,14 @@ import {
     RescheduledClassUpdatedWithDailyBatchAdded, ScheduledClassesBatchDeletionCancelled, 
     ScheduledClassesBatchDeletionSaved, ScheduledClassesBatchDeletionSubmitted,
     ScheduleSingleClassCancelled, ScheduleSingleClassSubmitted,
-    ScheduledSingleClassWithDailyBatchAdded,
-    ScheduledClassesActionTypes, ScheduledClassDeletionCancelled,
-    ScheduledClassDeletionRequested, ScheduledClassDeletionSaved
+    ScheduledSingleClassWithDailyBatchAdded, ScheduledClassesActionTypes, 
+    ScheduledClassDeletionCancelled, ScheduledClassDeletionRequested, 
+    ScheduledClassDeletionSaved, UnconfirmedScheduledClassesLoaded,
+    UnconfirmedScheduledClassesRequestCancelled, UnconfirmedScheduledClassesRequested
 } from './scheduled-classes.actions';
-import { landingPageScheduleLoaded } from './scheduled-classes.selectors';
+import { 
+    landingPageScheduleLoaded, unconfirmedScheduledClassesLoaded 
+} from './scheduled-classes.selectors';
 import { ClassesService } from '../classes-service/classes.service';
 import { ScheduledClassesState } from './scheduled-classes.reducers';
 
@@ -146,6 +149,28 @@ export class ScheduledClassesEffects {
                             })
                         )
                 )
+          )
+      });
+
+    fetchUnconfirmedScheduledClasses$ = createEffect(() => {
+        return this.actions$
+          .pipe(
+            ofType<UnconfirmedScheduledClassesRequested>(
+                ScheduledClassesActionTypes.UnconfirmedScheduledClassesRequested
+            ),
+            withLatestFrom(this.store.pipe(select(unconfirmedScheduledClassesLoaded))),
+            filter(([action, unconfirmedScheduledClassesLoaded]) => !unconfirmedScheduledClassesLoaded),
+            mergeMap(action => this.scheduledClassesService.fetchUnconfirmedStatusClasses()
+              .pipe(
+                map(scheduledClasses => new UnconfirmedScheduledClassesLoaded({ scheduledClasses })),
+                catchError(err => {
+                  this.store.dispatch(
+                      new UnconfirmedScheduledClassesRequestCancelled({ err })
+                  );
+                  return of();
+                })
+              )
+            )
           )
       });
 

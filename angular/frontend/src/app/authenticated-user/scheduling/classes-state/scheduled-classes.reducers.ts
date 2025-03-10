@@ -47,6 +47,7 @@ export interface ScheduledClassesState extends EntityState<ScheduledClassModel> 
     monthlyScheduledClassesLoaded: boolean,
     landingPageScheduledClassesLoaded: boolean,
     successMessage: string | undefined,
+    unconfirmedScheduledClassesLoaded: boolean,
     updatedPurchasedHours: StudentOrClassConfirmationModificationResponse | undefined;
 };
 
@@ -64,6 +65,7 @@ export const initialScheduledClassesState: ScheduledClassesState =
         monthlyScheduledClassesLoaded: false,
         landingPageScheduledClassesLoaded: false,
         successMessage: undefined,
+        unconfirmedScheduledClassesLoaded: false,
         updatedPurchasedHours: undefined
     });
 
@@ -254,7 +256,28 @@ export function scheduledClassesReducer(
             case ScheduledClassesActionTypes.UpdatedPurchasedHoursCleared:
                 return {
                     ...state, updatedPurchasedHours: undefined
-                }         
+                }   
+                
+
+            case ScheduledClassesActionTypes.UnconfirmedScheduledClassesLoaded:
+                return adapter.upsertMany(action.payload.scheduledClasses, 
+                    {
+                        ...state,
+                        errorMessage: undefined,
+                        unconfirmedScheduledClassesLoaded: true
+                    }
+                );
+            
+            case ScheduledClassesActionTypes.UnconfirmedScheduledClassesRequestCancelled:
+                let unconfirmedClassesErrorMessage: string = "Error fetching unconfirmed past scheduled classes!";
+                if (action.payload.err.error.message) {
+                    landingPageErrorMessage = action.payload.err.error.Error;
+                }
+                return {
+                    ...state,  successMessage: undefined,
+                    errorMessage: unconfirmedClassesErrorMessage
+                }
+    
             
             default: {
                 return state

@@ -82,6 +82,10 @@ export class ClassesService {
     return this.fetchScheduledClassesByDate(date);
   }
 
+  // note: in addition to the individual classes with "scheduled" status prior to the current
+  // date, the api call will also fetch all classes on the given dates with one class meeting
+  // the condition of having a "scheduled" status. This is due to the way scheduled classes are
+  // cached and retrieved by date in ngrx state
   fetchUnconfirmedStatusClasses(): Observable<ScheduledClassModel[]> {
     let token = this.authService.getAuthToken();
     return this.http.get<ScheduledClassModel[]>(

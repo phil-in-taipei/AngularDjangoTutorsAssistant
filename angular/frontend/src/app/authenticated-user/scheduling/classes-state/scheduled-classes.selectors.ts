@@ -36,6 +36,17 @@ export const selectScheduledClassesByMonthLoaded = createSelector(
     scheduledClassesState => scheduledClassesState.monthlyScheduledClassesLoaded
 );
 
+export const selectUnconfirmedPastScheduledClasses = (currentDate: string) => createSelector(
+    selectAllScheduledClasses,
+    scheduledClassesState => {
+      return scheduledClassesState.filter(
+        scheduledClass => 
+          scheduledClass.date < currentDate && 
+          scheduledClass.class_status === 'scheduled'
+      );
+    }
+);
+
 export const fetchingClassesInProgress = createSelector(
     selectScheduledClassesState,
     scheduledClassesState => scheduledClassesState.fetchingClassesInProgress
@@ -59,4 +70,9 @@ export const scheduledClassesSuccessMsg = createSelector(
 export const updatedPurchasedHours = createSelector(
     selectScheduledClassesState,
     scheduledClassesState => scheduledClassesState.updatedPurchasedHours
+);
+
+export const unconfirmedScheduledClassesLoaded = createSelector(
+    selectScheduledClassesState,
+    scheduledClassesState => scheduledClassesState.unconfirmedScheduledClassesLoaded
 );

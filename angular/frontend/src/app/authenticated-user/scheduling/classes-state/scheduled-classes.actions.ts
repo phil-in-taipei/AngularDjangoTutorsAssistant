@@ -34,7 +34,10 @@ export enum ScheduledClassesActionTypes {
     ScheduledClassDeletionRequested = '[Scheduled Classes Daily Page/Landing Page]  Removal of Scheduled Class Requested',
     ScheduledClassDeletionSaved = '[Scheduled Classes Daily Page/Landing Page] Scheduled Class Removed',
     ScheduledClassesMessagesCleared = '[Scheduled Class Edit Status, Reschedule and Schedule Pages] Scheduled Classes Messages Cleared',
-    UpdatedPurchasedHoursCleared = '[Scheduled Class Detail Page (Edit Class Status Child)] Updated Purchased Hours Data Removed'
+    UpdatedPurchasedHoursCleared = '[Scheduled Class Detail Page (Edit Class Status Child)] Updated Purchased Hours Data Removed',
+    UnconfirmedScheduledClassesLoaded = '[User Landing Page] Unconfirmed Past Scheduled Classes Loaded',
+    UnconfirmedScheduledClassesRequestCancelled = '[User Landing Page] Unconfirmed Past Scheduled Classes Request Cancelled',    
+    UnconfirmedScheduledClassesRequested = '[User Landing Page] Unconfirmed Past Scheduled Classes Requested',
 }
 
 export class ClassStatusUpdateCancelled implements Action {
@@ -80,7 +83,6 @@ export class DailyClassesRequested implements Action {
   
     constructor(public payload: { date: string }) {}
 }
-
 
 export class LandingPageScheduleLoaded implements Action {
     readonly type = ScheduledClassesActionTypes.LandingPageScheduleLoaded;
@@ -213,6 +215,24 @@ export class UpdatedPurchasedHoursCleared implements Action {
     readonly type = ScheduledClassesActionTypes.UpdatedPurchasedHoursCleared;
 }
 
+export class UnconfirmedScheduledClassesLoaded implements Action {
+    readonly type = ScheduledClassesActionTypes.UnconfirmedScheduledClassesLoaded;
+  
+    constructor(
+        public payload: { scheduledClasses: ScheduledClassModel[] }
+    ) {}
+}
+
+export class UnconfirmedScheduledClassesRequestCancelled implements Action {
+    readonly type = ScheduledClassesActionTypes.UnconfirmedScheduledClassesRequestCancelled;
+  
+    constructor(public payload: {  err: any }) {}
+}
+
+export class UnconfirmedScheduledClassesRequested implements Action {
+    readonly type = ScheduledClassesActionTypes.UnconfirmedScheduledClassesRequested;
+}
+
 export type ScheduledClassesActions = ClassStatusUpdateCancelled |
     ClassStatusUpdateSaved | ClassStatusUpdateSubmitted |
     DailyClassesLoaded | DailyClassesRequestCancelled | 
@@ -226,4 +246,6 @@ export type ScheduledClassesActions = ClassStatusUpdateCancelled |
     ScheduledClassDeletionCancelled | ScheduledClassesBatchDeletionCancelled | 
     ScheduledClassesBatchDeletionSubmitted | ScheduledClassesBatchDeletionSaved |
     ScheduledClassDeletionRequested | ScheduledClassDeletionSaved | 
-    ScheduledClassesMessagesCleared | UpdatedPurchasedHoursCleared;
+    ScheduledClassesMessagesCleared | UpdatedPurchasedHoursCleared |
+    UnconfirmedScheduledClassesLoaded | UnconfirmedScheduledClassesRequested |
+    UnconfirmedScheduledClassesRequestCancelled;
