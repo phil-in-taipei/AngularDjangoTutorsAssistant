@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+
+import { ScheduledClassModel } from 'src/app/models/scheduled-class.model';
 
 @Component({
   selector: 'app-unconfirmed-classes',
@@ -8,4 +10,9 @@ import { Component } from '@angular/core';
 })
 export class UnconfirmedClassesComponent {
 
+  @Input() unconfirmedClasses: ScheduledClassModel[];
+
+  trackByFn(index: number, item: any) {
+    return item.id;
+  }
 }

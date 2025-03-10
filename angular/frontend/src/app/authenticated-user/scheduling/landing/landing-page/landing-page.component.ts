@@ -5,12 +5,12 @@ import { Observable } from "rxjs";
 
 import { getDateString } from 'src/app/shared-utils/date-time.util';
 import { 
-  LandingPageScheduleRequested 
+  LandingPageScheduleRequested, UnconfirmedScheduledClassesRequested
 } from '../../classes-state/scheduled-classes.actions';
 import { ScheduledClassModel } from 'src/app/models/scheduled-class.model';
 import { ScheduledClassesState } from '../../classes-state/scheduled-classes.reducers';
 import { 
-  selectScheduledClassesByDate 
+  selectScheduledClassesByDate, selectUnconfirmedPastScheduledClasses
 } from '../../classes-state/scheduled-classes.selectors';
 import { 
   selectUserProfile 
@@ -28,6 +28,7 @@ export class LandingPageComponent implements OnInit {
 
   dateModel = {year: 0, month: 0, day: 0};
   todaysClasses$: Observable<ScheduledClassModel[] | undefined>;
+  unconfirmedPastClasses$: Observable<ScheduledClassModel[] | undefined>;
   userProfile$: Observable<UserProfileModel | undefined>;
 
   constructor(
@@ -38,6 +39,7 @@ export class LandingPageComponent implements OnInit {
   ngOnInit(): void {
     console.log('*****landing page initializing*****')
     this.store.dispatch(new LandingPageScheduleRequested());
+    this.store.dispatch(new UnconfirmedScheduledClassesRequested());
     let dateTimeObj = new Date();
     this.dateModel.year = dateTimeObj.getUTCFullYear();
     this.dateModel.month = dateTimeObj.getUTCMonth() + 1;
@@ -45,6 +47,8 @@ export class LandingPageComponent implements OnInit {
     let todayDateStr = this.getTodayDateString();
     this.todaysClasses$ = this.store.pipe(
       select(selectScheduledClassesByDate(todayDateStr)));
+    this.unconfirmedPastClasses$ = this.store.pipe(
+      select(selectUnconfirmedPastScheduledClasses(todayDateStr)));
     this.userProfile$ = this.store.pipe(select(selectUserProfile));
   }
 

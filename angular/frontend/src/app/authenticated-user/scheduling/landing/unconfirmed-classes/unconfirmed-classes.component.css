@@ -1,0 +1,14 @@
+h3, h5 {
+    text-align: center;
+    color: #758d97; 
+    background-color: black !important;
+}
+ 
+.row {
+    text-align: center;
+    background-color: black !important;
+}
+  
+.small-scr-tbl {
+    display: none;
+}

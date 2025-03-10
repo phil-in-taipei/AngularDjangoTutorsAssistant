@@ -1,1 +1,51 @@
-<p>unconfirmed-classes works!</p>
+
+<h5>
+        <button class="btn btn-dark" type="button"
+          data-bs-toggle="collapse" data-bs-target="#collapseUnconfirmed"
+          aria-expanded="false" aria-controls="collapseUnconfirmed">
+          View Unconfirmed Classes
+        </button>
+</h5>
+    <div
+        id="collapseUnconfirmed"
+        class="collapse table-responsive"
+    >
+    <table class="table bg-transparent">
+        <thead class="table bg-transparent">
+          <tr class="row bg-transparent">
+            <th class="col bg-transparent"><h5>Date</h5></th>
+            <th class="col bg-transparent"><h5>Time</h5></th>
+            <th class="col bg-transparent"><h5>Student/Class</h5></th>
+          </tr>
+        </thead>
+        <tbody class="table bg-transparent">
+          <tr class="row bg-transparent" 
+            *ngFor="let unconfirmedClass of unconfirmedClasses trackBy: trackByFn">
+            <th class="col bg-transparent">
+                <h5 class>
+                    <a [routerLink]="['/authenticated-user/scheduling/schedule-daily', unconfirmedClass.date]">
+                    {{ unconfirmedClass.date }}
+                    </a>
+                </h5>
+            </th>
+            <th class="col bg-transparent">
+                <h5 class>
+                    <a [routerLink]="['/authenticated-user/scheduling/single-class', unconfirmedClass.id]">
+                      {{ unconfirmedClass.start_time.slice(0, -3) }} - {{ unconfirmedClass.finish_time.slice(0, -3) }}
+                    </a>
+                </h5>
+            </th>
+            <th class="col bg-transparent">
+              <h5 >
+                <a [routerLink]="['/authenticated-user/student-or-class', unconfirmedClass.student_or_class]">
+                  <app-student-or-class-template-string 
+                  [studentOrClassId]=unconfirmedClass.student_or_class class="bg-transparent"
+                  >
+                  </app-student-or-class-template-string>
+                </a>
+              </h5>
+            </th>
+        </tr>
+        </tbody>
+    </table>
+</div>
