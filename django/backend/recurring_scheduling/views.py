@@ -87,7 +87,8 @@ class RecurringClassAppliedMonthlyViewSet(viewsets.ModelViewSet):
 
     def update(self, request,  *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    
+
+
 class RecurringClassAppliedMonthlyListView(generics.ListAPIView):
     permission_classes = (
         IsAuthenticated,
@@ -99,9 +100,6 @@ class RecurringClassAppliedMonthlyListView(generics.ListAPIView):
     paginate_by = 100
 
     def get_queryset(self):
-        #print('User:')
-        #print(self.request.user.profile)
-        #print('getting qs...')
         month = self.kwargs.get("month")
         year = self.kwargs.get("year")
         queryset = self.model.objects.filter(

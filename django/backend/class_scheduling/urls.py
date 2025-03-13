@@ -2,10 +2,15 @@ from django.urls import path, include
 
 from rest_framework.routers import DefaultRouter
 
-from .views import (ScheduledClassStatusConfirmationViewSet,
-                    ScheduledClassBatchDeletionView,
-                    ScheduledClassViewSet, ScheduledClassByTeacherByDateViewSet,
-                    ScheduledClassByTeacherByMonthViewSet, UnconfirmedStatusClassesViewSet)
+from .views import (
+    ScheduledClassStatusConfirmationViewSet,
+    ScheduledClassBatchDeletionView,
+    ScheduledClassViewSet,
+    ScheduledClassByTeacherByDateViewSet,
+    ScheduledClassByTeacherByMonthViewSet,
+    StudentOrClassAttendanceViewSet,
+    UnconfirmedStatusClassesViewSet
+)
 
 app_name = "class_scheduling"
 
@@ -33,6 +38,10 @@ urlpatterns = [
         'class-status-confirmation/',
         ScheduledClassStatusConfirmationViewSet.as_view(),
         name='class-status-confirmation'
+    ),
+    path(
+        'classes/student-or-class-attendance/<int:student_or_class_id>/',
+        StudentOrClassAttendanceViewSet.as_view(), name='student-or-class-attendance'
     ),
     path(
         'classes/unconfirmed-status/',

@@ -223,6 +223,24 @@ class ScheduledClassByTeacherByMonthViewSet(generics.ListAPIView):
         return queryset.order_by('date', 'start_time')
 
 
+class StudentOrClassAttendanceViewSet(generics.ListAPIView):
+    permission_classes = (
+        IsAuthenticated,
+    )
+    queryset = ScheduledClass.objects.all()
+    serializer_class = ScheduledClassSerializer
+    lookup_field = 'id'
+    model = serializer_class.Meta.model
+    pagination_class = SmallSetPagination
+
+    def get_queryset(self):
+        queryset = self.model.objects.filter(
+            student_or_class__id=self.kwargs.get("student_or_class_id"),
+            date__lt=datetime.date.today()
+        )
+        return queryset.order_by('-date', 'start_time')
+
+
 class UnconfirmedStatusClassesViewSet(generics.ListAPIView):
     permission_classes = (
         IsAuthenticated,
