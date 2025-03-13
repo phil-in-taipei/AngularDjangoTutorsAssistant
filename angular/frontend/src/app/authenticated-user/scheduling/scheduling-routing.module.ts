@@ -1,5 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
+import { 
+  AttendanceRecordComponent 
+} from './attendance/attendance-record/attendance-record.component';
 import { DailyListComponent } from './classes/daily/daily-list/daily-list.component';
 import { LandingPageComponent } from './landing/landing-page/landing-page.component';
 import { MonthlyViewComponent } from './classes/monthly/monthly-view/monthly-view.component';

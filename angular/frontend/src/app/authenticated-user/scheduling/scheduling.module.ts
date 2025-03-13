@@ -10,6 +10,9 @@ import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 
+import { 
+  AttendanceRecordComponent 
+} from './attendance/attendance-record/attendance-record.component';
 import { CalendarScheduleComponent } from './classes/monthly/calendar-schedule/calendar-schedule.component';
 import { EditClassStatusFormComponent } from './single-class/detail/edit-class-status-form/edit-class-status-form.component';
 import { 
@@ -44,6 +47,7 @@ import { userProfileReducer } from '../user/user-state/user.reducers';
 
 @NgModule({
   declarations: [
+    AttendanceRecordComponent,
     CalendarScheduleComponent,
     DailyListComponent,
     EditClassStatusFormComponent,

@@ -44,5 +44,11 @@ export interface ScheduledClassModel {
     class_status: string;
     teacher_notes: string;
     class_content: string;
-  }
+}
 
+export interface StudentOrClassAttendanceRecordResponse {
+    count: number,
+    next: string,
+    previous: string,
+    results: ScheduledClassModel[]
+}
