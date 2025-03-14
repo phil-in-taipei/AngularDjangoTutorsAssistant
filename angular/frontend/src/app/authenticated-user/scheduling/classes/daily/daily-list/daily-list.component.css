@@ -28,12 +28,11 @@ table {
 }
 
 .row {
-    background-color: black !important;
     color: #758d97; 
+    background-color: black;
 }
 
 .col {
-    background-color: black !important;
     color: #758d97; 
 }
 

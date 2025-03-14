@@ -1,24 +1,25 @@
-<div *ngIf="studentOrClass$ | async as studentOrClass">
+<br />
+<div *ngIf="studentOrClass$ | async as studentOrClass" class="container bg-transparent">
     <h2>Attendance for <a [routerLink]="['/', 'authenticated-user', 'student-or-class', studentOrClass.id]">
       {{ studentOrClass.student_or_class_name}}</a></h2>
-    <div class="large-scr row">
-        <div class="col text-center">
-          <button class="btn btn-sm btn-outline-secondary middle"
+    <div class="large-scr row bg-transparent">
+        <div class="col text-center bg-transparent">
+          <button class="btn btn-sm btn-outline-secondary middle bg-transparent"
             (click)="onPrevPageRequest()">Recently</button>
         </div>
-        <div class="col">
+        <div class="col bg-transparent">
         <h3>Remaining Hours: {{ studentOrClass.purchased_class_hours }}
           </h3>
         </div>
-        <div class="col text-center">
-          <button class="btn btn-sm btn-outline-secondary middle"
+        <div class="col text-center bg-transparent">
+          <button class="btn btn-sm btn-outline-secondary middle bg-transparent"
           (click)="onNextPagRequest()">Previous</button>
         </div>
     </div>
-    <div class="small-scr">
+    <div class="small-scr bg-transparent">
       <h3>Remaining Hours: {{ studentOrClass.purchased_class_hours }}</h3>
-      <div class="row">
-        <div class="col">
+      <div class="row bg-transparent">
+        <div class="col bg-transparent">
           <div class="container">
             <div class="d-grid gap-2">
                 <button class="btn btn-sm btn-outline-secondary middle"
@@ -37,10 +38,10 @@
       </div>
     </div>
   </div>
-  <div *ngIf="pastClasses$ | async as pastClasses; else no_attendance" class="container">
+  <div *ngIf="pastClasses$ | async as pastClasses; else no_attendance" class="container bg-transparent">
     <hr class="thick-br"/>
-    <div class="table-responsive">
-      <table class="table bg-transparent">
+    <div class="table-responsive bg-transparent">
+      <table class="table bg-transparent bg-transparent">
           <thead class="table bg-transparent">
             <tr class="row bg-transparent">
               <th class="col bg-transparent"><p>Date</p></th>
