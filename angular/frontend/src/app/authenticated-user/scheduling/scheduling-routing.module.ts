@@ -14,6 +14,7 @@ import {
 } from './single-class/detail/single-class-info/single-class-info.component';
 
 const routes: Routes = [{ path: '', component: SchedulingComponent, children: [
+  { path: 'attendance/:student_or_class_id', component: AttendanceRecordComponent },
   { path: 'calendar', component: MonthlyViewComponent },
   { path: 'landing', component: LandingPageComponent },
   { path: 'schedule-daily/:date', component: DailyListComponent },

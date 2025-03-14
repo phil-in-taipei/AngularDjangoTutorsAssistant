@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { map,  } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/authentication/auth.service';
 
@@ -28,6 +29,10 @@ export class AttendanceService {
     }/?page=${pageNum}`,
       {
         headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
-      })
+      }).pipe(
+        map(res =>
+          Object.values(res['results'])
+        )
+    )
     }
 }

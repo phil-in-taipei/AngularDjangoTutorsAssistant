@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { first, map, Observable } from 'rxjs';
+import { first, map, Observable, of } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 
 import { ActivatedRoute } from '@angular/router';
 
 import { AttendanceService } from '../service/attendance.service';
+import { ScheduledClassModel } from 'src/app/models/scheduled-class.model';
 import { 
   selectStudentOrClassById 
 } from 'src/app/authenticated-user/student-or-class/state/student-or-class.selectors';
@@ -26,13 +27,13 @@ import {
 export class AttendanceRecordComponent {
 
   idFromRouteData: number;
-  studentOrClass$: Observable<StudentOrClassModel | undefined>;
-  pastClasses: StudentOrClassAttendanceRecordResponse | undefined;
+  studentOrClass$: Observable<StudentOrClassModel | undefined> = of(undefined);
+  pastClasses$: Observable<ScheduledClassModel[] | undefined>
   pageNum: number = 1;
 
   constructor(
     private route: ActivatedRoute,
-    private attendanceService: AttendanceService,//private router: Router,
+    private attendanceService: AttendanceService,
     private store: Store<StudentsOrClassesState>
   ) { }
 
@@ -41,42 +42,24 @@ export class AttendanceRecordComponent {
     this.studentOrClass$ = this.store.pipe(
       select(selectStudentOrClassById(this.idFromRouteData))
     );
-    this.attendanceService.fetchPastClassesByStudentOrClass(
+    this.pastClasses$ = this.attendanceService.fetchPastClassesByStudentOrClass(
       this.idFromRouteData, this.pageNum
-    ).pipe(
-      first(),
-      map(res => res)
-    )
-    .subscribe(response => {
-      this.pastClasses = response;
-    });
+    );
   }
 
   onNextPagRequest() {
     this.pageNum += 1;
-    this.attendanceService.fetchPastClassesByStudentOrClass(
+    this.pastClasses$ = this.attendanceService.fetchPastClassesByStudentOrClass(
       this.idFromRouteData, this.pageNum
-    ).pipe(
-      first(),
-      map(res => res)
-    )
-    .subscribe(response => {
-      this.pastClasses = response;
-    });
+    );
   }
 
   onPrevPageRequest() {
     if (this.pageNum > 1) {
       this.pageNum -= 1;
-      this.attendanceService.fetchPastClassesByStudentOrClass(
+      this.pastClasses$ = this.attendanceService.fetchPastClassesByStudentOrClass(
         this.idFromRouteData, this.pageNum
-      ).pipe(
-        first(),
-        map(res => res)
-      )
-      .subscribe(response => {
-        this.pastClasses = response;
-      });
+      );
     }
   }
 

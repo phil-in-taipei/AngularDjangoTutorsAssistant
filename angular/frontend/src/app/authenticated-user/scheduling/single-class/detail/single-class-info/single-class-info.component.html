@@ -37,7 +37,7 @@
         <div id="profile_details">
             <div class="container">
               <h3>
-                <a [routerLink]="['/', 'authenticated-user', 'student-or-class', scheduledClass.student_or_class]">
+                <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', scheduledClass.student_or_class]">
                     <app-student-or-class-template-string 
                     [studentOrClassId]=scheduledClass.student_or_class class="bg-transparent"
                     >

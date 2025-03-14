@@ -1,1 +1,78 @@
-<p>attendance-record works!</p>
+<div *ngIf="studentOrClass$ | async as studentOrClass">
+    <h2>Attendance for <a [routerLink]="['/', 'authenticated-user', 'student-or-class', studentOrClass.id]">
+      {{ studentOrClass.student_or_class_name}}</a></h2>
+    <div class="large-scr row">
+        <div class="col text-center">
+          <button class="btn btn-sm btn-outline-secondary middle"
+            (click)="onPrevPageRequest()">Recently</button>
+        </div>
+        <div class="col">
+        <h3>Remaining Hours: {{ studentOrClass.purchased_class_hours }}
+          </h3>
+        </div>
+        <div class="col text-center">
+          <button class="btn btn-sm btn-outline-secondary middle"
+          (click)="onNextPagRequest()">Previous</button>
+        </div>
+    </div>
+    <div class="small-scr">
+      <h3>Remaining Hours: {{ studentOrClass.purchased_class_hours }}</h3>
+      <div class="row">
+        <div class="col">
+          <div class="container">
+            <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary middle"
+                (click)="onPrevPageRequest()">Recently</button>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="container">
+            <div class="d-grid gap-2">
+              <button class="btn btn-sm btn-outline-secondary middle"
+              (click)="onNextPagRequest()">Previous</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="pastClasses$ | async as pastClasses; else no_attendance" class="container">
+    <hr class="thick-br"/>
+    <div class="table-responsive">
+      <table class="table bg-transparent">
+          <thead class="table bg-transparent">
+            <tr class="row bg-transparent">
+              <th class="col bg-transparent"><p>Date</p></th>
+              <th class="col bg-transparent"><p>Time</p></th>
+              <th class="col bg-transparent"><p>Attendance</p></th>
+              <th class="col hidden-small"><p>Content</p></th>
+            </tr>
+          </thead>
+          <tbody class="table bg-transparent">
+            <tr class="row bg-transparent" *ngFor="let pastClass of pastClasses">
+              <th class="col bg-transparent">
+                <p><a [routerLink]="['/', 'authenticated-user', 'scheduling', 'schedule-daily', pastClass.date]">
+                  {{ pastClass.date }}
+                </a></p>
+              </th>
+              <th class="col bg-transparent">
+                <p>
+                  {{ pastClass.start_time.slice(0, -3) }}-{{ pastClass.finish_time.slice(0, -3) }}
+                </p>
+              </th>
+              <th class="col bg-transparent">
+                <p class="capitalize">{{ pastClass.class_status.toString().split('_').join(' ') }}</p>
+              </th>
+              <th class="col hidden-small">
+                <p>{{ pastClass.class_content }}</p>
+              </th>
+            </tr>
+          </tbody>
+      </table>
+      <hr class="thick-br"/>
+    </div>
+</div>
+<ng-template #no_attendance>
+<br />
+</ng-template>

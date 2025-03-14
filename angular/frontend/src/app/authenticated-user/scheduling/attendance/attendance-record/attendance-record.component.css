@@ -1,0 +1,135 @@
+
+
+h2, h3, h5 {
+  text-align: center;
+  color: #758d97; 
+  background-color: black !important;
+}
+
+table {
+  border-collapse: collapse;
+  background-color: black !important;
+}
+
+p {
+  background-color: black !important;
+  text-align: center;
+  color: #758d97; 
+}
+
+.table {
+  padding-left: 0px;
+  padding-right: 0px;
+  background-color: black !important;
+}
+
+.table .tr {
+  background-color: black !important;
+}
+
+.table .td {
+  background-color: black;
+}
+
+.table .th {
+  background-color: black !important;
+}
+
+.row {
+  background-color: black !important;
+  color: #758d97; 
+}
+
+.col {
+  background-color: black !important;
+  color: #758d97; 
+}
+  
+hr.thick-br {
+    border: 2px solid #758d97;
+  }
+  
+  hr.thin-grey {
+    border: 1px solid grey;
+  }
+  
+  .capitalize {
+    text-transform: capitalize;
+  }
+  
+  .small-scr {
+    display: none;
+  }
+  
+  @media screen and (min-width: 993px) {
+    .jumbotron {
+        margin: 30px;
+        color: #758d97;
+        max-width: 1400px;
+      min-width: 700px;
+    }
+    .attendance {
+      margin-top: 30px;
+      background-color: black;
+      align-items: center;
+      color: grey;
+      height: 100px;
+      outline: 1px solid grey;
+      max-width: 1060px;
+      min-width: 700px;
+    }
+  }
+  
+  @media screen and (min-width: 768px) and (max-width: 992px) {
+    .jumbotron {
+      margin: 30px;
+      background: black !important;
+      color: #758d97;
+      width: 95%;
+      max-width: 900px;
+      min-width: 600px;
+    }
+  
+    .attendance {
+      background: black !important;
+      outline: 1px solid grey;
+      margin: 20px;
+      color: #758d97;
+      width: 95%;
+      height: 90px;
+      max-width: 900px;
+      min-width: 600px;
+    }
+  }
+  
+  @media screen and (max-width: 767px) {
+    .jumbotron {
+      margin: 20px;
+      background: black !important;
+      color: #758d97;
+      max-width: 500px;
+      min-width: 200px;
+    }
+  
+    .attendance {
+      outline: 1px solid grey;
+      background: black !important;
+      margin: 20px;
+      color: #758d97;
+      width: 90%;
+      height: 130px;
+      max-width: 1000px;
+      min-width: 200px;
+    }
+    .hidden-small {
+      display: none;
+    }
+  
+    .small-scr {
+      display: block;
+    }
+  
+    .large-scr {
+      display: none;
+    }
+  }
