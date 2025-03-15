@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'djoser',
     'authapp',
 
+    'accounting',
     'class_scheduling',
     'recurring_scheduling',
     'school',
