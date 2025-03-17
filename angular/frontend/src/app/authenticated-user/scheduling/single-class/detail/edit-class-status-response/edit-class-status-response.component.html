@@ -1,4 +1,4 @@
-<div *ngIf="studentOrClassModificationResponse.changes.purchased_class_hours">
+<div>
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
         <h3>Freelance Class Updated</h3>
         <button type="button" class="btn-close" 
@@ -10,4 +10,7 @@
         [studentOrClassHoursUpdate]=studentOrClassModificationResponse>
       </app-revised-purchased-hours>
 </div>
+This is the modification response:
 {{ studentOrClassModificationResponse.id }}
+{{ studentOrClassModificationResponse.changes.purchased_class_hours }}
+

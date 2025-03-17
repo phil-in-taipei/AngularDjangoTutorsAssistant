@@ -88,10 +88,15 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
           "student_or_class_update": {
               "id": student_or_class.id,
               "changes": {
-                  "purchased_class_hours": student_or_class.purchased_class_hours
+                  "purchased_class_hours": float(student_or_class.purchased_class_hours)
               }
            }
         }
+        print("****************************************************")
+        print("This is the status revision response:")
+        print(response)
+        print("****************************************************")
+
         return Response(
             response,
             status=status.HTTP_202_ACCEPTED

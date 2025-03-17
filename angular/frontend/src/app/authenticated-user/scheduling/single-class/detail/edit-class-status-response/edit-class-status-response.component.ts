@@ -29,6 +29,7 @@ export class EditClassStatusResponseComponent {
     ) { }
   
     ngOnInit(): void {
+      console.log(this.studentOrClassModificationResponse.changes)
       this.timeoutId = setTimeout(() => this.onClearUpdatedClassStatusResponseData(), 2000);    
     }
 

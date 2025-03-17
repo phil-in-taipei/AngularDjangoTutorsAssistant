@@ -12,13 +12,13 @@ def determine_transaction_type(previous_class_status, updated_class_status):
     elif previous_class_status == "cancelled" and updated_class_status == "same_day_cancellation":
         return "deduct"
     elif previous_class_status == "completed" and updated_class_status == "scheduled":
-        return "refund"
+        return "add-back"
     elif previous_class_status == "completed" and updated_class_status == "cancelled":
-        return "refund"
+        return "add-back"
     elif previous_class_status == "same_day_cancellation" and updated_class_status == "scheduled":
-        return "refund"
+        return "add-back"
     elif previous_class_status == "same_day_cancellation" and updated_class_status == "cancelled":
-        return "refund"
+        return "add-back"
     else:
         return "unchanged"
 
@@ -56,7 +56,7 @@ def adjust_number_of_hours_purchased(
 ):
     if transaction_type == "deduct":
         return previous_number_of_hours_purchased - decimal.Decimal(str(duration))
-    elif transaction_type == "refund":
+    elif transaction_type == "add-back":
         return previous_number_of_hours_purchased + decimal.Decimal(str(duration))
 
 

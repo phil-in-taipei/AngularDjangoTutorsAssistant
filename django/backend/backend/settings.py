@@ -123,6 +123,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSIONS_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'COERCE_DECIMAL_TO_STRING': False
 }
 
 DJOSER = {
