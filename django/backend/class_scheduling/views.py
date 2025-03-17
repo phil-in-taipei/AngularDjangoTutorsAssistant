@@ -68,7 +68,11 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
         scheduled_class.class_content = class_content
         scheduled_class.save()
         student_or_class = scheduled_class.student_or_class
-
+        
+        response = {
+          "scheduled_class": ScheduledClassSerializer(scheduled_class).data,
+          "student_or_class_update": None
+        }
         if is_freelance_account(scheduled_class.student_or_class) and number_of_hours_purchased_should_be_updated(transaction_type):
             print("******Account must be adjusted*******")
             duration = determine_duration_of_class_time(
@@ -83,15 +87,12 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
             student_or_class.purchased_class_hours = new_number_of_purchased_hours
             student_or_class.save()
             print("updated")
-        response = {
-          "scheduled_class": ScheduledClassSerializer(scheduled_class).data,
-          "student_or_class_update": {
-              "id": student_or_class.id,
-              "changes": {
-                  "purchased_class_hours": float(student_or_class.purchased_class_hours)
-              }
-           }
-        }
+            response['student_or_class_update'] = {
+                "id": student_or_class.id,
+                "changes": {
+                    "purchased_class_hours": float(student_or_class.purchased_class_hours)
+                }
+            }
         print("****************************************************")
         print("This is the status revision response:")
         print(response)
