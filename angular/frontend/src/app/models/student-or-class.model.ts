@@ -29,6 +29,6 @@ export interface StudentOrClassModel {
 export interface StudentOrClassConfirmationModificationResponse {
     id: number;
     changes: {
-        purchased_class_hours: number | undefined;
+        purchased_class_hours: number;
     }
 }
