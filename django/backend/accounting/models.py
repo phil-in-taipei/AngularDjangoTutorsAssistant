@@ -14,11 +14,8 @@ TRANSACTION_TYPE = (
 class FreelanceTuitionTransactionRecord(models.Model):
     student_or_class = models.ForeignKey(
         StudentOrClass, on_delete=models.CASCADE,
+        limit_choices_to={'account_type': 'freelance'},
         related_name='student_or_class_tuition_transactions',
-    )
-    teacher = models.ForeignKey(
-        UserProfile, on_delete=models.CASCADE,
-        related_name='teacher_tuition_transactions',
     )
     transaction_amount = models.PositiveSmallIntegerField(editable=False)
     transaction_type = models.CharField(
