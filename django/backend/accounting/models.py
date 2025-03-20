@@ -3,8 +3,7 @@ from decimal import Decimal
 from django.db.models import CheckConstraint, Q
 from class_scheduling.models import ScheduledClass
 from student_account.models import StudentOrClass
-from user_profiles.models import UserProfile
-from .utils import validate_number_of_hours_purchased
+from .validation import validate_number_of_hours_purchased
 
 
 TRANSACTION_TYPE = (
@@ -121,7 +120,7 @@ class PurchasedHoursModificationRecord(models.Model):
                     )
                     |
                     (
-                        Q(odified_scheduled_class__isnull=True)
+                        Q(modified_scheduled_class__isnull=True)
                         & (
                                 Q(modification_type="tuition_payment_add")
                                 |
