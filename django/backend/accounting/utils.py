@@ -19,4 +19,10 @@ def create_purchased_hours_modification_record_for_tuition_transaction(
         previous_purchased_class_hours=previous_hours_purchased,
         updated_purchased_class_hours=student_or_class.purchased_class_hours
     )
+    print("----------------------------------------------------------------------")
+    print(F"These are the previous hours purchased: {previous_hours_purchased}")
+    print("----------------------------------------------------------------------")
+    print(F"These are the updated hours purchased: {student_or_class.purchased_class_hours}")
+    print("----------------------------------------------------------------------")
+
 

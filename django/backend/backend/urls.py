@@ -21,6 +21,7 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('authapp.urls')),
+    path('api/accounting/', include('accounting.urls')),
     path('api/profiles/', include('user_profiles.urls')),
     path('api/recurring/', include('recurring_scheduling.urls')),    
     path('api/schools/', include('school.urls')),
