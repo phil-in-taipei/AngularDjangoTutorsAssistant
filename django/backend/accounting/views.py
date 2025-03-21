@@ -20,8 +20,8 @@ class FreelanceTuitionTransactionViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        student_or_class_id = serializer.validated_data['student_or_class']
-        student_or_class = get_object_or_404(StudentOrClass, id=student_or_class_id)
+        student_or_class = serializer.validated_data['student_or_class']
+        #student_or_class = get_object_or_404(StudentOrClass, id=student_or_class_id)
         previous_hours_purchased = student_or_class.purchased_class_hours
         #previous_hours_purchased, freelance_tuition_transaction_record
         freelance_tuition_transaction=serializer.save()

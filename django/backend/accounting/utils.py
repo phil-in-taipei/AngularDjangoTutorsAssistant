@@ -5,10 +5,10 @@ from .models import PurchasedHoursModificationRecord
 def create_purchased_hours_modification_record_for_tuition_transaction(
         previous_hours_purchased, freelance_tuition_transaction_record,
 ):
-    if freelance_tuition_transaction_record.tuition_transaction == "payment":
+    if freelance_tuition_transaction_record.transaction_type == "payment":
         modification_type = "tuition_payment_add"
     else:
-        modification_type = "tuition_payment_deduct"
+        modification_type = "tuition_refund_deduct"
     student_or_class=StudentOrClass.objects.get(
         id=freelance_tuition_transaction_record.student_or_class.id
     )
