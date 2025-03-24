@@ -17,7 +17,8 @@ from .utils import (
     determine_duration_of_class_time,
     get_double_booked_by_user,
     is_freelance_account,
-    number_of_hours_purchased_should_be_updated
+    number_of_hours_purchased_should_be_updated,
+    create_purchased_hours_modification_record
 )
 from user_profiles.models import UserProfile
 from utilities.permissions import IsOwnerOrReadOnly
@@ -79,6 +80,11 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
                 scheduled_class.start_time, scheduled_class.finish_time
             )
             print(duration)
+            print("-------------------------------------------------------")
+            previous_number_of_purchased_hours = student_or_class.purchased_class_hours
+            print("This is the previous number of purchased hours:")
+            print(previous_number_of_purchased_hours)
+            print("--------------------------------------------------------------")
             new_number_of_purchased_hours = adjust_number_of_hours_purchased(
                     transaction_type, duration, student_or_class.purchased_class_hours
             )
@@ -87,6 +93,13 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
             student_or_class.purchased_class_hours = new_number_of_purchased_hours
             student_or_class.save()
             print("updated")
+            create_purchased_hours_modification_record(
+                student_or_class=student_or_class,
+                transaction_type=transaction_type,
+                scheduled_class=scheduled_class,
+                previous_number_of_purchased_hours=previous_number_of_purchased_hours,
+                new_number_of_purchased_hours=new_number_of_purchased_hours
+            )
             response['student_or_class_update'] = {
                 "id": student_or_class.id,
                 "changes": {

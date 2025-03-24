@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 import decimal
 
+from accounting.models import FreelanceTuitionTransactionRecord
+
 
 def determine_transaction_type(previous_class_status, updated_class_status):
     if previous_class_status == "scheduled" and updated_class_status == "completed":
@@ -48,7 +50,7 @@ def is_freelance_account(student_or_class):
 
 
 def number_of_hours_purchased_should_be_updated(transaction_type):
-    return transaction_type is not "unchanged"
+    return transaction_type != "unchanged"
 
 
 def adjust_number_of_hours_purchased(
@@ -136,3 +138,19 @@ def class_is_double_booked(
     print(classes_during_date_and_time)
 
     return len(classes_during_date_and_time) > 0
+
+
+def create_purchased_hours_modification_record(
+        student_or_class, transaction_type, scheduled_class,
+        previous_number_of_purchased_hours, new_number_of_purchased_hours
+    ):
+    if transaction_type == "add-back":
+        modification_type = "class_status_modification_add"
+    else: modification_type = "class_status_modification_deduct"
+    FreelanceTuitionTransactionRecord.objects.create(
+        student_or_class=student_or_class,
+        modified_scheduled_class=scheduled_class,
+        modification_type=modification_type,
+        previous_purchased_class_hours=previous_number_of_purchased_hours,
+        updated_purchased_class_hours=new_number_of_purchased_hours
+    )
