@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import decimal
 
-from accounting.models import FreelanceTuitionTransactionRecord
+from accounting.models import PurchasedHoursModificationRecord
 
 
 def determine_transaction_type(previous_class_status, updated_class_status):
@@ -147,7 +147,7 @@ def create_purchased_hours_modification_record(
     if transaction_type == "add-back":
         modification_type = "class_status_modification_add"
     else: modification_type = "class_status_modification_deduct"
-    FreelanceTuitionTransactionRecord.objects.create(
+    PurchasedHoursModificationRecord.objects.create(
         student_or_class=student_or_class,
         modified_scheduled_class=scheduled_class,
         modification_type=modification_type,
