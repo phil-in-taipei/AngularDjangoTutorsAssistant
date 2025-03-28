@@ -3,6 +3,7 @@ from rest_framework import serializers
 from class_scheduling.serializers import ScheduledClassSerializer
 from .models import FreelanceTuitionTransactionRecord, PurchasedHoursModificationRecord
 
+
 class FreelanceTuitionTransactionRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = FreelanceTuitionTransactionRecord

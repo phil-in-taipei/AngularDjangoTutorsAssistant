@@ -38,7 +38,32 @@ class FreelanceTuitionTransactionViewSet(viewsets.ModelViewSet):
                 freelance_tuition_transaction_record=freelance_tuition_transaction
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
+
+
+class FreelanceTuitionTransactionsListViewByMonthAndYear(generics.ListAPIView):
+    permission_classes = (
+        IsAuthenticated,
+    )
+    queryset = FreelanceTuitionTransactionRecord.objects.all()
+    serializer_class = FreelanceTuitionTransactionRecordSerializer
+    lookup_field = 'id'
+    model = serializer_class.Meta.model
+
+    def get_queryset(self):
+        month = self.kwargs.get("month")
+        year = self.kwargs.get("year")
+        query_timestamps = create_timestamps_for_beginning_and_end_of_month_and_year(
+            month, year
+        )
+
+        queryset = self.model.objects.filter(
+            student_or_class__teacher__user=self.request.user,
+            time_stamp__range=(query_timestamps['start'], query_timestamps['end'])
+        )
+        return queryset.order_by(
+            '-time_stamp',
+        )
+
 
 class PurchasedHoursModificationRecordsListViewByAccountAndMonth(generics.ListAPIView):
     permission_classes = (
