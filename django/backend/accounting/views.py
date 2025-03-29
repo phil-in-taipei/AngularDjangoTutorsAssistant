@@ -2,7 +2,9 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
+from user_profiles.models import UserProfile
 from .models import (
     FreelanceTuitionTransactionRecord,
     PurchasedHoursModificationRecord
@@ -13,9 +15,26 @@ from .serializers import (
     )
 from .utils import (
     create_purchased_hours_modification_record_for_tuition_transaction,
-    create_timestamps_for_beginning_and_end_of_month_and_year
+    create_timestamps_for_beginning_and_end_of_month_and_year,
+    generate_estimated_earnings_report
     )
 
+
+class EstimatedEarningsByMonthAndYear(APIView):
+    permission_classes = (
+        IsAuthenticated,
+    )
+
+    def get(self, *args, **kwargs):
+        query_list = []
+        teacher = get_object_or_404(UserProfile, user=self.request.user)
+        month = self.kwargs.get("month")
+        year = self.kwargs.get("year")
+        query_list = generate_estimated_earnings_report(teacher=teacher, month=month, year=year)
+        print("will return this.....")
+        print(query_list)
+        print("*************************************************")
+        return Response(query_list)
 
 class FreelanceTuitionTransactionViewSet(viewsets.ModelViewSet):
     permission_classes = (
