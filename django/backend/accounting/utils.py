@@ -3,6 +3,7 @@ from django.db.models import Case, When, Value, IntegerField
 from django.utils.timezone import make_aware, get_current_timezone
 
 from class_scheduling.models import ScheduledClass
+from class_scheduling.utils import determine_duration_of_class_time
 from student_account.models import StudentOrClass
 from .models import PurchasedHoursModificationRecord
  
@@ -90,6 +91,19 @@ def get_scheduled_classes_during_month_period(
         ),
         'student_or_class__school__school_name'  # Then by school name
     )
+
+
+def get_estimated_number_of_worked_hours(scheduled_classes):
+    number_of_worked_hours = 0
+    for scheduled_class in scheduled_classes:
+        if (
+                scheduled_class.class_status == "completed"
+                or scheduled_class.class_status == "same_day_cancellation"
+        ):
+            number_of_worked_hours += determine_duration_of_class_time(
+                scheduled_class.start_time, scheduled_class.finish_time
+            )
+    return number_of_worked_hours
 
 
 def generate_estimated_earnings_report(
