@@ -3,6 +3,8 @@ from rest_framework import generics, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+import json
+from django.core.serializers import serialize
 
 from user_profiles.models import UserProfile
 from .models import (
@@ -33,6 +35,7 @@ class EstimatedEarningsByMonthAndYear(APIView):
         query_list = generate_estimated_earnings_report(teacher=teacher, month=month, year=year)
         print("will return this.....")
         print(query_list)
+
         print("*************************************************")
         return Response(query_list)
 
