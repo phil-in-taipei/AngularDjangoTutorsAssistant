@@ -28,16 +28,17 @@ class EstimatedEarningsByMonthAndYear(APIView):
     )
 
     def get(self, *args, **kwargs):
-        query_list = []
         teacher = get_object_or_404(UserProfile, user=self.request.user)
         month = self.kwargs.get("month")
         year = self.kwargs.get("year")
-        query_list = generate_estimated_earnings_report(teacher=teacher, month=month, year=year)
+        monthly_accounting_report = generate_estimated_earnings_report(
+            teacher=teacher, month=month, year=year
+        )
         print("will return this.....")
-        print(query_list)
+        print(monthly_accounting_report)
 
         print("*************************************************")
-        return Response(query_list)
+        return Response(monthly_accounting_report)
 
 class FreelanceTuitionTransactionViewSet(viewsets.ModelViewSet):
     permission_classes = (

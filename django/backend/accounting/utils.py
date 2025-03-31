@@ -229,6 +229,46 @@ def generate_accounting_reports(organized_classes_data):
     return accounting_data
 
 
+def calculate_school_totals(report):
+    # Create a copy of the report to avoid modifying the original
+    updated_report = report.copy()
+    
+    # Process each school in the classes_in_schools list
+    for school_report in updated_report["classes_in_schools"]:
+        # Initialize school_total
+        school_total = 0
+        
+        # Sum up the Total values from all students in this school
+        for student_report in school_report["students_reports"]:
+            school_total += student_report["Total"]
+        
+        # Add the school_total field to the school report
+        school_report["school_total"] = school_total
+    
+    return updated_report
+
+
+def calculate_overall_monthly_total(accounting_data):
+    # Create a copy of the data to avoid modifying the original
+    monthly_accounting_data = accounting_data.copy()
+    
+    # Initialize the overall total
+    overall_monthly_total = 0
+    
+    # Sum up all school totals
+    for school_report in monthly_accounting_data["classes_in_schools"]:
+        overall_monthly_total += school_report["school_total"]
+    
+    # Sum up all freelance student totals
+    for student_report in monthly_accounting_data["freelance_students"]:
+        overall_monthly_total += student_report["Total"]
+    
+    # Add the overall monthly total to the accounting data
+    monthly_accounting_data["overall_monthly_total"] = overall_monthly_total
+    
+    return monthly_accounting_data
+
+
 def generate_estimated_earnings_report(
         teacher, month, year
 ):
@@ -238,7 +278,11 @@ def generate_estimated_earnings_report(
     sorted_classes = organize_scheduled_classes(teacher, month, year)
     print("************This is the query result************")
     pprint(sorted_classes)
-    generate_accounting_reports(sorted_classes)
-    return generate_accounting_reports(sorted_classes)
+    basic_report = generate_accounting_reports(sorted_classes)
+    print('*********************************************')
+    pprint(basic_report)
+    print("************************************************")
+    report_with_school_totals = calculate_school_totals(report=basic_report)
+    return calculate_overall_monthly_total(accounting_data=report_with_school_totals)
 
 
