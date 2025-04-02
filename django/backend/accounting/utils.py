@@ -175,7 +175,57 @@ def organize_scheduled_classes(teacher, month, year):
     return organized_data
 
 
-def generate_accounting_reports(organized_classes_data):
+def process_school_classes(accounting_data, organized_classes_data):
+    for school_data in organized_classes_data["classes_in_schools"]:
+        school_report = {
+            "school_name": school_data["school_name"],
+            "students_reports": []
+        }
+
+        for student_classes in school_data["students_classes"]:
+            scheduled_classes = student_classes["scheduled_classes"]
+
+            # Get the student_or_class object (assuming the first class has it)
+            if scheduled_classes:
+                student_or_class = scheduled_classes[0].student_or_class
+                hours = get_estimated_number_of_worked_hours(scheduled_classes)
+
+                accounting_report = {
+                    "Name": student_or_class.student_or_class_name,
+                    "Rate": student_or_class.tuition_per_hour,
+                    "Hours": hours,
+                    "Total": student_or_class.tuition_per_hour * hours
+                }
+
+                school_report["students_reports"].append(accounting_report)
+
+        accounting_data["classes_in_schools"].append(school_report)
+    return accounting_data
+
+
+def process_freelance_students(accounting_data, organized_classes_data):
+    for student_classes in organized_classes_data["freelance_students"]:
+        scheduled_classes = student_classes["scheduled_classes"]
+
+        # Get the student_or_class object
+        if scheduled_classes:
+            student_or_class = scheduled_classes[0].student_or_class
+            hours = get_estimated_number_of_worked_hours(scheduled_classes)
+
+            accounting_report = {
+                "Name": student_or_class.student_or_class_name,
+                "Rate": student_or_class.tuition_per_hour,
+                "Hours": hours,
+                "Total": student_or_class.tuition_per_hour * hours
+            }
+
+            accounting_data["freelance_students"].append(accounting_report)
+    return accounting_data
+
+
+def generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
+        organized_classes_data
+):
     # Create a copy of the structure to avoid modifying the original
     accounting_data = {
         "classes_in_schools": [],
@@ -183,50 +233,18 @@ def generate_accounting_reports(organized_classes_data):
     }
     
     # Process school classes
-    for school_data in organized_classes_data["classes_in_schools"]:
-        school_report = {
-            "school_name": school_data["school_name"],
-            "students_reports": []
-        }
-        
-        for student_classes in school_data["students_classes"]:
-            scheduled_classes = student_classes["scheduled_classes"]
-            
-            # Get the student_or_class object (assuming the first class has it)
-            if scheduled_classes:
-                student_or_class = scheduled_classes[0].student_or_class
-                hours = get_estimated_number_of_worked_hours(scheduled_classes)
-                
-                accounting_report = {
-                    "Name": student_or_class.student_or_class_name,
-                    "Rate": student_or_class.tuition_per_hour,
-                    "Hours": hours,
-                    "Total": student_or_class.tuition_per_hour * hours
-                }
-                
-                school_report["students_reports"].append(accounting_report)
-        
-        accounting_data["classes_in_schools"].append(school_report)
-    
+    accounting_data_with_school_classes_reports = process_school_classes(
+        accounting_data=accounting_data,
+        organized_classes_data=organized_classes_data
+    )
+
     # Process freelance students
-    for student_classes in organized_classes_data["freelance_students"]:
-        scheduled_classes = student_classes["scheduled_classes"]
-        
-        # Get the student_or_class object
-        if scheduled_classes:
-            student_or_class = scheduled_classes[0].student_or_class
-            hours = get_estimated_number_of_worked_hours(scheduled_classes)
-            
-            accounting_report = {
-                "Name": student_or_class.student_or_class_name,
-                "Rate": student_or_class.tuition_per_hour,
-                "Hours": hours,
-                "Total": student_or_class.tuition_per_hour * hours
-            }
-            
-            accounting_data["freelance_students"].append(accounting_report)
+    accounting_data_with_school_and_freelance_reports = process_freelance_students(
+        accounting_data=accounting_data_with_school_classes_reports,
+        organized_classes_data=organized_classes_data
+    )
     
-    return accounting_data
+    return accounting_data_with_school_and_freelance_reports
 
 
 def calculate_school_totals(report):
@@ -272,13 +290,12 @@ def calculate_overall_monthly_total(accounting_data):
 def generate_estimated_earnings_report(
         teacher, month, year
 ):
-    #sorted_classes = get_scheduled_classes_during_month_period(
-    #    teacher, month, year
-    #)
-    sorted_classes = organize_scheduled_classes(teacher, month, year)
+    organized_classes_data = organize_scheduled_classes(teacher, month, year)
     print("************This is the query result************")
-    pprint(sorted_classes)
-    basic_report = generate_accounting_reports(sorted_classes)
+    pprint(organized_classes_data)
+    basic_report = generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
+        organized_classes_data=organized_classes_data
+    )
     print('*********************************************')
     pprint(basic_report)
     print("************************************************")
