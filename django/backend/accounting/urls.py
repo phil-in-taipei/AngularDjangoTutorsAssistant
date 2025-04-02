@@ -5,7 +5,7 @@ from .views import (
     EstimatedEarningsByMonthAndYear,
     FreelanceTuitionTransactionsListViewByMonthAndYear,
     FreelanceTuitionTransactionViewSet,
-    PurchasedHoursModificationRecordsListViewByAccountAndMonth
+    PurchasedHoursModificationRecordsListViewByAccountAndMonth, EstimatedSchoolEarningsByMonthAndYear
 )
 
 app_name = "accounting"
@@ -15,9 +15,15 @@ router.register(r'tuition-transactions', FreelanceTuitionTransactionViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('estimated-earnings-by-month-year/<int:month>/<int:year>/',
-         EstimatedEarningsByMonthAndYear.as_view(),
-         name='estimated-earnings-by-month-year'
+    path(
+        'estimated-earnings-by-month-year/<int:month>/<int:year>/',
+        EstimatedEarningsByMonthAndYear.as_view(),
+        name='estimated-earnings-by-month-year'
+    ),
+    path(
+        'estimated-school-earnings-by-month-year/<int:month>/<int:year>/<int:school_id>/',
+        EstimatedSchoolEarningsByMonthAndYear.as_view(),
+        name='estimated-school-earnings-by-month-year'
     ),
     path(
         'purchased-hours-modifications/by-month-and-account/<int:month>/<int:year>/<int:account_id>/',

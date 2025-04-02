@@ -93,6 +93,26 @@ def get_scheduled_classes_during_month_period(
     )
 
 
+def get_scheduled_classes_at_school_during_month_period(
+        teacher, school, month, year
+):
+    start_date = date(int(year), int(month), 1)
+    if int(month) == 12:
+        finish_date = date(int(year) + 1, 1, 1)
+    else:
+        finish_date = date(int(year), int(month) + 1, 1)
+
+    queryset = ScheduledClass.objects.filter(
+                date__gte=start_date,
+                date__lt=finish_date,
+                teacher=teacher,
+                student_or_class__school=school
+        )
+    return list(queryset.order_by(
+        'student_or_class__school__school_name'
+    ))
+
+
 def get_estimated_number_of_worked_hours(scheduled_classes):
     number_of_worked_hours = 0
     for scheduled_class in scheduled_classes:
@@ -177,6 +197,9 @@ def organize_scheduled_classes(teacher, month, year):
 
 def process_school_classes(accounting_data, organized_classes_data):
     for school_data in organized_classes_data["classes_in_schools"]:
+        print("This is the school data:")
+        print("**************************************************************************")
+        print(school_data)
         school_report = {
             "school_name": school_data["school_name"],
             "students_reports": []
@@ -221,6 +244,22 @@ def process_freelance_students(accounting_data, organized_classes_data):
 
             accounting_data["freelance_students"].append(accounting_report)
     return accounting_data
+
+
+def generate_accounting_reports_for_classes_in_schools(
+        organized_classes_data
+):
+    # Create a copy of the structure to avoid modifying the original
+    accounting_data = {
+        "classes_in_schools": [],
+    }
+
+    # Process school classes
+    accounting_data_with_school_classes_reports = process_school_classes(
+        accounting_data=accounting_data,
+        organized_classes_data=organized_classes_data
+    )
+    return accounting_data_with_school_classes_reports
 
 
 def generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
@@ -301,5 +340,30 @@ def generate_estimated_earnings_report(
     print("************************************************")
     report_with_school_totals = calculate_school_totals(report=basic_report)
     return calculate_overall_monthly_total(accounting_data=report_with_school_totals)
+
+
+def generate_estimated_earnings_report_for_single_school(
+        teacher, school, month, year
+):
+    school_data = {
+        "school_name": school.school_name,
+        "students_classes": get_scheduled_classes_at_school_during_month_period(
+            teacher=teacher, school=school,
+            month=month, year=year
+        )
+    }
+    organized_classes_data = {
+        'classes_in_schools': school_data
+    }
+    print("************This is the query result************")
+    pprint(organized_classes_data)
+    basic_report = generate_accounting_reports_for_classes_in_schools(
+        organized_classes_data=organized_classes_data
+    )
+    print('*********************************************')
+    pprint(basic_report)
+    print("************************************************")
+    report_with_school_totals = calculate_school_totals(report=basic_report)
+    return report_with_school_totals
 
 

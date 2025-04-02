@@ -7,6 +7,8 @@ import json
 from django.core.serializers import serialize
 
 from user_profiles.models import UserProfile
+from school.models import School
+
 from .models import (
     FreelanceTuitionTransactionRecord,
     PurchasedHoursModificationRecord
@@ -18,8 +20,8 @@ from .serializers import (
 from .utils import (
     create_purchased_hours_modification_record_for_tuition_transaction,
     create_timestamps_for_beginning_and_end_of_month_and_year,
-    generate_estimated_earnings_report
-    )
+    generate_estimated_earnings_report, generate_estimated_earnings_report_for_single_school
+)
 
 
 class EstimatedEarningsByMonthAndYear(APIView):
@@ -39,6 +41,32 @@ class EstimatedEarningsByMonthAndYear(APIView):
 
         print("*************************************************")
         return Response(monthly_accounting_report)
+
+
+class EstimatedSchoolEarningsByMonthAndYear(APIView):
+    permission_classes = (
+        IsAuthenticated,
+    )
+
+    def get(self, *args, **kwargs):
+        school_id = self.kwargs.get("school_id")
+        school = get_object_or_404(School, id=school_id)
+        teacher = get_object_or_404(UserProfile, user=self.request.user)
+        month = self.kwargs.get("month")
+        year = self.kwargs.get("year")
+        monthly_accounting_report = generate_estimated_earnings_report_for_single_school(
+            teacher=teacher, school=school, month=month, year=year
+        )
+        print("will return this.....")
+        print(monthly_accounting_report)
+
+        print("*************************************************")
+        return Response(monthly_accounting_report)
+
+    #generate_estimated_earnings_report_for_single_school(
+     #   teacher, school, month, year
+    #)
+
 
 class FreelanceTuitionTransactionViewSet(viewsets.ModelViewSet):
     permission_classes = (
