@@ -108,9 +108,9 @@ def get_scheduled_classes_at_school_during_month_period(
                 teacher=teacher,
                 student_or_class__school=school
         )
-    return list(queryset.order_by(
+    return queryset.order_by(
         'student_or_class__school__school_name'
-    ))
+    )
 
 
 def get_estimated_number_of_worked_hours(scheduled_classes):
@@ -126,9 +126,9 @@ def get_estimated_number_of_worked_hours(scheduled_classes):
     return number_of_worked_hours
 
 
-def organize_scheduled_classes(teacher, month, year):
+def organize_scheduled_classes(classes):
     # Get all classes for the specified month and year
-    classes = get_scheduled_classes_during_month_period(teacher, month, year)
+    #classes = get_scheduled_classes_during_month_period(teacher, month, year)
     
     # Initialize the main dictionary structure
     organized_data = {
@@ -329,7 +329,8 @@ def calculate_overall_monthly_total(accounting_data):
 def generate_estimated_earnings_report(
         teacher, month, year
 ):
-    organized_classes_data = organize_scheduled_classes(teacher, month, year)
+    classes_during_period = get_scheduled_classes_during_month_period(teacher, month, year)
+    organized_classes_data = organize_scheduled_classes(classes=classes_during_period)
     print("************This is the query result************")
     pprint(organized_classes_data)
     basic_report = generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
@@ -345,16 +346,11 @@ def generate_estimated_earnings_report(
 def generate_estimated_earnings_report_for_single_school(
         teacher, school, month, year
 ):
-    school_data = {
-        "school_name": school.school_name,
-        "students_classes": get_scheduled_classes_at_school_during_month_period(
-            teacher=teacher, school=school,
-            month=month, year=year
-        )
-    }
-    organized_classes_data = {
-        'classes_in_schools': school_data
-    }
+    classes_during_period = get_scheduled_classes_at_school_during_month_period(
+        teacher, school, month, year
+    )
+    organized_classes_data = organize_scheduled_classes(classes=classes_during_period)
+
     print("************This is the query result************")
     pprint(organized_classes_data)
     basic_report = generate_accounting_reports_for_classes_in_schools(
