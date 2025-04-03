@@ -93,6 +93,20 @@ def get_scheduled_classes_during_month_period(
     )
 
 
+def get_scheduled_classes_at_school_during_date_range(
+        teacher, school, start_date, finish_date
+):
+    queryset = ScheduledClass.objects.filter(
+                date__gte=start_date,
+                date__lt=finish_date,
+                teacher=teacher,
+                student_or_class__school=school
+        )
+    return queryset.order_by(
+        'student_or_class__school__school_name'
+    )
+
+
 def get_scheduled_classes_at_school_during_month_period(
         teacher, school, month, year
 ):
@@ -343,7 +357,28 @@ def generate_estimated_earnings_report(
     return calculate_overall_monthly_total(accounting_data=report_with_school_totals)
 
 
-def generate_estimated_earnings_report_for_single_school(
+def generate_estimated_earnings_report_for_single_school_within_date_range(
+        teacher, school, start_date, finish_date
+):
+    classes_during_period = get_scheduled_classes_at_school_during_date_range(
+        teacher=teacher, school=school, 
+        start_date=start_date, finish_date=finish_date
+    )
+    organized_classes_data = organize_scheduled_classes(classes=classes_during_period)
+
+    print("************This is the query result************")
+    pprint(organized_classes_data)
+    basic_report = generate_accounting_reports_for_classes_in_schools(
+        organized_classes_data=organized_classes_data
+    )
+    print('*********************************************')
+    pprint(basic_report)
+    print("************************************************")
+    report_with_school_totals = calculate_school_totals(report=basic_report)
+    return report_with_school_totals
+
+
+def generate_estimated_monthly_earnings_report_for_single_school(
         teacher, school, month, year
 ):
     classes_during_period = get_scheduled_classes_at_school_during_month_period(

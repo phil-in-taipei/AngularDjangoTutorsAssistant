@@ -20,7 +20,9 @@ from .serializers import (
 from .utils import (
     create_purchased_hours_modification_record_for_tuition_transaction,
     create_timestamps_for_beginning_and_end_of_month_and_year,
-    generate_estimated_earnings_report, generate_estimated_earnings_report_for_single_school
+    generate_estimated_earnings_report,
+    generate_estimated_monthly_earnings_report_for_single_school,
+    generate_estimated_earnings_report_for_single_school_within_date_range
 )
 
 
@@ -54,7 +56,7 @@ class EstimatedSchoolEarningsByMonthAndYear(APIView):
         teacher = get_object_or_404(UserProfile, user=self.request.user)
         month = self.kwargs.get("month")
         year = self.kwargs.get("year")
-        monthly_accounting_report = generate_estimated_earnings_report_for_single_school(
+        monthly_accounting_report = generate_estimated_monthly_earnings_report_for_single_school(
             teacher=teacher, school=school, month=month, year=year
         )
         print("will return this.....")
@@ -63,9 +65,27 @@ class EstimatedSchoolEarningsByMonthAndYear(APIView):
         print("*************************************************")
         return Response(monthly_accounting_report)
 
-    #generate_estimated_earnings_report_for_single_school(
-     #   teacher, school, month, year
-    #)
+
+class EstimatedSchoolEarningsWithinDateRange(APIView):
+    permission_classes = (
+        IsAuthenticated,
+    )
+
+    def get(self, *args, **kwargs):
+        school_id = self.kwargs.get("school_id")
+        school = get_object_or_404(School, id=school_id)
+        teacher = get_object_or_404(UserProfile, user=self.request.user)
+        start_date = self.kwargs.get("start_date")
+        finish_date = self.kwargs.get("finish_date")
+        accounting_report_within_date_range = generate_estimated_earnings_report_for_single_school_within_date_range(
+            teacher=teacher, school=school, 
+            start_date=start_date, finish_date=finish_date
+        )
+        print("will return this.....")
+        print(accounting_report_within_date_range)
+
+        print("*************************************************")
+        return Response(accounting_report_within_date_range)
 
 
 class FreelanceTuitionTransactionViewSet(viewsets.ModelViewSet):

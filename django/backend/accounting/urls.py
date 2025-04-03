@@ -5,7 +5,9 @@ from .views import (
     EstimatedEarningsByMonthAndYear,
     FreelanceTuitionTransactionsListViewByMonthAndYear,
     FreelanceTuitionTransactionViewSet,
-    PurchasedHoursModificationRecordsListViewByAccountAndMonth, EstimatedSchoolEarningsByMonthAndYear
+    PurchasedHoursModificationRecordsListViewByAccountAndMonth,
+    EstimatedSchoolEarningsByMonthAndYear, 
+    EstimatedSchoolEarningsWithinDateRange
 )
 
 app_name = "accounting"
@@ -24,6 +26,11 @@ urlpatterns = [
         'estimated-school-earnings-by-month-year/<int:month>/<int:year>/<int:school_id>/',
         EstimatedSchoolEarningsByMonthAndYear.as_view(),
         name='estimated-school-earnings-by-month-year'
+    ),
+    path(
+        'estimated-school-earnings-within-date-range/<str:start_date>/<str:finish_date>/<int:school_id>/',
+        EstimatedSchoolEarningsWithinDateRange.as_view(),
+        name='estimated-school-earnings-within-date-range'
     ),
     path(
         'purchased-hours-modifications/by-month-and-account/<int:month>/<int:year>/<int:account_id>/',
