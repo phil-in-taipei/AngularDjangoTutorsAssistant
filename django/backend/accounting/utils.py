@@ -375,7 +375,7 @@ def generate_estimated_earnings_report_for_single_school_within_date_range(
     pprint(basic_report)
     print("************************************************")
     report_with_school_totals = calculate_school_totals(report=basic_report)
-    return report_with_school_totals
+    return report_with_school_totals['classes_in_schools'][0]
 
 
 def generate_estimated_monthly_earnings_report_for_single_school(
@@ -395,6 +395,6 @@ def generate_estimated_monthly_earnings_report_for_single_school(
     pprint(basic_report)
     print("************************************************")
     report_with_school_totals = calculate_school_totals(report=basic_report)
-    return report_with_school_totals
+    return report_with_school_totals['classes_in_schools'][0]
 
 
