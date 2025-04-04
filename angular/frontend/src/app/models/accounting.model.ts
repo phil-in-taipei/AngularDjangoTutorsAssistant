@@ -34,7 +34,7 @@ export interface SchoolAccountingReportModel {
     school_total: number;
 }
 
-export interface SchoolsAndFreelanceStudentsAccountingReport {
+export interface SchoolsAndFreelanceStudentsAccountingReportModel {
     classes_in_schools: SchoolAccountingReportModel[]
     freelance_students: StudentOrClassAccountingReportModel[]
 }
