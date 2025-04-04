@@ -22,10 +22,10 @@ export interface PurchasedHoursModificationRecordModel {
 }
 
 export interface StudentOrClassAccountingReportModel {
-    Name: string;
-    Rate: number;
-    Hours: number;
-    Total: number; 
+    name: string;
+    rate: number;
+    hours: number;
+    total: number; 
 }
 
 export interface SchoolAccountingReportModel {

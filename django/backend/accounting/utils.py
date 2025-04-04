@@ -141,9 +141,6 @@ def get_estimated_number_of_worked_hours(scheduled_classes):
 
 
 def organize_scheduled_classes(classes):
-    # Get all classes for the specified month and year
-    #classes = get_scheduled_classes_during_month_period(teacher, month, year)
-    
     # Initialize the main dictionary structure
     organized_data = {
         "classes_in_schools": [],
@@ -228,10 +225,10 @@ def process_school_classes(accounting_data, organized_classes_data):
                 hours = get_estimated_number_of_worked_hours(scheduled_classes)
 
                 accounting_report = {
-                    "Name": student_or_class.student_or_class_name,
-                    "Rate": student_or_class.tuition_per_hour,
-                    "Hours": hours,
-                    "Total": student_or_class.tuition_per_hour * hours
+                    "name": student_or_class.student_or_class_name,
+                    "rate": student_or_class.tuition_per_hour,
+                    "hours": hours,
+                    "total": student_or_class.tuition_per_hour * hours
                 }
 
                 school_report["students_reports"].append(accounting_report)
@@ -250,10 +247,10 @@ def process_freelance_students(accounting_data, organized_classes_data):
             hours = get_estimated_number_of_worked_hours(scheduled_classes)
 
             accounting_report = {
-                "Name": student_or_class.student_or_class_name,
-                "Rate": student_or_class.tuition_per_hour,
-                "Hours": hours,
-                "Total": student_or_class.tuition_per_hour * hours
+                "name": student_or_class.student_or_class_name,
+                "rate": student_or_class.tuition_per_hour,
+                "hours": hours,
+                "total": student_or_class.tuition_per_hour * hours
             }
 
             accounting_data["freelance_students"].append(accounting_report)
