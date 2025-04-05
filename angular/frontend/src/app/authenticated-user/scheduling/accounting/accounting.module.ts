@@ -7,9 +7,24 @@ import { StoreModule } from '@ngrx/store';
 
 import { AccountingComponent } from './accounting/accounting.component';
 import { AccountingRoutingModule } from './accounting-routing.module';
+import { 
+  MonthlySchoolAccountingReportComponent 
+} from './reports/monthly-school-accounting-report/monthly-school-accounting-report.component';
+import { 
+  OverallMonthlyAccountingReportComponent 
+} from './reports/overall-monthly-accounting-report/overall-monthly-accounting-report.component';
+import { 
+  SchoolAccountingReportWithinDateRangeComponent 
+} from './reports/school-accounting-report-within-date-range/school-accounting-report-within-date-range.component';
 
 import { SchoolsEffects } from '../../schools/state/school.effects';
 import { schoolsReducer } from '../../schools/state/school.reducers';
+import { 
+  SelectDateRangeAndSchoolComponent 
+} from './reports/select-date-range-and-school/select-date-range-and-school.component';
+import { 
+  SelectDateRangeAndSchoolFormComponent 
+} from './reports/select-date-range-and-school-form/select-date-range-and-school-form.component';
 import { 
   SelectMonthYearAndSchoolComponent 
 } from './reports/select-month-year-and-school/select-month-year-and-school.component';
@@ -27,6 +42,11 @@ import {
 @NgModule({
   declarations: [
     AccountingComponent,
+    MonthlySchoolAccountingReportComponent,
+    OverallMonthlyAccountingReportComponent,
+    SchoolAccountingReportWithinDateRangeComponent,
+    SelectDateRangeAndSchoolComponent,
+    SelectDateRangeAndSchoolFormComponent,
     SelectMonthYearAndSchoolComponent,
     SelectMonthYearAndSchoolFormComponent
   ],

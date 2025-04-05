@@ -1,1 +1,65 @@
-<p>select-month-year-and-school-form works!</p>
+<div class="m-3 p-2">
+    <div class="container">
+        <h2 class="text-center">Select Month, Year, and (optional) School for Accounting Report</h2>
+        <form (submit)="onNavigateToMonthlyReport(selectMonthYearAndSchoolForm)"
+          #selectMonthYearAndSchoolForm="ngForm">
+          <div>
+            <br />
+              <label>Schools</label>
+              <select
+              name="school"
+              class="form-control"
+              ngModel
+              required
+              #school="ngModel"
+              >
+              <option [value]=0>All Schools and Freelance Students</option>
+              <option *ngFor="let school of schools"
+                  [value]=school.id
+              >{{ school.school_name }}
+              </option>
+              </select>
+              <div *ngIf="school.touched && school.invalid">
+                Please select a valid school
+              </div>
+            </div>
+          <div>
+            <label>Month</label>
+              <select
+              class="form-control"
+              name="month"
+              class="form-control"
+              ngModel
+              required
+              #month="ngModel"
+              >
+              <option *ngFor="let opt of monthsAndIntegers"
+                  [value]=opt[1]
+              >{{ opt[0] }}</option>
+              </select>
+          </div>
+          <br />
+          <div>
+            <label>Year</label>
+              <select
+              class="form-control"
+              name="year"
+              class="form-control"
+              ngModel
+              required
+              #year="ngModel"
+              >
+              <option *ngFor="let year of years"
+                [value]=year
+              >{{ year }}</option>
+              </select>
+          </div>
+          <br />
+          <div>
+            <button class="btn btn-dark" type="submit">
+                Submit
+            </button>
+          </div>
+        </form>
+    </div>
+</div>
