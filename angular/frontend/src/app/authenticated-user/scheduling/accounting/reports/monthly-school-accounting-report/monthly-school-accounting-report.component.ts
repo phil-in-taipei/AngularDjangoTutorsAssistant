@@ -11,19 +11,23 @@ import { AccountingService } from '../../accounting-service/accounting.service';
   templateUrl: './monthly-school-accounting-report.component.html',
   styleUrl: './monthly-school-accounting-report.component.css'
 })
-export class MonthlySchoolAccountingReportComponent {
+export class MonthlySchoolAccountingReportComponent implements OnInit {
 
   errorMessage: string|undefined = undefined;
+  fetchingReportInProgress:boolean = true;
   monthFromRouteData:number;
   yearFromRouteData:number;
   schoolIdFromRouteData:number;
   schoolMonthlyAccountingReport: SchoolAccountingReportModel|undefined = undefined;
 
-
   constructor(
     private route: ActivatedRoute,
     private accountingService: AccountingService
   ) { }
+
+  onClearErrorMessage() {
+    this.errorMessage = undefined;
+  }
 
   ngOnInit(): void {
     this.monthFromRouteData = +this.route.snapshot.params['month'];
@@ -37,9 +41,11 @@ export class MonthlySchoolAccountingReportComponent {
       ).subscribe({
         next: (res) => { 
           this.schoolMonthlyAccountingReport = res; 
+          this.fetchingReportInProgress = false;
         },
         error: (err) => {
           this.errorMessage = 'There was an error fetching the report';
+          this.fetchingReportInProgress = false;
           if (err["detail"]) {
             this.errorMessage = err["detail"];
           }

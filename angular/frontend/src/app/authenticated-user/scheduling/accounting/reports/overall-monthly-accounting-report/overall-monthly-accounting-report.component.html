@@ -1,1 +1,29 @@
-<p>overall-monthly-accounting-report works!</p>
+<hr class="thick-br"/>
+<div *ngIf="fetchingReportInProgress">
+    <div class="text-center">
+      <div class="spinner-border text-secondary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <br />
+    </div>
+    <br />
+</div>
+<div *ngIf="errorMessage">
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <h6>{{ errorMessage }}</h6>
+    <button type="button" class="btn-close" (click)="onClearErrorMessage()"
+    data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+</div>
+<hr class="thick-br"/>
+
+<div *ngIf="monthlyAccountingReport">
+    <div *ngIf="monthlyAccountingReport.freelance_students">
+        <div class="bg-transparent"
+              *ngFor="let freelance_student of monthlyAccountingReport.freelance_students"
+        >
+        <h1>{{ freelance_student.name }}</h1>
+        </div>
+    </div>
+</div>
+<hr class="thick-br"/>

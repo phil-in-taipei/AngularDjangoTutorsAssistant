@@ -1,1 +1,23 @@
-<p>monthly-school-accounting-report works!</p>
+<hr class="thick-br"/>
+<div *ngIf="fetchingReportInProgress">
+    <div class="text-center">
+      <div class="spinner-border text-secondary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <br />
+    </div>
+    <br />
+</div>
+<div *ngIf="errorMessage">
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <h6>{{ errorMessage }}</h6>
+    <button type="button" class="btn-close" (click)="onClearErrorMessage()"
+    data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+</div>
+<hr class="thick-br"/>
+
+<div *ngIf="schoolMonthlyAccountingReport">
+  <h1>{{ schoolMonthlyAccountingReport.school_name }}</h1>
+</div>
+<hr class="thick-br"/>
