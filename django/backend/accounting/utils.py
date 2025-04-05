@@ -308,7 +308,7 @@ def calculate_school_totals(report):
         
         # Sum up the Total values from all students in this school
         for student_report in school_report["students_reports"]:
-            school_total += student_report["Total"]
+            school_total += student_report["total"]
         
         # Add the school_total field to the school report
         school_report["school_total"] = school_total
@@ -329,7 +329,7 @@ def calculate_overall_monthly_total(accounting_data):
     
     # Sum up all freelance student totals
     for student_report in monthly_accounting_data["freelance_students"]:
-        overall_monthly_total += student_report["Total"]
+        overall_monthly_total += student_report["total"]
     
     # Add the overall monthly total to the accounting data
     monthly_accounting_data["overall_monthly_total"] = overall_monthly_total
@@ -372,7 +372,10 @@ def generate_estimated_earnings_report_for_single_school_within_date_range(
     pprint(basic_report)
     print("************************************************")
     report_with_school_totals = calculate_school_totals(report=basic_report)
-    return report_with_school_totals['classes_in_schools'][0]
+    if len(report_with_school_totals['classes_in_schools']) > 0:
+        return report_with_school_totals['classes_in_schools'][0]
+    else:
+        return None
 
 
 def generate_estimated_monthly_earnings_report_for_single_school(
@@ -392,6 +395,9 @@ def generate_estimated_monthly_earnings_report_for_single_school(
     pprint(basic_report)
     print("************************************************")
     report_with_school_totals = calculate_school_totals(report=basic_report)
-    return report_with_school_totals['classes_in_schools'][0]
+    if len(report_with_school_totals['classes_in_schools']) > 0:
+        return report_with_school_totals['classes_in_schools'][0]
+    else:
+        return None
 
 
