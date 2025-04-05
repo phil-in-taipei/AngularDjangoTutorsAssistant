@@ -42,7 +42,7 @@ export class AccountingService {
     month: number, year: number, school_id: number
   ) {
     let token = this.authService.getAuthToken();
-    return this.http.get<SchoolAccountingReportModel[]>(
+    return this.http.get<SchoolAccountingReportModel>(
       `${environment.apiUrl}/api/accounting/estimated-school-earnings-by-month-year/${month}/${year}/${school_id}/`,
         {
           headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
@@ -53,7 +53,7 @@ export class AccountingService {
     start_date: string, finish_date: string, school_id: number
   ) {
     let token = this.authService.getAuthToken();
-    return this.http.get<SchoolAccountingReportModel[]>(
+    return this.http.get<SchoolAccountingReportModel>(
       `${environment.apiUrl}/api/accounting/estimated-school-earnings-within-date-range/${start_date}/${finish_date}/${school_id}/`,
         {
           headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
@@ -64,7 +64,7 @@ export class AccountingService {
     month: number, year: number
   ) {
     let token = this.authService.getAuthToken();
-    return this.http.get<SchoolsAndFreelanceStudentsAccountingReportModel[]>(
+    return this.http.get<SchoolsAndFreelanceStudentsAccountingReportModel>(
       `${environment.apiUrl}/api/accounting/estimated-earnings-by-month-year/${month}/${year}/`,
         {
           headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
