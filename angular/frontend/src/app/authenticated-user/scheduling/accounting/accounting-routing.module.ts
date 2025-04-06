@@ -21,7 +21,7 @@ const routes: Routes = [
   { path: '', component: AccountingComponent, children: [
       { path: 'overall-monthly-accounting-report/:month/:year', component: OverallMonthlyAccountingReportComponent },
       { path: 'monthly-school-accounting-report/:month/:year/:school_id', component: MonthlySchoolAccountingReportComponent },
-      { path: 'school-accounting-report-within-date-range', component: SchoolAccountingReportWithinDateRangeComponent },
+      { path: 'school-accounting-report-within-date-range/:start_date/:finish_date/:school_id', component: SchoolAccountingReportWithinDateRangeComponent },
       { path: 'select-date-range-and-school', component: SelectDateRangeAndSchoolComponent },
       { path: 'select-month-year-and-school', component: SelectMonthYearAndSchoolComponent },
     ] 

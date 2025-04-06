@@ -1,1 +1,51 @@
-<p>select-date-range-and-school-form works!</p>
+<div class="container">
+    <form (submit)="onNavigateToSchoolReportWithinDateRange(
+        singleClassForm
+        )" #singleClassForm="ngForm">
+        <div class="input-group">
+            <input class="form-control" placeholder="yyyy-mm-dd"
+                name="date1" [(ngModel)]="dateModel1" ngbDatepicker #date1="ngbDatepicker">
+            <div class="input-group-append">
+            <button class="btn btn-outline-secondary calendar" (click)="date1.toggle()" type="button">
+            Select Start Date</button>
+            </div>
+        </div>
+        <br />
+        <div class="input-group">
+            <input class="form-control" placeholder="yyyy-mm-dd"
+                name="date2" [(ngModel)]="dateModel2" ngbDatepicker #date2="ngbDatepicker">
+            <div class="input-group-append">
+            <button class="btn btn-outline-secondary calendar" (click)="date2.toggle()" type="button">
+            Select Finish Date</button>
+            </div>
+        </div>
+        <br />
+        <div>
+          <label>School</label>
+            <select
+            class="form-control"
+            name="school"
+            class="form-control"
+            ngModel
+            required
+            #student_or_class="ngModel"
+            >
+            <option *ngFor="let school of schools"
+                [value]=school.id
+            >{{ school.school_name }}
+            </option>
+            </select>
+            <div *ngIf="student_or_class.touched && student_or_class.invalid">
+              Please enter a student or class.
+            </div>
+        </div>
+         <br />
+ 
+        <div>
+        <button class="btn btn-outline-secondary" type="submit">
+          Submit
+        </button>
+      </div>
+    </form>
+    <br />
+  </div>

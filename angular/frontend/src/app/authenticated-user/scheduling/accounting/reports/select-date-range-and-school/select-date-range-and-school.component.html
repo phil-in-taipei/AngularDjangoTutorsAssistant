@@ -1,1 +1,6 @@
-<p>select-date-range-and-school works!</p>
+<div *ngIf="schools$ | async as schools" class="container">
+    <app-select-date-range-and-school-form 
+    [schools]=schools
+    >
+    </app-select-date-range-and-school-form>
+</div>
