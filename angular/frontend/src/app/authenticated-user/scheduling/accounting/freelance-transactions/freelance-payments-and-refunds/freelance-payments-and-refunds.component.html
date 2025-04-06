@@ -1,0 +1,99 @@
+<div class="container" [hidden]="!showMonthlySelectForm"
+[style.opacity]="!showMonthlySelectForm ? '0' : '1'"
+[style.visibility]="!showMonthlySelectForm ? 'hidden' : 'visible'">
+  <h2>Select Month to View Payments</h2>
+  <form (submit)="onMonthYearSelect(monthYearSelectForm)"
+    #monthYearSelectForm="ngForm">
+    <div>
+      <label>Month</label>
+        <select
+        class="form-control"
+        name="month"
+        class="form-control"
+        ngModel
+        required
+        #month="ngModel"
+        >
+        <option *ngFor="let opt of monthsAndIntegers"
+            [value]=opt[1]
+        >{{ opt[0] }}</option>
+        </select>
+    </div>
+    <br />
+    <div>
+      <label>Year</label>
+        <select
+        class="form-control"
+        name="year"
+        class="form-control"
+        ngModel
+        required
+        #year="ngModel"
+        >
+        <option *ngFor="let year of years"
+          [value]=year
+        >{{ year }}</option>
+        </select>
+    </div>
+    <br />
+    <div>
+      <button class="btn btn-outline-secondary" type="submit">
+          Submit
+      </button>
+    </div>
+    <br />
+  </form>
+</div>
+
+<div class="text-center" [hidden]="showMonthlySelectForm"
+    [style.opacity]="showMonthlySelectForm ? '0' : '1'"
+    [style.visibility]="showMonthlySelectForm ? 'hidden' : 'visible'"
+>
+    <br />
+  <button class="btn btn-sm btn-outline-secondary text"
+   (click)="showMonthlySelect()">
+      Select Another Month
+  </button>
+</div>
+
+<hr class="thick-br"/>
+<div *ngIf="freelanceTransactions"
+  [hidden]="showMonthlySelectForm"
+  [style.opacity]="showMonthlySelectForm ? '0' : '1'"
+  [style.visibility]="showMonthlySelectForm ? 'hidden' : 'visible'">
+  <div *ngIf="freelanceTransactions.length > 0; else no_billings" class="container">
+    <br />
+    <h3>Payments for {{ selectedMonth[0] }} {{ selectedYear }}</h3>
+    <hr class="thick-br"/>
+    <table style="width:100%">
+      <thead>
+      <tr>
+        <th scope="col"><h4>From</h4></th>
+        <th scope="col"><h4>Type</h4></th>
+        <th scope="col"><h4>Hours</h4></th>
+        <th scope="col"><h4>Amount</h4></th>
+        <th scope="col"><h4>Time Received</h4></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let billing of freelanceTransactions">
+        <td>{{ billing.student_or_class }}</td>
+        <td>{{ billing.transaction_type }}</td>
+        <td>{{ billing.class_hours_purchased_or_refunded }}</td>
+        <td>NT${{ billing.transaction_amount }}</td>
+        <td>{{ billing.time_stamp }}</td>
+      </tr>
+    </tbody>
+    </table>
+    <hr class="thick-or"/>
+    <h4>Total: NT${{ total }}</h4>
+    <hr class="thick-or"/>
+  </div>
+  <ng-template #no_billings>
+    <div class="container">
+      <hr class="thick-br"/>
+      <h4>No payments for {{ selectedMonth[0] }} {{ selectedYear }}!</h4>
+      <hr class="thick-br"/>
+    </div>
+  </ng-template>
+</div>

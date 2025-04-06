@@ -2,6 +2,9 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AccountingComponent } from './accounting/accounting.component';
 import { 
+  FreelancePaymentsAndRefundsComponent 
+} from './freelance-transactions/freelance-payments-and-refunds/freelance-payments-and-refunds.component';
+import { 
   MonthlySchoolAccountingReportComponent 
 } from './reports/monthly-school-accounting-report/monthly-school-accounting-report.component';
 import { 
@@ -19,6 +22,7 @@ import {
 
 const routes: Routes = [
   { path: '', component: AccountingComponent, children: [
+      { path: 'monthly-freelance-transactions', component: FreelancePaymentsAndRefundsComponent },
       { path: 'overall-monthly-accounting-report/:month/:year', component: OverallMonthlyAccountingReportComponent },
       { path: 'monthly-school-accounting-report/:month/:year/:school_id', component: MonthlySchoolAccountingReportComponent },
       { path: 'school-accounting-report-within-date-range/:start_date/:finish_date/:school_id', component: SchoolAccountingReportWithinDateRangeComponent },

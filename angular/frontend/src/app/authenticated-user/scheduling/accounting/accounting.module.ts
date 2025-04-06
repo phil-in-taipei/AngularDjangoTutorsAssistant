@@ -8,11 +8,17 @@ import { StoreModule } from '@ngrx/store';
 import { AccountingComponent } from './accounting/accounting.component';
 import { AccountingRoutingModule } from './accounting-routing.module';
 import { 
+  FreelancePaymentsAndRefundsComponent 
+} from './freelance-transactions/freelance-payments-and-refunds/freelance-payments-and-refunds.component';
+import { 
   MonthlySchoolAccountingReportComponent 
 } from './reports/monthly-school-accounting-report/monthly-school-accounting-report.component';
 import { 
   OverallMonthlyAccountingReportComponent 
 } from './reports/overall-monthly-accounting-report/overall-monthly-accounting-report.component';
+import { 
+  PurchasedHoursModificationRecordsComponent 
+} from './freelance-transactions/purchased-hours-modification-records/purchased-hours-modification-records.component';
 import { 
   SchoolAccountingReportWithinDateRangeComponent 
 } from './reports/school-accounting-report-within-date-range/school-accounting-report-within-date-range.component';
@@ -42,13 +48,15 @@ import {
 @NgModule({
   declarations: [
     AccountingComponent,
+    FreelancePaymentsAndRefundsComponent,
     MonthlySchoolAccountingReportComponent,
     OverallMonthlyAccountingReportComponent,
+    PurchasedHoursModificationRecordsComponent,
     SchoolAccountingReportWithinDateRangeComponent,
     SelectDateRangeAndSchoolComponent,
     SelectDateRangeAndSchoolFormComponent,
     SelectMonthYearAndSchoolComponent,
-    SelectMonthYearAndSchoolFormComponent
+    SelectMonthYearAndSchoolFormComponent,
   ],
   imports: [
     CommonModule,
