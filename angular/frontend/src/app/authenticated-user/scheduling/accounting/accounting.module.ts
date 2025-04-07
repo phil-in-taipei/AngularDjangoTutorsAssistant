@@ -11,14 +11,38 @@ import {
   FreelancePaymentsAndRefundsComponent 
 } from './freelance-transactions/freelance-payments-and-refunds/freelance-payments-and-refunds.component';
 import { 
+  MakePurchaseComponent 
+} from './freelance-transactions/purchases/make-purchase/make-purchase.component';
+import { 
+  MakePurchaseFormComponent 
+} from './freelance-transactions/purchases/make-purchase-form/make-purchase-form.component';
+import { 
+  MakeRefundComponent 
+} from './freelance-transactions/refunds/make-refund/make-refund.component';
+import { 
+  MakeRefundFormComponent 
+} from './freelance-transactions/refunds/make-refund-form/make-refund-form.component';
+import { 
   MonthlySchoolAccountingReportComponent 
 } from './reports/monthly-school-accounting-report/monthly-school-accounting-report.component';
 import { 
   OverallMonthlyAccountingReportComponent 
 } from './reports/overall-monthly-accounting-report/overall-monthly-accounting-report.component';
 import { 
+  PostPurchaseHoursUpdateComponent 
+} from './freelance-transactions/purchases/post-purchase-hours-update/post-purchase-hours-update.component';
+import { 
+  PostRefundHoursUpdateComponent 
+} from './freelance-transactions/refunds/post-refund-hours-update/post-refund-hours-update.component';
+import { 
   PurchasedHoursModificationRecordsComponent 
 } from './freelance-transactions/purchased-hours-modification-records/purchased-hours-modification-records.component';
+import { 
+  PurchaseResponseDisplayComponent 
+} from './freelance-transactions/purchases/purchase-response-display/purchase-response-display.component';
+import { 
+  RefundResponseDisplayComponent 
+} from './freelance-transactions/refunds/refund-response-display/refund-response-display.component';
 import { 
   SchoolAccountingReportWithinDateRangeComponent 
 } from './reports/school-accounting-report-within-date-range/school-accounting-report-within-date-range.component';
@@ -49,9 +73,17 @@ import {
   declarations: [
     AccountingComponent,
     FreelancePaymentsAndRefundsComponent,
+    MakePurchaseComponent,
+    MakePurchaseFormComponent,
+    MakeRefundComponent,
+    MakeRefundFormComponent,
     MonthlySchoolAccountingReportComponent,
     OverallMonthlyAccountingReportComponent,
+    PostPurchaseHoursUpdateComponent,
+    PostRefundHoursUpdateComponent,
     PurchasedHoursModificationRecordsComponent,
+    PurchaseResponseDisplayComponent,
+    RefundResponseDisplayComponent,
     SchoolAccountingReportWithinDateRangeComponent,
     SelectDateRangeAndSchoolComponent,
     SelectDateRangeAndSchoolFormComponent,

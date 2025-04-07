@@ -5,6 +5,12 @@ import {
   FreelancePaymentsAndRefundsComponent 
 } from './freelance-transactions/freelance-payments-and-refunds/freelance-payments-and-refunds.component';
 import { 
+  MakePurchaseComponent 
+} from './freelance-transactions/purchases/make-purchase/make-purchase.component';
+import { 
+  MakeRefundComponent 
+} from './freelance-transactions/refunds/make-refund/make-refund.component';
+import { 
   MonthlySchoolAccountingReportComponent 
 } from './reports/monthly-school-accounting-report/monthly-school-accounting-report.component';
 import { 
@@ -24,6 +30,8 @@ const routes: Routes = [
   { path: '', component: AccountingComponent, children: [
       { path: 'monthly-freelance-transactions', component: FreelancePaymentsAndRefundsComponent },
       { path: 'overall-monthly-accounting-report/:month/:year', component: OverallMonthlyAccountingReportComponent },
+      { path: 'make-purchase', component: MakePurchaseComponent },
+      { path: 'make-refund', component: MakeRefundComponent },     
       { path: 'monthly-school-accounting-report/:month/:year/:school_id', component: MonthlySchoolAccountingReportComponent },
       { path: 'school-accounting-report-within-date-range/:start_date/:finish_date/:school_id', component: SchoolAccountingReportWithinDateRangeComponent },
       { path: 'select-date-range-and-school', component: SelectDateRangeAndSchoolComponent },
