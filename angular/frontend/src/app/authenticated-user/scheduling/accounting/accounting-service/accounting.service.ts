@@ -1,11 +1,13 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/authentication/auth.service';
 import { 
-  FreelanceTuitionTransactionRecordModel, PurchasedHoursModificationRecordModel,
-  SchoolAccountingReportModel, SchoolsAndFreelanceStudentsAccountingReportModel 
+  FreelanceTuitionTransactionModel, FreelanceTuitionTransactionRecordModel, 
+  PurchasedHoursModificationRecordModel, SchoolAccountingReportModel, 
+  SchoolsAndFreelanceStudentsAccountingReportModel 
 } from 'src/app/models/accounting.model';
 
 @Injectable({
@@ -69,6 +71,17 @@ export class AccountingService {
         {
           headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
         })
+  }
+
+  submitFreelanceTuitionTransaction(
+    submissionForm: FreelanceTuitionTransactionModel
+  ): Observable<FreelanceTuitionTransactionRecordModel> {
+    let token = this.authService.getAuthToken();
+    return this.http.post<FreelanceTuitionTransactionRecordModel>(
+      `${environment.apiUrl}/api/accounting/tuition-transactions/`, submissionForm,
+      {
+        headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
+      });
   }
 
 }

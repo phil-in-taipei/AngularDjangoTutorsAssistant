@@ -1,5 +1,11 @@
 import { ScheduledClassModel } from "./scheduled-class.model";
 
+export interface FreelanceTuitionTransactionModel {
+    transaction_type: string;
+    class_hours_purchased_or_refunded: number;
+    student_or_class: number;
+}
+
 export interface FreelanceTuitionTransactionRecordModel {
     id: number;
     transaction_amount: number;

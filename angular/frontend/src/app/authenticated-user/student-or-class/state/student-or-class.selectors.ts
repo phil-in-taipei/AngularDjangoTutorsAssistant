@@ -11,11 +11,19 @@ export const fetchingStudentsOrClassesInProgress = createSelector(
             selectStudentsOrClassesState,
             state => state.fetchingStudentsOrClassesInProgress
         );
+        
 
 export const selectAllStudentsOrClasses = createSelector(
     selectStudentsOrClassesState,
         fromStudentsOrClasses.selectAll
     );
+
+export const selectFreelanceStudentsOrClasses = createSelector(
+    selectAllStudentsOrClasses,
+    studentsOrClasses => studentsOrClasses.filter(
+        item => item.account_type === 'freelance'
+    )
+);
 
 export const selectStudentOrClassById = (id: number) => createSelector(
     selectStudentsOrClassesState,
