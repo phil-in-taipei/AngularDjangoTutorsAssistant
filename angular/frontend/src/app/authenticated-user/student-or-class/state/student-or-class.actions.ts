@@ -3,12 +3,13 @@ import { Update } from "@ngrx/entity";
 
 import { 
     StudentOrClassCreateAndEditModel, StudentOrClassEditModel,
-    StudentOrClassConfirmationModificationResponse,
     StudentOrClassModel 
 } from "src/app/models/student-or-class.model";
 
 
 export enum StudentOrClassActionTypes {
+    FreelanceAccountPurchasedHoursSaved = '[Make Purchase Page] Amount of Purchased Hours Updated Following Purchase Transaction',
+    FreelanceAccountRefundedHoursSaved = '[Make Refund Page] Amount of Purchased Hours Updated Following Refund Transaction',
     StudentOrClassCreateSubmitted = '[Create Student Or Class Page] Student Or Class Submitted',
     StudentOrClassCreatedAdded = '[Create Student Or Class Page] Newly Created Student Or Class Added',
     StudentOrClassCreationCancelled = '[Create Student Or Class Page] Student Or Class Creation Cancelled',
@@ -25,6 +26,29 @@ export enum StudentOrClassActionTypes {
     StudentsOrClassesRequested = '[Authenicated User Component View] Users Students Or Classes Requested',
     StudentsOrClassesRequestCancelled= '[Authenticated User Component View] Users Students Or Classes Request Cancelled',
 };
+
+export class FreelanceAccountPurchasedHoursSaved implements Action {
+    readonly type = StudentOrClassActionTypes.FreelanceAccountPurchasedHoursSaved;
+  
+    constructor(
+        public payload: { 
+            class_hours_purchased_or_refunded: number, 
+            studentOrClass: StudentOrClassModel
+        }
+    ) {}
+}
+
+export class FreelanceAccountRefundedHoursSaved implements Action {
+    readonly type = StudentOrClassActionTypes.FreelanceAccountRefundedHoursSaved;
+  
+    constructor(
+        public payload: { 
+            class_hours_purchased_or_refunded: number, 
+            studentOrClass: StudentOrClassModel
+        }
+    ) {}
+}
+
 
 export class StudentOrClassCreatedAdded implements Action {
     readonly type = StudentOrClassActionTypes.StudentOrClassCreatedAdded;
@@ -124,10 +148,12 @@ export class StudentsOrClassesRequested implements Action {
     readonly type = StudentOrClassActionTypes.StudentsOrClassesRequested;
   }
 
-export type StudentOrClassActions = StudentOrClassCreatedAdded | StudentOrClassCreateSubmitted |
-    StudentOrClassCreationCancelled | StudentOrClassDeletionCancelled |
-    StudentOrClassDeletionRequested | StudentOrClassDeletionSaved |
-    StudentOrClassEditCancelled |StudentOrClassEditSubmitted | StudentOrClassEditUpdated |
-    StudentsOrClassesCleared | StudentsOrClassesLoaded | StudentsOrClassesMessagesCleared |
-    StudentsOrClassesRequestCancelled | StudentsOrClassesRequested  | 
-    StudentOrClassPurchasedHoursUpdated;
+export type StudentOrClassActions = FreelanceAccountPurchasedHoursSaved |
+    FreelanceAccountRefundedHoursSaved | StudentOrClassCreatedAdded | 
+    StudentOrClassCreateSubmitted | StudentOrClassCreationCancelled | 
+    StudentOrClassDeletionCancelled | StudentOrClassDeletionRequested | 
+    StudentOrClassDeletionSaved | StudentOrClassEditCancelled |
+    StudentOrClassEditSubmitted | StudentOrClassEditUpdated |
+    StudentsOrClassesCleared |  StudentsOrClassesLoaded | 
+    StudentsOrClassesMessagesCleared | StudentsOrClassesRequestCancelled | 
+    StudentsOrClassesRequested  | StudentOrClassPurchasedHoursUpdated;

@@ -1,1 +1,8 @@
-<p>make-refund works!</p>
+<div *ngIf="freelanceStudents$ | async as freelanceStudents">
+    <hr class="thick-br"/>
+    <app-make-refund-form
+      [freelanceStudents]=freelanceStudents
+    >
+    </app-make-refund-form>
+    <hr class="thick-br"/>
+</div>

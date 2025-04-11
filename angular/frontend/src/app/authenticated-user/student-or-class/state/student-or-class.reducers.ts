@@ -46,7 +46,54 @@ export function studentsOrClassesReducer(
     let reducerErrorMessage: string | undefined = undefined;
     let reducerSuccessMessage: string | undefined = undefined;
 
-    switch(action.type) {
+    switch(action.type) { //FreelanceAccountPurchasedHoursSaved
+
+        case StudentOrClassActionTypes.FreelanceAccountPurchasedHoursSaved:
+            // clone with spead operator and add the new value before saving the clone
+            let studentOrClass:StudentOrClassModel = { ...action.payload.studentOrClass }
+            console.log('this is the account balance prior to ')
+            console.log(studentOrClass.purchased_class_hours)
+            if (studentOrClass.purchased_class_hours) {
+                let newBalance:number = +studentOrClass.purchased_class_hours + +action.payload.class_hours_purchased_or_refunded;
+                studentOrClass.purchased_class_hours = newBalance;    
+            }
+        
+            console.log('this is the new account balance:')
+            console.log(studentOrClass.purchased_class_hours);
+            return adapter.updateOne(
+                {
+                    id: action.payload.studentOrClass.id,
+                    changes: studentOrClass
+                },
+                {
+                    ...state, errorMessage:undefined,
+                    successMessage: `The number of purchased hours is: ${studentOrClass.purchased_class_hours}`
+                }
+            );
+
+
+        case StudentOrClassActionTypes.FreelanceAccountRefundedHoursSaved:
+            // clone with spead operator and add the new value before saving the clone
+            let freelanceAccount:StudentOrClassModel = { ...action.payload.studentOrClass }
+            console.log('this is the account balance prior to ')
+            console.log(freelanceAccount.purchased_class_hours)
+            if (freelanceAccount.purchased_class_hours) {
+                let updatedBalance:number = +freelanceAccount.purchased_class_hours - +action.payload.class_hours_purchased_or_refunded;
+                freelanceAccount.purchased_class_hours = updatedBalance;    
+            }
+            
+            console.log('this is the new account balance:')
+            console.log(freelanceAccount.purchased_class_hours);
+            return adapter.updateOne(
+                {
+                    id: action.payload.studentOrClass.id,
+                    changes: freelanceAccount
+                },
+                {
+                    ...state, errorMessage:undefined,
+                    successMessage: `The number of purchased hours is: ${freelanceAccount.purchased_class_hours}`
+                }
+            );  
 
         case StudentOrClassActionTypes.StudentOrClassCreatedAdded:
             reducerErrorMessage = undefined;
