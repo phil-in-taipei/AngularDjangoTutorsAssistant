@@ -1,1 +1,7 @@
-<p>purchase-response-display works!</p>
+<div *ngIf="freelanceAccount$ | async as freelanceAccount">
+    <h2>{{ freelanceAccount.student_or_class_name }}</h2>
+    <app-post-purchase-hours-update
+      [freelanceAccount]=freelanceAccount
+      [purchaseRecord]=purchaseRecord>
+    </app-post-purchase-hours-update>
+</div>

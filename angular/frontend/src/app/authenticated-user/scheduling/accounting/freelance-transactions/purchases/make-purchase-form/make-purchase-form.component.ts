@@ -26,16 +26,28 @@ export class MakePurchaseFormComponent {
 
   constructor(private accountingService: AccountingService) { }
 
+  onClearErrorMessage(): void {
+    this.errorMessage = undefined;
+  }
+
+  onClearNewlySubmittedTransactionResponse(): void {
+    this.freelanceTuitionTransactionResponse = undefined;
+  }
+
   onSubmitPurchase(form: NgForm) {
+    this.onClearErrorMessage();
+    this.onClearNewlySubmittedTransactionResponse();
     if (form.invalid) {
       form.reset();
       return;
     }
     let submissionForm: FreelanceTuitionTransactionModel = {
-      transaction_type: "purchase", 
+      transaction_type: "payment", 
       class_hours_purchased_or_refunded: +form.value.class_hours_purchased_or_refunded,
       student_or_class: +form.value.student_or_class
     }
+    console.log("*************submissions data for purchase**********")
+    console.log(submissionForm)
     this.accountingService.submitFreelanceTuitionTransaction(
       submissionForm
     ).pipe(single()

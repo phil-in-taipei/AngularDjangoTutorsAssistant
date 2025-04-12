@@ -1,1 +1,71 @@
-<p>make-purchase-form works!</p>
+<div *ngIf="errorMessage">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <h4 class="text-danger">{{ errorMessage }}</h4>
+      <button type="button" class="btn-close" (click)="onClearErrorMessage()"
+      data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+
+
+<div *ngIf="freelanceTuitionTransactionResponse; else purchaseForm">
+    <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+        <h6>Purchase Successfully Submitted!</h6>
+        <button type="button" class="btn-close" (click)="onClearNewlySubmittedTransactionResponse()"
+        data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <app-purchase-response-display
+        [purchaseRecord]=freelanceTuitionTransactionResponse>
+    </app-purchase-response-display>
+</div>
+
+
+<ng-template #purchaseForm>
+    <form (submit)="onSubmitPurchase(purchaseForm)" #purchaseForm="ngForm">
+
+      <div>
+          <label>Savings Account</label>
+            <select
+            class="form-control"
+            name="student_or_class"
+            class="form-control"
+            ngModel
+            required
+            #student_or_class="ngModel"
+            >
+            <option *ngFor="let freelanceStudent of freelanceStudents"
+                [value]=freelanceStudent.id
+            >{{ freelanceStudent.student_or_class_name }}
+            </option>
+            </select>
+            <div *ngIf="student_or_class.touched && student_or_class.invalid">
+              Please select a freelance student.
+            </div>
+      </div>
+      <br />
+      <div>
+          <label>Hours Purchased</label>
+          <input
+          class="form-control"
+          type="number"
+          min="1"
+          max="50"
+          rows="4"
+          name="class_hours_purchased_or_refunded"
+          ngModel
+          required
+          placeholder="10"
+          #class_hours_purchased_or_refunded="ngModel"
+          >
+          <div *ngIf="class_hours_purchased_or_refunded.touched && class_hours_purchased_or_refunded.invalid">
+            Please enter the number of hours to purchase
+          </div>
+      </div>
+      <br />
+      <div>
+        <button class="btn btn-outline-secondary" type="submit">
+          Submit
+        </button>
+      </div>
+    </form>
+    <br />
+</ng-template>
