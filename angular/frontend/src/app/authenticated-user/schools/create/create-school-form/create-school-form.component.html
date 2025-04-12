@@ -15,7 +15,6 @@
       <div *ngIf="school_name.touched && school_name.invalid">Please enter the school name.</div>
     </div>
     <br />
-    <hr class="thick-br"/>
     <div>
         <label>Street Address</label>
         <input
@@ -32,7 +31,6 @@
       <div *ngIf="address_line_1.touched && address_line_1.invalid">Please enter the street address.</div>
     </div>
     <br />
-    <hr class="thick-br"/>
     <div>
         <label>District and City</label>
         <input
@@ -48,8 +46,6 @@
         >
       <div *ngIf="address_line_2.touched && address_line_2.invalid">Please enter the district and city.</div>
     </div>
-    <br />
-    <hr class="thick-br"/>
     <br />
     <div>
         <label>Phone Number</label>
@@ -84,7 +80,7 @@
         ></textarea>
       <div *ngIf="other_information.touched && other_information.invalid">Please enter any additional information.</div>
       </div>
-    <hr class="thick-br"/>
+    <br />
     <div>
       <button class="btn btn-dark" type="submit"
       >Submit</button>

@@ -36,7 +36,6 @@ export class PostRefundHoursUpdateComponent implements OnInit {
     this.store.dispatch(new StudentsOrClassesMessagesCleared());
   }
 
-
   ngOnInit(): void {
     let payload = {
       class_hours_purchased_or_refunded: this.refundRecord.class_hours_purchased_or_refunded, 

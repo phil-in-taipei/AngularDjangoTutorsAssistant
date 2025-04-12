@@ -26,6 +26,13 @@ export class MakeRefundFormComponent {
 
   constructor(private accountingService: AccountingService) { }
 
+  onClearErrorMessage(): void {
+    this.errorMessage = undefined;
+  }
+
+  onClearNewlySubmittedTransactionResponse(): void {
+    this.freelanceTuitionTransactionResponse = undefined;
+  }
 
   onSubmitRefund(form: NgForm) {
     if (form.invalid) {
@@ -47,7 +54,7 @@ export class MakeRefundFormComponent {
           this.showForm = false;
         },
         error: (err) => {
-          this.errorMessage = 'There was an error submitting the transactions';
+          this.errorMessage = 'There was an error submitting the transaction';
           this.fetchingInProgress = false;
           if (err["message"]) {
             this.errorMessage = err["message"];
