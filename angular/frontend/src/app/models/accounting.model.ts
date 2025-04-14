@@ -43,4 +43,5 @@ export interface SchoolAccountingReportModel {
 export interface SchoolsAndFreelanceStudentsAccountingReportModel {
     classes_in_schools: SchoolAccountingReportModel[]
     freelance_students: StudentOrClassAccountingReportModel[]
+    overall_monthly_total: number;
 }

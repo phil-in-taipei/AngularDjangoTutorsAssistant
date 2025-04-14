@@ -1,4 +1,3 @@
-<hr class="thick-br"/>
 <div *ngIf="fetchingReportInProgress">
     <div class="text-center">
       <div class="spinner-border text-secondary" role="status">
@@ -15,9 +14,30 @@
     data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
 </div>
-<hr class="thick-br"/>
 
-<div *ngIf="schoolAccountingReport">
-  <h1>{{ schoolAccountingReport.school_name }}</h1>
+<div *ngIf="schoolAccountingReport" class="container">
+  <hr class="thick-br"/>
+  <h1 class="text-center">{{ schoolAccountingReport.school_name }}</h1>
+  <table style="width:100%">
+    <thead>
+    <tr>
+      <th scope="col"><h4>Class</h4></th>
+      <th scope="col"><h4>Rate</h4></th>
+      <th scope="col"><h4>Hours</h4></th>
+      <th scope="col"><h4>Total</h4></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let report of schoolAccountingReport.students_reports">
+      <td>{{ report.name }}</td>
+      <td>NT${{ report.rate }}/hr</td>
+      <td>{{ report.hours }}</td>
+      <td>NT${{ report.total }}</td>
+    </tr>
+  </tbody>
+  </table>
+  <hr class="thick-br"/>
+  <h4>Total: NT${{ schoolAccountingReport.school_total }}</h4>
+  <hr class="thick-br"/>
 </div>
 <hr class="thick-br"/>

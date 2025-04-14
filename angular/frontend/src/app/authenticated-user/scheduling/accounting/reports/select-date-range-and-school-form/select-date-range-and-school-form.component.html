@@ -1,23 +1,36 @@
 <div class="container">
+  <br />
+    <h2 class="text-center">School Report in Date Range</h2>
     <form (submit)="onNavigateToSchoolReportWithinDateRange(
         singleClassForm
         )" #singleClassForm="ngForm">
-        <div class="input-group">
-            <input class="form-control" placeholder="yyyy-mm-dd"
-                name="date1" [(ngModel)]="dateModel1" ngbDatepicker #date1="ngbDatepicker">
-            <div class="input-group-append">
-            <button class="btn btn-outline-secondary calendar" (click)="date1.toggle()" type="button">
-            Select Start Date</button>
-            </div>
-        </div>
         <br />
-        <div class="input-group">
-            <input class="form-control" placeholder="yyyy-mm-dd"
-                name="date2" [(ngModel)]="dateModel2" ngbDatepicker #date2="ngbDatepicker">
-            <div class="input-group-append">
-            <button class="btn btn-outline-secondary calendar" (click)="date2.toggle()" type="button">
-            Select Finish Date</button>
+        <div class="row">
+          <div class="col">
+            <label>Start</label>
+            <div class="input-group">
+              <input class="form-control" placeholder="yyyy-mm-dd"
+                  name="date1" [(ngModel)]="dateModel1" ngbDatepicker #date1="ngbDatepicker">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary calendar" (click)="date1.toggle()" type="button">
+                  Select Date
+                </button>
+              </div>
             </div>
+          </div>
+          <br />
+          <div class="col">
+            <label>Finish</label>
+            <div class="input-group">
+              <input class="form-control" placeholder="yyyy-mm-dd"
+                  name="date2" [(ngModel)]="dateModel2" ngbDatepicker #date2="ngbDatepicker">
+              <div class="input-group-append">
+              <button class="btn btn-outline-secondary calendar" (click)="date2.toggle()" type="button">
+                Select Date
+              </button>
+              </div>
+            </div>
+          </div>
         </div>
         <br />
         <div>
