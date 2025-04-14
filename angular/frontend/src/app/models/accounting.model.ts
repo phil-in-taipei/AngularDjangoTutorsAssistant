@@ -36,7 +36,7 @@ export interface StudentOrClassAccountingReportModel {
 
 export interface SchoolAccountingReportModel {
     school_name: string;
-    student_reports : StudentOrClassAccountingReportModel[]
+    students_reports : StudentOrClassAccountingReportModel[]
     school_total: number;
 }
 

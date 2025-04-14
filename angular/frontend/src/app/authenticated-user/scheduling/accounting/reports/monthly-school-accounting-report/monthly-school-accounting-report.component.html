@@ -15,9 +15,29 @@
     data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
 </div>
-<hr class="thick-br"/>
 
-<div *ngIf="schoolMonthlyAccountingReport">
+<div *ngIf="schoolMonthlyAccountingReport" class="container">
   <h1>{{ schoolMonthlyAccountingReport.school_name }}</h1>
+  <table style="width:100%">
+    <thead>
+    <tr>
+      <th scope="col"><h4>Class</h4></th>
+      <th scope="col"><h4>Rate</h4></th>
+      <th scope="col"><h4>Hours</h4></th>
+      <th scope="col"><h4>Total</h4></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let report of schoolMonthlyAccountingReport.students_reports">
+      <td>{{ report.name }}</td>
+      <td>NT${{ report.rate }}/hr</td>
+      <td>{{ report.hours }}</td>
+      <td>NT${{ report.total }}</td>
+    </tr>
+  </tbody>
+  </table>
+  <hr class="thick-br"/>
+  <h4>Total: NT${{ schoolMonthlyAccountingReport.school_total }}</h4>
+  <hr class="thick-br"/>
 </div>
 <hr class="thick-br"/>
