@@ -226,6 +226,7 @@ def process_school_classes(accounting_data, organized_classes_data):
 
                 accounting_report = {
                     "name": student_or_class.student_or_class_name,
+                    "account_id": student_or_class.id,
                     "rate": student_or_class.tuition_per_hour,
                     "hours": hours,
                     "total": student_or_class.tuition_per_hour * hours
@@ -248,6 +249,7 @@ def process_freelance_students(accounting_data, organized_classes_data):
 
             accounting_report = {
                 "name": student_or_class.student_or_class_name,
+                "account_id": student_or_class.id,
                 "rate": student_or_class.tuition_per_hour,
                 "hours": hours,
                 "total": student_or_class.tuition_per_hour * hours
@@ -375,7 +377,7 @@ def generate_estimated_earnings_report_for_single_school_within_date_range(
     if len(report_with_school_totals['classes_in_schools']) > 0:
         return report_with_school_totals['classes_in_schools'][0]
     else:
-        return  {
+        return {
             "school_name": school.school_name,
             "student_reports": [],
             "school_total": float(0)

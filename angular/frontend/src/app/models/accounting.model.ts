@@ -29,6 +29,7 @@ export interface PurchasedHoursModificationRecordModel {
 
 export interface StudentOrClassAccountingReportModel {
     name: string;
+    account_id: number;
     rate: number;
     hours: number;
     total: number; 

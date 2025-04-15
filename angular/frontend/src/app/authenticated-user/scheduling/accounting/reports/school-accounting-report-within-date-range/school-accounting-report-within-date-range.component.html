@@ -18,6 +18,7 @@
 <div *ngIf="schoolAccountingReport" class="container">
   <hr class="thick-br"/>
   <h1 class="text-center">{{ schoolAccountingReport.school_name }}</h1>
+  <h5 class="text-center">(Click class for attendance record)</h5>
   <table style="width:100%">
     <thead>
     <tr>
@@ -29,7 +30,11 @@
   </thead>
   <tbody>
     <tr *ngFor="let report of schoolAccountingReport.students_reports">
-      <td>{{ report.name }}</td>
+      <td>        
+        <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', report.account_id]">
+          {{ report.name }}
+        </a>
+      </td>
       <td>NT${{ report.rate }}/hr</td>
       <td>{{ report.hours }}</td>
       <td>NT${{ report.total }}</td>

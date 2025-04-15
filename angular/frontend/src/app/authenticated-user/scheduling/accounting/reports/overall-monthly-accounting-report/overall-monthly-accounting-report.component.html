@@ -25,6 +25,7 @@
     <hr class="thick-br"/>
     <div *ngFor="let schoolReport of monthlyAccountingReport.classes_in_schools" class="container">
       <h4 class="text-center">{{ schoolReport.school_name }}</h4>
+      <h6 class="text-center">(Click for attendance record)</h6>
       <table style="width:100%">
         <thead>
         <tr>
@@ -36,7 +37,11 @@
       </thead>
       <tbody>
         <tr *ngFor="let classReport of schoolReport.students_reports">
-          <td>{{ classReport.name }}</td>
+          <td>
+            <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', classReport.account_id]">
+              {{ classReport.name }}
+            </a>
+          </td>
           <td>NT${{ classReport.rate }}/hr</td>
           <td>{{ classReport.hours }}</td>
           <td>NT${{ classReport.total }}</td>
@@ -51,6 +56,7 @@
     <div *ngIf="monthlyAccountingReport.freelance_students" class="container">
       <hr class="thick-br"/>
       <h3 class="text-center">Freelance Students</h3>
+      <h5 class="text-center">(Click for attendance record)</h5>
       <table style="width:100%">
         <thead>
         <tr>
@@ -62,7 +68,11 @@
       </thead>
       <tbody>
         <tr *ngFor="let report of monthlyAccountingReport.freelance_students">
-          <td>{{ report.name }}</td>
+          <td>
+            <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', report.account_id]">
+              {{ report.name }}
+            </a>
+          </td>
           <td>NT${{ report.rate }}/hr</td>
           <td>{{ report.hours }}</td>
           <td>NT${{ report.total }}</td>

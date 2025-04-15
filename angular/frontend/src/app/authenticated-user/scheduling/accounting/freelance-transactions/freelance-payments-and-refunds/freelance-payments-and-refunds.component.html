@@ -63,7 +63,7 @@
   [style.visibility]="showMonthlySelectForm ? 'hidden' : 'visible'">
   <div *ngIf="freelanceTransactions.length > 0; else no_billings" class="container">
     <br />
-    <h3>Payments for {{ selectedMonth[0] }} {{ selectedYear }}</h3>
+    <h3 class="text-center">Payments for {{ selectedMonth[0] }} {{ selectedYear }}</h3>
     <hr class="thick-br"/>
     <table style="width:100%">
       <thead>
@@ -77,7 +77,14 @@
     </thead>
     <tbody>
       <tr *ngFor="let billing of freelanceTransactions">
-        <td>{{ billing.student_or_class }}</td>
+        <td>
+          <a [routerLink]="['/authenticated-user/student-or-class', billing.student_or_class]">
+            <app-freelance-account-template-display 
+            [studentOrClassId]=billing.student_or_class class="bg-transparent"
+            >
+            </app-freelance-account-template-display>
+          </a>
+        </td>
         <td>{{ billing.transaction_type }}</td>
         <td>{{ billing.class_hours_purchased_or_refunded }}</td>
         <td>NT${{ billing.transaction_amount }}</td>

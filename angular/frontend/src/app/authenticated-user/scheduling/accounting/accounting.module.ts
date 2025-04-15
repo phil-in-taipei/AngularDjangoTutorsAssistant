@@ -8,6 +8,9 @@ import { StoreModule } from '@ngrx/store';
 import { AccountingComponent } from './accounting/accounting.component';
 import { AccountingRoutingModule } from './accounting-routing.module';
 import { 
+  FreelanceAccountTemplateDisplayComponent 
+} from './freelance-transactions/freelance-account-template-display/freelance-account-template-display.component';
+import { 
   FreelancePaymentsAndRefundsComponent 
 } from './freelance-transactions/freelance-payments-and-refunds/freelance-payments-and-refunds.component';
 import { 
@@ -72,6 +75,7 @@ import {
 @NgModule({
   declarations: [
     AccountingComponent,
+    FreelanceAccountTemplateDisplayComponent,
     FreelancePaymentsAndRefundsComponent,
     MakePurchaseComponent,
     MakePurchaseFormComponent,
