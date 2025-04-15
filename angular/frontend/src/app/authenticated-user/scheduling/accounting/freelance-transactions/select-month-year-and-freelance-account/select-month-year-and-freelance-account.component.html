@@ -1,0 +1,6 @@
+<div *ngIf="freelanceAccounts$ | async as freelanceAccounts" class="container">
+    <app-select-month-year-and-freelance-account-form
+    [freelanceAccounts]=freelanceAccounts
+    >
+    </app-select-month-year-and-freelance-account-form>
+</div>

@@ -11,6 +11,9 @@ import {
   MakeRefundComponent 
 } from './freelance-transactions/refunds/make-refund/make-refund.component';
 import { 
+  MonthlyFreelanceAccountActivityRecordsComponent 
+} from './freelance-transactions/monthly-freelance-account-activity-records/monthly-freelance-account-activity-records.component';
+import { 
   MonthlySchoolAccountingReportComponent 
 } from './reports/monthly-school-accounting-report/monthly-school-accounting-report.component';
 import { 
@@ -23,11 +26,15 @@ import {
   SelectDateRangeAndSchoolComponent 
 } from './reports/select-date-range-and-school/select-date-range-and-school.component';
 import { 
+  SelectMonthYearAndFreelanceAccountComponent 
+} from './freelance-transactions/select-month-year-and-freelance-account/select-month-year-and-freelance-account.component';
+import { 
   SelectMonthYearAndSchoolComponent 
 } from './reports/select-month-year-and-school/select-month-year-and-school.component';
 
 const routes: Routes = [
-  { path: '', component: AccountingComponent, children: [
+  { path: '', component: AccountingComponent, children: [ 
+      { path: 'monthly-freelance-account-activity/:month/:year/:account_id', component: MonthlyFreelanceAccountActivityRecordsComponent },
       { path: 'monthly-freelance-transactions', component: FreelancePaymentsAndRefundsComponent },
       { path: 'overall-monthly-accounting-report/:month/:year', component: OverallMonthlyAccountingReportComponent },
       { path: 'make-purchase', component: MakePurchaseComponent },
@@ -35,6 +42,7 @@ const routes: Routes = [
       { path: 'monthly-school-accounting-report/:month/:year/:school_id', component: MonthlySchoolAccountingReportComponent },
       { path: 'school-accounting-report-within-date-range/:start_date/:finish_date/:school_id', component: SchoolAccountingReportWithinDateRangeComponent },
       { path: 'select-date-range-and-school', component: SelectDateRangeAndSchoolComponent },
+      { path: 'select-month-year-and-freelance-account', component: SelectMonthYearAndFreelanceAccountComponent },
       { path: 'select-month-year-and-school', component: SelectMonthYearAndSchoolComponent },
     ] 
   }
