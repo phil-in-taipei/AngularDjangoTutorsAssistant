@@ -13,7 +13,7 @@ import {
   templateUrl: './overall-monthly-accounting-report.component.html',
   styleUrl: './overall-monthly-accounting-report.component.css'
 })
-export class OverallMonthlyAccountingReportComponent {
+export class OverallMonthlyAccountingReportComponent implements OnInit {
 
     errorMessage: string|undefined = undefined;
     fetchingReportInProgress:boolean = true;

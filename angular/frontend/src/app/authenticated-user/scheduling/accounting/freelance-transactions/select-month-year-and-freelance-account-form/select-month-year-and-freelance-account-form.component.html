@@ -1,1 +1,66 @@
-<p>select-month-year-and-freelance-account-form works!</p>
+<div class="m-3 p-2">
+    <div class="container">
+        <h1 class="text-center">Freelance Account Activity Report</h1>
+        <h2 class="text-center">Select Month, Year, and Freelance Account</h2>
+        <form (submit)="onNavigateToFreelanceAccountActivityRecord(selectMonthYearAndFreelanceAccountForm)"
+          #selectMonthYearAndFreelanceAccountForm="ngForm">
+          <div>
+            <br />
+              <label>
+                Freelance Account
+              </label>
+              <select
+              name="account"
+              class="form-control"
+              ngModel
+              required
+              #account="ngModel"
+              >
+              <option *ngFor="let account of freelanceAccounts"
+                  [value]=account.id
+              >{{ account.student_or_class_name }}
+              </option>
+              </select>
+              <div *ngIf="account.touched && account.invalid">
+                Please select a valid freelance account
+              </div>
+            </div>
+          <div>
+            <label>Month</label>
+              <select
+              class="form-control"
+              name="month"
+              class="form-control"
+              ngModel
+              required
+              #month="ngModel"
+              >
+              <option *ngFor="let opt of monthsAndIntegers"
+                  [value]=opt[1]
+              >{{ opt[0] }}</option>
+              </select>
+          </div>
+          <div>
+            <label>Year</label>
+              <select
+              class="form-control"
+              name="year"
+              class="form-control"
+              ngModel
+              required
+              #year="ngModel"
+              >
+              <option *ngFor="let year of years"
+                [value]=year
+              >{{ year }}</option>
+              </select>
+          </div>
+          <br />
+          <div>
+            <button class="btn btn-dark" type="submit">
+                Submit
+            </button>
+          </div>
+        </form>
+    </div>
+</div>

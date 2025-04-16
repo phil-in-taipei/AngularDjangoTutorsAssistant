@@ -1,1 +1,32 @@
-<p>monthly-freelance-account-activity-records works!</p>
+<div *ngIf="fetchingReportInProgress">
+    <div class="text-center">
+      <div class="spinner-border text-secondary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <br />
+    </div>
+    <br />
+</div>
+<div *ngIf="errorMessage">
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <h6>{{ errorMessage }}</h6>
+    <button type="button" class="btn-close" (click)="onClearErrorMessage()"
+    data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+</div>
+
+<div *ngIf="monthlyPurchasedHoursModifications" class="container">
+    <hr class="thick-br"/>
+    <h1 class="text-center">Account Activity {{ monthFromRouteData }}/{{ yearFromRouteData }}</h1>
+    <h2 class="text-center">
+      <a [routerLink]="['/authenticated-user/student-or-class', freelanceAccountIdFromRouteData]">
+        <app-freelance-account-template-display 
+        [studentOrClassId]=freelanceAccountIdFromRouteData class="bg-transparent"
+        >
+        </app-freelance-account-template-display>
+      </a>
+    </h2>
+    <h5 class="text-center">{{ monthlyPurchasedHoursModifications.length }} Modification(s)</h5>
+    <hr class="thick-br"/>
+
+</div>
