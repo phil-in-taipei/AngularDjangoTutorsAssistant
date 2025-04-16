@@ -17,7 +17,7 @@
 
 <div *ngIf="monthlyPurchasedHoursModifications" class="container">
     <hr class="thick-br"/>
-    <h1 class="text-center">Account Activity {{ monthFromRouteData }}/{{ yearFromRouteData }}</h1>
+    <h2 class="text-center">Account Activity {{ monthFromRouteData }}/{{ yearFromRouteData }}</h2>
     <h2 class="text-center">
       <a [routerLink]="['/authenticated-user/student-or-class', freelanceAccountIdFromRouteData]">
         <app-freelance-account-template-display 
@@ -26,7 +26,42 @@
         </app-freelance-account-template-display>
       </a>
     </h2>
-    <h5 class="text-center">{{ monthlyPurchasedHoursModifications.length }} Modification(s)</h5>
+    <h4 class="text-center">{{ monthlyPurchasedHoursModifications.length }} Modification(s) to Purchased Hours</h4>
     <hr class="thick-br"/>
+    <div *ngIf="monthlyPurchasedHoursModifications.length > 0;else noRecordsMessage">
+      <hr class="thick-br"/>
+      <table style="width:100%">
+        <thead>
+        <tr>
+          <th scope="col"><h4>Time</h4></th>
+          <th scope="col"><h4>Type</h4></th>
+          <th scope="col"><h4>Previous</h4></th>
+          <th scope="col"><h4>Details</h4></th>
+          <th scope="col"><h4>Updated</h4></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let modification of monthlyPurchasedHoursModifications">
+          <td>{{ modification.time_stamp.split('T')[0] + ' ' + modification.time_stamp.split('T')[1].split(':').slice(0, 2).join(':') }}</td>
+          <td>{{ modification.modification_type.split('_').join(' ')[0].toUpperCase() }}{{ modification.modification_type.split('_').join(' ').substring(1) }}</td>         
+          <td>{{ modification.previous_purchased_class_hours }} hrs</td>
+          <td *ngIf="modification.tuition_transaction">
+            Transaction: {{ modification.tuition_transaction.class_hours_purchased_or_refunded }} hrs
+          </td>
+          <td *ngIf="modification.modified_scheduled_class">
+            <a [routerLink]="['/authenticated-user/scheduling/schedule-daily/', modification.modified_scheduled_class.date]">
+              Class: {{ modification.modified_scheduled_class.date }}
+            </a>
+          </td>
+          <td>{{ modification.updated_purchased_class_hours }} hrs</td>
+        </tr>
+      </tbody>
+      </table>
+      <hr class="thick-or"/>
+  
+    </div>
+    <ng-template #noRecordsMessage>
+      <h3 class="text-center">No Account Activity for Current Month</h3>
+    </ng-template>
 
 </div>
