@@ -2,14 +2,14 @@
     <div>
       <hr class="thick-br"/>
       <div *ngIf="monthlyDateRange$ | async as monthlyDateRange;else no_previous_dates">
-        <h5>Reselect Monthly Schedule</h5>
+        <h4 class="text-center">Reselect Monthly Schedule</h4>
           <app-reselect-monthly
             [monthlyDateRange]=monthlyDateRange
             (closeMonthlySelectFormEvent)="closeMonthlySelectFormHander($event)">
           </app-reselect-monthly>
       </div>
       <ng-template #no_previous_dates>
-        <h5>Select Monthly Schedule</h5>
+        <h4 class="text-center">Select Monthly Schedule</h4>
           <app-select-monthly
             (closeMonthlySelectFormEvent)="closeMonthlySelectFormHander($event)">
           </app-select-monthly>

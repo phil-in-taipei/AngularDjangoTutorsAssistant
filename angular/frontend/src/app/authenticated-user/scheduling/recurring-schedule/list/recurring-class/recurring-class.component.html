@@ -28,7 +28,7 @@
       <div *ngIf="!deletionPopupVisible; else delWeeklyTask" class="col text-left">
         <h5>
           <button
-            class="btn btn-sm btn-dark"
+            class="btn btn-sm btn-outline-danger"
             (click)="showDeletionPopup()"
             >
             Remove
@@ -39,7 +39,7 @@
         <div class="col">
           <h5>
             <button
-              class="btn btn-sm btn-dark"
+              class="btn btn-sm btn-outline-secondary"
               (click)="hideDeletionPopup()">
               Cancel Deletion
             </button>

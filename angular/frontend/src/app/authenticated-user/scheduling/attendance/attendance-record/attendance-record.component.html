@@ -76,4 +76,13 @@
 </div>
 <ng-template #no_attendance>
 <br />
+<h3 class="text-center">There is currently no attendance record</h3>
+<hr class="thick-br"/>
+<div class="text-center">
+  <button class="btn btn-sm btn-outline-secondary text"
+  [routerLink]="['/user/scheduling/schedule-single-class']">
+      Schdule a Class
+  </button>
+</div>
+<hr class="thick-br"/>
 </ng-template>
