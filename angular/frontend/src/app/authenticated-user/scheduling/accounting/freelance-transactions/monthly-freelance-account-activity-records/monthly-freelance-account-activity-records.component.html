@@ -46,7 +46,7 @@
           <td>{{ modification.modification_type.split('_').join(' ')[0].toUpperCase() }}{{ modification.modification_type.split('_').join(' ').substring(1) }}</td>         
           <td>{{ modification.previous_purchased_class_hours }} hrs</td>
           <td *ngIf="modification.tuition_transaction">
-            <a [routerLink]="['/authenticated-user/scheduling/accounting/monthly-freelance-transactions']">
+            <a [routerLink]="['/authenticated-user/scheduling/accounting/monthly-freelance-transactions', monthFromRouteData, yearFromRouteData]">
               Transaction: {{ modification.tuition_transaction.class_hours_purchased_or_refunded }} hrs
             </a>
           </td>

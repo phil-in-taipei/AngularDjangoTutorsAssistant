@@ -26,6 +26,9 @@ import {
   SelectDateRangeAndSchoolComponent 
 } from './reports/select-date-range-and-school/select-date-range-and-school.component';
 import { 
+  SelectMonthAndYearForFreelancePaymentsAndRefundsRecordsComponent 
+} from './freelance-transactions/select-month-and-year-for-freelance-payments-and-refunds-records/select-month-and-year-for-freelance-payments-and-refunds-records.component';
+import { 
   SelectMonthYearAndFreelanceAccountComponent 
 } from './freelance-transactions/select-month-year-and-freelance-account/select-month-year-and-freelance-account.component';
 import { 
@@ -35,13 +38,14 @@ import {
 const routes: Routes = [
   { path: '', component: AccountingComponent, children: [ 
       { path: 'monthly-freelance-account-activity/:month/:year/:account_id', component: MonthlyFreelanceAccountActivityRecordsComponent },
-      { path: 'monthly-freelance-transactions', component: FreelancePaymentsAndRefundsComponent },
+      { path: 'monthly-freelance-transactions/:month/:year', component: FreelancePaymentsAndRefundsComponent },
       { path: 'overall-monthly-accounting-report/:month/:year', component: OverallMonthlyAccountingReportComponent },
       { path: 'make-purchase', component: MakePurchaseComponent },
       { path: 'make-refund', component: MakeRefundComponent },     
       { path: 'monthly-school-accounting-report/:month/:year/:school_id', component: MonthlySchoolAccountingReportComponent },
       { path: 'school-accounting-report-within-date-range/:start_date/:finish_date/:school_id', component: SchoolAccountingReportWithinDateRangeComponent },
       { path: 'select-date-range-and-school', component: SelectDateRangeAndSchoolComponent },
+      { path: 'select-month-and-year-for-freelance-payments-refunds-records', component: SelectMonthAndYearForFreelancePaymentsAndRefundsRecordsComponent },
       { path: 'select-month-year-and-freelance-account', component: SelectMonthYearAndFreelanceAccountComponent },
       { path: 'select-month-year-and-school', component: SelectMonthYearAndSchoolComponent },
     ] 

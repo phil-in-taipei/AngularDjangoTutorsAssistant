@@ -1,69 +1,25 @@
-<div class="container" [hidden]="!showMonthlySelectForm"
-[style.opacity]="!showMonthlySelectForm ? '0' : '1'"
-[style.visibility]="!showMonthlySelectForm ? 'hidden' : 'visible'">
-  <h2>Select Month to View Payments</h2>
-  <form (submit)="onMonthYearSelect(monthYearSelectForm)"
-    #monthYearSelectForm="ngForm">
-    <div>
-      <label>Month</label>
-        <select
-        class="form-control"
-        name="month"
-        class="form-control"
-        ngModel
-        required
-        #month="ngModel"
-        >
-        <option *ngFor="let opt of monthsAndIntegers"
-            [value]=opt[1]
-        >{{ opt[0] }}</option>
-        </select>
+<div *ngIf="fetchingInProgress">
+  <div class="text-center">
+    <div class="spinner-border text-secondary" role="status">
+      <span class="visually-hidden">Loading...</span>
     </div>
     <br />
-    <div>
-      <label>Year</label>
-        <select
-        class="form-control"
-        name="year"
-        class="form-control"
-        ngModel
-        required
-        #year="ngModel"
-        >
-        <option *ngFor="let year of years"
-          [value]=year
-        >{{ year }}</option>
-        </select>
-    </div>
-    <br />
-    <div>
-      <button class="btn btn-outline-secondary" type="submit">
-          Submit
-      </button>
-    </div>
-    <br />
-  </form>
+  </div>
+  <br />
 </div>
-
-<div class="text-center" [hidden]="showMonthlySelectForm"
-    [style.opacity]="showMonthlySelectForm ? '0' : '1'"
-    [style.visibility]="showMonthlySelectForm ? 'hidden' : 'visible'"
->
-    <br />
-  <button class="btn btn-sm btn-outline-secondary text"
-   (click)="showMonthlySelect()">
-      Select Another Month
-  </button>
+<div *ngIf="errorMessage">
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <h6>{{ errorMessage }}</h6>
+  <button type="button" class="btn-close" (click)="onClearErrorMessage()"
+  data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
 </div>
 
 <hr class="thick-br"/>
-<div *ngIf="freelanceTransactions"
-  [hidden]="showMonthlySelectForm"
-  [style.opacity]="showMonthlySelectForm ? '0' : '1'"
-  [style.visibility]="showMonthlySelectForm ? 'hidden' : 'visible'">
+<div *ngIf="freelanceTransactions">
   <div *ngIf="freelanceTransactions.length > 0; else no_billings" class="container">
     <br />
-    <h3 class="text-center">Payments for {{ selectedMonth[0] }} {{ selectedYear }}</h3>
+    <h3 class="text-center">Payments for {{ monthFromRouteData }}/{{ yearFromRouteData }}</h3>
     <hr class="thick-br"/>
     <table style="width:100%">
       <thead>
@@ -78,7 +34,7 @@
     <tbody>
       <tr *ngFor="let billing of freelanceTransactions">
         <td>
-          <a [routerLink]="['/authenticated-user/student-or-class', billing.student_or_class]">
+          <a [routerLink]="['/authenticated-user/scheduling/accounting/monthly-freelance-account-activity/', monthFromRouteData, yearFromRouteData, billing.student_or_class]">
             <app-freelance-account-template-display 
             [studentOrClassId]=billing.student_or_class class="bg-transparent"
             >
@@ -99,7 +55,7 @@
   <ng-template #no_billings>
     <div class="container">
       <hr class="thick-br"/>
-      <h4>No payments for {{ selectedMonth[0] }} {{ selectedYear }}!</h4>
+      <h4>No payments for {{ monthFromRouteData }}/{{ yearFromRouteData }}!</h4>
       <hr class="thick-br"/>
     </div>
   </ng-template>

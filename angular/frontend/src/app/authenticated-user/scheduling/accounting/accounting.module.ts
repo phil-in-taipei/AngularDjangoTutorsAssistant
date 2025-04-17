@@ -62,6 +62,12 @@ import {
   SelectDateRangeAndSchoolFormComponent 
 } from './reports/select-date-range-and-school-form/select-date-range-and-school-form.component';
 import { 
+  SelectMonthAndYearForFreelancePaymentsAndRefundsRecordsComponent 
+} from './freelance-transactions/select-month-and-year-for-freelance-payments-and-refunds-records/select-month-and-year-for-freelance-payments-and-refunds-records.component';
+import { 
+  SelectMonthAndYearForFreelancePaymentsAndRefundsRecordsFormComponent 
+} from './freelance-transactions/select-month-and-year-for-freelance-payments-and-refunds-records-form/select-month-and-year-for-freelance-payments-and-refunds-records-form.component';
+import { 
   SelectMonthYearAndFreelanceAccountComponent 
 } from './freelance-transactions/select-month-year-and-freelance-account/select-month-year-and-freelance-account.component';
 import { 
@@ -101,6 +107,8 @@ import {
     SchoolAccountingReportWithinDateRangeComponent,
     SelectDateRangeAndSchoolComponent,
     SelectDateRangeAndSchoolFormComponent,
+    SelectMonthAndYearForFreelancePaymentsAndRefundsRecordsComponent,
+    SelectMonthAndYearForFreelancePaymentsAndRefundsRecordsFormComponent,
     SelectMonthYearAndFreelanceAccountComponent,
     SelectMonthYearAndFreelanceAccountFormComponent,
     SelectMonthYearAndSchoolComponent,

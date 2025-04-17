@@ -1,0 +1,45 @@
+<div class="m-3 p-2">
+    <div class="container">
+        <h2 class="text-center">Freelance Payments and Refunds</h2>
+        <h3 class="text-center">Select Month and Year</h3>
+        <form (submit)="onNavigateToMonthlyPaymentsandRefundsRecord(selectMonthYearForm)"
+          #selectMonthYearForm="ngForm">
+          <div>
+            <label>Month</label>
+              <select
+              class="form-control"
+              name="month"
+              class="form-control"
+              ngModel
+              required
+              #month="ngModel"
+              >
+              <option *ngFor="let opt of monthsAndIntegers"
+                  [value]=opt[1]
+              >{{ opt[0] }}</option>
+              </select>
+          </div>
+          <div>
+            <label>Year</label>
+              <select
+              class="form-control"
+              name="year"
+              class="form-control"
+              ngModel
+              required
+              #year="ngModel"
+              >
+              <option *ngFor="let year of years"
+                [value]=year
+              >{{ year }}</option>
+              </select>
+          </div>
+          <br />
+          <div>
+            <button class="btn btn-outline-secondary" type="submit">
+                Submit
+            </button>
+          </div>
+        </form>
+    </div>
+</div>

@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { NgForm } from '@angular/forms'
-import { single, map } from 'rxjs';
+import { ActivatedRoute } from "@angular/router";
+import { single,  } from 'rxjs';
 
 import { AccountingService } from '../../accounting-service/accounting.service';
 import { 
   FreelanceTuitionTransactionRecordModel 
 } from 'src/app/models/accounting.model';
-import { monthsAndIntegers, getYearsOptions } from 'src/app/shared-utils/date-time.util';
 
 @Component({
   selector: 'app-freelance-payments-and-refunds',
@@ -19,16 +18,39 @@ export class FreelancePaymentsAndRefundsComponent implements OnInit {
   errorMessage: string|undefined = undefined;
   fetchingInProgress:boolean = false;
   freelanceTransactions: FreelanceTuitionTransactionRecordModel[] | undefined = undefined;
-  readonly monthsAndIntegers:[string, number][] = monthsAndIntegers;
-  selectedMonth: [string, number] = ['January', 1];
-  selectedYear: number = 2025;
-  showMonthlySelectForm: boolean = true;
+  monthFromRouteData:number;
+  yearFromRouteData:number;
   total:string = "0";
-  years: number[];
 
   constructor(
-    private accountingService: AccountingService
+    private accountingService: AccountingService,
+    private route: ActivatedRoute,
+
   ) { }
+
+  ngOnInit(): void {
+    this.monthFromRouteData = +this.route.snapshot.params['month'];
+    this.yearFromRouteData = +this.route.snapshot.params['year'];
+    this.fetchingInProgress = true;
+    this.accountingService.fetchFreelancePaymentsByMonthAndYear(
+      this.monthFromRouteData, this.yearFromRouteData
+    ).pipe(single()
+      ).subscribe({
+        next: (res) => { 
+          this.freelanceTransactions = res; 
+          this.fetchingInProgress = false;
+          this.total = this.calculateTotalEarnings(this.freelanceTransactions)
+        },
+        error: (err) => {
+          this.errorMessage = 'There was an error fetching the transactions';
+          this.fetchingInProgress = false;
+          if (err["detail"]) {
+            this.errorMessage = err["detail"];
+          }
+        }
+      }
+    );
+  }
 
   calculateTotalEarnings(monthlyBillings: FreelanceTuitionTransactionRecordModel[]) {
     console.log("***************************************")
@@ -48,48 +70,15 @@ export class FreelancePaymentsAndRefundsComponent implements OnInit {
     return this.formatThousand(value);
   }
 
+  onClearErrorMessage() {
+    this.errorMessage = undefined;
+  }
+
   formatThousand(value: number): string {
     if (!value) return ''
     let strValue = value.toString()
     return strValue.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
   }
 
-  ngOnInit(): void {
-    this.years = getYearsOptions();
-  }
-
-  onMonthYearSelect(form: NgForm) {
-    if (form.invalid) {
-      return;
-    }
-    this.showMonthlySelectForm = false;
-    this.selectedYear = form.value.year;
-    this.selectedMonth = this.monthsAndIntegers[+form.value.month - 1]
-    this.fetchingInProgress = true;
-    this.accountingService.fetchFreelancePaymentsByMonthAndYear(
-      +form.value.month, +form.value.year
-    ).pipe(single()
-      ).subscribe({
-        next: (res) => { 
-          this.freelanceTransactions = res; 
-          this.fetchingInProgress = false;
-          this.total = this.calculateTotalEarnings(this.freelanceTransactions)
-        },
-        error: (err) => {
-          this.errorMessage = 'There was an error fetching the transactions';
-          this.fetchingInProgress = false;
-          if (err["detail"]) {
-            this.errorMessage = err["detail"];
-          }
-          this.showMonthlySelectForm = true;
-        }
-      }
-    );
-  }
-
-  showMonthlySelect() {
-    this.showMonthlySelectForm = true;
-    this.freelanceTransactions = undefined;
-  }
 
 }
