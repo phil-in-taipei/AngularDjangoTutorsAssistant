@@ -41,9 +41,6 @@ import {
   PostRefundHoursUpdateComponent 
 } from './freelance-transactions/refunds/post-refund-hours-update/post-refund-hours-update.component';
 import { 
-  PurchasedHoursModificationRecordsComponent 
-} from './freelance-transactions/purchased-hours-modification-records/purchased-hours-modification-records.component';
-import { 
   PurchaseResponseDisplayComponent 
 } from './freelance-transactions/purchases/purchase-response-display/purchase-response-display.component';
 import { 
@@ -101,7 +98,6 @@ import {
     OverallMonthlyAccountingReportComponent,
     PostPurchaseHoursUpdateComponent,
     PostRefundHoursUpdateComponent,
-    PurchasedHoursModificationRecordsComponent,
     PurchaseResponseDisplayComponent,
     RefundResponseDisplayComponent,
     SchoolAccountingReportWithinDateRangeComponent,

@@ -21,33 +21,35 @@
     <br />
     <h3 class="text-center">Payments for {{ monthFromRouteData }}/{{ yearFromRouteData }}</h3>
     <hr class="thick-br"/>
-    <table style="width:100%">
-      <thead>
-      <tr>
-        <th scope="col"><h4>From</h4></th>
-        <th scope="col"><h4>Type</h4></th>
-        <th scope="col"><h4>Hours</h4></th>
-        <th scope="col"><h4>Amount</h4></th>
-        <th scope="col"><h4>Time Received</h4></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let billing of freelanceTransactions">
-        <td>
-          <a [routerLink]="['/authenticated-user/scheduling/accounting/monthly-freelance-account-activity/', monthFromRouteData, yearFromRouteData, billing.student_or_class]">
-            <app-freelance-account-template-display 
-            [studentOrClassId]=billing.student_or_class class="bg-transparent"
-            >
-            </app-freelance-account-template-display>
-          </a>
-        </td>
-        <td>{{ billing.transaction_type }}</td>
-        <td>{{ billing.class_hours_purchased_or_refunded }}</td>
-        <td>NT${{ billing.transaction_amount }}</td>
-        <td>{{ billing.time_stamp }}</td>
-      </tr>
-    </tbody>
-    </table>
+    <div class="table-responsive">
+      <table style="width:100%">
+        <thead>
+        <tr>
+          <th scope="col"><h4>From</h4></th>
+          <th scope="col"><h4>Type</h4></th>
+          <th scope="col"><h4>Hours</h4></th>
+          <th scope="col"><h4>Amount</h4></th>
+          <th scope="col"><h4>Time Received</h4></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let billing of freelanceTransactions">
+          <td>
+            <a [routerLink]="['/authenticated-user/scheduling/accounting/monthly-freelance-account-activity/', monthFromRouteData, yearFromRouteData, billing.student_or_class]">
+              <app-freelance-account-template-display 
+              [studentOrClassId]=billing.student_or_class class="bg-transparent"
+              >
+              </app-freelance-account-template-display>
+            </a>
+          </td>
+          <td>{{ billing.transaction_type }}</td>
+          <td>{{ billing.class_hours_purchased_or_refunded }}</td>
+          <td>NT${{ billing.transaction_amount }}</td>
+          <td>{{ billing.time_stamp }}</td>
+        </tr>
+      </tbody>
+      </table>
+    </div>
     <hr class="thick-or"/>
     <h4>Total: NT${{ total }}</h4>
     <hr class="thick-or"/>

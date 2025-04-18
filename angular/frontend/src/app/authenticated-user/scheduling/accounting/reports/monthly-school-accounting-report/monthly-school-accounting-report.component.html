@@ -19,28 +19,30 @@
   <hr class="thick-br"/>
   <h1 class="text-center">{{ schoolMonthlyAccountingReport.school_name }}</h1>
   <h5 class="text-center">(Click Class for attendance record)</h5>
-  <table style="width:100%">
-    <thead>
-    <tr>
-      <th scope="col"><h4>Class</h4></th>
-      <th scope="col"><h4>Rate</h4></th>
-      <th scope="col"><h4>Hours</h4></th>
-      <th scope="col"><h4>Total</h4></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let report of schoolMonthlyAccountingReport.students_reports">
-      <td>
-        <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', report.account_id]">
-          {{ report.name }}
-        </a>
-      </td>
-      <td>NT${{ report.rate }}/hr</td>
-      <td>{{ report.hours }}</td>
-      <td>NT${{ report.total }}</td>
-    </tr>
-  </tbody>
-  </table>
+  <div class="table-responsive">
+    <table style="width:100%">
+      <thead>
+      <tr>
+        <th scope="col"><h4>Class</h4></th>
+        <th scope="col"><h4>Rate</h4></th>
+        <th scope="col"><h4>Hours</h4></th>
+        <th scope="col"><h4>Total</h4></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let report of schoolMonthlyAccountingReport.students_reports">
+        <td>
+          <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', report.account_id]">
+            {{ report.name }}
+          </a>
+        </td>
+        <td>NT${{ report.rate }}/hr</td>
+        <td>{{ report.hours }}</td>
+        <td>NT${{ report.total }}</td>
+      </tr>
+    </tbody>
+    </table>
+  </div>
   <hr class="thick-br"/>
   <h4>Total: NT${{ schoolMonthlyAccountingReport.school_total }}</h4>
   <hr class="thick-br"/>
