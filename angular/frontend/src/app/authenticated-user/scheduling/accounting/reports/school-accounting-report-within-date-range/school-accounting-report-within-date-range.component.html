@@ -16,10 +16,11 @@
 </div>
 
 <div *ngIf="schoolAccountingReport" class="container">
-  <hr class="thick-br"/>
+  <hr class="thin-br"/>
   <h2 class="text-center">{{ schoolAccountingReport.school_name }}</h2>
   <h3 class="text-center">{{ startDateFromRouteData }}-{{ finishDateFromRouteData }}</h3>
   <h5 class="text-center">(Click class for attendance record)</h5>
+  <hr class="thin-br"/>
   <div class="table-responsive">
     <table style="width:100%">
       <thead>
@@ -44,8 +45,8 @@
     </tbody>
     </table>
   </div>
-  <hr class="thick-br"/>
+  <hr class="thin-br"/>
   <h4>Total: NT${{ schoolAccountingReport.school_total }}</h4>
-  <hr class="thick-br"/>
+  <hr class="thin-br"/>
 </div>
-<hr class="thick-br"/>
+<hr class="thin-br"/>

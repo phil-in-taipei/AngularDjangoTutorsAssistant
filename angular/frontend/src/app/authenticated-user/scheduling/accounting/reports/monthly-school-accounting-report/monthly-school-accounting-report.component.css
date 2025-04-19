@@ -10,24 +10,17 @@ table {
 table tr {
     border-left: 1px solid #758d97;
     border-right: 1px solid #758d97;
-      border-bottom: 1pt solid #758d97;
-      padding: 1em;
+    border-bottom: 1pt solid #758d97;
+    padding: 1em;
 }
   
 table th {
-      padding: 1em;
+    padding: 1em;
 }
   
 table td {
     border-left: 1px solid #758d97;
     border-right: 1px solid #758d97;
-        padding: 1em;
+    padding: 1em;
 }
-  
-hr.thick-or {
-    border: 2px solid #cb410b;
-}
-  
-hr.thin-white {
-    border: 1px solid white;
-}
+

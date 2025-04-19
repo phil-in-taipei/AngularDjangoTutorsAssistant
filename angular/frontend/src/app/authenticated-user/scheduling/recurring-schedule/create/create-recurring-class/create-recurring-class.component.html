@@ -1,18 +1,22 @@
 <br />
 <h3>Schedule a Recurring Class</h3>
 <div *ngIf="errorMessage$ | async as classErrMsg">
-  <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <h4 class="text-danger">{{ classErrMsg }}</h4>
-    <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
-    data-bs-dismiss="alert" aria-label="Close"></button>
+  <div class="container">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <h5 class="text-center">{{ classErrMsg }}</h5>
+      <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+      data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
   </div>
 </div>
 
 <div *ngIf="successMessage$ | async as classSuccessMsg">
-  <div class="alert alert-secondary alert-dismissible fade show" role="alert">
-    <h6>{{ classSuccessMsg }}</h6>
-    <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
-    data-bs-dismiss="alert" aria-label="Close"></button>
+  <div class="container">
+    <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+      <h5 class="text-center">{{ classSuccessMsg }}</h5>
+      <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+      data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
   </div>
 </div>
 <div *ngIf="studentsOrClasses$ | async as studentsOrClasses">

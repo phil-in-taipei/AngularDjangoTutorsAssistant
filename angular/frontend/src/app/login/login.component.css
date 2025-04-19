@@ -1,0 +1,29 @@
+.login {
+    display: none;
+}
+
+.logo {
+        /* Set dimensions and circular shape */
+  width: 400px;
+  height: 200px;
+  border-radius: 80%;
+  background-color: #010b3e;
+  border: #0098da solid 3px !important;
+  color: #758d97;
+  /* Text color for the letters */
+  text-align: center; /* Center the text inside the circle */
+  display: flex; /* Enables flexbox for positioning letters */
+  justify-content: center; /* Center the text horizontally */
+  align-items: center; /* Center the text vertically */
+  font-weight: bold; /* Make the text bold */
+  margin: 10 auto;
+  padding: 50px;
+  line-height: 300px; 
+}
+
+@media (min-width: 768px) {
+    .login {
+      display: block; /* Change the display property to show the element */
+    }
+
+}

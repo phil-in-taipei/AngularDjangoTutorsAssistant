@@ -1,38 +1,22 @@
-h2 {
-    color: grey;
-  }
-  
-  h4 {
-    color: grey;
-  }
-  
-  table {
-      border:1px solid grey;
-      border-collapse: collapse;
-      color: grey;
-  }
+
+table {
+  border:1px solid #758d97;
+  border-collapse: collapse;
+}
   
   table tr {
     border-left: 1px solid grey;
     border-right: 1px solid grey;
-      border-bottom: 1pt solid grey;
-      padding: 1em;
+    border-bottom: 1pt solid grey;
+    padding: 1em;
   }
   
   table th {
-          padding: 1em;
+    padding: 1em;
   }
   
-  table td {
-      border-left: 1px solid grey;
-      border-right: 1px solid grey;
-          padding: 1em;
-  }
-  
-  hr.thick-br {
-    border: 2px solid #758d97;
-  }
-  
-  hr.thin-white {
-    border: 1px solid grey;
-  }
+table td {
+  border-left: 1px solid #758d97;
+  border-right: 1px solid #758d97;
+  padding: 1em;
+}

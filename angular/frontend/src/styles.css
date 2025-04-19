@@ -30,3 +30,15 @@ body, html {
   color: #758d97 !important;
   background-color: black !important;
 }
+
+hr.thin-bl {
+  border: 1px solid #0098da;
+}
+
+hr.thick-br {
+  border: 2px solid #758d97;
+}
+
+hr.thin-br {
+  border: 1px solid #758d97;
+}

@@ -1,7 +1,7 @@
 <br />
 <div *ngIf="classSubmitErrMsg$ | async as classErrMsg" class="p-1 m-1">
-  <div class="alert alert-warning alert-dismissible fade show" role="alert">
-    <h3>{{ classErrMsg }}</h3>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <h5 class="text-center">{{ classErrMsg }}</h5>
     <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
     data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
@@ -11,7 +11,7 @@
 <div *ngIf="classSubmitSuccess$ | async as classSuccessMsg" class="p-1 m-1">
   <hr class="thick-br"/>
   <div class="alert alert-secondary alert-dismissible fade show" role="alert">
-    <h6>{{ classSuccessMsg }}</h6>
+    <h5 class="text-center">{{ classSuccessMsg }}</h5>
     <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
     data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
@@ -36,7 +36,7 @@
       <br />
         <div id="profile_details">
             <div class="container">
-              <h3>
+              <h3 class="text-center">
                 <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', scheduledClass.student_or_class]">
                     <app-student-or-class-template-string 
                     [studentOrClassId]=scheduledClass.student_or_class class="bg-transparent"
@@ -62,10 +62,10 @@
                 <td>
                   <h4
                   *ngIf="scheduledClass.class_status==='cancellation_request'"
-                  class="errMsg capitalize">
+                  class="errMsg text-capitalize">
                   {{ scheduledClass.class_status.split('_').join(' ') }}
                   </h4>
-                  <h4 class="capitalize"
+                  <h4 class="text-capitalize"
                   *ngIf="scheduledClass.class_status!=='cancellation_request'">
                   {{ scheduledClass.class_status.split('_').join(' ') }}
                   </h4>
@@ -87,33 +87,7 @@
         </div>
         <hr class="thick-br"/>
         </div>
-        <div>
-          <div class="text-center container">
-            <div class="d-grid gap-2">
-              <button class="btn btn-sm btn-outline-secondary" type="button"
-                (click)="toggleRescheduleForm()">
-                {{ rescheduleFormVisible ? "Never Mind, I'll submit one next time for "
-                : "Click Here to reschedule the class " }}
-              </button>
-            </div>
 
-            <br />
-          </div>
-          <hr class="thick-br"/>
-        </div>
-        
-        <div [hidden]="!rescheduleFormVisible"
-          [style.opacity]="!rescheduleFormVisible ? '0' : '1'"
-          [style.visibility]="!rescheduleFormVisible ? 'hidden' : 'visible'"
-          class="m-3 p-2"
-        >
-          <app-reschedule-class-form 
-            [scheduledClass]=scheduledClass
-            (closeFormEvent)="closeFormHander($event)"
-          >
-          </app-reschedule-class-form>
-          <hr class="thick-br"/>
-        </div>
         
         <div class="container text-center">
           <div class=" d-grid gap-2">
@@ -138,6 +112,33 @@
           </app-edit-class-status-form>
           <hr class="thick-br"/>
         </div>
+      </div>
+      <div>
+        <div class="text-center container">
+          <div class="d-grid gap-2">
+            <button class="btn btn-sm btn-outline-secondary" type="button"
+              (click)="toggleRescheduleForm()">
+              {{ rescheduleFormVisible ? "Never Mind, I'll reschedule next time for "
+              : "Click Here to reschedule the class " }}
+            </button>
+          </div>
+
+          <br />
+        </div>
+        <hr class="thick-br"/>
+      </div>
+      
+      <div [hidden]="!rescheduleFormVisible"
+        [style.opacity]="!rescheduleFormVisible ? '0' : '1'"
+        [style.visibility]="!rescheduleFormVisible ? 'hidden' : 'visible'"
+        class="m-3 p-2"
+      >
+        <app-reschedule-class-form 
+          [scheduledClass]=scheduledClass
+          (closeFormEvent)="closeFormHander($event)"
+        >
+        </app-reschedule-class-form>
+        <hr class="thick-br"/>
       </div>
 </div>
 <ng-template #calendar_link>

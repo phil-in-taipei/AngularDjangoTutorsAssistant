@@ -2,7 +2,7 @@
 <h3>Schedule a Class</h3>
 <div *ngIf="classSubmitErrMsg$ | async as classErrMsg" class="container">
   <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <h4 class="text-danger">{{ classErrMsg }}</h4>
+    <h5 class="text-center">{{ classErrMsg }}</h5>
     <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
     data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
@@ -10,7 +10,7 @@
 
 <div *ngIf="classSubmitSuccess$ | async as classSuccessMsg" class="container">
   <div class="alert alert-secondary alert-dismissible fade show" role="alert">
-    <h6>{{ classSuccessMsg }}</h6>
+    <h5 class="text-center">{{ classSuccessMsg }}</h5>
     <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
     data-bs-dismiss="alert" aria-label="Close"></button>
   </div>

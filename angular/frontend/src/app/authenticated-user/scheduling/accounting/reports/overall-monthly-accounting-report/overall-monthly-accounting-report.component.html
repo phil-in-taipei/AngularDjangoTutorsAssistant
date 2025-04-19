@@ -16,13 +16,13 @@
 </div>
 
 <div *ngIf="monthlyAccountingReport" class="container">
-  <hr class="thick-br"/>
+  <hr class="thin-br"/>
   <h1 class="text-center">Monthly Accounting Report</h1>
-  <hr class="thick-br"/>
+  <hr class="thin-br"/>
   <div *ngIf="monthlyAccountingReport.classes_in_schools" class="container">
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
     <h3 class="text-center">Schools</h3>
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
     <div *ngFor="let schoolReport of monthlyAccountingReport.classes_in_schools" class="container">
       <div class="table-responsive">
         <h4 class="text-center">{{ schoolReport.school_name }}</h4>
@@ -49,9 +49,9 @@
           </tr>
         </tbody>
         </table>
-        <hr class="thick-br"/>
+        <hr class="thin-br"/>
         <h4>School Total: NT${{ schoolReport.school_total }}</h4>
-        <hr class="thick-br"/>
+        <hr class="thin-br"/>
       </div>
     </div>
   </div>
@@ -82,10 +82,10 @@
           </tr>
         </tbody>
         </table>
-        <hr class="thick-br"/>
+        <hr class="thin-br"/>
       </div>
     </div>
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
     <h3>Overall Monthly Total: NT${{ monthlyAccountingReport.overall_monthly_total }}</h3>
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
 </div>

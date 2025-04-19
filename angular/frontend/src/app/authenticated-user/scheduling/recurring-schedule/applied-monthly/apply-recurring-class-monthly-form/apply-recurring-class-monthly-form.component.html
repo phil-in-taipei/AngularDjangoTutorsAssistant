@@ -1,6 +1,6 @@
 <div *ngIf="errorMsg$ | async as monthlyErrMsg">
-  <div class="alert alert-warning alert-dismissible fade show" role="alert">
-    <h6 class="text-danger">{{ monthlyErrMsg }}</h6>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <h5 class="text-center">{{ monthlyErrMsg }}</h5>
     <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
     data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
@@ -8,7 +8,7 @@
 
 <div *ngIf="successMsg$ | async as monthySuccessMsg">
   <div class="alert alert-secondary alert-dismissible fade show" role="alert">
-    <h4>{{ monthySuccessMsg }}</h4>
+    <h5 class="text-center">{{ monthySuccessMsg }}</h5>
     <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
     data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
