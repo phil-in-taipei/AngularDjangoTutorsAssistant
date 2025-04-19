@@ -59,7 +59,7 @@ class StudentOrClass(models.Model):
                 self.school.school_name,
             )
         else:
-            return str(self.student_or_class_name).title()
+            return "{} (Freelance)".format(str(self.student_or_class_name).title())
 
     def __str__(self):
         if self.school:
