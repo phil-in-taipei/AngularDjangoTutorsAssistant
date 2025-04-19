@@ -5,7 +5,14 @@
         (click)="navToYsdtrdy()">Previous Day</button>
     </div>
     <div class="col bg-transparent">
-    <h3>Daily Schedule: {{ dateFromRouteData }}
+      <h3>
+        {{ 
+          (dateFromRouteData.split('-') || []).length === 3 ? 
+          monthsAndIntegers[(+dateFromRouteData.split('-')[1]) - 1][0] + ' ' + 
+          (+dateFromRouteData.split('-')[2]) + ', ' + 
+          dateFromRouteData.split('-')[0] : 
+          dateFromRouteData 
+        }}
       </h3>
     </div>
     <div class="col text-center bg-transparent">
@@ -14,7 +21,15 @@
     </div>
   </div>
   <div class="small-scr bg-transparent">
-    <h3>Daily Schedule: {{ dateFromRouteData }}</h3>
+    <h3>                    
+      {{ 
+        (dateFromRouteData.split('-') || []).length === 3 ? 
+        monthsAndIntegers[(+dateFromRouteData.split('-')[1]) - 1][0] + ' ' + 
+        (+dateFromRouteData.split('-')[2]) + ', ' + 
+        dateFromRouteData.split('-')[0] : 
+        dateFromRouteData 
+      }}
+    </h3>
     <div class="row bg-transparent">
       <div class="col bg-transparent">
         <div class="container">

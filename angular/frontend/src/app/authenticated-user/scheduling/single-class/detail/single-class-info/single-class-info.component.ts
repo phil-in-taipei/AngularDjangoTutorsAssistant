@@ -3,6 +3,7 @@ import { ActivatedRoute } from "@angular/router";
 import { Observable } from "rxjs";
 import {select, Store } from '@ngrx/store';
 
+import { monthsAndIntegers } from 'src/app/shared-utils/date-time.util';
 import { ScheduledClassModel } from 'src/app/models/scheduled-class.model';
 import { 
   ScheduledClassesState 
@@ -32,6 +33,7 @@ export class SingleClassInfoComponent implements OnInit{
   classSubmitSuccess$: Observable<string | undefined>;
   editStatusFormVisible: boolean = false;
   idFromRouteData:number;
+  readonly monthsAndIntegers = monthsAndIntegers;
   rescheduleFormVisible: boolean = false;
   scheduledClass$: Observable<ScheduledClassModel | undefined>;
   studentOrClassModificationResponse$: Observable<StudentOrClassConfirmationModificationResponse | undefined>;

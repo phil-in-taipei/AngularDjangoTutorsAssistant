@@ -6,7 +6,7 @@ import { select, Store } from '@ngrx/store';
 import { ScheduledClassesState } from '../../../classes-state/scheduled-classes.reducers';
 import { ScheduledClassModel } from 'src/app/models/scheduled-class.model';
 import { DailyClassesRequested } from '../../../classes-state/scheduled-classes.actions';
-import { getDateString } from 'src/app/shared-utils/date-time.util';
+import { getDateString, monthsAndIntegers } from 'src/app/shared-utils/date-time.util';
 import { 
   selectScheduledClassesByDate, fetchingClassesInProgress 
 } from '../../../classes-state/scheduled-classes.selectors';
@@ -22,6 +22,7 @@ export class DailyListComponent implements OnInit{
   dateFromRouteData: string;
   dailyScheduledClasses$: Observable<ScheduledClassModel[] | undefined>;
   fetchingClasses$: Observable<boolean> = of(false);
+  readonly monthsAndIntegers = monthsAndIntegers;
   tmrwRouterStr: string;
   ystrdyRouterStr: string;
 

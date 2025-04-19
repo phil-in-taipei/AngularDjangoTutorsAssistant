@@ -47,7 +47,15 @@
           <table class="profile-table" style="width:100%">
               <tr>
                   <th><h4>Date</h4></th>
-                  <td><h4>{{ scheduledClass.date }}</h4></td>
+                  <td><h4>
+                    {{ 
+                      (scheduledClass.date.split('-') || []).length === 3 ? 
+                      monthsAndIntegers[(+scheduledClass.date.split('-')[1]) - 1][0] + ' ' + 
+                      (+scheduledClass.date.split('-')[2]) + ', ' + 
+                      scheduledClass.date.split('-')[0] : 
+                      scheduledClass.date 
+                    }}
+                  </h4></td>
               </tr>
               <tr>
                   <th><h4>Time</h4></th>
