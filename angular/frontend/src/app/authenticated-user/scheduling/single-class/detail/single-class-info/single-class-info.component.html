@@ -1,30 +1,4 @@
 <br />
-<div *ngIf="classSubmitErrMsg$ | async as classErrMsg" class="p-1 m-1">
-  <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <h5 class="text-center">{{ classErrMsg }}</h5>
-    <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
-    data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-  <hr class="thick-br"/>
-</div>
-
-<div *ngIf="classSubmitSuccess$ | async as classSuccessMsg" class="p-1 m-1">
-  <hr class="thick-br"/>
-  <div class="alert alert-secondary alert-dismissible fade show" role="alert">
-    <h5 class="text-center">{{ classSuccessMsg }}</h5>
-    <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
-    data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-</div>
-
-
-<hr class="thick-br"/>
-<div *ngIf="studentOrClassModificationResponse$ | async as updatedPurchasedHours" class="p-1 m-1">
-  <app-edit-class-status-response
-    [studentOrClassModificationResponse]=updatedPurchasedHours>
-  </app-edit-class-status-response>
-</div>
-
 <div *ngIf="(scheduledClass$ | async) as scheduledClass; else calendar_link">
     <div class="text-center">
       <button class="btn btn-sm btn-outline-secondary text"
@@ -32,8 +6,8 @@
           Return to {{ scheduledClass.date }} Schedule
       </button>
     </div>
+    <hr class="thin-br"/>
     <div class="table-responsive">
-      <br />
         <div id="profile_details">
             <div class="container">
               <h3 class="text-center">
@@ -45,7 +19,30 @@
                 </a>
             </h3>
         </div>
-        <hr class="thick-br"/>
+        <div *ngIf="classSubmitSuccess$ | async as classSuccessMsg" class="p-1 m-1">
+          <hr class="thin-br"/>
+          <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+            <h5 class="text-center">{{ classSuccessMsg }}</h5>
+            <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+            data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        </div>
+        <div *ngIf="classSubmitErrMsg$ | async as classErrMsg" class="p-1 m-1">
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <h5 class="text-center">{{ classErrMsg }}</h5>
+            <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+            data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          <hr class="thin-br"/>
+        </div>        
+        
+        <div *ngIf="studentOrClassModificationResponse$ | async as updatedPurchasedHours" class="p-1 m-1">
+          <app-edit-class-status-response
+            [studentOrClassModificationResponse]=updatedPurchasedHours>
+          </app-edit-class-status-response>
+        </div>
+
+        <hr class="thin-br"/>
         <div class="container" [hidden]="rescheduleFormVisible || editStatusFormVisible">
           <table class="profile-table" style="width:100%">
               <tr>
@@ -85,10 +82,9 @@
               </tr>
           </table>
         </div>
-        <hr class="thick-br"/>
+        <hr class="thin-br"/>
         </div>
 
-        
         <div class="container text-center">
           <div class=" d-grid gap-2">
             <button class="btn btn-sm btn-outline-secondary" type="button"
@@ -97,9 +93,8 @@
               : "Click Here to edit the class status " }}
             </button>
           </div>
-            <br />
         </div>
-        <hr class="thick-br"/>
+        <hr class="thin-br"/>
         <div [hidden]="!editStatusFormVisible"
           [style.opacity]="!editStatusFormVisible ? '0' : '1'"
           [style.visibility]="!editStatusFormVisible ? 'hidden' : 'visible'"
@@ -110,7 +105,7 @@
             (closeFormEvent)="closeFormHander($event)"
           >
           </app-edit-class-status-form>
-          <hr class="thick-br"/>
+          <hr class="thin-br"/>
         </div>
       </div>
       <div>
@@ -122,10 +117,8 @@
               : "Click Here to reschedule the class " }}
             </button>
           </div>
-
-          <br />
         </div>
-        <hr class="thick-br"/>
+        <hr class="thin-br"/>
       </div>
       
       <div [hidden]="!rescheduleFormVisible"
@@ -138,16 +131,16 @@
           (closeFormEvent)="closeFormHander($event)"
         >
         </app-reschedule-class-form>
-        <hr class="thick-br"/>
+        <hr class="thin-br"/>
       </div>
 </div>
 <ng-template #calendar_link>
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
     <div class="text-center">
       <button class="btn btn-sm btn-outline-secondary text"
       [routerLink]="['/user/scheduling/calendar']">
           Return to Calendar
       </button>
     </div>
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
   </ng-template>

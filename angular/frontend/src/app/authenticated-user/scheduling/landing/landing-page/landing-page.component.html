@@ -23,21 +23,10 @@
       (click)="navToSelectedDate()">Go To Scheduled Date
     </button>
 </div>
-<div *ngIf="unconfirmedPastClasses$ | async as unconfirmedPastClasses" class="container">
-  <div *ngIf="unconfirmedPastClasses.length > 0" class="m-3 p-2">
-    <br />
-    <h3>Unconfirmed Classes</h3>
-    <h5>{{ unconfirmedPastClasses.length }} Unconfirmed Class(es)</h5>
-    <hr class="thick-br"/>
-    <app-unconfirmed-classes 
-      [unconfirmedClasses]=unconfirmedPastClasses class="bg-transparent"
-    >
-    </app-unconfirmed-classes>
-  </div>
-</div>
-  <div *ngIf="todaysClasses$ | async as todaysClasses" class="container">
+
+<div *ngIf="todaysClasses$ | async as todaysClasses" class="container">
     <div class="m-3 p-2">
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
     <h3>Today's Schedule</h3>
     <h5>{{ todaysClasses.length }} Class(es) Scheduled Today</h5>
     <h5>
@@ -51,7 +40,7 @@
       id="collapseDailyTasks"
       class="collapse table-responsive m-3 p-2"
     >
-      <hr class="thick-br"/>
+      <hr class="thin-br"/>
       <table class="table bg-transparent">
         <thead class="table bg-transparent">
           <tr class="row">
@@ -71,7 +60,18 @@
         </tbody>
       </table>
     </div>
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
   </div>
 </div>
-  <br/><br/>
+<div *ngIf="unconfirmedPastClasses$ | async as unconfirmedPastClasses" class="container">
+  <div *ngIf="unconfirmedPastClasses.length > 0" class="m-3 p-2">
+    <hr class="thin-br"/>
+    <h3>Unconfirmed Classes</h3>
+    <h5>{{ unconfirmedPastClasses.length }} Unconfirmed Class(es)</h5>
+    <hr class="thin-br"/>
+    <app-unconfirmed-classes 
+      [unconfirmedClasses]=unconfirmedPastClasses class="bg-transparent"
+    >
+    </app-unconfirmed-classes>
+  </div>
+</div>
