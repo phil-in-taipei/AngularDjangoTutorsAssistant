@@ -29,9 +29,7 @@ export class EditClassStatusFormComponent {
 
 
   onSubmitClassStatusUpdate(form: NgForm) {
-
     if (form.invalid) {
-      //console.log('the form is invalid!')
       this.store.dispatch(new ClassStatusUpdateCancelled({err: {
         error: {
           message: "The form values were not properly filled in!"
@@ -45,8 +43,8 @@ export class EditClassStatusFormComponent {
     let submissionForm: ModifyClassStatusModel = {
       id: this.scheduledClass.id,
       class_status: form.value.class_status,
-      teacher_notes: form.value.teacher_notes,
-      class_content: form.value.class_content
+      teacher_notes: form.value.teacher_notes || '',
+      class_content: form.value.class_content || ''
     }
     this.store.dispatch(new ClassStatusUpdateSubmitted(
       { scheduledClass: submissionForm }

@@ -1,9 +1,6 @@
 <div *ngIf="studentsOrClassesSuccessMsg$ | async as accountSuccessMsg">
     <div class="alert alert-secondary alert-dismissible fade show" role="alert">
-      <h4 class="text-center">{{ accountSuccessMsg }}</h4>
-      <h4 class="text-center">
-        Purchased Class Hours: {{ studentOrClassHoursUpdate.changes.purchased_class_hours }}
-      </h4>
+      <h5 class="text-center">{{ accountSuccessMsg }}</h5>
       <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
       data-bs-dismiss="alert" aria-label="Close"></button>
 </div>

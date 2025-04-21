@@ -24,7 +24,7 @@ export class RevisedPurchasedHoursComponent implements OnInit{
 
     @Input() studentOrClassHoursUpdate: StudentOrClassConfirmationModificationResponse;
     studentsOrClassesSuccessMsg$: Observable<string | undefined> = of(undefined);
-    private timeoutId: any;
+    private timeoutId: ReturnType<typeof setTimeout> | undefined = undefined;
 
     constructor(
       private store: Store<StudentsOrClassesState>

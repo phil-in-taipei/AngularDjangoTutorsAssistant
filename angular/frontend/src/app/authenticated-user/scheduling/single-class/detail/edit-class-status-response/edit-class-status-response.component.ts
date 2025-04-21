@@ -22,14 +22,13 @@ import {
 export class EditClassStatusResponseComponent {
 
   @Input() studentOrClassModificationResponse: StudentOrClassConfirmationModificationResponse;
-  private timeoutId: any;
+  private timeoutId: ReturnType<typeof setTimeout> | undefined = undefined;
 
     constructor(
       private store: Store<ScheduledClassesState>
     ) { }
   
     ngOnInit(): void {
-      console.log(this.studentOrClassModificationResponse.changes)
       this.timeoutId = setTimeout(() => this.onClearUpdatedClassStatusResponseData(), 3000);    
     }
 

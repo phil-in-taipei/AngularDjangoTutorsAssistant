@@ -167,7 +167,7 @@ export function studentsOrClassesReducer(
                 action.payload.studentOrClass,
                 {
                     ...state, errorMessage:undefined,
-                    successMessage: 'You have successfully updated the account info!'
+                    successMessage: `Updated Purchased Hours: ${action.payload.studentOrClass.changes.purchased_class_hours}`
                 }
             );
 
