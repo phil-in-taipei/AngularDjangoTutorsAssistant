@@ -38,7 +38,7 @@ export class RevisedPurchasedHoursComponent implements OnInit{
       this.studentsOrClassesSuccessMsg$ = this.store.pipe(
         select(studentsOrClassesSuccessMsg)
       );
-      this.timeoutId = setTimeout(() => this.onClearStatusMsgs(), 1800);    
+      this.timeoutId = setTimeout(() => this.onClearStatusMsgs(), 2900);    
     }
 
     onClearStatusMsgs() {

@@ -1,6 +1,6 @@
 <div>
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        <h3>Freelance Class Updated</h3>
+    <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+        <h3 class="text-center">Freelance Class Updated</h3>
         <button type="button" class="btn-close" 
             (click)="onClearUpdatedClassStatusResponseData()"
             data-bs-dismiss="alert" aria-label="Close">
@@ -10,7 +10,5 @@
         [studentOrClassHoursUpdate]=studentOrClassModificationResponse>
       </app-revised-purchased-hours>
 </div>
-This is the modification response:
-{{ studentOrClassModificationResponse.id }}
-{{ studentOrClassModificationResponse.changes.purchased_class_hours }}
+
 

@@ -2,14 +2,15 @@
     <th class="col">
         <h5 *ngIf="scheduledClass.class_status==='cancelled' || scheduledClass.class_status==='same_day_cancellation'; else not_completed_red" 
         class="cross-out-alert">
-            <a [routerLink]="['/authenticated-user/scheduling/single-class', scheduledClass.id]">
-              {{ scheduledClass.start_time.slice(0, -3) }} - {{ scheduledClass.finish_time.slice(0, -3) }}
+            <a class="text-danger" 
+              [routerLink]="['/authenticated-user/scheduling/single-class', scheduledClass.id]">
+              {{ scheduledClass.start_time.slice(0, -3) }}-{{ scheduledClass.finish_time.slice(0, -3) }}
             </a>
         </h5>
         <ng-template #not_completed_red>
           <h5>
             <a [routerLink]="['/authenticated-user/scheduling/single-class', scheduledClass.id]">
-              {{ scheduledClass.start_time.slice(0, -3) }} - {{ scheduledClass.finish_time.slice(0, -3) }}
+              {{ scheduledClass.start_time.slice(0, -3) }}-{{ scheduledClass.finish_time.slice(0, -3) }}
             </a>
           </h5>
         </ng-template>
