@@ -1,13 +1,13 @@
 <tr class="row" >
     <th class="col">
-        <h5 *ngIf="scheduledClass.class_status==='cancelled' || scheduledClass.class_status==='same_day_cancellation'; else not_completed_red" 
+        <h5 *ngIf="scheduledClass.class_status==='cancelled' || scheduledClass.class_status==='same_day_cancellation'; else not_cancelled_red" 
         class="cross-out-alert">
             <a class="text-danger" 
               [routerLink]="['/authenticated-user/scheduling/single-class', scheduledClass.id]">
               {{ scheduledClass.start_time.slice(0, -3) }}-{{ scheduledClass.finish_time.slice(0, -3) }}
             </a>
         </h5>
-        <ng-template #not_completed_red>
+        <ng-template #not_cancelled_red>
           <h5>
             <a [routerLink]="['/authenticated-user/scheduling/single-class', scheduledClass.id]">
               {{ scheduledClass.start_time.slice(0, -3) }}-{{ scheduledClass.finish_time.slice(0, -3) }}
@@ -16,8 +16,8 @@
         </ng-template>
     </th>
     <th class="col">
-      <h5 *ngIf="scheduledClass.class_status==='cancelled' || scheduledClass.class_status==='same_day_cancellation'; else not_completed" 
-        class="cross-out-alert">
+      <h5 *ngIf="scheduledClass.class_status==='cancelled' || scheduledClass.class_status==='same_day_cancellation'; else not_cancelled" 
+        class="cross-out">
         <a [routerLink]="['/authenticated-user/student-or-class', scheduledClass.student_or_class]">
           <app-student-or-class-template-string 
           [studentOrClassId]=scheduledClass.student_or_class class="bg-transparent"
@@ -25,7 +25,7 @@
           </app-student-or-class-template-string>
         </a>
       </h5>
-      <ng-template #not_completed>
+      <ng-template #not_cancelled>
         <h5>
           <a [routerLink]="['/authenticated-user/student-or-class', scheduledClass.student_or_class]">
             <app-student-or-class-template-string 

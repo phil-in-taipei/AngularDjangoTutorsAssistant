@@ -3,7 +3,7 @@
   }
   
   .navbar-dark .navbar-nav > li > a:hover {
-      color: #333;
+      color: #004483;
   }
   
   .navbar-dark .navbar-nav > .open > a:focus {
@@ -18,6 +18,11 @@
   .dropdown-menu {
       font-size: 1em;
       color: #758d97;
+  }
+
+
+  .navbar-dark .navbar-nav > li > a {
+    color: #758d97;
   }
   
   .dropdown-item > li > a:hover {
