@@ -59,60 +59,77 @@
               </li>
             </ul>
           </li>
-          
+
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle mydropnav"
-              href="#" id="navbarDropdown" role="button" 
-              data-bs-toggle="dropdown" aria-expanded="false"
-            >
-              Accounting
+               href="#" id="clientsDropdown" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
+               Accounting
             </a>
-            <ul class="dropdown-menu mydropnav bg-dark" 
-              aria-labelledby="navbarDropdown">
-              <li>
-                <a class="dropdown-item bg-dark link-style" 
-                  routerLink="/authenticated-user/scheduling/accounting/select-month-year-and-school" routerLinkActive 
-                  >
-                  Monthly Report
+            <ul class="dropdown-menu bg-dark" aria-labelledby="clientsDropdown">
+              <!-- Nested dropdown: Schools/Companies -->
+              <li class="dropdown-submenu">
+                <a class="dropdown-item dropdown-toggle bg-dark text-white" href="#">
+                  Estimated Earnings
                 </a>
+                <ul class="dropdown-menu bg-dark">
+                  <li>
+                    <a class="dropdown-item bg-dark link-style" 
+                      routerLink="/authenticated-user/scheduling/accounting/select-month-year-and-school" routerLinkActive 
+                      >
+                      Monthly Report
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item bg-dark link-style" 
+                      routerLink="/authenticated-user/scheduling/accounting/select-date-range-and-school" routerLinkActive 
+                      >
+                      Report in Date Range
+                    </a>
+                  </li>
+                  <li>
+                </ul>
               </li>
-              <li>
-                <a class="dropdown-item bg-dark link-style" 
-                  routerLink="/authenticated-user/scheduling/accounting/select-date-range-and-school" routerLinkActive 
-                  >
-                  Report in Date Range
+          
+              <!-- Nested dropdown: Students/Classes -->
+              <li class="dropdown-submenu">
+                <a class="dropdown-item dropdown-toggle bg-dark text-white" href="#">
+                  Freelance
                 </a>
-              </li>
-              <li>
-                <a class="dropdown-item bg-dark link-style" 
-                  routerLink="/authenticated-user/scheduling/accounting/select-month-year-and-freelance-account" routerLinkActive 
-                  >
-                  Freelance Account Activity
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item bg-dark link-style" 
-                  routerLink="/authenticated-user/scheduling/accounting/select-month-and-year-for-freelance-payments-refunds-records" routerLinkActive 
-                  >
-                  Freelance Transactions
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item bg-dark link-style" 
-                  routerLink="/authenticated-user/scheduling/accounting/make-purchase" routerLinkActive 
-                  >
-                  Purchase Freelance Hours
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item bg-dark link-style" 
-                  routerLink="/authenticated-user/scheduling/accounting/make-refund" routerLinkActive 
-                  >
-                  Refund Freelance Hours
-                </a>
+                <ul class="dropdown-menu bg-dark">
+                  <li>
+                    <a class="dropdown-item bg-dark link-style" 
+                      routerLink="/authenticated-user/scheduling/accounting/select-month-year-and-freelance-account" routerLinkActive 
+                      >
+                      Account Activity
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item bg-dark link-style" 
+                      routerLink="/authenticated-user/scheduling/accounting/select-month-and-year-for-freelance-payments-refunds-records" routerLinkActive 
+                      >
+                      Transactions Records
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item bg-dark link-style" 
+                      routerLink="/authenticated-user/scheduling/accounting/make-purchase" routerLinkActive 
+                      >
+                      Purchase Hours
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item bg-dark link-style" 
+                      routerLink="/authenticated-user/scheduling/accounting/make-refund" routerLinkActive 
+                      >
+                      Refund Hours
+                    </a>
+                  </li>
+                </ul>
               </li>
             </ul>
-          </li> 
+          </li>
+
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle mydropnav"
               href="#" id="navbarDropdown" role="button" 
@@ -124,19 +141,21 @@
               aria-labelledby="navbarDropdown">
               <li><a class="dropdown-item bg-dark link-style" 
                 routerLink="/authenticated-user/scheduling/schedule-single-class" routerLinkActive 
-                >Schedule Single</a>
+                >Single Class</a>
               </li>
               <li><a class="dropdown-item bg-dark link-style" 
                 routerLink="/authenticated-user/scheduling/recurring-schedule/create" routerLinkActive 
-                >Schedule Recurring</a>
+                >Recurring Class</a>
               </li>
               <li><a class="dropdown-item bg-dark link-style" 
                 routerLink="/authenticated-user/scheduling/recurring-schedule/list" routerLinkActive 
-                >Recurring Schedule</a>
+                >Recurring List</a>
               </li>
-              <li><a class="dropdown-item bg-dark link-style" 
-                routerLink="/authenticated-user/scheduling/recurring-schedule/select-month-year" routerLinkActive 
-                >Recurring Applied Monthly</a>
+              <li>
+                <a class="dropdown-item bg-dark link-style" 
+                  routerLink="/authenticated-user/scheduling/recurring-schedule/select-month-year" routerLinkActive 
+                  >Monthly Booking
+                </a>
               </li>
             </ul>
           </li> 
