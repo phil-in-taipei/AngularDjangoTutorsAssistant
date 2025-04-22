@@ -6,34 +6,60 @@
       >
         Tutor's Assistant
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" 
+        data-bs-toggle="collapse" 
+        data-bs-target="#navbarSupportedContent" 
+        aria-controls="navbarSupportedContent" 
+        data-bs-auto-close="outside"
+        aria-expanded="false" 
+        aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle mydropnav"
-              href="#" id="navbarDropdown" role="button" 
-              data-bs-toggle="dropdown" aria-expanded="false"
-            >
-              Students
+               href="#" id="clientsDropdown" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
+              Clients
             </a>
-            <ul class="dropdown-menu mydropnav bg-dark" 
-              aria-labelledby="navbarDropdown">
-              <li><a class="nav-link" 
-                [routerLink]="['create-school']">Create School</a>
+            <ul class="dropdown-menu bg-dark" aria-labelledby="clientsDropdown">
+              <!-- Nested dropdown: Schools/Companies -->
+              <li class="dropdown-submenu">
+                <a class="dropdown-item dropdown-toggle bg-dark text-white" href="#">
+                  Schools/Companies
+                </a>
+                <ul class="dropdown-menu bg-dark">
+                  <li>
+                    <a class="dropdown-item bg-dark text-white"
+                       [routerLink]="['create-school']">Create School</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item bg-dark text-white"
+                       [routerLink]="['users-schools']">View Schools</a>
+                  </li>
+                </ul>
               </li>
-              <li><a class="nav-link" 
-                [routerLink]="['users-schools']">View Schools</a>
-              </li>
-              <li><a class="nav-link" 
-                [routerLink]="['create-student-or-class']">Create Class</a>
-              </li>
-              <li><a class="nav-link" 
-                [routerLink]="['users-students-or-classes']">View Classes</a>
+          
+              <!-- Nested dropdown: Students/Classes -->
+              <li class="dropdown-submenu">
+                <a class="dropdown-item dropdown-toggle bg-dark text-white" href="#">
+                  Students/Classes
+                </a>
+                <ul class="dropdown-menu bg-dark">
+                  <li>
+                    <a class="dropdown-item bg-dark text-white"
+                       [routerLink]="['create-student-or-class']">Create Class</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item bg-dark text-white"
+                       [routerLink]="['users-students-or-classes']">View Classes</a>
+                  </li>
+                </ul>
               </li>
             </ul>
           </li>
+          
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle mydropnav"
               href="#" id="navbarDropdown" role="button" 
