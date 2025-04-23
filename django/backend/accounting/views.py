@@ -132,7 +132,7 @@ class FreelanceTuitionTransactionsListViewByMonthAndYear(generics.ListAPIView):
             time_stamp__range=(query_timestamps['start'], query_timestamps['end'])
         )
         return queryset.order_by(
-            '-time_stamp',
+            'time_stamp',
         )
 
 
@@ -159,5 +159,5 @@ class PurchasedHoursModificationRecordsListViewByAccountAndMonth(generics.ListAP
             time_stamp__range=(query_timestamps['start'], query_timestamps['end'])
         )
         return queryset.order_by(
-            '-time_stamp',
+            'time_stamp',
         )

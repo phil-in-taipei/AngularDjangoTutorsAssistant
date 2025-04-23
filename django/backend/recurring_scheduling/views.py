@@ -109,6 +109,8 @@ class RecurringClassAppliedMonthlyListView(generics.ListAPIView):
         )
         return queryset.order_by(
             'scheduling_year', 'scheduling_month',
+            'recurring_class__recurring_day_of_week',
+            'recurring_class__recurring_start_time',
             'recurring_class__student_or_class__student_or_class_name'
         )
 
