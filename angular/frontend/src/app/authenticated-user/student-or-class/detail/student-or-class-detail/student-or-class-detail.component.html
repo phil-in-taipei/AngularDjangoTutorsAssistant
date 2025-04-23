@@ -25,8 +25,9 @@
                 <hr class="thick-br" />
                 <div class="table-responsive">
                     <div class="container mt-1 pt-1">
-                        <h1>
-                            {{ studentOrClass.student_or_class_name[0] | uppercase }}{{ studentOrClass.student_or_class_name.substring(1) }}
+                        <h1><a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', studentOrClass.id]">
+                                {{ studentOrClass.student_or_class_name[0] | uppercase }}{{ studentOrClass.student_or_class_name.substring(1) }}
+                            </a>
                         </h1>
                     </div>
                     <hr />
