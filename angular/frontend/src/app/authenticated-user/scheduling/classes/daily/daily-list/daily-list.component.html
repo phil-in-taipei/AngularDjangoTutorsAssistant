@@ -63,12 +63,12 @@
 </ng-container>
 
 <div *ngIf="dailyScheduledClasses$ | async as todaysClasses" class="container">
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
     <h5>{{ todaysClasses.length }} Class(es) Scheduled</h5>
     <div *ngIf="todaysClasses.length > 0; else no_daily"
         class="table-responsive"
       >
-      <hr class="thick-br"/>
+      <hr class="thin-br"/>
       <table class="table bg-transparent">
         <thead class="table bg-transparent">
           <tr class="row bg-transparent">
@@ -96,5 +96,5 @@
           </button>
         </div>
       </ng-template>
-      <hr class="thick-br"/>
+      <hr class="thin-br"/>
 </div>

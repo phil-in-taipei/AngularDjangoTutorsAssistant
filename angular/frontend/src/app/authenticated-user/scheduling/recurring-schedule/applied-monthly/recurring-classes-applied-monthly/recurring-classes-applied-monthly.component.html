@@ -5,11 +5,12 @@
         Select Another Month
     </button>
   </div>
-  <hr class="thick-br"/>
-  <h3>
+  <hr class="thin-br"/>
+  <h3 class="text-center">
     Batch Booking for {{ monthsAndIntegers[monthFromRouteData - 1][0] }} {{ yearFromRouteData }}
   </h3>
-  <div *ngIf="rCAMs$ | async as recurringClasses" class="container content">
+  <hr class="thin-br"/>
+  <div *ngIf="rCAMs$ | async as recurringClasses" class="container">
     <div class="text-center">
       <button class="btn btn-sm btn-outline-secondary" type="button"
         (click)="toggleApplySchedulerSubmitForm()">
@@ -21,18 +22,18 @@
     <div [hidden]="!showApplyRecurringClassSubmitForm"
     [style.opacity]="!showApplyRecurringClassSubmitForm ? '0' : '1'"
     [style.visibility]="!showApplyRecurringClassSubmitForm ? 'hidden' : 'visible'">
-      <hr class="thick-br"/>
+      <hr class="thin-br"/>
       <app-apply-recurring-class-monthly-form
         [month]=monthFromRouteData
         [year]=yearFromRouteData>
       </app-apply-recurring-class-monthly-form>
     </div>
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
 </div>
 
 <div *ngIf="batchDeletionErrMsg$ | async as classErrMsg" class="container">
   <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <h4 class="text-danger">{{ classErrMsg }}</h4>
+    <h4 class="text-center">{{ classErrMsg }}</h4>
     <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
     data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
@@ -40,7 +41,7 @@
 
 <div *ngIf="batchDeletionSuccessMsg$ | async as classSuccessMsg" class="container">
   <div class="alert alert-primary alert-dismissible fade show" role="alert">
-    <h6>{{ classSuccessMsg }}</h6>
+    <h6 class="text-center">{{ classSuccessMsg }}</h6>
     <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
     data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
