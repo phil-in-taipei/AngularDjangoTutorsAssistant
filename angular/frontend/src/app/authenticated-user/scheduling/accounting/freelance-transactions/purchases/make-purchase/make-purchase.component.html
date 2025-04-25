@@ -3,10 +3,10 @@
   <h2 class="text-center">Purchase Freelance Hours</h2>
 </div>
 <div *ngIf="freelanceStudents$ | async as freelanceStudents">
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
     <app-make-purchase-form
       [freelanceStudents]=freelanceStudents
     >
     </app-make-purchase-form>
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
 </div>

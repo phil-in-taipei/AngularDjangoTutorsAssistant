@@ -3,10 +3,10 @@
   <h2 class="text-center">Refund Freelance Hours</h2>
 </div>
 <div *ngIf="freelanceStudents$ | async as freelanceStudents">
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
     <app-make-refund-form
       [freelanceStudents]=freelanceStudents
     >
     </app-make-refund-form>
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
 </div>

@@ -17,12 +17,12 @@
 </div>
 <div *ngIf="studentsOrClasses$ | async as studentsOrClasses">
   <div *ngIf="userProfile$ | async as userProfile" class="container">
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
     <app-schedule-single-class-form
       [studentsOrClasses]=studentsOrClasses
       [userProfile]=userProfile
     >
     </app-schedule-single-class-form>
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
   </div>
 </div>
