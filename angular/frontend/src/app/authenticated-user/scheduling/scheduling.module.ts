@@ -34,6 +34,9 @@ import { SchedulingComponent } from './scheduling/scheduling.component';
 
 import { ScheduledClassesEffects } from './classes-state/scheduled-classes.effects';
 import { scheduledClassesReducer } from './classes-state/scheduled-classes.reducers';
+import { SchoolTemplateStringComponent } from './school-template-string/school-template-string.component';
+import { SchoolsEffects } from '../schools/state/school.effects';
+import { schoolsReducer } from '../schools/state/school.reducers';
 import { SelectMonthlyComponent } from './classes/monthly/select-monthly/select-monthly.component';
 import { SingleClassInfoComponent } from './single-class/detail/single-class-info/single-class-info.component';
 import { 
@@ -59,6 +62,7 @@ import { userProfileReducer } from '../user/user-state/user.reducers';
     RevisedPurchasedHoursComponent,
     ScheduleSingleClassComponent,
     ScheduleSingleClassFormComponent,
+    SchoolTemplateStringComponent,
     SelectMonthlyComponent,
     SingleClassInfoComponent,
     ScheduledClassComponent,
@@ -73,6 +77,8 @@ import { userProfileReducer } from '../user/user-state/user.reducers';
     NgbModule,
     StoreModule.forFeature('scheduledClasses', scheduledClassesReducer),
     EffectsModule.forFeature([ScheduledClassesEffects]),
+    StoreModule.forFeature('schools', schoolsReducer),
+    EffectsModule.forFeature([SchoolsEffects]),
     StoreModule.forFeature('studentsOrClasses', studentsOrClassesReducer),
     EffectsModule.forFeature([StudentsOrClassesEffects]),
     StoreModule.forFeature('user', userProfileReducer),

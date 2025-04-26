@@ -5,24 +5,24 @@
     <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
     data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
-  <hr class="thick-br"/>
+  <hr class="thin-br"/>
 </div>
 
 <div *ngIf="successMsg$ | async as successMsg" class="p-1 m-1">
-  <hr class="thick-br"/>
+  <hr class="thin-br"/>
   <div class="alert alert-secondary alert-dismissible fade show" role="alert">
     <h6>{{ successMsg }}</h6>
     <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
     data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
-  <hr class="thick-br"/>
+  <hr class="thin-br"/>
 </div>
 
 <div *ngIf="(studentOrClass$ | async) as studentOrClass; else homepage_link">
     <div class="mt-1 p-1 rounded">
         <div class="p-1 rounded-lg m-1">
             <div class="container text-center">
-                <hr class="thick-br" />
+                <hr class="thin-br" />
                 <div class="table-responsive">
                     <div class="container mt-1 pt-1">
                         <h1><a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', studentOrClass.id]">
@@ -102,12 +102,12 @@
 </div>
 
 <ng-template #homepage_link>
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
     <div class="text-center">
       <button class="btn btn-sm btn-dark text"
       [routerLink]="['/authenticated-user/scheduling/landing']">
           Return to Homepage
       </button>
     </div>
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
 </ng-template>

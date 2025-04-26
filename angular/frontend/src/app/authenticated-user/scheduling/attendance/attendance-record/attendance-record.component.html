@@ -1,15 +1,25 @@
 <br />
 <div *ngIf="studentOrClass$ | async as studentOrClass" class="container bg-transparent">
-    <h2>Attendance for <a [routerLink]="['/', 'authenticated-user', 'student-or-class', studentOrClass.id]">
-      {{ studentOrClass.student_or_class_name}}</a></h2>
+    <h3>Attendance for <a [routerLink]="['/', 'authenticated-user', 'student-or-class', studentOrClass.id]">
+      {{ studentOrClass.student_or_class_name}}</a>
+    </h3>
     <div class="large-scr row bg-transparent">
         <div class="col text-center bg-transparent">
           <button class="btn btn-sm btn-outline-secondary middle bg-transparent"
             (click)="onPrevPageRequest()">Recently</button>
         </div>
         <div class="col bg-transparent">
-        <h3>Remaining Hours: {{ studentOrClass.purchased_class_hours }}
-          </h3>
+          <h4 class="text-center" *ngIf="studentOrClass.purchased_class_hours">
+            Remaining Hours: {{ studentOrClass.purchased_class_hours }}
+          </h4>
+          <h4 class="text-center" *ngIf="studentOrClass.school">
+            <a [routerLink]="['/authenticated-user/school', studentOrClass.school]">
+              <app-school-template-str 
+                [schoolId]=studentOrClass.school class="bg-transparent"
+              >
+              </app-school-template-str>
+            </a>          
+          </h4>
         </div>
         <div class="col text-center bg-transparent">
           <button class="btn btn-sm btn-outline-secondary middle bg-transparent"
@@ -39,7 +49,7 @@
     </div>
   </div>
   <div *ngIf="pastClasses$ | async as pastClasses; else no_attendance" class="container bg-transparent">
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
     <div class="table-responsive bg-transparent">
       <table class="table bg-transparent bg-transparent">
           <thead class="table bg-transparent">
@@ -71,18 +81,18 @@
             </tr>
           </tbody>
       </table>
-      <hr class="thick-br"/>
+      <hr class="thin-br"/>
     </div>
 </div>
 <ng-template #no_attendance>
 <br />
 <h3 class="text-center">There is currently no attendance record</h3>
-<hr class="thick-br"/>
+<hr class="thin-br"/>
 <div class="text-center">
   <button class="btn btn-sm btn-outline-secondary text"
-  [routerLink]="['/user/scheduling/schedule-single-class']">
-      Schdule a Class
+  [routerLink]="['/authenticated-user/scheduling/schedule-single-class']">
+      Schedule a Class
   </button>
 </div>
-<hr class="thick-br"/>
+<hr class="thin-br"/>
 </ng-template>
