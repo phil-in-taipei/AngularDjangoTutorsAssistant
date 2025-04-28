@@ -1,5 +1,27 @@
 import { DurationOptionsInterface } from "../models/time-related.model";
 
+export function calculateTimeStringsDifferenceinNumbers(
+  time1: string, time2: string
+): number {
+  // Parse the input time strings
+  const [hours1, minutes1] = time1.split(':').map(Number);
+  const [hours2, minutes2] = time2.split(':').map(Number);
+  
+  // Convert first time to minutes
+  const totalMinutes1 = hours1 * 60 + minutes1;
+  
+  // Convert second time to minutes and add 1 minute
+  const totalMinutes2 = hours2 * 60 + minutes2 + 1;
+  
+  // Calculate the difference in minutes
+  const diffMinutes = totalMinutes2 - totalMinutes1;
+  
+  // Convert the difference to hours (as a decimal number)
+  const diffHours = diffMinutes / 60;
+  
+  return diffHours;
+}
+
 export function getClassDurationsOptions(): DurationOptionsInterface[] {
   const classDurationOptions: DurationOptionsInterface[] = [
     { stringVal: '30 mins', timeArr: [0, 30] },

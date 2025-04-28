@@ -59,9 +59,27 @@
               </tr>
               <tr>
                   <th><h4>Time</h4></th>
-                  <td><h4>{{ scheduledClass.start_time.slice(0, -3) }} -
-                    {{scheduledClass.finish_time.slice(0, -3) }}</h4></td>
+                  <td>
+                    <h4>{{ scheduledClass.start_time.slice(0, -3) }} -
+                      {{scheduledClass.finish_time.slice(0, -3) }} / 
+                      <app-time-in-hours
+                      [startTime]=scheduledClass.start_time
+                      [finishTime]=scheduledClass.finish_time
+                    ></app-time-in-hours> hour(s)
+                    </h4>
+                  </td>
               </tr>
+              <!--<tr>
+                <th><h4>Hours</h4></th>
+                <td>
+                  <h4>
+                    <app-time-in-hours
+                      [startTime]=scheduledClass.start_time
+                      [finishTime]=scheduledClass.finish_time
+                    ></app-time-in-hours>
+                  </h4>
+                </td>
+            </tr> -->
               <tr>
                 <th><h4>Status</h4></th>
                 <td>

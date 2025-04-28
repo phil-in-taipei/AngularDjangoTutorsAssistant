@@ -44,6 +44,9 @@ import {
 } from '../student-or-class/student-or-class-template-string/student-or-class-template-string.component';
 import { StudentsOrClassesEffects } from '../student-or-class/state/student-or-class.effects';
 import { studentsOrClassesReducer } from '../student-or-class/state/student-or-class.reducers';
+import { 
+  TimeInHoursComponent 
+} from './single-class/detail/time-in-hours/time-in-hours.component';
 import { UnconfirmedClassesComponent } from './landing/unconfirmed-classes/unconfirmed-classes.component';
 import { UserEffects } from '../user/user-state/user.effects';
 import { userProfileReducer } from '../user/user-state/user.reducers';
@@ -68,6 +71,7 @@ import { userProfileReducer } from '../user/user-state/user.reducers';
     ScheduledClassComponent,
     SchedulingComponent,
     StudentOrClassTemplateStringComponent,
+    TimeInHoursComponent,
     UnconfirmedClassesComponent
   ],
   imports: [
