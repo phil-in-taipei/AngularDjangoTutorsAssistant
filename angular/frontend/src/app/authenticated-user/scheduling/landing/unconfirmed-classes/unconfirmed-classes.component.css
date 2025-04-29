@@ -5,10 +5,7 @@ h3, h5 {
 }
  
 .row {
-    text-align: center;
     background-color: black !important;
+    color: #758d97; 
 }
-  
-.small-scr-tbl {
-    display: none;
-}
+

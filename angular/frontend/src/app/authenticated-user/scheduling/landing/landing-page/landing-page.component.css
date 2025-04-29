@@ -4,29 +4,6 @@ h3, h5 {
     background-color: black !important;
 }
 
-table {
-    border-collapse: collapse;
-    background-color: black !important;
-}
-
-.table {
-    padding-left: 0px;
-    padding-right: 0px;
-    background-color: black !important;
-}
-
-.table .tr {
-    background-color: black !important;
-}
-
-.table .td {
-    background-color: black;
-}
-
-.table .th {
-    background-color: black !important;
-}
-
 .row {
     background-color: black !important;
     color: #758d97; 
@@ -42,36 +19,3 @@ table {
   }
   
 
-@media screen and (min-width: 993px) {
-  .jumbotron {
-        margin-top: 30px;
-        margin-left: 20px;
-        margin-right: 50px;
-        color: grey;
-        max-width: 1050px;
-        min-width: 670px;
-        border: 5px solid transparent;
-    }
-}
-    
-@media screen and (min-width: 768px) and (max-width: 992px) {
-    .jumbotron {
-        margin-top: 30px;
-        margin-left: 20px;
-        color: white;
-        max-width: 650px;
-        min-width: 550px;
-        border: 30px solid transparent;
-      }
-}
-    
-@media screen and (max-width: 767px) {
-    .jumbotron {
-        margin-top: 30px;
-        margin-left: 15px;
-        color: grey;
-        max-width: 500px;
-        min-width: 200px;
-        border: 30px solid transparent;
-    }
-}
