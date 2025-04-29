@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-//import * as CryptoJS from 'crypto-js';
+// Use require-style imports instead of ES modules
+// for encryption
+const AES = require('crypto-js/aes');
+const Utf8 = require('crypto-js/enc-utf8');
 import { Store } from '@ngrx/store';
 import { environment } from '../../environments/environment';
 import { AuthDataModel } from '../models/auth-data.model';
@@ -42,6 +45,7 @@ export class AuthService {
   private refreshExpTime: Date;
   private authStatusListener = new Subject<boolean>();
   private loginErrorListener = new Subject<boolean>();
+  private readonly SECRET_KEY = 'Secret Passphrase'; // Replace with a strong secret key
 
   constructor(
     private http: HttpClient, private router: Router, 
@@ -115,8 +119,6 @@ export class AuthService {
 
   // public for testing purposes
   public fetchRefreshToken() {
-    //let bytes  = CryptoJS.AES.decrypt(this.refresh, this.encryptKey);
-    //let refresh = bytes.toString(CryptoJS.enc.Utf8);
     let refresh = this.refresh;
     console.log('this is the unencryped refresh token')
     console.log(refresh);
@@ -140,8 +142,10 @@ export class AuthService {
           this.setAuthTimer(50000); // 50000 (50 seconds) // 285000 (4.75 minutes)
           console.log('this is when the refresh will expire:')
           console.log(this.refreshExpTime);
-          this.saveAuthData(this.refresh, this.refreshExpTime,
-            this.token, this.tokenExpTime);
+          this.saveAuthData(
+            this.refresh, this.refreshExpTime,
+            this.token, this.tokenExpTime
+          );
         }
       }, error => {
         console.log(error)
@@ -150,6 +154,17 @@ export class AuthService {
       });
   }
 
+  public decryptToken(encryptedToken: string): string {
+    const bytes = AES.decrypt(encryptedToken, this.SECRET_KEY);
+    return bytes.toString(Utf8);
+  }
+
+  public encryptToken(authToken: string): string {
+    const encryptedToken: string = AES.encrypt(
+      authToken, this.SECRET_KEY
+    ).toString();
+    return encryptedToken
+  }
 
   private getAuthData():AuthDataModel | undefined {
     const token = localStorage.getItem('token');
@@ -160,9 +175,9 @@ export class AuthService {
       return;
     }
     return {
-      token: token,
+      token: this.decryptToken(token),
       accessExpDate: new Date(accessExpDate),
-      refresh: refresh,
+      refresh: this.decryptToken(refresh),
       refreshExp: new Date(refreshExpDate)
     }
   }
@@ -262,9 +277,9 @@ export class AuthService {
 
   private saveAuthData(refresh: string, refreshExpDate: Date,
     token: string, expirationDate: Date) {
-      localStorage.setItem('refresh', refresh);
+      localStorage.setItem('refresh', this.encryptToken(refresh));
       localStorage.setItem('refreshExpiration', refreshExpDate.toISOString());
-      localStorage.setItem('token', token);
+      localStorage.setItem('token', this.encryptToken(token));
       localStorage.setItem('expiration', expirationDate.toISOString());
   }
 
