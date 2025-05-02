@@ -24,45 +24,6 @@
     </button>
 </div>
 
-<div *ngIf="todaysClasses$ | async as todaysClasses" class="container">
-    <div class="m-3 p-2">
-    <hr class="thin-br"/>
-    <h3>Today's Schedule</h3>
-    <h5>{{ todaysClasses.length }} Class(es) Scheduled Today</h5>
-    <h5>
-      <button class="btn btn-outline-secondary" type="button"
-        data-bs-toggle="collapse" data-bs-target="#collapseDailyTasks"
-        aria-expanded="false" aria-controls="collapseExample">
-        View Today's Schedule
-      </button>
-    </h5>
-    <div *ngIf="todaysClasses.length > 0"
-      id="collapseDailyTasks"
-      class="collapse table-responsive"
-    >
-      <hr class="thin-br"/>
-      <table class="table bg-transparent">
-        <thead class="table bg-transparent">
-          <tr class="row">
-            <th class="col"><h5>Time</h5></th>
-            <th class="col"><h5>Student/Class</h5></th>
-            <th class="col"><h5>Delete</h5></th>
-          </tr>
-        </thead>
-        <tbody class="table bg-transparent">
-          <div 
-            class="bg-transparent" 
-            *ngFor="let scheduledClass of todaysClasses trackBy: trackByFn"
-          >
-            <app-scheduled-class [scheduledClass]=scheduledClass class="bg-transparent">
-            </app-scheduled-class>
-          </div>
-        </tbody>
-      </table>
-    </div>
-    <hr class="thin-br"/>
-  </div>
-</div>
 <div *ngIf="unconfirmedPastClasses$ | async as unconfirmedPastClasses" class="container">
   <div *ngIf="unconfirmedPastClasses.length > 0" class="m-3 p-2">
     <hr class="thin-br"/>
@@ -75,3 +36,16 @@
     </app-unconfirmed-classes>
   </div>
 </div>
+
+<div *ngIf="todaysClasses$ | async as todaysClasses" class="container">
+  <div class="m-3 p-2">
+    <hr class="thin-br"/>
+    <h3>Today's Schedule</h3>
+    <h5>{{ todaysClasses.length }} Class(es) Scheduled Today</h5>
+    <hr class="thin-br"/>
+    <app-classes-on-current-date 
+      [scheduledClasses]=todaysClasses class="bg-transparent">
+    </app-classes-on-current-date>
+  </div>
+</div>
+

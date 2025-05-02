@@ -14,6 +14,9 @@ import {
   AttendanceRecordComponent 
 } from './attendance/attendance-record/attendance-record.component';
 import { CalendarScheduleComponent } from './classes/monthly/calendar-schedule/calendar-schedule.component';
+import { 
+  ClassesOnCurrentDateComponent 
+} from './landing/classes-on-current-date/classes-on-current-date.component';
 import { EditClassStatusFormComponent } from './single-class/detail/edit-class-status-form/edit-class-status-form.component';
 import { 
   EditClassStatusResponseComponent 
@@ -55,6 +58,7 @@ import { userProfileReducer } from '../user/user-state/user.reducers';
   declarations: [
     AttendanceRecordComponent,
     CalendarScheduleComponent,
+    ClassesOnCurrentDateComponent,
     DailyListComponent,
     EditClassStatusFormComponent,
     EditClassStatusResponseComponent,
