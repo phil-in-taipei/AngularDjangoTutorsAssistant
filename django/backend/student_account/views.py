@@ -49,7 +49,6 @@ class StudentOrClassListView(APIView):
     )
 
     def get(self, request, *args, **kwargs):
-        print(request.user)
         student_or_class_accounts = StudentOrClass.objects.filter(
             teacher__user=request.user
         )

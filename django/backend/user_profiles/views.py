@@ -16,15 +16,11 @@ class UserProfileView(APIView):
 
     def get(self, request):
         user_profile = get_object_or_404(UserProfile, user=request.user)
-        print('this is calling the get function')
-        print(request.user)
         serializer = UserProfileSerializer(user_profile)
         return Response(serializer.data)
 
     def patch(self, request):
         user_profile = get_object_or_404(UserProfile, user=request.user)
-        print('this is calling the patch function')
-        print(request.user)
         serializer = UserProfileSerializer(user_profile, data=request.data, partial=True)
         # partial=True to patch data partially
         if serializer.is_valid():
@@ -63,6 +59,12 @@ class UserList(generics.ListCreateAPIView):
                 )
             serializer = UserCreateSerializer(user)
             headers = self.get_success_headers(serializer.data)
-            return Response(data={"message": "User successfully created!"}, status=status.HTTP_201_CREATED,
-                            headers=headers)
-        return Response(status=status.HTTP_400_BAD_REQUEST, data={"message": "Error creating user!"})
+            return Response(
+                data={"message": "User successfully created!"}, 
+                status=status.HTTP_201_CREATED,
+                headers=headers
+            )
+        return Response(
+            status=status.HTTP_400_BAD_REQUEST, 
+            data={"message": "Error creating user!"}
+        )

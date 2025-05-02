@@ -1,8 +1,6 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import generics, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from .models import RecurringScheduledClass, RecurringClassAppliedMonthly
 from .serializers import RecurringClassSerializer, RecurringClassAppliedMonthlySerializer
@@ -30,9 +28,6 @@ class RecurringClassAppliedMonthlyViewSet(viewsets.ModelViewSet):
         scheduling_month = serializer.validated_data['scheduling_month']
         scheduling_year = serializer.validated_data['scheduling_year']
         recurring_class = serializer.validated_data['recurring_class']
-        print('****************this is the recurring class id:******************')
-        print(recurring_class)
-       #recurring_class = get_object_or_404(RecurringScheduledClass, id=recurring_class_id)
 
         monthly_booking_date_list = create_date_list(
             year=scheduling_year, month=scheduling_month, 
@@ -71,8 +66,12 @@ class RecurringClassAppliedMonthlyViewSet(viewsets.ModelViewSet):
             date_list=monthly_booking_date_list,
             recurring_class=recurring_for_specific_month_obj.recurring_class
         )
-        list_of_classes_to_be_deleted_strings = [str(obj) for obj in obsolete_classes_to_be_deleted]
-        list_of_classes_to_be_deleted_ids = [obj.id for obj in obsolete_classes_to_be_deleted]
+        list_of_classes_to_be_deleted_strings = [
+            str(obj) for obj in obsolete_classes_to_be_deleted
+        ]
+        list_of_classes_to_be_deleted_ids = [
+            obj.id for obj in obsolete_classes_to_be_deleted
+        ]
         recurring_for_specific_month_obj.delete()
         return Response(
                 {

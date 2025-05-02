@@ -39,7 +39,6 @@ class SchoolListView(APIView):
     )
 
     def get(self, request, *args, **kwargs):
-        print(request.user)
         teachers_schools = School.objects.filter(scheduling_teacher__user=request.user)
         serializer = SchoolSerializer(teachers_schools, many=True)
         return Response(serializer.data)
