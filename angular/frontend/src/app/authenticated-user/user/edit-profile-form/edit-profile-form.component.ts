@@ -26,7 +26,6 @@ export class EditProfileFormComponent {
   onSubmitEditedProfile(form: NgForm) {
 
     if (form.invalid) {
-      //console.log('the form is invalid!')
       this.store.dispatch(new UserProfileSubmissionCancelled({err: {
         error: {
           message: "The form values were not properly filled in!"

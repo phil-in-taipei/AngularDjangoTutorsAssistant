@@ -3,7 +3,6 @@ import { SchoolModel } from 'src/app/models/school.model';
 import { NgForm } from '@angular/forms';
 import { Router } from "@angular/router";
 
-import { getDateString } from 'src/app/shared-utils/date-time.util';
 
 @Component({
   selector: 'app-select-date-range-and-school-form',

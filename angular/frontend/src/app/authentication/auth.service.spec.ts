@@ -30,7 +30,7 @@ fdescribe('AuthService', () => {
     let storage: {[index: string]:any} = {};
     
     const mockLocalStorage = {
-      getItem: (key: string): string => {
+      getItem: (key: string): string | null => {
         return key in storage ? storage[key] : null;
       },
       setItem: (key: string, value: string) => {

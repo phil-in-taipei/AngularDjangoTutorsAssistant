@@ -9,9 +9,6 @@ import { ScheduledClassModel } from 'src/app/models/scheduled-class.model';
 import { 
   selectStudentOrClassById 
 } from 'src/app/authenticated-user/student-or-class/state/student-or-class.selectors';
-import { 
-  StudentOrClassAttendanceRecordResponse 
-} from 'src/app/models/scheduled-class.model';
 import { StudentOrClassModel } from 'src/app/models/student-or-class.model';
 import { 
   StudentsOrClassesState 

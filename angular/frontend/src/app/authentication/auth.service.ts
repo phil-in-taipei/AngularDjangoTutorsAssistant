@@ -120,8 +120,6 @@ export class AuthService {
   // public for testing purposes
   public fetchRefreshToken() {
     let refresh = this.refresh;
-    console.log('this is the unencryped refresh token')
-    console.log(refresh);
     this.http.post<AuthTokenRefreshResponseModel>(
       `${environment.apiUrl}/auth/jwt/refresh`, {refresh: refresh})
       .subscribe(response => {
@@ -131,16 +129,10 @@ export class AuthService {
           this.isAuthenticated = true;
           this.authStatusListener.next(true);
           const dtToken:Date = new Date();
-          console.log('now recieving login data ...')
-          console.log('this is now:')
-          console.log(dtToken);
-          console.log('this is when the token will expire...');
-          //dtToken.setMinutes(dtToken.getMinutes() + 4);
-          dtToken.setSeconds(dtToken.getSeconds() + 50);
-          console.log(dtToken);
+          dtToken.setMinutes(dtToken.getMinutes() + environment.tokenMinsAmount);
+          dtToken.setSeconds(dtToken.getSeconds() + environment.tokenSecondsAmount);
           this.tokenExpTime = dtToken;
-          this.setAuthTimer(50000); // 50000 (50 seconds) // 285000 (4.75 minutes)
-          console.log('this is when the refresh will expire:')
+          this.setAuthTimer(environment.authTimerAmount); // 50000 (50 seconds) // 285000 (4.75 minutes)
           console.log(this.refreshExpTime);
           this.saveAuthData(
             this.refresh, this.refreshExpTime,
@@ -148,7 +140,7 @@ export class AuthService {
           );
         }
       }, error => {
-        console.log(error)
+        //console.log(error)
         this.authStatusListener.next(false);
         this.logout();
       });
@@ -209,24 +201,15 @@ export class AuthService {
       `${environment.apiUrl}/auth/jwt/create`, authData
       )
       .subscribe(response => {
-        console.log('This is the login response:')
-        console.log(response)
         if (response.access && response.refresh) {
-          console.log('The tokens are both in the login response')
           this.refresh = response.refresh;
-          //this.refresh = CryptoJS.AES.encrypt(response.refresh, this.encryptKey).toString();//response.refresh;
           this.token = response.access;
           this.isAuthenticated = true;
           this.authStatusListener.next(true);
           this.loginErrorListener.next(false);
           const dtToken:Date = new Date();
-          console.log('now recieving login data ...')
-          console.log('this is now:')
-          console.log(dtToken);
-          console.log('this is when the token will expire...');
           dtToken.setMinutes(dtToken.getMinutes() + environment.tokenMinsAmount);
           dtToken.setSeconds(dtToken.getSeconds() + environment.tokenSecondsAmount);
-          console.log(dtToken);
           this.tokenExpTime = dtToken;
           const dtRfrshTken:Date = new Date();
           // for testing, the refresh expires in 2 mins and 50 seconds
@@ -236,18 +219,14 @@ export class AuthService {
           dtRfrshTken.setSeconds(dtRfrshTken.getSeconds() + environment.tokenRefreshSecondsAmount);
           this.refreshExpTime = new Date(dtRfrshTken);
           this.setAuthTimer(environment.authTimerAmount); // 285000 (4 minutes 45 seconds) // 50000 (50 seconds)
-          console.log('this is when the refresh expires')
-          console.log(dtRfrshTken);
           this.saveAuthData(this.refresh, this.refreshExpTime,
             this.token, this.tokenExpTime);
-          //this.router.navigate(['authenticated-user', 'user-profile']);
           this.router.navigate(['authenticated-user', 'scheduling', 'landing']);
         } else {
-          console.log('the tokens are not in the response:')
-          console.log(response);
+          this.loginErrorListener.next(true);
+          this.authStatusListener.next(false);
         }
       }, error => {
-        console.log(error)
         this.loginErrorListener.next(true);
         this.authStatusListener.next(false);
       })
@@ -256,11 +235,8 @@ export class AuthService {
   private refreshTokenOrLogout() {
     const now = new Date();
     if(this.refreshExpTime < now) {
-      console.log('the refresh token is expired');
       this.logout();
-      //this.router.navigate(['/']);
     } else {
-      console.log('getting a new token...');
       this.fetchRefreshToken();
     }
   }
