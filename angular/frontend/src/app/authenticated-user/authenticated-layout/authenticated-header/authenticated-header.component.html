@@ -141,6 +141,12 @@
               aria-labelledby="navbarDropdown">
               <li>
                 <a class="dropdown-item bg-dark link-style" 
+                  routerLink="/authenticated-user/scheduling/calendar" routerLinkActive >
+                  Calendar
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item bg-dark link-style" 
                   routerLink="/authenticated-user/scheduling/schedule-single-class" routerLinkActive 
                   >Single Class
                 </a>
@@ -167,9 +173,6 @@
           </li> 
           <li><a class="nav-link" 
             [routerLink]="['user-profile']">Profile</a>
-          </li>
-          <li><a class="nav-link" 
-            routerLink="/authenticated-user/scheduling/calendar" routerLinkActive >Calendar</a>
           </li>         
           <li>
             <a class="nav-link" href="#" (click)="onLogout()">Logout</a>

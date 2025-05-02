@@ -16,7 +16,7 @@
 </div>
 
 <div *ngIf="monthlyPurchasedHoursModifications" class="container">
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
     <h2 class="text-center">
       <a [routerLink]="['/authenticated-user/student-or-class', freelanceAccountIdFromRouteData]">
         <app-freelance-account-template-display 
@@ -27,10 +27,10 @@
     </h2>
     <h2 class="text-center">Account Activity {{ monthFromRouteData }}/{{ yearFromRouteData }}</h2>
     <h4 class="text-center">{{ monthlyPurchasedHoursModifications.length }} Modification(s) to Purchased Hours</h4>
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
     <div *ngIf="monthlyPurchasedHoursModifications.length > 0;else noRecordsMessage">
       <div class="table-responsive">
-        <hr class="thick-br"/>
+        <hr class="thin-br"/>
         <table style="width:100%">
           <thead>
             <tr>
@@ -60,7 +60,7 @@
             </tr>
           </tbody>
         </table>
-        <hr class="thick-br"/>
+        <hr class="thin-br"/>
       </div>
     </div>
     <ng-template #noRecordsMessage>

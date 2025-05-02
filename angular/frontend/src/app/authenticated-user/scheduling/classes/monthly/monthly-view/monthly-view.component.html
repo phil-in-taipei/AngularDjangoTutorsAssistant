@@ -1,6 +1,6 @@
 <div *ngIf="showMonthlySelectForm" class="container content">
     <div>
-      <hr class="thick-br"/>
+      <hr class="thin-br"/>
       <div *ngIf="monthlyDateRange$ | async as monthlyDateRange;else no_previous_dates">
         <h4 class="text-center">Reselect Monthly Schedule</h4>
           <app-reselect-monthly
@@ -14,7 +14,7 @@
             (closeMonthlySelectFormEvent)="closeMonthlySelectFormHander($event)">
           </app-select-monthly>
       </ng-template>
-      <hr class="thick-br"/>
+      <hr class="thin-br"/>
     </div>
 </div>
 

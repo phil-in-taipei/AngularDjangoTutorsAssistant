@@ -15,12 +15,12 @@
 </div>
 </div>
 
-<hr class="thick-br"/>
+<hr class="thin-br"/>
 <div *ngIf="freelanceTransactions">
   <div *ngIf="freelanceTransactions.length > 0; else no_billings" class="container">
     <br />
     <h3 class="text-center">Payments for {{ monthFromRouteData }}/{{ yearFromRouteData }}</h3>
-    <hr class="thick-br"/>
+    <hr class="thin-br"/>
     <div class="table-responsive">
       <table style="width:100%">
         <thead>
@@ -50,15 +50,15 @@
       </tbody>
       </table>
     </div>
-    <hr class="thick-or"/>
+    <hr class="thin-br"/>
     <h4>Total: NT${{ total }}</h4>
-    <hr class="thick-or"/>
+    <hr class="thin-br"/>
   </div>
   <ng-template #no_billings>
     <div class="container">
-      <hr class="thick-br"/>
+      <hr class="thin-br"/>
       <h4>No payments for {{ monthFromRouteData }}/{{ yearFromRouteData }}!</h4>
-      <hr class="thick-br"/>
+      <hr class="thin-br"/>
     </div>
   </ng-template>
 </div>
