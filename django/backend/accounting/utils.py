@@ -7,7 +7,7 @@ from class_scheduling.utils import determine_duration_of_class_time
 from student_account.models import StudentOrClass
 from .models import PurchasedHoursModificationRecord
  
-from pprint import pprint
+#from pprint import pprint
 
 
 def create_purchased_hours_modification_record_for_tuition_transaction(
@@ -27,11 +27,6 @@ def create_purchased_hours_modification_record_for_tuition_transaction(
         previous_purchased_class_hours=previous_hours_purchased,
         updated_purchased_class_hours=student_or_class.purchased_class_hours
     )
-    print("----------------------------------------------------------------------")
-    print(F"These are the previous hours purchased: {previous_hours_purchased}")
-    print("----------------------------------------------------------------------")
-    print(F"These are the updated hours purchased: {student_or_class.purchased_class_hours}")
-    print("----------------------------------------------------------------------")
 
 
 def create_timestamps_for_beginning_and_end_of_month_and_year(month: int, year: int) -> dict:
@@ -208,9 +203,7 @@ def organize_scheduled_classes(classes):
 
 def process_school_classes(accounting_data, organized_classes_data):
     for school_data in organized_classes_data["classes_in_schools"]:
-        print("This is the school data:")
-        print("**************************************************************************")
-        print(school_data)
+
         school_report = {
             "school_name": school_data["school_name"],
             "students_reports": []
@@ -344,14 +337,11 @@ def generate_estimated_earnings_report(
 ):
     classes_during_period = get_scheduled_classes_during_month_period(teacher, month, year)
     organized_classes_data = organize_scheduled_classes(classes=classes_during_period)
-    print("************This is the query result************")
-    pprint(organized_classes_data)
+
     basic_report = generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
         organized_classes_data=organized_classes_data
     )
-    print('*********************************************')
-    pprint(basic_report)
-    print("************************************************")
+
     report_with_school_totals = calculate_school_totals(report=basic_report)
     return calculate_overall_monthly_total(accounting_data=report_with_school_totals)
 
@@ -365,14 +355,10 @@ def generate_estimated_earnings_report_for_single_school_within_date_range(
     )
     organized_classes_data = organize_scheduled_classes(classes=classes_during_period)
 
-    print("************This is the query result************")
-    pprint(organized_classes_data)
     basic_report = generate_accounting_reports_for_classes_in_schools(
         organized_classes_data=organized_classes_data
     )
-    print('*********************************************')
-    pprint(basic_report)
-    print("************************************************")
+
     report_with_school_totals = calculate_school_totals(report=basic_report)
     if len(report_with_school_totals['classes_in_schools']) > 0:
         return report_with_school_totals['classes_in_schools'][0]
@@ -392,14 +378,10 @@ def generate_estimated_monthly_earnings_report_for_single_school(
     )
     organized_classes_data = organize_scheduled_classes(classes=classes_during_period)
 
-    print("************This is the query result************")
-    pprint(organized_classes_data)
     basic_report = generate_accounting_reports_for_classes_in_schools(
         organized_classes_data=organized_classes_data
     )
-    print('*********************************************')
-    pprint(basic_report)
-    print("************************************************")
+
     report_with_school_totals = calculate_school_totals(report=basic_report)
     if len(report_with_school_totals['classes_in_schools']) > 0:
         return report_with_school_totals['classes_in_schools'][0]

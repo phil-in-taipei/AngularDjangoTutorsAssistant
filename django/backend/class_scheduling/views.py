@@ -15,13 +15,10 @@ from .utils import (
     class_is_double_booked,
     determine_transaction_type,
     determine_duration_of_class_time,
-    get_double_booked_by_user,
     is_freelance_account,
     number_of_hours_purchased_should_be_updated,
     create_purchased_hours_modification_record
 )
-from user_profiles.models import UserProfile
-from utilities.permissions import IsOwnerOrReadOnly
 
 
 class ScheduledClassBatchDeletionView(APIView):
@@ -39,8 +36,6 @@ class ScheduledClassBatchDeletionView(APIView):
             return Response({
                 "ids": obsolete_scheduled_class_ids,
                 "message": "Batch Deletion Successful!"
-                #"message": "Successfully deleted: "
-                #           + ', '.join(obsolete_scheduled_class_strings)
             })
         else:
             return Response({"Error": "The classes for deletion do not exist, "
@@ -75,24 +70,19 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
           "student_or_class_update": None
         }
         if is_freelance_account(scheduled_class.student_or_class) and number_of_hours_purchased_should_be_updated(transaction_type):
-            print("******Account must be adjusted*******")
+            #print("******Account must be adjusted*******")
             duration = determine_duration_of_class_time(
                 scheduled_class.start_time, scheduled_class.finish_time
             )
-            print(duration)
-            print("-------------------------------------------------------")
             previous_number_of_purchased_hours = student_or_class.purchased_class_hours
-            print("This is the previous number of purchased hours:")
-            print(previous_number_of_purchased_hours)
-            print("--------------------------------------------------------------")
+            
             new_number_of_purchased_hours = adjust_number_of_hours_purchased(
                     transaction_type, duration, student_or_class.purchased_class_hours
             )
-            print("This is the new number of purchased hours:")
-            print(new_number_of_purchased_hours)
+            
             student_or_class.purchased_class_hours = new_number_of_purchased_hours
             student_or_class.save()
-            print("updated")
+            
             create_purchased_hours_modification_record(
                 student_or_class=student_or_class,
                 transaction_type=transaction_type,
@@ -106,10 +96,6 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
                     "purchased_class_hours": float(student_or_class.purchased_class_hours)
                 }
             }
-        print("****************************************************")
-        print("This is the status revision response:")
-        print(response)
-        print("****************************************************")
 
         return Response(
             response,
@@ -284,9 +270,4 @@ class UnconfirmedStatusClassesViewSet(generics.ListAPIView):
             teacher__user=self.request.user,
             date__in=dates_with_scheduled_classes
         )
-        #queryset = self.model.objects.filter(
-        #    teacher__user=self.request.user,
-        #    date__lt=today,
-        #    class_status='scheduled'
-        #)
         return queryset.order_by('date', 'start_time')

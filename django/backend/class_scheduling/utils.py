@@ -63,11 +63,8 @@ def adjust_number_of_hours_purchased(
 
 
 def determine_duration_of_class_time(start_time, finish_time):
-    print(start_time)
-    print(finish_time)
     # calibrate time by adding one minute to the finish time
     calibrated_finish_time = add_minute_to_datetime_obj(datetime_obj=finish_time)
-    print(calibrated_finish_time)
     # Convert time objects to timedelta, using only hours and minutes
     delta1 = timedelta(
         hours=start_time.hour, minutes=start_time.minute
@@ -135,7 +132,6 @@ def class_is_double_booked(
         scheduled_class in class_finishes_during_time_frame or
         scheduled_class in time_frame_occurs_during_a_booked_class
     ]
-    print(classes_during_date_and_time)
 
     return len(classes_during_date_and_time) > 0
 
