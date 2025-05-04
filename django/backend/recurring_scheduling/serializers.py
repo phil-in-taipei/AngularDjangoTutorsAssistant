@@ -19,8 +19,11 @@ class RecurringClassAppliedMonthlySerializer(serializers.ModelSerializer):
     class Meta:
         model = RecurringClassAppliedMonthly
         month_string = serializers.ReadOnlyField()
+        recurring_day_of_week = serializers.ReadOnlyField()
+        recurring_start_time = serializers.ReadOnlyField()
 
         fields = (
             'id', 'scheduling_month', 'scheduling_year',
-            'recurring_class', 'month_string'
+            'recurring_class', 'month_string',
+            'recurring_day_of_week', 'recurring_start_time'
         )

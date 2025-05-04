@@ -11,6 +11,8 @@ export interface RecurringClassAppliedMonthlyModel {
     scheduling_month: number;
     scheduling_year: number;
     recurring_class: number;
+    recurring_day_of_week: number;
+    recurring_start_time: string;
 }  
   
 export interface RecurringClassAppliedMonthlyDeletionResponse {

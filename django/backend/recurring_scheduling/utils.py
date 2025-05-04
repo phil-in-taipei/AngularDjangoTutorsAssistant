@@ -55,7 +55,7 @@ def recurring_class_applied_monthly_has_scheduling_conflict(
         recurring_class
 ):
     for date in list_of_dates_on_day_in_given_month:
-        print(date)
+        #print(date)
         if ScheduledClass.custom_query.teacher_already_booked_classes_during_date_and_time(
             query_date=date, 
             starting_time=recurring_class.recurring_start_time, 
@@ -90,6 +90,6 @@ def recurring_class_is_double_booked(
         recurring_class in class_finishes_during_time_frame or
         recurring_class in time_frame_occurs_during_a_booked_class
     ]
-    print(classes_during_day_of_week_and_time)
+    #print(classes_during_day_of_week_and_time)
 
     return len(classes_during_day_of_week_and_time) > 0

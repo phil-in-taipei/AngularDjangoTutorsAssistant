@@ -112,6 +112,16 @@ class RecurringClassAppliedMonthly(models.Model):
         month_string = [month[1] for month in MONTH_INTEGERS
                         if month[0] == self.scheduling_month][0]
         return month_string
+    
+    # this is for sorting in the frontend state
+    @property
+    def recurring_day_of_week(self):
+        return self.recurring_class.recurring_day_of_week
+    
+    # this is for sorting in the frontend state
+    @property
+    def recurring_start_time(self):
+        return self.recurring_class.recurring_start_time
 
     def __str__(self):
         month_string = [month[1] for month in MONTH_INTEGERS

@@ -11,6 +11,25 @@ import {
   ScheduledClassBatchDeletionDataModel 
 } from 'src/app/models/scheduled-class.model';
 
+function compareRecurringClassesAppliedMonthly(
+  a: RecurringClassAppliedMonthlyModel, 
+  b: RecurringClassAppliedMonthlyModel
+): number {
+  // First compare by day of week
+  const dayComparison = a.recurring_day_of_week - b.recurring_day_of_week;
+  
+  // If days are different, return that comparison
+  if (dayComparison !== 0) {
+    return dayComparison;
+  }
+  
+  // If days are the same, compare start times
+  const timeA = new Date('1970-01-01T' + a.recurring_start_time);
+  const timeB = new Date('1970-01-01T' + b.recurring_start_time);
+  
+  return timeA.getTime() - timeB.getTime();
+}
+
 export interface RecurringClassAppliedMonthlysState 
     extends EntityState<RecurringClassAppliedMonthlyModel> {
 
@@ -26,7 +45,9 @@ export interface RecurringClassAppliedMonthlysState
     
 export const adapter: EntityAdapter<RecurringClassAppliedMonthlyModel> =
     
-createEntityAdapter<RecurringClassAppliedMonthlyModel>();
+createEntityAdapter<RecurringClassAppliedMonthlyModel>(
+  { sortComparer: compareRecurringClassesAppliedMonthly }
+);
     
 export const initialRecurringClassAppliedMonthlysState: 
     RecurringClassAppliedMonthlysState = adapter.getInitialState({
