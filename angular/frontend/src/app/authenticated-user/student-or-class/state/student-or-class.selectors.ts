@@ -7,11 +7,16 @@ import * as fromStudentsOrClasses from './student-or-class.reducers';
 export const selectStudentsOrClassesState =
             createFeatureSelector<StudentsOrClassesState>("studentsOrClasses");
 
+
+export const deletionModeForStudentsOrClassesActivated = createSelector(
+    selectStudentsOrClassesState,
+        state => state.deletionModeActivated
+);
+    
 export const fetchingStudentsOrClassesInProgress = createSelector(
             selectStudentsOrClassesState,
             state => state.fetchingStudentsOrClassesInProgress
-        );
-        
+        );        
 
 export const selectAllStudentsOrClasses = createSelector(
     selectStudentsOrClassesState,

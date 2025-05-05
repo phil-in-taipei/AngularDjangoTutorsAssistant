@@ -21,8 +21,11 @@
             </h5>        
         </ng-template>
     </th>
-    <th class="col">
-      <div *ngIf="!deletionPopupVisible; else delWeeklyTask" class="col text-left">
+    <ng-container 
+      *ngIf="{ value: deletionModeForStudentsOrClassesActivated$ | async } as context"
+    >
+    <th *ngIf="context.value" class="col">
+      <div *ngIf="!deletionPopupVisible; else delStudentOrClass" class="col text-left">
         <h5>
           <button
             class="btn btn-sm btn-outline-danger"
@@ -32,7 +35,7 @@
           </button>
         </h5>
       </div>
-      <ng-template #delWeeklyTask class="row">
+      <ng-template #delStudentOrClass class="row">
         <div class="col">
           <h5>
             <button
@@ -54,4 +57,5 @@
         </div>
       </ng-template>
     </th>
+    </ng-container>
 </tr>

@@ -14,6 +14,8 @@ export enum StudentOrClassActionTypes {
     StudentOrClassCreatedAdded = '[Create Student Or Class Page] Newly Created Student Or Class Added',
     StudentOrClassCreationCancelled = '[Create Student Or Class Page] Student Or Class Creation Cancelled',
     StudentOrClassDeletionCancelled = '[Students Or Classes List Page] Removal of Student Or Class Cancelled',
+    StudentOrClassDeletionModeActivated = '[Students Or Classes List Page] Students Or Classes Deletion Mode Activated',
+    StudentOrClassDeletionModeDeactivated = '[Students Or Classes List Page] Students Or Classes Deletion Mode Deactivated',    
     StudentOrClassDeletionRequested = '[Students Or Classes List Page]  Removal of Student Or Class Requested',
     StudentOrClassDeletionSaved = '[Students Or Classes List Page] Student Or Class Removed',
     StudentOrClassEditCancelled= '[Student Or Class Detail Page] Edit Student Or Class Cancelled',
@@ -49,7 +51,6 @@ export class FreelanceAccountRefundedHoursSaved implements Action {
     ) {}
 }
 
-
 export class StudentOrClassCreatedAdded implements Action {
     readonly type = StudentOrClassActionTypes.StudentOrClassCreatedAdded;
 
@@ -76,6 +77,14 @@ export class StudentOrClassDeletionCancelled implements Action {
     readonly type = StudentOrClassActionTypes.StudentOrClassDeletionCancelled;
 
     constructor(public payload: {  err: any }) {}
+}
+
+export class StudentOrClassDeletionModeActivated implements Action {
+    readonly type = StudentOrClassActionTypes.StudentOrClassDeletionModeActivated;
+}
+
+export class StudentOrClassDeletionModeDeactivated implements Action {
+    readonly type = StudentOrClassActionTypes.StudentOrClassDeletionModeDeactivated;
 }
 
 export class StudentOrClassDeletionRequested implements Action {
@@ -114,7 +123,6 @@ export class StudentOrClassEditUpdated implements Action {
     }
 }
 
-
 export class StudentOrClassPurchasedHoursUpdated implements Action {
     readonly type = StudentOrClassActionTypes.StudentOrClassPurchasedHoursUpdated;
 
@@ -151,7 +159,8 @@ export class StudentsOrClassesRequested implements Action {
 export type StudentOrClassActions = FreelanceAccountPurchasedHoursSaved |
     FreelanceAccountRefundedHoursSaved | StudentOrClassCreatedAdded | 
     StudentOrClassCreateSubmitted | StudentOrClassCreationCancelled | 
-    StudentOrClassDeletionCancelled | StudentOrClassDeletionRequested | 
+    StudentOrClassDeletionCancelled | StudentOrClassDeletionModeActivated |
+    StudentOrClassDeletionModeDeactivated |StudentOrClassDeletionRequested | 
     StudentOrClassDeletionSaved | StudentOrClassEditCancelled |
     StudentOrClassEditSubmitted | StudentOrClassEditUpdated |
     StudentsOrClassesCleared |  StudentsOrClassesLoaded | 

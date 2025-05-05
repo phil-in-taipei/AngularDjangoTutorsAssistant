@@ -21,6 +21,7 @@ function compareStudentsOrClassesByName(
 };
 
 export interface StudentsOrClassesState extends EntityState<StudentOrClassModel> {
+    deletionModeActivated: boolean;
     fetchingStudentsOrClassesInProgress: boolean;
     errorMessage: string | undefined,
     studentsOrClassesLoaded: boolean,
@@ -33,6 +34,7 @@ export const adapter: EntityAdapter<StudentOrClassModel> =
     );
 
 export const initialStudentsOrClassesState: StudentsOrClassesState = adapter.getInitialState({
+    deletionModeActivated: false,
     errorMessage: undefined,
     fetchingStudentsOrClassesInProgress: false,
     studentsOrClassesLoaded: false,
@@ -124,6 +126,19 @@ export function studentsOrClassesReducer(
                 ...state,  successMessage: reducerSuccessMessage,
                 errorMessage: reducerErrorMessage
             }
+
+        case StudentOrClassActionTypes.StudentOrClassDeletionModeActivated:
+            return {
+                ...state, 
+                deletionModeActivated: true
+            }
+            
+        case StudentOrClassActionTypes.StudentOrClassDeletionModeDeactivated:
+            return {
+                ...state, 
+                deletionModeActivated: false
+            }
+            
 
         case StudentOrClassActionTypes.StudentOrClassDeletionSaved:
             reducerErrorMessage = undefined;

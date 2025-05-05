@@ -6,9 +6,14 @@ import {
   StudentOrClassModel 
 } from 'src/app/models/student-or-class.model';
 import { 
+  StudentOrClassDeletionModeActivated, 
+  StudentOrClassDeletionModeDeactivated 
+} from '../../state/student-or-class.actions';
+import { 
   StudentsOrClassesState 
 } from '../../state/student-or-class.reducers';
 import { 
+  deletionModeForStudentsOrClassesActivated,
   fetchingStudentsOrClassesInProgress,
   selectAllStudentsOrClasses
 } from '../../state/student-or-class.selectors';
@@ -22,6 +27,7 @@ import {
 export class StudentOrClassListComponent implements OnInit {
   
   studentsOrClasses$: Observable<StudentOrClassModel[] | undefined> = of(undefined);
+  deletionModeForStudentsOrClassesActivated$: Observable<boolean> = of(false);
   fetchingStudentsOrClassesInProgress$: Observable<boolean> = of(false);
 
   constructor(private store: Store<StudentsOrClassesState>) { }
@@ -30,11 +36,27 @@ export class StudentOrClassListComponent implements OnInit {
     this.studentsOrClasses$ = this.store.pipe(
       select(selectAllStudentsOrClasses)
     );
+    this.deletionModeForStudentsOrClassesActivated$ = this.store.pipe(
+      select(deletionModeForStudentsOrClassesActivated)
+    );
   this.fetchingStudentsOrClassesInProgress$ = this.store.pipe(
       select(fetchingStudentsOrClassesInProgress)
     );
   }
-  
+
+
+  onActivateStudentOrClassDeletionMode(): void {
+    this.store.dispatch(
+      new StudentOrClassDeletionModeActivated()
+    );
+  }
+
+  onDeactivateStudentOrClassDeletionMode(): void {
+    this.store.dispatch(
+      new StudentOrClassDeletionModeDeactivated()
+    );
+  }
+
   trackByFn(index: number, item: any) {
     return item.id;
   }

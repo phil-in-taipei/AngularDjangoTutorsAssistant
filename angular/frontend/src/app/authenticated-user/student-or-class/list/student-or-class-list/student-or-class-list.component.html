@@ -15,12 +15,52 @@
         <hr class="thin-br"/>
         <h3>Students Or Classes</h3>
         <hr class="thin-br"/>
+        <ng-container *ngIf="{ value: deletionModeForStudentsOrClassesActivated$ | async } as context">
+          <div *ngIf="context.value">
+            <div class="text-center">
+                <h4 class="text-center text-danger">
+                  Warning
+                </h4>
+                <h5 class="text-center text-danger">
+                  Deleting Student Or Class May Influence
+                </h5>
+                <h5 class="text-center text-danger">
+                  Past Monthly Earnings Estimates
+                </h5>
+                <button class="btn btn-outline-danger" 
+                (click)="onDeactivateStudentOrClassDeletionMode()" type="button">
+                  Deactivate Deletion Mode
+                </button>
+              <br />
+            </div>
+            <br />
+          </div>
+        </ng-container>
+        <ng-container 
+          *ngIf="{ value: deletionModeForStudentsOrClassesActivated$ | async } as context"
+        >
+          <div *ngIf="!context.value">
+            <div class="text-center">
+                <button class="btn btn-outline-danger middle" 
+                (click)="onActivateStudentOrClassDeletionMode()" type="button">
+                  Activate Deletion Mode
+                </button>
+              <br />
+            </div>
+            <br />
+          </div>
+        </ng-container>
+        <hr class="thin-br"/>             
         <table class="table bg-transparent">
             <thead class="table bg-transparent">
               <tr class="row list">
                 <th class="col list"><h5>Student Or Class Name</h5></th>
                 <th class="col list"><h5>Information</h5></th>
-                <th class="col list"><h5>Delete</h5></th>
+                <ng-container 
+                  *ngIf="{ value: deletionModeForStudentsOrClassesActivated$ | async } as context"
+                >
+                  <th *ngIf="context.value" class="col list"><h5>Delete</h5></th>
+                </ng-container>
               </tr>
             </thead>
             <tbody class="bg-transparent">
