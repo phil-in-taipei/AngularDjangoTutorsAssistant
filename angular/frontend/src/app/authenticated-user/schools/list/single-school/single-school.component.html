@@ -11,7 +11,8 @@
         {{ school.address_line_1 }}
       </h5>
     </th>
-    <th class="col">
+  <ng-container *ngIf="{ value: deletionModeActivated$ | async } as context">
+    <th *ngIf="context.value" class="col">
       <div *ngIf="!deletionPopupVisible; else delWeeklyTask" class="col text-left">
         <h5>
           <button
@@ -44,4 +45,5 @@
         </div>
       </ng-template>
     </th>
+  </ng-container>
 </tr>

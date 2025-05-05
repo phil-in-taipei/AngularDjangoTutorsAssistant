@@ -7,6 +7,11 @@ import * as fromSchools from './school.reducers';
 export const selectSchoolsState = 
             createFeatureSelector<SchoolsState>("schools");
 
+export const deletionModeActivated = createSelector(
+            selectSchoolsState,
+            state => state.deletionModeActivated
+        );
+
 
 export const fetchingSchoolsInProgress = createSelector(
             selectSchoolsState,

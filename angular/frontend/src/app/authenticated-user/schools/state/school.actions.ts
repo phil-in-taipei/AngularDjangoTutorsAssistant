@@ -11,6 +11,8 @@ export enum SchoolActionTypes {
     SchoolCreatedAdded = '[Create School Page] Newly Created School Added',
     SchoolCreationCancelled = '[Create School Page] School Creation Cancelled',
     SchoolDeletionCancelled = '[Schools List Page] Removal of School Cancelled',
+    SchoolDeletionModeActivated = '[Schools List Page] School Deletion Mode Activated',
+    SchoolDeletionModeDeactivated = '[Schools List Page] School Deletion Mode Deactivated',
     SchoolDeletionRequested = '[Schools List Page]  Removal of School Requested',
     SchoolDeletionSaved = '[School List Page] School Removed',
     SchoolEditCancelled= '[School Detail Page] Edit School Cancelled',
@@ -49,6 +51,14 @@ export class SchoolDeletionCancelled implements Action {
     readonly type = SchoolActionTypes.SchoolDeletionCancelled;
   
     constructor(public payload: {  err: any }) {}
+}
+
+export class SchoolDeletionModeActivated implements Action {
+    readonly type = SchoolActionTypes.SchoolDeletionModeActivated;
+}
+
+export class SchoolDeletionModeDeactivated implements Action {
+    readonly type = SchoolActionTypes.SchoolDeletionModeDeactivated;
 }
 
 export class SchoolDeletionRequested implements Action {
@@ -115,6 +125,7 @@ export class SchoolsRequested implements Action {
 
 export type SchoolActions = SchoolCreatedAdded | SchoolCreateSubmitted |
     SchoolCreationCancelled | SchoolDeletionCancelled |
+    SchoolDeletionModeActivated | SchoolDeletionModeDeactivated |
     SchoolDeletionRequested | SchoolDeletionSaved |
     SchoolEditCancelled |SchoolEditSubmitted | SchoolEditUpdated | 
     SchoolsCleared | SchoolsLoaded | SchoolsMessagesCleared |

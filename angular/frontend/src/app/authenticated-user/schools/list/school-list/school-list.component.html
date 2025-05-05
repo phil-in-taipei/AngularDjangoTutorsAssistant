@@ -1,26 +1,63 @@
 <ng-container *ngIf="{ value: fetchingSchoolsInProgress$ | async } as context">
-    <div *ngIf="context.value">
-      <div class="text-center">
-        <div class="spinner-border text-secondary" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-        <br />
+  <div *ngIf="context.value">
+    <div class="text-center">
+      <div class="spinner-border text-secondary" role="status">
+        <span class="visually-hidden">Loading...</span>
       </div>
       <br />
     </div>
-  </ng-container>
+    <br />
+  </div>
+</ng-container>
+
   
-  <div *ngIf="schools$ | async as schools" class="container content">
+<div *ngIf="schools$ | async as schools" class="container content">
       <div class="mx-5 pd-0">
         <hr class="thin-br"/>
         <h3>Schools and Companies</h3>
+        <hr class="thin-br"/>
+        <ng-container *ngIf="{ value: deletionModeActivated$ | async } as context">
+          <div *ngIf="context.value">
+            <div class="text-center">
+                <h4 class="text-center text-danger">
+                  Warning
+                </h4>
+                <h5 class="text-center text-danger">
+                  Deleting School May Influence Past
+                </h5>
+                <h5 class="text-center text-danger">
+                  Monthly Earnings Estimates
+                </h5>
+                <button class="btn btn-outline-danger" 
+                (click)="onDeactivateSchoolDeletionMode()" type="button">
+                  Deactivate Deletion Mode
+                </button>
+              <br />
+            </div>
+            <br />
+          </div>
+        </ng-container>
+        <ng-container *ngIf="{ value: deletionModeActivated$ | async } as context">
+          <div *ngIf="!context.value">
+            <div class="text-center">
+                <button class="btn btn-outline-danger middle" 
+                (click)="onActivateSchoolDeletionMode()" type="button">
+                  Activate Deletion Mode
+                </button>
+              <br />
+            </div>
+            <br />
+          </div>
+        </ng-container>
         <hr class="thin-br"/>
         <table class="table bg-transparent">
             <thead class="table bg-transparent">
               <tr class="row list">
                 <th class="col list"><h5>School Name</h5></th>
                 <th class="col list"><h5>Address</h5></th>
-                <th class="col list"><h5>Delete</h5></th>
+                <ng-container *ngIf="{ value: deletionModeActivated$ | async } as context">
+                  <th *ngIf="context.value" class="col list"><h5>Delete</h5></th>
+                </ng-container>
               </tr>
             </thead>
             <tbody class="bg-transparent">
@@ -32,4 +69,4 @@
         </table>
         <hr class="thin-br"/>
     </div>
-  </div>
+</div>

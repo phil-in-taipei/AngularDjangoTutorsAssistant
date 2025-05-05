@@ -19,6 +19,7 @@ function compareSchoolsByName(
 };
 
 export interface SchoolsState extends EntityState<SchoolModel> {
+    deletionModeActivated: boolean;
     fetchingSchoolsInProgress: boolean;
     errorMessage: string | undefined,
     schoolsLoaded: boolean,
@@ -31,6 +32,7 @@ export const adapter: EntityAdapter<SchoolModel> =
     );
 
 export const initialSchoolsState: SchoolsState = adapter.getInitialState({
+    deletionModeActivated: false,
     errorMessage: undefined,
     fetchingSchoolsInProgress: false,
     schoolsLoaded: false,
@@ -75,7 +77,20 @@ export function schoolsReducer(
                 ...state,  successMessage: reducerSuccessMessage,
                 errorMessage: reducerErrorMessage
             }
+
+        case SchoolActionTypes.SchoolDeletionModeActivated:
+            return {
+                ...state, 
+                deletionModeActivated: true
+            }
         
+
+        case SchoolActionTypes.SchoolDeletionModeDeactivated:
+            return {
+                ...state, 
+                deletionModeActivated: false
+                }
+            
         case SchoolActionTypes.SchoolDeletionSaved:
             reducerErrorMessage = undefined;
             reducerSuccessMessage = action.payload.message;
