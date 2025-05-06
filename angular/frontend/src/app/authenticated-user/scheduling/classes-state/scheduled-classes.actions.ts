@@ -31,6 +31,8 @@ export enum ScheduledClassesActionTypes {
     ScheduledClassesBatchDeletionSaved = '[Recurring Classes Applied Monthly Page] Monthly Batch Deletion of Scheduled Class Saved',
     ScheduledClassesCleared = '[View User Logout] All Scheduled Classes Removed',
     ScheduledClassDeletionCancelled = '[Scheduled Classes API] Removal of Scheduled Class Cancelled',
+    ScheduledClassDeletionModeActivated = '[Scheduled Classes Daily List Page] Scheduled Class Deletion Mode Activated',
+    ScheduledClassDeletionModeDeactivated = '[Scheduled Classes Daily List Page] Scheduled Class Deletion Mode Deactivated',    
     ScheduledClassDeletionRequested = '[Scheduled Classes Daily Page/Landing Page]  Removal of Scheduled Class Requested',
     ScheduledClassDeletionSaved = '[Scheduled Classes Daily Page/Landing Page] Scheduled Class Removed',
     ScheduledClassesMessagesCleared = '[Scheduled Class Edit Status, Reschedule and Schedule Pages] Scheduled Classes Messages Cleared',
@@ -195,6 +197,14 @@ export class ScheduledClassDeletionCancelled implements Action {
     constructor(public payload: {  err: any }) {}
 }
 
+export class ScheduledClassDeletionModeActivated implements Action {
+    readonly type = ScheduledClassesActionTypes.ScheduledClassDeletionModeActivated;
+}
+
+export class ScheduledClassDeletionModeDeactivated implements Action {
+    readonly type = ScheduledClassesActionTypes.ScheduledClassDeletionModeDeactivated;
+}
+
 export class ScheduledClassDeletionRequested implements Action {
     readonly type = ScheduledClassesActionTypes.ScheduledClassDeletionRequested;
   
@@ -243,7 +253,8 @@ export type ScheduledClassesActions = ClassStatusUpdateCancelled |
     RescheduleClassSubmitted | RescheduledClassUpdatedWithDailyBatchAdded | 
     ScheduleSingleClassSubmitted | ScheduleSingleClassCancelled | 
     ScheduledSingleClassWithDailyBatchAdded | ScheduledClassesCleared | 
-    ScheduledClassDeletionCancelled | ScheduledClassesBatchDeletionCancelled | 
+    ScheduledClassDeletionCancelled | ScheduledClassesBatchDeletionCancelled |
+    ScheduledClassDeletionModeActivated | ScheduledClassDeletionModeDeactivated | 
     ScheduledClassesBatchDeletionSubmitted | ScheduledClassesBatchDeletionSaved |
     ScheduledClassDeletionRequested | ScheduledClassDeletionSaved | 
     ScheduledClassesMessagesCleared | UpdatedPurchasedHoursCleared |

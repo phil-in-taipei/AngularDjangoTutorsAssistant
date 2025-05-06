@@ -6,6 +6,12 @@ import * as fromScheduledClasses from "./scheduled-classes.reducers";
 export const selectScheduledClassesState = 
             createFeatureSelector<ScheduledClassesState>("scheduledClasses");
 
+
+export const deletionModeForScheduledClassesActivated = createSelector(
+    selectScheduledClassesState,
+        state => state.deletionModeActivated
+);           
+
 export const selectAllScheduledClasses = createSelector(
     selectScheduledClassesState,
     fromScheduledClasses.selectAll

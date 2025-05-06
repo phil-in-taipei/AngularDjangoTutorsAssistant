@@ -3,9 +3,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, map, of } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 
+import { 
+  deletionModeForScheduledClassesActivated 
+} from '../../../classes-state/scheduled-classes.selectors';
 import { ScheduledClassesState } from '../../../classes-state/scheduled-classes.reducers';
 import { ScheduledClassModel } from 'src/app/models/scheduled-class.model';
-import { DailyClassesRequested } from '../../../classes-state/scheduled-classes.actions';
+import { 
+  DailyClassesRequested, 
+  ScheduledClassDeletionModeActivated, 
+  ScheduledClassDeletionModeDeactivated 
+} from '../../../classes-state/scheduled-classes.actions';
 import { getDateString, monthsAndIntegers } from 'src/app/shared-utils/date-time.util';
 import { 
   selectScheduledClassesByDate, fetchingClassesInProgress 
@@ -17,10 +24,11 @@ import {
   templateUrl: './daily-list.component.html',
   styleUrl: './daily-list.component.css'
 })
-export class DailyListComponent implements OnInit{
+export class DailyListComponent implements OnInit {
 
   dateFromRouteData: string;
   dailyScheduledClasses$: Observable<ScheduledClassModel[] | undefined>;
+  deletionModeForScheduledClassesActivated$: Observable<boolean> = of(false);
   fetchingClasses$: Observable<boolean> = of(false);
   readonly monthsAndIntegers = monthsAndIntegers;
   tmrwRouterStr: string;
@@ -36,6 +44,9 @@ export class DailyListComponent implements OnInit{
     this.dateFromRouteData = this.route.snapshot.params['date'];
     this.tmrwRouterStr = this.getTmrwRouterStr(this.dateFromRouteData);
     this.ystrdyRouterStr = this.getYstrdyRouterStr(this.dateFromRouteData);
+    this.deletionModeForScheduledClassesActivated$ = this.store.pipe(
+      select(deletionModeForScheduledClassesActivated)
+    );
     this.fetchingClasses$ = this.store.pipe(
       select(fetchingClassesInProgress)
     );
@@ -117,6 +128,18 @@ export class DailyListComponent implements OnInit{
         }
         return scheduledClasses;
       }));
+  }
+
+  onActivateScheduledClassDeletionMode(): void {
+    this.store.dispatch(
+      new ScheduledClassDeletionModeActivated()
+    );
+  }
+
+  onDeactivateScheduledClassDeletionMode(): void {
+    this.store.dispatch(
+      new ScheduledClassDeletionModeDeactivated()
+    );
   }
 
   trackByFn(index: number, item: any) {

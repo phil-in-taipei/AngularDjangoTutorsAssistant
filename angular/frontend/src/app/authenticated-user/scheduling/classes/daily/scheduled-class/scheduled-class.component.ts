@@ -1,6 +1,10 @@
-import { Component, Input } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Component, Input, OnInit } from '@angular/core';
+import { Observable, of } from "rxjs";
+import { select, Store } from '@ngrx/store';
 
+import { 
+  deletionModeForScheduledClassesActivated 
+} from '../../../classes-state/scheduled-classes.selectors';
 import { 
   ScheduledClassDeletionRequested 
 } from '../../../classes-state/scheduled-classes.actions';
@@ -14,13 +18,19 @@ import { ScheduledClassesState } from '../../../classes-state/scheduled-classes.
   templateUrl: './scheduled-class.component.html',
   styleUrl: './scheduled-class.component.css'
 })
-export class ScheduledClassComponent {
+export class ScheduledClassComponent implements OnInit {
 
   @Input() scheduledClass: ScheduledClassModel;
-
+  deletionModeForScheduledClassesActivated$: Observable<boolean> = of(false);
   deletionPopupVisible: boolean = false;
 
   constructor(private store: Store<ScheduledClassesState>) { }
+
+  ngOnInit(): void {
+    this.deletionModeForScheduledClassesActivated$ = this.store.pipe(
+      select(deletionModeForScheduledClassesActivated)
+    );
+  }
 
   showDeletionPopup() {
     this.deletionPopupVisible = true;

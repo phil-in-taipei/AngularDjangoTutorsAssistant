@@ -36,7 +36,10 @@
         </h5>
       </ng-template>
     </th>
-    <th class="col">
+    <ng-container 
+      *ngIf="{ value: deletionModeForScheduledClassesActivated$ | async } as context"
+    >
+    <th *ngIf="context.value" class="col">
       <div *ngIf="!deletionPopupVisible; else delAccount" 
         class="col text-left">
         <button
@@ -64,4 +67,5 @@
         </div>
       </ng-template>
     </th>
+    </ng-container>
 </tr>

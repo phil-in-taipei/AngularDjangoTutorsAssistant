@@ -42,6 +42,7 @@ function compareByDateAndTime(
 
 export interface ScheduledClassesState extends EntityState<ScheduledClassModel> {
     dateRange: [string, string] | undefined;
+    deletionModeActivated: boolean;
     fetchingClassesInProgress: boolean;
     errorMessage: string | undefined,
     monthlyScheduledClassesLoaded: boolean,
@@ -60,6 +61,7 @@ export const adapter: EntityAdapter<ScheduledClassModel> =
 export const initialScheduledClassesState: ScheduledClassesState = 
     adapter.getInitialState({
         dateRange: undefined,
+        deletionModeActivated: false,
         errorMessage: undefined,
         fetchingClassesInProgress: false,
         monthlyScheduledClassesLoaded: false,
@@ -218,6 +220,19 @@ export function scheduledClassesReducer(
                     ...state,  successMessage: undefined,
                     errorMessage: deletionErrMsg
                 }
+
+
+            case ScheduledClassesActionTypes.ScheduledClassDeletionModeActivated:
+                return {
+                    ...state, 
+                    deletionModeActivated: true
+                }
+                    
+            case ScheduledClassesActionTypes.ScheduledClassDeletionModeDeactivated:
+                return {
+                    ...state, 
+                    deletionModeActivated: false                    
+                }    
                 
             case ScheduledClassesActionTypes.ScheduledClassDeletionSaved:
                 return adapter.removeOne(action.payload.id, 

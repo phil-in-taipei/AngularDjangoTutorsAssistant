@@ -65,6 +65,43 @@
 <div *ngIf="dailyScheduledClasses$ | async as todaysClasses" class="container">
     <hr class="thin-br"/>
     <h5>{{ todaysClasses.length }} Class(es) Scheduled</h5>
+    <hr class="thin-br" />
+    <ng-container *ngIf="{ value: deletionModeForScheduledClassesActivated$ | async } as context">
+      <div *ngIf="context.value">
+        <div class="text-center">
+            <h4 class="text-center text-danger">
+              Warning
+            </h4>
+            <h5 class="text-center text-danger">
+              Deleting a Class May Influence
+            </h5>
+            <h5 class="text-center text-danger">
+              Past Monthly Earnings Estimates
+            </h5>
+            <button class="btn btn-outline-danger" 
+            (click)="onDeactivateScheduledClassDeletionMode()" type="button">
+              Deactivate Deletion Mode
+            </button>
+          <br />
+        </div>
+        <br />
+      </div>
+    </ng-container>
+    <ng-container 
+    *ngIf="{ value: deletionModeForScheduledClassesActivated$ | async } as context"
+  >
+    <div *ngIf="!context.value">
+      <div class="text-center">
+          <button class="btn btn-outline-danger middle" 
+          (click)="onActivateScheduledClassDeletionMode()" type="button">
+            Activate Deletion Mode
+          </button>
+        <br />
+      </div>
+      <br />
+    </div>
+  </ng-container>
+    
     <div *ngIf="todaysClasses.length > 0; else no_daily"
         class="table-responsive"
       >
@@ -74,7 +111,16 @@
           <tr class="row bg-transparent">
             <th class="col bg-transparent"><h5>Time</h5></th>
             <th class="col bg-transparent"><h5>Student/Class</h5></th>
-            <th class="col bg-transparent"><h5>Delete</h5></th>
+            <ng-container 
+            *ngIf="{ value: deletionModeForScheduledClassesActivated$ | async } as context"
+          >
+            <th *ngIf="context.value" class="col bg-transparent"
+            >
+            <h5>
+              Delete
+            </h5>
+          </th>
+          </ng-container>
           </tr>
         </thead>
         <tbody class="table bg-transparent">
