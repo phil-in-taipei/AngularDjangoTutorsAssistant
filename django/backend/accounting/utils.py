@@ -226,7 +226,6 @@ def process_school_classes(accounting_data, organized_classes_data):
                 }
 
                 school_report["students_reports"].append(accounting_report)
-
         accounting_data["classes_in_schools"].append(school_report)
     return accounting_data
 
@@ -292,6 +291,40 @@ def generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
     return accounting_data_with_school_and_freelance_reports
 
 
+def sort_accounting_reports_by_name(reports):
+    """
+    Sort a list of accounting report dictionaries by the 'name' field alphabetically.
+    
+    Args:
+        reports (list): A list of accounting report dictionaries.
+        
+    Returns:
+        list: The sorted list of accounting report dictionaries.
+    """
+    return sorted(reports, key=lambda report: report['name'])
+
+def sort_school_reports_alphabetically(accounting_data):
+    for school_report in accounting_data["classes_in_schools"]:
+        # for each school, sort accounting reports for 
+        # student/class alphabetically by name
+        school_report['students_reports'] = sort_accounting_reports_by_name(
+            reports=school_report["students_reports"]
+        )
+    return accounting_data
+
+
+def sort_school_and_freelance_reports_alphabetically(accounting_data):
+    #sort school accounting data alphabetically:
+    accounting_data = sort_school_reports_alphabetically(
+        accounting_data=accounting_data
+    )
+    #sort freelance reports alphabetically by name
+    accounting_data["freelance_students"] = sort_accounting_reports_by_name(
+        reports=accounting_data["freelance_students"]
+    )
+    return accounting_data
+
+
 def calculate_school_totals(report):
     # Create a copy of the report to avoid modifying the original
     updated_report = report.copy()
@@ -341,8 +374,12 @@ def generate_estimated_earnings_report(
     basic_report = generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
         organized_classes_data=organized_classes_data
     )
-
-    report_with_school_totals = calculate_school_totals(report=basic_report)
+    basic_report_sorted_alphabetically = sort_school_and_freelance_reports_alphabetically(
+        accounting_data=basic_report
+    )
+    report_with_school_totals = calculate_school_totals(
+        report=basic_report_sorted_alphabetically
+    )
     return calculate_overall_monthly_total(accounting_data=report_with_school_totals)
 
 
@@ -358,8 +395,12 @@ def generate_estimated_earnings_report_for_single_school_within_date_range(
     basic_report = generate_accounting_reports_for_classes_in_schools(
         organized_classes_data=organized_classes_data
     )
-
-    report_with_school_totals = calculate_school_totals(report=basic_report)
+    basic_report_sorted_alphabetically = sort_school_reports_alphabetically(
+        accounting_data=basic_report
+    )
+    report_with_school_totals = calculate_school_totals(
+        report=basic_report_sorted_alphabetically
+    )
     if len(report_with_school_totals['classes_in_schools']) > 0:
         return report_with_school_totals['classes_in_schools'][0]
     else:
@@ -381,8 +422,12 @@ def generate_estimated_monthly_earnings_report_for_single_school(
     basic_report = generate_accounting_reports_for_classes_in_schools(
         organized_classes_data=organized_classes_data
     )
-
-    report_with_school_totals = calculate_school_totals(report=basic_report)
+    basic_report_sorted_alphabetically = sort_school_reports_alphabetically(
+        accounting_data=basic_report
+    )
+    report_with_school_totals = calculate_school_totals(
+        report=basic_report_sorted_alphabetically
+    )
     if len(report_with_school_totals['classes_in_schools']) > 0:
         return report_with_school_totals['classes_in_schools'][0]
     else:
