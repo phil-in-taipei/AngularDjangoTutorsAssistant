@@ -141,6 +141,10 @@ class ScheduledClass(models.Model):
                                      blank=True)
     class_content = models.TextField(editable=True, default='',
                                      blank=True)
+    
+    @property
+    def student_or_class_template_str(self):
+        return self.student_or_class.template_str
 
     def __str__(self):
         return "{} on {} at {}-{} with {}".format(

@@ -28,15 +28,12 @@
       <ng-template #not_cancelled>
         <h5>
           <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', scheduledClass.student_or_class]">
-            <app-student-or-class-template-string 
-            [studentOrClassId]=scheduledClass.student_or_class class="bg-transparent"
-            >
-            </app-student-or-class-template-string>
+            {{scheduledClass.student_or_class_template_str }}
           </a>
         </h5>
       </ng-template>
     </th>
-    <ng-container 
+    <ng-container
       *ngIf="{ value: deletionModeForScheduledClassesActivated$ | async } as context"
     >
     <th *ngIf="context.value" class="col">

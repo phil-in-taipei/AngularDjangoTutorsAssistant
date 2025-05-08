@@ -38,10 +38,7 @@
             <th class="col bg-transparent">
               <h5 >
                 <a [routerLink]="['/authenticated-user/student-or-class', unconfirmedClass.student_or_class]">
-                  <app-student-or-class-template-string 
-                  [studentOrClassId]=unconfirmedClass.student_or_class class="bg-transparent"
-                  >
-                  </app-student-or-class-template-string>
+                  {{ unconfirmedClass.student_or_class_template_str }}
                 </a>
               </h5>
             </th>

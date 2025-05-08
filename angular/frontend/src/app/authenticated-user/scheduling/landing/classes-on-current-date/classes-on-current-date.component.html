@@ -51,10 +51,7 @@
             <ng-template #not_cancelled_student_or_class>
                 <h5>
                     <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', scheduledClass.student_or_class]">
-                        <app-student-or-class-template-string 
-                        [studentOrClassId]=scheduledClass.student_or_class class="bg-transparent"
-                        >
-                        </app-student-or-class-template-string>
+                        {{ scheduledClass.student_or_class_template_str }}
                     </a>
                 </h5>
             </ng-template>
