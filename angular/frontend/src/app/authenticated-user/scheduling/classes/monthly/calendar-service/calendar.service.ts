@@ -25,7 +25,7 @@ export class CalendarService {
     if (scheduledClasses) {
       for (let i=0; i < scheduledClasses.length; i++) {
         let schedulingObj = {
-          title: scheduledClasses[i].student_or_class_template_str,
+          title: `Inactive Account`,
           date: scheduledClasses[i].date,
           start: `${scheduledClasses[i].date}T${scheduledClasses[i].start_time}`,
           end: `${scheduledClasses[i].date}T${scheduledClasses[i].finish_time}`,
@@ -39,6 +39,7 @@ export class CalendarService {
           studentOrClass = res;
         })
         if (studentOrClass) {
+          schedulingObj.title = studentOrClass.template_str;
           if (studentOrClass.purchased_class_hours) {
             if (studentOrClass.purchased_class_hours <= 3) {
               schedulingObj.color = '#dc3545';

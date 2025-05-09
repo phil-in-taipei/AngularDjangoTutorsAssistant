@@ -44,7 +44,6 @@ export interface ScheduledClassModel {
     class_status: string;
     teacher_notes: string;
     class_content: string;
-    student_or_class_template_str: string;
 }
 
 export interface StudentOrClassAttendanceRecordResponse {

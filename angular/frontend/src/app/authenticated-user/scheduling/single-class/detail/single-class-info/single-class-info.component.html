@@ -12,7 +12,10 @@
             <div class="container">
               <h3 class="text-center">
                 <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', scheduledClass.student_or_class]">
-                  {{ scheduledClass.student_or_class_template_str }}
+                    <app-student-or-class-template-string 
+                    [studentOrClassId]=scheduledClass.student_or_class class="bg-transparent"
+                    >
+                    </app-student-or-class-template-string>
                 </a>
             </h3>
         </div>
