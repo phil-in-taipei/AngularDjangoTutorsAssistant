@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
+import { AuthGuard } from '../authentication/auth.guard';
 import { AuthenticatedUserComponent } from './authenticated-user/authenticated-user.component';
 import { CreateSchoolComponent } from './schools/create/create-school/create-school.component';
 import { CreateStudentOrClassComponent } from './student-or-class/create/create-student-or-class/create-student-or-class.component';
@@ -14,7 +16,8 @@ const routes: Routes = [
       { path: 'create-school', component: CreateSchoolComponent },
       { path: 'create-student-or-class', component: CreateStudentOrClassComponent },
       { path: 'scheduling', loadChildren: () => import(
-        './scheduling/scheduling.module').then(m => m.SchedulingModule)
+        './scheduling/scheduling.module').then(m => m.SchedulingModule), 
+        canActivate: [AuthGuard]
       },
       { path: 'school/:id', component: SchoolDetailComponent },
       { path: 'student-or-class/:id', component: StudentOrClassDetailComponent },
@@ -28,6 +31,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [AuthGuard]
 })
 export class AuthenticatedUserRoutingModule { }
