@@ -31,13 +31,21 @@ import {
   UserProfileCleared 
 } from '../authenticated-user/user/user-state/user.actions';
 
+declare global {
+  interface Window { 
+    FRONTEND_CONFIG: {
+      encryptionKey: string;
+    }; 
+  }
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private isAuthenticated = false;
-  private isLoginError = false;
+  private isAuthenticated: boolean = false;
+  private isLoginError: boolean = false;
   private token: string;
   private tokenExpTime: Date
   private tokenTimer: NodeJS.Timer;
@@ -45,7 +53,7 @@ export class AuthService {
   private refreshExpTime: Date;
   private authStatusListener = new Subject<boolean>();
   private loginErrorListener = new Subject<boolean>();
-  private readonly SECRET_KEY = 'Secret Passphrase'; // Replace with a strong secret key
+  private readonly SECRET_KEY = window.FRONTEND_CONFIG?.encryptionKey ||'Secret Passphrase'; // Replace with a strong secret key
 
   constructor(
     private http: HttpClient, private router: Router, 
@@ -116,6 +124,9 @@ export class AuthService {
     this.store.dispatch(new UserProfileCleared());
   }
 
+  private createSixHourTimeString() {
+    return  Math.floor(Date.now() / (6 * 60 * 60 * 1000)).toString(); 
+  }
 
   // public for testing purposes
   public fetchRefreshToken() {
@@ -146,14 +157,29 @@ export class AuthService {
       });
   }
 
-  public decryptToken(encryptedToken: string): string {
-    const bytes = AES.decrypt(encryptedToken, this.SECRET_KEY);
-    return bytes.toString(Utf8);
+  public decryptToken(encryptedToken: string): string|null {
+    //const bytes = AES.decrypt(encryptedToken, `${this.SECRET_KEY}${this.createSixHourTimeString()}`);
+    //return bytes.toString(Utf8);
+    try {
+      const bytes = AES.decrypt(encryptedToken, `${this.SECRET_KEY}${this.createSixHourTimeString()}`);
+      const decryptedToken = bytes.toString(Utf8);
+
+      // Add validation to check if the decrypted token is valid
+      if (!decryptedToken || decryptedToken.trim() === '') {
+        return null; // or throw an error, or handle it as needed
+      }
+
+      return decryptedToken;
+    } catch (error) {
+      // Handle any potential errors during decryption
+      console.error('Decryption failed:', error);
+      return null; // or throw an error, or handle it as needed
+    }
   }
 
   public encryptToken(authToken: string): string {
     const encryptedToken: string = AES.encrypt(
-      authToken, this.SECRET_KEY
+      authToken, `${this.SECRET_KEY}${this.createSixHourTimeString()}`
     ).toString();
     return encryptedToken
   }
@@ -166,10 +192,15 @@ export class AuthService {
     if (!token || !accessExpDate || !refreshExpDate || !refresh) {
       return;
     }
+    const decryptedToken = this.decryptToken(token);
+    const decryptedRefreshToken = this.decryptToken(refresh);
+    if (!decryptedToken || !decryptedRefreshToken) {
+      return;
+    }
     return {
-      token: this.decryptToken(token),
+      token: decryptedToken,
       accessExpDate: new Date(accessExpDate),
-      refresh: this.decryptToken(refresh),
+      refresh: decryptedRefreshToken,
       refreshExp: new Date(refreshExpDate)
     }
   }

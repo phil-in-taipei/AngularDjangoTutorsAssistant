@@ -26,7 +26,7 @@ TEMPLATE_DIR = BASE_DIR / 'templates'
 
 # Raises django's ImproperlyConfigured exception if SECRET_KEY not in os.environ
 SECRET_KEY = env("SECRET_KEY")
-
+FRONTEND_ENCRYPTION_KEY = env("FRONTEND_ENCRYPTION_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
