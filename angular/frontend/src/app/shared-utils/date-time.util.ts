@@ -87,14 +87,12 @@ export function getFinishTime(
   startTimeDate: Date, classDuration: String[]
 ): string {
   let finishTimeDate = startTimeDate;
-  console.log(classDuration)
   finishTimeDate.setHours(
     finishTimeDate.getHours() + +classDuration[0]);
   finishTimeDate.setMinutes(
     finishTimeDate.getMinutes() + +classDuration[1] - 1);
   // 1 minute subtracted to avoid scheduling overlap conflict
   // add 1 minute on when calculating hours in student account
-  console.log(finishTimeDate)
   return getFormattedTime(
     finishTimeDate.getHours(), finishTimeDate.getMinutes()
   )
@@ -157,7 +155,6 @@ export function getFirstDateofMonthStr(month: number, year: number): string {
     const firstYear = 2025;
     let years = []
     for (let i = firstYear; i < nextYear; i++) {
-      console.log(i)
       years.push(i)
     }
     return years;

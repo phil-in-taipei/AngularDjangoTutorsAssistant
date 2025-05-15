@@ -25,7 +25,6 @@ export class SelectMonthAndYearForFreelancePaymentsAndRefundsRecordsFormComponen
   }
 
   onNavigateToMonthlyPaymentsandRefundsRecord(form: NgForm) {
-    console.log(form.value);
     if (form.invalid) {
       form.reset()
       return;

@@ -11,24 +11,17 @@ import { AuthService } from './auth.service';
 export class AuthErrorInterceptor implements HttpInterceptor {
   constructor(private authService: AuthService) {}
   
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    console.log('Outgoing request');
-    console.log(request.url);
-    
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {    
     return next.handle(request).pipe(
       tap(event => {
         // Only process Response events
-        if (event.type === HttpEventType.Response) {
-          console.log(`Response received; status: ${event.status}`);
-          
+        if (event.type === HttpEventType.Response) {          
           // Safely check for auth errors in the response body
           try {
             if (event.body) {
               if (event.body.detail === 'Given token not valid for any token type') {
                 this.authService.logout();
               } else if (event.body.err && event.body.err.detail === "Given token not valid for any token type") {
-                console.log("*****Error****")
-                console.log(event.body.err)
                 this.authService.logout();
               }
             }
@@ -39,7 +32,7 @@ export class AuthErrorInterceptor implements HttpInterceptor {
       }),
       // Add proper error handling
       catchError((error: HttpErrorResponse) => {
-        console.error('HTTP error intercepted:', error);
+        //HTTP error intercepted
         
         // Check for authentication errors
         if (error.status === 401) {

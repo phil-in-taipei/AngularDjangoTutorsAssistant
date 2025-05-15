@@ -30,7 +30,6 @@ export class SelectMonthYearAndSchoolFormComponent implements OnInit{
 
 
   onNavigateToMonthlyReport(form: NgForm) {
-    console.log(form.value);
     if (form.invalid) {
       return;
     }

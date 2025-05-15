@@ -24,7 +24,9 @@ class AngularAppView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['frontend_encryption_key'] = settings.FRONTEND_ENCRYPTION_KEY
+        context['encryption_config'] = {
+            'frontend_encryption_key': settings.FRONTEND_ENCRYPTION_KEY
+        }
         return context
 
 urlpatterns = [
@@ -36,5 +38,5 @@ urlpatterns = [
     path('api/schools/', include('school.urls')),
     path('api/scheduling/', include('class_scheduling.urls')),
     path('api/accounts/', include('student_account.urls')),
-    re_path(r'^.*$', AngularAppView.as_view(template_name='index.html')),
+    re_path(r'^.*$', AngularAppView.as_view()),
 ]

@@ -28,7 +28,6 @@ export class SelectMonthYearAndFreelanceAccountFormComponent implements OnInit {
   }
 
   onNavigateToFreelanceAccountActivityRecord(form: NgForm) {
-    console.log(form.value);
     if (form.invalid) {
       return;
     }

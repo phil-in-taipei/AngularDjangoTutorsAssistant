@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-//import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from './authentication/auth.service';
 
 @Component({
@@ -14,7 +13,7 @@ export class AppComponent implements OnInit{
   constructor(private authService: AuthService) {}
 
   ngOnInit() {
-    console.log("****main app component initializing and calling autoAuthUser function*****");
+    //"main app component initializing and calling autoAuthUser function
     this.authService.autoAuthUser();
   }
 }

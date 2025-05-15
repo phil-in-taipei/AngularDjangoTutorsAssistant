@@ -46,7 +46,6 @@ export class StudentOrClassService {
 
   fetchUsersStudentsOrClasses(): Observable<StudentOrClassModel[]> {
     let token = this.authService.getAuthToken();
-    console.log('******fetching users students or classes******')
     return this.http.get<StudentOrClassModel[]>(
       `${environment.apiUrl}/api/accounts/students-or-classes/`,
         {

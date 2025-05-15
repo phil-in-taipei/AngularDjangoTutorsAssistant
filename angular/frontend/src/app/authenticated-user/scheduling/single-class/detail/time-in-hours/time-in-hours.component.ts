@@ -18,13 +18,9 @@ export class TimeInHoursComponent implements OnInit {
   timeInHours: number | undefined = undefined;
 
   ngOnInit(): void {
-    console.log("***********Debugging************")
-    console.log(`Start time: ${this.startTime}`)
-    console.log(`Finish time: ${this.finishTime}`)
     this.timeInHours = calculateTimeStringsDifferenceinNumbers(
       this.startTime.slice(0, -3), this.finishTime.slice(0, -3)
     );
-    console.log(`Result: ${this.timeInHours}`)
   }
 
 }

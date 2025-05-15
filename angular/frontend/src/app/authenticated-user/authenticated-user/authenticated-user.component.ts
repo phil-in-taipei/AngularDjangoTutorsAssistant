@@ -20,7 +20,6 @@ export class AuthenticatedUserComponent implements OnInit {
 
 
   ngOnInit(): void {
-    console.log('initializing the authenticated user component now...')
     this.store.dispatch(new SchoolsRequested());
     this.store.dispatch(new StudentsOrClassesRequested());
     this.store.dispatch(new UserProfileRequested());

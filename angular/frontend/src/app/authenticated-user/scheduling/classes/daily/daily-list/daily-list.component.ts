@@ -91,7 +91,6 @@ export class DailyListComponent implements OnInit {
 
 
   navToTmrrow() {
-    console.log(this.tmrwRouterStr);
     this.router.navigate(['/', 'authenticated-user', 'scheduling', 'schedule-daily',  this.tmrwRouterStr]);
     this.dateFromRouteData = this.tmrwRouterStr;
     this.tmrwRouterStr = this.getTmrwRouterStr(this.dateFromRouteData);
@@ -111,7 +110,6 @@ export class DailyListComponent implements OnInit {
   }
 
   navToYsdtrdy() {
-    console.log(this.ystrdyRouterStr); 
     this.router.navigate(['/', 'authenticated-user', 'scheduling', 'schedule-daily',  this.ystrdyRouterStr]);
     this.dateFromRouteData = this.ystrdyRouterStr;
     this.tmrwRouterStr = this.getTmrwRouterStr(this.dateFromRouteData);

@@ -28,7 +28,6 @@ export class SelectDateRangeAndSchoolFormComponent {
     let start_date = `${form.value.date1.year}-${form.value.date1.month}-${form.value.date1.day}`
     let finish_date = `${form.value.date2.year}-${form.value.date2.month}-${form.value.date2.day}`
     const school_id = +form.value.school;
-    console.log(`This is the date range: ${start_date} to ${finish_date}`)
     this.router.navigate(
       [
         'authenticated-user', 'scheduling', 'accounting', 

@@ -24,7 +24,6 @@ export class SelectMonthAndYearComponent implements OnInit {
 
 
   onMonthAndYearNav(form: NgForm) {
-    console.log(form.value);
     if (form.invalid) {
       return;
     }

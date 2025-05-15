@@ -53,27 +53,29 @@ export class AuthService {
   private refreshExpTime: Date;
   private authStatusListener = new Subject<boolean>();
   private loginErrorListener = new Subject<boolean>();
-  private readonly SECRET_KEY = window.FRONTEND_CONFIG?.encryptionKey ||'Secret Passphrase'; // Replace with a strong secret key
+  private encryptionKey: string | null = null;
+  private SECRET_KEY = 'djkljadfsaoasddd82k22kds;o;kjpvsajsjlxoijjdis';
 
   constructor(
     private http: HttpClient, private router: Router, 
     private store: Store<AppState>
-  ) { }
+  ) { 
+    this.loadEncryptionKey(); 
+    if (this.encryptionKey) {
+      this.SECRET_KEY = this.encryptionKey
+    }
+  }
 
   autoAuthUser(): void {
-    console.log('getting auth data .....')
     const authInformation = this.getAuthData();
     if (authInformation) {
       if (authInformation.accessExpDate && authInformation.token &&
           authInformation.refreshExp && authInformation.refresh) {
-          console.log('Auth info in local storage:')
-          console.log('this is when tokens will expire on reload:')
-          console.log(authInformation.accessExpDate);
-          console.log(authInformation.refreshExp);
+          // Auth info in local storage
           const now = new Date();
           if(authInformation.refreshExp > now) {
-            console.log('refresh token is not expired. ' + 
-              'Setting token variables and authentication status to true...')
+            //'refresh token is not expired. ' + 
+            //  'Setting token variables and authentication status to true
             this.isAuthenticated = true;
             this.authStatusListener.next(true);
             this.token = authInformation.token;
@@ -81,24 +83,46 @@ export class AuthService {
             this.refresh = authInformation.refresh;
             this.refreshExpTime = new Date(authInformation.refreshExp);
             let timeUntilTokenExp = new Date().getTime() - this.tokenExpTime.getTime();
-            console.log('reseting timer ....')
+            // reset timer
             this.setAuthTimer(timeUntilTokenExp); // if the value is negative, the timer will
                                                   // immediately trigger refreshTokenOrLogout();
             //this.router.navigate(['authenticated-user', 'user-profile']);
             this.router.navigate(['authenticated-user', 'scheduling', 'landing']);
           } else {
-            console.log('refresh token expired. Logging out...')
+            //console.log('refresh token expired. Logging out...')
             this.logout();
             //return;
           }
       } else {
-        console.log('Token info incomplete. Logging out...');
+        //console.log('Token info incomplete. Logging out...');
         this.logout();
         //return;
       }
     } else {
-      console.log('Token info undefined. Logging out...');
-        this.logout();
+      //console.log('Token info undefined. Logging out...');
+      this.logout();
+    }
+  }
+
+  private loadEncryptionKey(): void {
+    try {
+      // Get the script element by ID
+      const scriptElement = document.getElementById('encryption-config');
+      if (!scriptElement) {
+        //'Encryption configuration not found'
+        return;
+      }
+      // Parse the JSON content from the script tag
+      const config = JSON.parse(scriptElement.textContent || '{}');
+      this.encryptionKey = config.frontend_encryption_key;
+      
+      // Important security step: Remove the script element so it's not accessible later
+      // This makes it harder for malicious scripts to find the key
+      scriptElement.remove();
+      
+    } catch (error) {
+      //console.error('Error loading encryption configuration:', error);
+      return;
     }
   }
 
@@ -134,7 +158,6 @@ export class AuthService {
     this.http.post<AuthTokenRefreshResponseModel>(
       `${environment.apiUrl}/auth/jwt/refresh`, {refresh: refresh})
       .subscribe(response => {
-        console.log(response)
         if (response.access) {
           this.token = response.access;
           this.isAuthenticated = true;
@@ -144,14 +167,14 @@ export class AuthService {
           dtToken.setSeconds(dtToken.getSeconds() + environment.tokenSecondsAmount);
           this.tokenExpTime = dtToken;
           this.setAuthTimer(environment.authTimerAmount); // 50000 (50 seconds) // 285000 (4.75 minutes)
-          console.log(this.refreshExpTime);
+          
           this.saveAuthData(
             this.refresh, this.refreshExpTime,
             this.token, this.tokenExpTime
           );
         }
       }, error => {
-        //console.log(error)
+        //Error: set auth status to false and logout
         this.authStatusListener.next(false);
         this.logout();
       });
@@ -172,7 +195,7 @@ export class AuthService {
       return decryptedToken;
     } catch (error) {
       // Handle any potential errors during decryption
-      console.error('Decryption failed:', error);
+      //console.error('Decryption failed:', error);
       return null; // or throw an error, or handle it as needed
     }
   }
@@ -212,7 +235,6 @@ export class AuthService {
   getAuthToken(): string {
     return this.token;
   }
-
 
   getIsAuth(): boolean {
     return this.isAuthenticated;
@@ -291,10 +313,10 @@ export class AuthService {
   }
 
   private setAuthTimer(duration: number) {
-    console.log('this auth timer is being set');
-    console.log(`for this long: ${duration}`);
+    // auth timer is being set');
+    // for this long: ${duration}`);
     this.tokenTimer = setTimeout(() => {
-      console.log('time is up!');
+      //'time is up
       let dt:Date = new Date();
       console.log(dt);
       this.refreshTokenOrLogout();
