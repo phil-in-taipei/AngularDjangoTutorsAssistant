@@ -1,31 +1,26 @@
 <tr class="row" *ngIf="recurringClass$ | async as recurring_class">
    
     <th class="col">
-      <h5>
+      <p>
         {{ recurring_class.day_of_week_string }}
-      </h5>
+      </p>
     </th>
     <th class="col">
-      <h5>
-        {{ recurring_class.recurring_start_time.slice(0, -3) }}
-      </h5>
+      <p>
+        {{ recurring_class.recurring_start_time.slice(0, -3) }}-{{ recurring_class.recurring_finish_time.slice(0, -3) }}
+      </p>
     </th>
     <th class="col">
-      <h5>
-        {{ recurring_class.recurring_finish_time.slice(0, -3) }}
-      </h5>
+        <p>
+          <a [routerLink]="['/authenticated-user/student-or-class', recurring_class.student_or_class]">
+              <app-student-or-class-templ-string 
+              [studentOrClassId]=recurring_class.student_or_class class="bg-transparent"
+              >
+              </app-student-or-class-templ-string>
+          </a>
+        </p>
     </th>
-    <th class="col">
-        <h5>
-            <a [routerLink]="['/authenticated-user/student-or-class', recurring_class.student_or_class]">
-                <app-student-or-class-templ-string 
-                [studentOrClassId]=recurring_class.student_or_class class="bg-transparent"
-                >
-                </app-student-or-class-templ-string>
-            </a>
-        </h5>
-    </th>
-    <th class="col">
+    <th class="col hidden-small">
       <div *ngIf="!deletionPopupVisible;else del_monthly" class="col text-center">
         <button
           class="btn btn-sm btn-block btn-outline-danger"

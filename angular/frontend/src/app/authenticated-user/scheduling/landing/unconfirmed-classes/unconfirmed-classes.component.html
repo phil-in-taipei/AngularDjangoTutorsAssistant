@@ -13,37 +13,37 @@
     <table class="table bg-transparent">
         <thead class="table bg-transparent">
           <tr class="row bg-transparent">
-            <th class="col bg-transparent"><h5>Date</h5></th>
-            <th class="col bg-transparent"><h5>Time</h5></th>
-            <th class="col bg-transparent"><h5>Student/Class</h5></th>
+            <th class="col bg-transparent"><p>Date</p></th>
+            <th class="col bg-transparent hidden-small"><p>Time</p></th>
+            <th class="col bg-transparent"><p>Student/Class</p></th>
           </tr>
         </thead>
         <tbody class="table bg-transparent">
           <tr class="row bg-transparent" 
             *ngFor="let unconfirmedClass of unconfirmedClasses trackBy: trackByFn">
             <th class="col bg-transparent">
-                <h5 class>
-                    <a [routerLink]="['/authenticated-user/scheduling/schedule-daily', unconfirmedClass.date]">
+                <p>
+                  <a [routerLink]="['/authenticated-user/scheduling/schedule-daily', unconfirmedClass.date]">
                     {{ unconfirmedClass.date }}
-                    </a>
-                </h5>
+                  </a>
+                </p>
             </th>
-            <th class="col bg-transparent">
-                <h5 class>
+            <th class="col bg-transparent hidden-small">
+                <p>
                     <a [routerLink]="['/authenticated-user/scheduling/single-class', unconfirmedClass.id]">
                       {{ unconfirmedClass.start_time.slice(0, -3) }} - {{ unconfirmedClass.finish_time.slice(0, -3) }}
                     </a>
-                </h5>
+                </p>
             </th>
             <th class="col bg-transparent">
-              <h5 >
+              <p>
                 <a [routerLink]="['/authenticated-user/student-or-class', unconfirmedClass.student_or_class]">
                   <app-student-or-class-template-string 
                   [studentOrClassId]=unconfirmedClass.student_or_class class="bg-transparent"
                   >
                   </app-student-or-class-template-string>
                 </a>
-              </h5>
+              </p>
             </th>
         </tr>
         </tbody>

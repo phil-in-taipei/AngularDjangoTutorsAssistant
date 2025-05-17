@@ -1,22 +1,22 @@
 <tr class="row" >
     <th class="col">
-        <h5 *ngIf="scheduledClass.class_status==='cancelled' || scheduledClass.class_status==='same_day_cancellation'; else not_cancelled_red" 
+        <p *ngIf="scheduledClass.class_status==='cancelled' || scheduledClass.class_status==='same_day_cancellation'; else not_cancelled_red" 
         class="cross-out-alert">
-            <a class="text-danger" 
+          <a class="text-danger" 
               [routerLink]="['/authenticated-user/scheduling/single-class', scheduledClass.id]">
               {{ scheduledClass.start_time.slice(0, -3) }}-{{ scheduledClass.finish_time.slice(0, -3) }}
-            </a>
-        </h5>
+          </a>
+        </p>
         <ng-template #not_cancelled_red>
-          <h5>
+          <p>
             <a [routerLink]="['/authenticated-user/scheduling/single-class', scheduledClass.id]">
               {{ scheduledClass.start_time.slice(0, -3) }}-{{ scheduledClass.finish_time.slice(0, -3) }}
             </a>
-          </h5>
+          </p>
         </ng-template>
     </th>
     <th class="col">
-      <h5 *ngIf="scheduledClass.class_status==='cancelled' || scheduledClass.class_status==='same_day_cancellation'; else not_cancelled" 
+      <p *ngIf="scheduledClass.class_status==='cancelled' || scheduledClass.class_status==='same_day_cancellation'; else not_cancelled" 
         class="cross-out">
         <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', scheduledClass.student_or_class]">
           <app-student-or-class-template-string 
@@ -24,22 +24,22 @@
           >
           </app-student-or-class-template-string>
         </a>
-      </h5>
+      </p>
       <ng-template #not_cancelled>
-        <h5>
+        <p>
           <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', scheduledClass.student_or_class]">
             <app-student-or-class-template-string 
             [studentOrClassId]=scheduledClass.student_or_class class="bg-transparent"
             >
             </app-student-or-class-template-string>
           </a>
-        </h5>
+        </p>
       </ng-template>
     </th>
-    <ng-container 
+    <ng-container
       *ngIf="{ value: deletionModeForScheduledClassesActivated$ | async } as context"
     >
-    <th *ngIf="context.value" class="col">
+    <th *ngIf="context.value" class="col hidden-small">
       <div *ngIf="!deletionPopupVisible; else delAccount" 
         class="col text-left">
         <button

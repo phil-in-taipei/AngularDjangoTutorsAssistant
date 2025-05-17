@@ -42,3 +42,19 @@ hr.thick-br {
 hr.thin-br {
   border: 1px solid #758d97;
 }
+
+.small-scr {
+  display: none;
+}
+
+@media screen and (max-width: 767px) {
+  
+  .hidden-small {
+    display: none;
+  }
+  
+  .small-scr {
+    display: block;
+  }
+
+}

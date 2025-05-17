@@ -78,6 +78,9 @@
             <h5 class="text-center text-danger">
               Past Monthly Earnings Estimates
             </h5>
+            <p class="text-center text-danger small-scr">
+              (Turn Horizontal to Delete)
+            </p>
             <button class="btn btn-outline-danger" 
             (click)="onDeactivateScheduledClassDeletionMode()" type="button">
               Deactivate Deletion Mode
@@ -109,16 +112,16 @@
       <table class="table bg-transparent">
         <thead class="table bg-transparent">
           <tr class="row bg-transparent">
-            <th class="col bg-transparent"><h5>Time</h5></th>
-            <th class="col bg-transparent"><h5>Student/Class</h5></th>
-            <ng-container 
+            <th class="col bg-transparent"><p>Time</p></th>
+            <th class="col bg-transparent"><p>Student/Class</p></th>
+            <ng-container
             *ngIf="{ value: deletionModeForScheduledClassesActivated$ | async } as context"
           >
-            <th *ngIf="context.value" class="col bg-transparent"
+            <th *ngIf="context.value" class="col bg-transparent hidden-small"
             >
-            <h5>
+            <p>
               Delete
-            </h5>
+            </p>
           </th>
           </ng-container>
           </tr>
