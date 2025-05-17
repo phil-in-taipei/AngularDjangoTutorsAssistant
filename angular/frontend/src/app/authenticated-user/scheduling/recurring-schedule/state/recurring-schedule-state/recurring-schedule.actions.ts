@@ -12,6 +12,8 @@ export enum RecurringClassesActionTypes {
   RecurringClassCreateSubmitted = '[Create Recurring Class Page] Recurring Class Submitted',
   RecurringClassAdded = '[Create Recurring Class Page] Newly Created Task with Daily Batch Added',
   RecurringClassCreationCancelled = '[Create Recurring Class Page] Recurring Class Creation Cancelled',
+  RecurringClassDeletionModeActivated = '[Recurring Classes Daily List Page] Recurring Class Deletion Mode Activated',
+  RecurringClassDeletionModeDeactivated = '[Recurring Classes Daily List Page] Recurring Class Deletion Mode Deactivated',  
   RecurringClassDeletionCancelled = '[Recurring Classes Page] Removal of Recurring Class Cancelled',
   RecurringClassDeletionRequested = '[Recurring Classes  Page]  Removal of Recurring Class Requested',
   RecurringClassDeletionSaved = '[Recurring Classes Page] Recurring Class Removed',
@@ -68,6 +70,14 @@ export class RecurringClassDeletionCancelled implements Action {
   constructor(public payload: {  err: any }) {}
 }
 
+export class RecurringClassDeletionModeActivated implements Action {
+    readonly type = RecurringClassesActionTypes.RecurringClassDeletionModeActivated;
+}
+
+export class RecurringClassDeletionModeDeactivated implements Action {
+    readonly type = RecurringClassesActionTypes.RecurringClassDeletionModeDeactivated;
+}
+
 export class RecurringClassDeletionRequested implements Action {
   readonly type = RecurringClassesActionTypes.RecurringClassDeletionRequested;
 
@@ -88,5 +98,6 @@ export type RecurringClassActions = RecurringClassesCleared |
   RecurringClassesLoaded | RecurringClassesRequestCancelled |
   RecurringClassesRequested | RecurringClassCreateSubmitted |
   RecurringClassAdded | RecurringClassCreationCancelled |
-  RecurringClassDeletionCancelled | RecurringClassDeletionRequested |
+  RecurringClassDeletionCancelled | RecurringClassDeletionModeDeactivated |
+  RecurringClassDeletionModeActivated | RecurringClassDeletionRequested |
   RecurringClassDeletionSaved | RecurringClassesMessagesCleared;

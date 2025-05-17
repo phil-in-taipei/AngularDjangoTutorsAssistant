@@ -6,6 +6,12 @@ import * as fromRecurringClasses from './recurring-schedule.reducers';
 export const selectRecurringClassesState = 
   createFeatureSelector<RecurringClassesState>("recurringClasses");
 
+
+export const deletionModeForRecurringClassesActivated = createSelector(
+    selectRecurringClassesState,
+    state => state.deletionModeActivated
+);           
+
 export const selectAllRecurringClasses = createSelector(
   selectRecurringClassesState,
   fromRecurringClasses.selectAll

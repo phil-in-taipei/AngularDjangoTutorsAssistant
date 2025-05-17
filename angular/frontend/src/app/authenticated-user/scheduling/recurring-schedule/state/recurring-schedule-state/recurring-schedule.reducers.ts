@@ -25,6 +25,7 @@ function compareRecurringClasses(
   }
 
   export interface RecurringClassesState extends EntityState<RecurringClassModel> {
+    deletionModeActivated: boolean;
     errorMessage: string | undefined,
     recurringClassesLoaded: boolean,
     successMessage: string | undefined,
@@ -38,9 +39,10 @@ function compareRecurringClasses(
   export const initialRecurringClassesState: RecurringClassesState = adapter
     .getInitialState(
         {
-            errorMessage: undefined,
-            recurringClassesLoaded: false,
-            successMessage: undefined
+          deletionModeActivated: false,
+          errorMessage: undefined,
+          recurringClassesLoaded: false,
+          successMessage: undefined
         }
     );
   
@@ -91,7 +93,20 @@ function compareRecurringClasses(
           ...state, successMessage: undefined,
           errorMessage: errMsg
         }
-  
+
+
+      case RecurringClassesActionTypes.RecurringClassDeletionModeActivated:
+        return {
+              ...state, 
+              deletionModeActivated: true
+              }
+                    
+      case RecurringClassesActionTypes.RecurringClassDeletionModeDeactivated:
+        return {
+            ...state, 
+            deletionModeActivated: false                    
+          }    
+                
       case RecurringClassesActionTypes.RecurringClassDeletionSaved:
         return adapter.removeOne(action.payload.id,
           {
