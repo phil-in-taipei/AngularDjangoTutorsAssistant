@@ -8,6 +8,8 @@ import {
 } from 'src/app/shared-utils/date-time.util';
 import { RecurringClassAppliedMonthlyModel } from 'src/app/models/recurring-schedule.model';
 import { 
+  RecurringClassAppliedMonthlyDeletionModeActivated,
+  RecurringClassAppliedMonthlyDeletionModeDeactivated,
   RecurringClassAppliedMonthlysCleared,
   RecurringClassAppliedMonthlysRequested, 
   RecurringClassesAppliedMonthlyMessagesCleared 
@@ -24,6 +26,7 @@ import {
   scheduledClassesSuccessMsg, scheduledClassesErrorMsg 
 } from '../../../classes-state/scheduled-classes.selectors';
 import { 
+  deletionModeForRecurringClassesAppliedMonthlyActivated,
   optionalScheduledClassBatchDeletionData,
   selectAllRecurringClassAppliedMonthlys, 
   selectRecurringClassAppliedMonthlysLoaded 
@@ -38,6 +41,7 @@ import {
 })
 export class RecurringClassesAppliedMonthlyComponent implements OnInit {
 
+  deletionModeForRecurringClassesAppliedMonthlyActivated$: Observable<boolean> = of(false);
   rCAMs$: Observable<RecurringClassAppliedMonthlyModel[] | undefined> = of(undefined);
   rCAMsLoaded$: Observable<boolean> = of(false);
   monthFromRouteData:number;
@@ -56,6 +60,9 @@ export class RecurringClassesAppliedMonthlyComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.deletionModeForRecurringClassesAppliedMonthlyActivated$ = this.rCAMStore.pipe(
+      select(deletionModeForRecurringClassesAppliedMonthlyActivated)
+    );
     this.scheduledClassesStore.dispatch(new ScheduledClassesCleared());
     this.rCAMStore.dispatch(new RecurringClassAppliedMonthlysCleared());
     this.monthFromRouteData = +this.route.snapshot.params['month'];
@@ -81,6 +88,17 @@ export class RecurringClassesAppliedMonthlyComponent implements OnInit {
     );
   }
 
+  onActivateRecurringClassAppliedMonthlyDeletionMode(): void {
+    this.rCAMStore.dispatch(
+      new RecurringClassAppliedMonthlyDeletionModeActivated()
+    );
+  }
+
+  onDeactivateRecurringClassAppliedMonthlyDeletionMode(): void {
+    this.rCAMStore.dispatch(
+      new RecurringClassAppliedMonthlyDeletionModeDeactivated()
+    );
+  }
 
   onClearStatusMsgs() {
     this.scheduledClassesStore.dispatch(new ScheduledClassesMessagesCleared());
@@ -94,7 +112,6 @@ export class RecurringClassesAppliedMonthlyComponent implements OnInit {
       this.showApplyRecurringClassSubmitForm = true;
     }
   }
-
 
   trackByFn(index: number, item: any) {
     return item.id;

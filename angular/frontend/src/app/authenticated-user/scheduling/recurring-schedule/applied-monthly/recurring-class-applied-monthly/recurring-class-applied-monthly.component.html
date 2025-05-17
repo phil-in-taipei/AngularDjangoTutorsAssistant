@@ -19,7 +19,10 @@
           </a>
         </p>
     </th>
-    <th class="col hidden-small">
+    <ng-container
+      *ngIf="{ value: deletionModeForRecurringClassesAppliedMonthlyActivated$ | async } as context"
+    >
+    <th *ngIf="context.value" class="col hidden-small">
       <div *ngIf="!deletionPopupVisible;else del_monthly" class="col text-center">
         <button
           class="btn btn-sm btn-block btn-outline-danger"
@@ -45,4 +48,5 @@
         </div>
       </ng-template>
     </th>
+    </ng-container>
   </tr>

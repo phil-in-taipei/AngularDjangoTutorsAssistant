@@ -15,6 +15,8 @@ export enum RecurringClassAppliedMonthlyActionTypes {
     RecurringClassAppliedMonthlyAdded = '[Create Recurring Class Applied Monthly Page] Newly Created Monthly Applied Monthly Added',
     RecurringClassAppliedMonthlyCreationCancelled = '[Create Recurring Class Applied Monthly Page] Recurring Class Applied Monthly Creation Cancelled',
     RecurringClassAppliedMonthlyDeletionCancelled = '[Recurring Class Applied Monthlys Page] Removal of Recurring Class Applied Monthly Cancelled',
+    RecurringClassAppliedMonthlyDeletionModeActivated = '[Recurring Classes Applied Monthly List Page] Recurring Class Applied Monthly Deletion Mode Activated',
+    RecurringClassAppliedMonthlyDeletionModeDeactivated = '[Recurring Classes Applied Monthly List Page] Recurring Class Applied Monthly Deletion Mode Deactivated',
     RecurringClassAppliedMonthlyDeletionRequested = '[Recurring Class Applied Monthlys Page]  Removal of Recurring Class Applied Monthly Requested',
     RecurringClassAppliedMonthlyDeletionSaved = '[Recurring Class Applied Monthlys Page] Recurring Class Applied Monthly Removed',
     RecurringClassesAppliedMonthlyMessagesCleared = '[Recurring Class Applied Monthly List, and Submission Pages] Recurring Classes Applied Monthly Messages Cleared',
@@ -74,6 +76,14 @@ export class RecurringClassAppliedMonthlyDeletionCancelled implements Action {
     constructor(public payload: { err: any }) {}
 }
 
+export class RecurringClassAppliedMonthlyDeletionModeActivated implements Action {
+    readonly type = RecurringClassAppliedMonthlyActionTypes.RecurringClassAppliedMonthlyDeletionModeActivated;
+}
+
+export class RecurringClassAppliedMonthlyDeletionModeDeactivated implements Action {
+    readonly type = RecurringClassAppliedMonthlyActionTypes.RecurringClassAppliedMonthlyDeletionModeDeactivated;
+}
+
 export class RecurringClassAppliedMonthlyDeletionRequested implements Action {
     readonly type = RecurringClassAppliedMonthlyActionTypes.RecurringClassAppliedMonthlyDeletionRequested;
 
@@ -96,4 +106,5 @@ export type RecurringClassAppliedMonthlyActions = RecurringClassAppliedMonthlysC
     RecurringClassAppliedMonthlysRequested | RecurringClassAppliedMonthlyCreateSubmitted |
     RecurringClassAppliedMonthlyAdded | RecurringClassAppliedMonthlyCreationCancelled |
     RecurringClassAppliedMonthlyDeletionCancelled | RecurringClassAppliedMonthlyDeletionRequested |
+    RecurringClassAppliedMonthlyDeletionModeActivated | RecurringClassAppliedMonthlyDeletionModeDeactivated | 
     RecurringClassAppliedMonthlyDeletionSaved | RecurringClassesAppliedMonthlyMessagesCleared;

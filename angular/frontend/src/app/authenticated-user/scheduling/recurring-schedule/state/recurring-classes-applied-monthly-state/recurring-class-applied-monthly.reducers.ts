@@ -32,15 +32,11 @@ function compareRecurringClassesAppliedMonthly(
 
 export interface RecurringClassAppliedMonthlysState 
     extends EntityState<RecurringClassAppliedMonthlyModel> {
-
-        errorMessage: string | undefined,
-        
-        recurringClassAppliedMonthlysLoaded: boolean,
-        
-        successMessage: string | undefined,
-
-        optionalBatchDeletionData: ScheduledClassBatchDeletionDataModel | undefined
-    
+      deletionModeActivated: boolean;
+      errorMessage: string | undefined,
+      recurringClassAppliedMonthlysLoaded: boolean,
+      successMessage: string | undefined,
+      optionalBatchDeletionData: ScheduledClassBatchDeletionDataModel | undefined
     };
     
 export const adapter: EntityAdapter<RecurringClassAppliedMonthlyModel> =
@@ -51,6 +47,8 @@ createEntityAdapter<RecurringClassAppliedMonthlyModel>(
     
 export const initialRecurringClassAppliedMonthlysState: 
     RecurringClassAppliedMonthlysState = adapter.getInitialState({
+
+    deletionModeActivated: false,
 
     errorMessage: undefined,
     
@@ -110,7 +108,19 @@ export function recurringClassAppliedMonthlysReducer(
               successMessage: undefined,
               errorMessage: errMsg
             }
-       
+
+        case RecurringClassAppliedMonthlyActionTypes.RecurringClassAppliedMonthlyDeletionModeActivated:
+          return {
+                ...state, 
+                deletionModeActivated: true
+                }
+                    
+        case RecurringClassAppliedMonthlyActionTypes.RecurringClassAppliedMonthlyDeletionModeDeactivated:
+          return {
+              ...state, 
+              deletionModeActivated: false                    
+            }    
+                  
         case RecurringClassAppliedMonthlyActionTypes.RecurringClassAppliedMonthlyDeletionSaved:
           let deletionResponseData: RecurringClassAppliedMonthlyDeletionResponse = 
             action.payload.recurringClassAppliedMonthlyDeletionResponse

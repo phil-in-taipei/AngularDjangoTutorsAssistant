@@ -5,6 +5,11 @@ import * as fromRecurringClassesAppliedMonthly from './recurring-class-applied-m
 export const selectRecurringClassesAppliedMonthlyState =
   createFeatureSelector<RecurringClassAppliedMonthlysState>("recurringClassesAppliedMonthly");
 
+export const deletionModeForRecurringClassesAppliedMonthlyActivated = createSelector(
+    selectRecurringClassesAppliedMonthlyState,
+    state => state.deletionModeActivated
+); 
+
 export const selectAllRecurringClassAppliedMonthlys = createSelector(
   selectRecurringClassesAppliedMonthlyState,
   fromRecurringClassesAppliedMonthly.selectAll

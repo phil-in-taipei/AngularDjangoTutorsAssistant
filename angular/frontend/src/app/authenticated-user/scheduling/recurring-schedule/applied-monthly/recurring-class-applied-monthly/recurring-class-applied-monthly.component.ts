@@ -3,6 +3,9 @@ import { Observable, of } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 
 import { 
+  deletionModeForRecurringClassesAppliedMonthlyActivated 
+} from '../../state/recurring-classes-applied-monthly-state/recurring-class-applied-monthly.selectors';
+import { 
   RecurringClassAppliedMonthlysState 
 } from '../../state/recurring-classes-applied-monthly-state/recurring-class-applied-monthly.reducers';
 import { 
@@ -25,9 +28,10 @@ import {
   templateUrl: './recurring-class-applied-monthly.component.html',
   styleUrl: './recurring-class-applied-monthly.component.css'
 })
-export class RecurringClassAppliedMonthlyComponent {
+export class RecurringClassAppliedMonthlyComponent implements OnInit {
 
   @Input() recurringClassAppliedMonthly: RecurringClassAppliedMonthlyModel;
+  deletionModeForRecurringClassesAppliedMonthlyActivated$: Observable<boolean> = of(false);
   recurringClass$: Observable<RecurringClassModel | undefined> = of(undefined);
 
   deletionPopupVisible: boolean = false;
@@ -39,6 +43,9 @@ export class RecurringClassAppliedMonthlyComponent {
 
 
   ngOnInit(): void {
+    this.deletionModeForRecurringClassesAppliedMonthlyActivated$ = this.rCAMStore.pipe(
+      select(deletionModeForRecurringClassesAppliedMonthlyActivated)
+    );
     this.recurringClass$ = this.recurringClassesStore.pipe(select(
       selectRecurringClassById(this.recurringClassAppliedMonthly.recurring_class)
     ));

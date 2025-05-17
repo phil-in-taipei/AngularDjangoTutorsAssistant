@@ -67,13 +67,46 @@
 
 <div *ngIf="rCAMs$ | async as recurringClassesAppliedMonthly" class="container content">
   <div class="large-scr-tbl">
+        <ng-container *ngIf="{ value: deletionModeForRecurringClassesAppliedMonthlyActivated$ | async } as context">
+      <div *ngIf="context.value" class="text-center">
+          <p class="text-center text-danger small-scr">
+            (Turn Horizontal to Delete)
+          </p>
+            <button class="btn btn-outline-danger" 
+            (click)="onDeactivateRecurringClassAppliedMonthlyDeletionMode()" type="button">
+              Deactivate Deletion Mode
+            </button>
+          <br />
+      </div>
+    </ng-container>
+    <ng-container 
+      *ngIf="{ value: deletionModeForRecurringClassesAppliedMonthlyActivated$ | async } as context"
+    >
+    <div *ngIf="!context.value" class="text-center">
+          <button class="btn btn-outline-danger middle" 
+          (click)="onActivateRecurringClassAppliedMonthlyDeletionMode()" type="button">
+            Activate Deletion Mode
+          </button>
+      <br />
+    </div>
+    </ng-container>
+    
     <div class="container">
       <table class="table bg-transparent">
           <thead class="table bg-transparent">
             <tr class="row">
               <th class="col"><p>Time</p></th>
               <th class="col"><p>Student</p></th>
-              <th class="col hidden-small" id="edit"><p>Remove</p></th>
+                              <ng-container
+                  *ngIf="{ value: deletionModeForRecurringClassesAppliedMonthlyActivated$ | async } as context"
+                >
+                  <th *ngIf="context.value" class="col bg-transparent hidden-small"
+                  >
+                    <p>
+                      Remove
+                    </p>
+                  </th>
+                </ng-container>
             </tr>
           </thead>
           <tbody class="bg-transparent">
