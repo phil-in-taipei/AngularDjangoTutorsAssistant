@@ -1,10 +1,10 @@
 <tr class="row" > 
-    <th class="col">
+    <th class="col hidden-small">
       <p>
         {{ recurringClass.day_of_week_string }}
       </p>
     </th>
-    <th class="col">
+    <th class="col hidden-small">
         <p>
           {{ 
             recurringClass.recurring_start_time.slice(0, -3) 
@@ -12,7 +12,17 @@
             recurringClass.recurring_finish_time.slice(0, -3) 
           }}
         </p>
-      </th>
+    </th>
+    <th class="col small-scr">
+        <p>
+          {{ recurringClass.day_of_week_string.slice(0, 3) }} 
+          {{ 
+            recurringClass.recurring_start_time.slice(0, -3) 
+          }}-{{ 
+            recurringClass.recurring_finish_time.slice(0, -3) 
+          }}
+        </p>
+    </th>
     <th class="col">
         <p>
           <a [routerLink]="['/authenticated-user/student-or-class', recurringClass.student_or_class]">
