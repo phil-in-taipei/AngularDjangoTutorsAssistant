@@ -1,14 +1,13 @@
 <tr class="row" *ngIf="recurringClass$ | async as recurring_class">
-   
-    <th class="col">
-      <p>
-        {{ recurring_class.day_of_week_string }}
-      </p>
-    </th>
-    <th class="col">
-      <p>
-        {{ recurring_class.recurring_start_time.slice(0, -3) }}-{{ recurring_class.recurring_finish_time.slice(0, -3) }}
-      </p>
+       <th class="col">
+        <p>
+          {{ recurring_class.day_of_week_string.slice(0, 3) }} 
+          {{ 
+            recurring_class.recurring_start_time.slice(0, -3) 
+          }}-{{ 
+            recurring_class.recurring_finish_time.slice(0, -3) 
+          }}
+        </p>
     </th>
     <th class="col">
         <p>
