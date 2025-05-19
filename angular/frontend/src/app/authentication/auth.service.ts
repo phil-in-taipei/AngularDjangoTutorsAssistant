@@ -31,13 +31,6 @@ import {
   UserProfileCleared 
 } from '../authenticated-user/user/user-state/user.actions';
 
-declare global {
-  interface Window { 
-    FRONTEND_CONFIG: {
-      encryptionKey: string;
-    }; 
-  }
-}
 
 @Injectable({
   providedIn: 'root'
@@ -148,9 +141,9 @@ export class AuthService {
     this.store.dispatch(new UserProfileCleared());
   }
 
-  private createSixHourTimeString() {
-    return  Math.floor(Date.now() / (6 * 60 * 60 * 1000)).toString(); 
-  }
+  //private createSixHourTimeString() {
+  //  return  Math.floor(Date.now() / (6 * 60 * 60 * 1000)).toString(); 
+  //}
 
   // public for testing purposes
   public fetchRefreshToken() {
@@ -184,7 +177,7 @@ export class AuthService {
     //const bytes = AES.decrypt(encryptedToken, `${this.SECRET_KEY}${this.createSixHourTimeString()}`);
     //return bytes.toString(Utf8);
     try {
-      const bytes = AES.decrypt(encryptedToken, `${this.SECRET_KEY}${this.createSixHourTimeString()}`);
+      const bytes = AES.decrypt(encryptedToken, `${this.SECRET_KEY}`);
       const decryptedToken = bytes.toString(Utf8);
 
       // Add validation to check if the decrypted token is valid
@@ -202,7 +195,7 @@ export class AuthService {
 
   public encryptToken(authToken: string): string {
     const encryptedToken: string = AES.encrypt(
-      authToken, `${this.SECRET_KEY}${this.createSixHourTimeString()}`
+      authToken, `${this.SECRET_KEY}`
     ).toString();
     return encryptedToken
   }
