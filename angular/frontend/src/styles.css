@@ -10,7 +10,7 @@ body, html {
 .color-frame {
     background-color: black;
     border: #0098da solid 1px !important;
-    outline: #010b3e solid 5px !important;
+    outline: #010b3e solid 10px !important;
   }
   
 .content {
@@ -47,7 +47,33 @@ hr.thin-br {
   display: none;
 }
 
+.small-and-med-scr {
+  display: none;
+}
+
+
+@media screen and (min-width: 768px) and (max-width: 992px) {
+
+  .hidden-small-and-medium {
+    display: none;
+  }
+
+  .small-and-med-scr {
+    display: block;
+  }
+
+}
+
 @media screen and (max-width: 767px) {
+
+  .hidden-small-and-medium {
+    display: none;
+  }
+
+  .small-and-med-scr {
+    display: block;
+  }
+
   
   .hidden-small {
     display: none;
