@@ -1,47 +1,47 @@
 <tr class="row" > 
     <th class="col">
-        <h5>
-            <a [routerLink]="['/authenticated-user/school', school.id]">
+        <p>
+          <a [routerLink]="['/authenticated-user/school', school.id]">
               {{ school.school_name }}
-            </a>
-        </h5>
+          </a>
+        </p>
     </th>
     <th class="col">
-      <h5>
+      <p>
         {{ school.address_line_1 }}
-      </h5>
+      </p>
     </th>
   <ng-container *ngIf="{ value: deletionModeActivated$ | async } as context">
-    <th *ngIf="context.value" class="col">
+    <th *ngIf="context.value" class="col hidden-small">
       <div *ngIf="!deletionPopupVisible; else delWeeklyTask" class="col text-left">
-        <h5>
+        <p>
           <button
             class="btn btn-sm btn-outline-danger"
             (click)="showDeletionPopup()"
             >
             Remove
           </button>
-        </h5>
+        </p>
       </div>
       <ng-template #delWeeklyTask class="row">
         <div class="col">
-          <h5>
+          <p>
             <button
               class="btn btn-sm btn-outline-secondary"
               (click)="hideDeletionPopup()">
               Cancel Deletion
             </button>
-          </h5>
+          </p>
         </div>
         <div class="col">
-          <h5>
+          <p>
             <button
               class="btn btn-sm btn-outline-danger"
               (click)="onRemoveSchool()"
               >
               Confirm Removal
             </button>
-          </h5>
+          </p>
         </div>
       </ng-template>
     </th>

@@ -1,59 +1,59 @@
 <tr class="row" > 
     <th class="col">
-      <h5>
+      <p>
         <a [routerLink]="['/authenticated-user/student-or-class', studentOrClass.id]">
           {{ studentOrClass.student_or_class_name }}
         </a>
-      </h5>
+      </p>
     </th>
     <th class="col">
-        <h5 *ngIf="studentOrClass.school; else freelance_info">
-            <a [routerLink]="['/authenticated-user/school', studentOrClass.school]">
-                <app-school-template-string 
+        <p *ngIf="studentOrClass.school; else freelance_info">
+          <a [routerLink]="['/authenticated-user/school', studentOrClass.school]">
+              <app-school-template-string 
                 [schoolId]=studentOrClass.school class="bg-transparent"
-                >
-                </app-school-template-string>
-            </a>
-        </h5>
+              >
+              </app-school-template-string>
+          </a>
+        </p>
         <ng-template #freelance_info>
-            <h5>
-                Freelance
-            </h5>        
+            <p>
+              Freelance
+            </p>        
         </ng-template>
     </th>
     <ng-container 
       *ngIf="{ value: deletionModeForStudentsOrClassesActivated$ | async } as context"
     >
-    <th *ngIf="context.value" class="col">
+    <th *ngIf="context.value" class="col hidden-small hidden-small">
       <div *ngIf="!deletionPopupVisible; else delStudentOrClass" class="col text-left">
-        <h5>
+        <p>
           <button
             class="btn btn-sm btn-outline-danger"
             (click)="showDeletionPopup()"
             >
             Remove
           </button>
-        </h5>
+        </p>
       </div>
       <ng-template #delStudentOrClass class="row">
         <div class="col">
-          <h5>
+          <p>
             <button
               class="btn btn-sm btn-dark"
               (click)="hideDeletionPopup()">
               Cancel Deletion
             </button>
-          </h5>
+          </p>
         </div>
         <div class="col">
-          <h5>
+          <p>
             <button
               class="btn btn-sm btn-outline-danger"
               (click)="onRemoveStudentOrClass()"
               >
               Confirm Removal
             </button>
-          </h5>
+          </p>
         </div>
       </ng-template>
     </th>

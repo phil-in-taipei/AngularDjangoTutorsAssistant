@@ -28,6 +28,9 @@
                 <h5 class="text-center text-danger">
                   Monthly Earnings Estimates
                 </h5>
+                <p class="text-center text-danger small-scr">
+                  (Turn Horizontal to Delete)
+                </p>
                 <button class="btn btn-outline-danger" 
                 (click)="onDeactivateSchoolDeletionMode()" type="button">
                   Deactivate Deletion Mode
@@ -53,10 +56,10 @@
         <table class="table bg-transparent">
             <thead class="table bg-transparent">
               <tr class="row list">
-                <th class="col list"><h5>School Name</h5></th>
-                <th class="col list"><h5>Address</h5></th>
+                <th class="col list"><p>School Name</p></th>
+                <th class="col list"><p>Address</p></th>
                 <ng-container *ngIf="{ value: deletionModeActivated$ | async } as context">
-                  <th *ngIf="context.value" class="col list"><h5>Delete</h5></th>
+                  <th *ngIf="context.value" class="col list hidden-small"><p>Delete</p></th>
                 </ng-container>
               </tr>
             </thead>
