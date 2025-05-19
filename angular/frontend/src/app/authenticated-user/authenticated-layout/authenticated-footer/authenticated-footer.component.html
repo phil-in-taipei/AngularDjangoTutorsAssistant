@@ -9,11 +9,11 @@
           <!--Grid row-->
           <div class="row">
             <!-- Grid column -->
-            <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
-              <h6 class="text-uppercase mb-4 font-weight-bold">
+            <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
+              <h6 class="text-uppercase mb-4 font-weight-bold text-center">
                 Tutor's Assistant
               </h6>
-              <p>A Scheduling & Management System for Tutors</p>
+              <p class="text-center">A Scheduling & Management System for Tutors</p>
             </div>
             <!-- Grid column -->
   
@@ -21,17 +21,17 @@
   
             <!-- Grid column -->
             <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
-              <h6 class="text-uppercase mb-4 font-weight-bold">
-                Tutor's Assistant
-              </h6>
-              <p>
-                <a routerLink="/authenticated-user/user-profile" href="#">Profile</a>
+              <p class="text-center">
+                <a routerLink="/authenticated-user/user-profile" href="#">User Profile</a>
               </p>
-              <p>
+              <p class="text-center">
+                <a routerLink="/authenticated-user/users-students-or-classes" href="#">Students/Classes</a>
+              </p>
+              <p class="text-center">
                 <a routerLink="/authenticated-user/users-schools" href="#">Schools/Clients</a>
               </p>
-              <p>
-                <a href="#" (click)="onLogout()">Logout</a>
+              <p class="text-center">
+                <a routerLink="/authenticated-user/scheduling/calendar" href="#">Calendar</a>
               </p>
             </div>
             <!-- Grid column -->
@@ -41,7 +41,18 @@
   
             <!-- Grid column -->
             <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mt-3">
-
+              <p class="text-center">
+                <a routerLink="/authenticated-user/scheduling/schedule-single-class" href="#">Schedule a Class</a>
+              </p>
+              <p class="text-center">
+                <a routerLink="/authenticated-user/scheduling/recurring-schedule/select-month-year" href="#">Schedule a Batch</a>
+              </p>
+              <p class="text-center">
+                <a routerLink="/authenticated-user/scheduling/recurring-schedule/list" href="#">Recurring Classes</a>
+              </p>
+              <p class="text-center">
+                <a href="#" (click)="onLogout()">Logout</a>
+              </p>
             </div>
           </div>
           <!--Grid row-->
