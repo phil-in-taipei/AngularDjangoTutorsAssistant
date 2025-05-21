@@ -25,13 +25,13 @@
                 class="text-danger cross-out-alert"
             >
                 <a class="text-danger"
-                [routerLink]="['/authenticated-user/scheduling/schedule-daily', scheduledClass.date]">
+                [routerLink]="['/authenticated-user/scheduling/single-class', scheduledClass.id]">
                     {{ scheduledClass.start_time.slice(0, -3) }}-{{ scheduledClass.finish_time.slice(0, -3) }}
                 </a>
             </p>
             <ng-template #not_cancelled_time>
                 <p>
-                    <a [routerLink]="['/authenticated-user/scheduling/schedule-daily', scheduledClass.date]">
+                    <a [routerLink]="['/authenticated-user/scheduling/single-class', scheduledClass.id]">
                         {{ scheduledClass.start_time.slice(0, -3) }}-{{ scheduledClass.finish_time.slice(0, -3) }}
                     </a>
                 </p>
