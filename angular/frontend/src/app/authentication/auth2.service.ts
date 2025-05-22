@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Subject, interval, Subscription } from 'rxjs';
-import { takeWhile } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 // Use require-style imports instead of ES modules
 // for encryption
 const AES = require('crypto-js/aes');
@@ -36,21 +35,19 @@ import {
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService { // testing out alternative version with subsription for timer
+export class AuthService {
 
   private isAuthenticated: boolean = false;
   private isLoginError: boolean = false;
   private token: string;
   private tokenExpTime: Date
-  private tokenSubscription: Subscription | null = null;
-  private lastActivity: number = Date.now();
+  private tokenTimer: NodeJS.Timer;
   private refresh: string;
   private refreshExpTime: Date;
   private authStatusListener = new Subject<boolean>();
   private loginErrorListener = new Subject<boolean>();
   private encryptionKey: string | null = null;
   private SECRET_KEY = 'djkljadfsaoasddd82k22kds;o;kjpvsajsjlxoijjdis';
-  private checkIntervalMs = 30000; // Check every 30 seconds
 
   constructor(
     private http: HttpClient, private router: Router, 
@@ -60,24 +57,7 @@ export class AuthService { // testing out alternative version with subsription f
     if (this.encryptionKey) {
       this.SECRET_KEY = this.encryptionKey
     }
-    // Monitor user activity
-    this.setupActivityListeners();
   }
-
-
-  // Set up event listeners to track user activity
-  private setupActivityListeners(): void {
-    const events = ['mousedown', 'keydown', 'touchstart', 'scroll', 'visibilitychange'];
-    events.forEach(event => {
-      document.addEventListener(event, () => this.updateLastActivity());
-    });
-  }
-
-  // Update the timestamp of the last user activity
-  private updateLastActivity(): void {
-    this.lastActivity = Date.now();
-  }
-
 
   autoAuthUser(): void {
     const authInformation = this.getAuthData();
@@ -87,24 +67,32 @@ export class AuthService { // testing out alternative version with subsription f
           // Auth info in local storage
           const now = new Date();
           if(authInformation.refreshExp > now) {
+            //'refresh token is not expired. ' + 
+            //  'Setting token variables and authentication status to true
             this.isAuthenticated = true;
             this.authStatusListener.next(true);
             this.token = authInformation.token;
             this.tokenExpTime = new Date(authInformation.accessExpDate);
             this.refresh = authInformation.refresh;
             this.refreshExpTime = new Date(authInformation.refreshExp);
-            
-            // Use the token monitoring system instead of setTimeout
-            this.startTokenExpirationTimer();
-            
+            let timeUntilTokenExp = new Date().getTime() - this.tokenExpTime.getTime();
+            // reset timer
+            this.setAuthTimer(timeUntilTokenExp); // if the value is negative, the timer will
+                                                  // immediately trigger refreshTokenOrLogout();
+            //this.router.navigate(['authenticated-user', 'user-profile']);
             this.router.navigate(['authenticated-user', 'scheduling', 'landing']);
           } else {
+            //console.log('refresh token expired. Logging out...')
             this.logout();
+            //return;
           }
       } else {
+        //console.log('Token info incomplete. Logging out...');
         this.logout();
+        //return;
       }
     } else {
+      //console.log('Token info undefined. Logging out...');
       this.logout();
     }
   }
@@ -114,6 +102,7 @@ export class AuthService { // testing out alternative version with subsription f
       // Get the script element by ID
       const scriptElement = document.getElementById('encryption-config');
       if (!scriptElement) {
+        //'Encryption configuration not found'
         return;
       }
       // Parse the JSON content from the script tag
@@ -125,6 +114,7 @@ export class AuthService { // testing out alternative version with subsription f
       scriptElement.remove();
       
     } catch (error) {
+      //console.error('Error loading encryption configuration:', error);
       return;
     }
   }
@@ -142,7 +132,6 @@ export class AuthService { // testing out alternative version with subsription f
     this.loginErrorListener.next(false);
   }
 
-
   private clearNgrxStore():void {
     this.store.dispatch(new RecurringClassAppliedMonthlysCleared());
     this.store.dispatch(new RecurringClassesCleared());
@@ -151,6 +140,10 @@ export class AuthService { // testing out alternative version with subsription f
     this.store.dispatch(new StudentsOrClassesCleared());
     this.store.dispatch(new UserProfileCleared());
   }
+
+  //private createSixHourTimeString() {
+  //  return  Math.floor(Date.now() / (6 * 60 * 60 * 1000)).toString(); 
+  //}
 
   // public for testing purposes
   public fetchRefreshToken() {
@@ -166,8 +159,8 @@ export class AuthService { // testing out alternative version with subsription f
           dtToken.setMinutes(dtToken.getMinutes() + environment.tokenMinsAmount);
           dtToken.setSeconds(dtToken.getSeconds() + environment.tokenSecondsAmount);
           this.tokenExpTime = dtToken;
+          this.setAuthTimer(environment.authTimerAmount); // 50000 (50 seconds) // 285000 (4.75 minutes)
           
-          // Save the updated auth data
           this.saveAuthData(
             this.refresh, this.refreshExpTime,
             this.token, this.tokenExpTime
@@ -180,8 +173,9 @@ export class AuthService { // testing out alternative version with subsription f
       });
   }
 
-
   public decryptToken(encryptedToken: string): string|null {
+    //const bytes = AES.decrypt(encryptedToken, `${this.SECRET_KEY}${this.createSixHourTimeString()}`);
+    //return bytes.toString(Utf8);
     try {
       const bytes = AES.decrypt(encryptedToken, `${this.SECRET_KEY}`);
       const decryptedToken = bytes.toString(Utf8);
@@ -193,6 +187,8 @@ export class AuthService { // testing out alternative version with subsription f
 
       return decryptedToken;
     } catch (error) {
+      // Handle any potential errors during decryption
+      //console.error('Decryption failed:', error);
       return null; // or throw an error, or handle it as needed
     }
   }
@@ -203,7 +199,6 @@ export class AuthService { // testing out alternative version with subsription f
     ).toString();
     return encryptedToken
   }
-
 
   private getAuthData():AuthDataModel | undefined {
     const token = localStorage.getItem('token');
@@ -246,7 +241,6 @@ export class AuthService { // testing out alternative version with subsription f
     return this.loginErrorListener.asObservable();
   }
 
-
   login(username: string, password: string): void {
     const authData: AuthLoginModel = {username: username, password: password};
     this.http.post<AuthLoginResponseModel>(
@@ -264,19 +258,15 @@ export class AuthService { // testing out alternative version with subsription f
           dtToken.setSeconds(dtToken.getSeconds() + environment.tokenSecondsAmount);
           this.tokenExpTime = dtToken;
           const dtRfrshTken:Date = new Date();
-          
+          // for testing, the refresh expires in 2 mins and 50 seconds
+          // in production, the refresh expires in 23 hours and 45 minutes
           dtRfrshTken.setHours(dtRfrshTken.getHours() + environment.tokenRefreshHoursAmount);
           dtRfrshTken.setMinutes(dtRfrshTken.getMinutes() + environment.tokenRefreshMinsAmount);
           dtRfrshTken.setSeconds(dtRfrshTken.getSeconds() + environment.tokenRefreshSecondsAmount);
           this.refreshExpTime = new Date(dtRfrshTken);
-          
-          // Save auth data and start token monitoring
+          this.setAuthTimer(environment.authTimerAmount); // 285000 (4 minutes 45 seconds) // 50000 (50 seconds)
           this.saveAuthData(this.refresh, this.refreshExpTime,
             this.token, this.tokenExpTime);
-            
-          // Start the token monitoring system
-          this.startTokenExpirationTimer();
-          
           this.router.navigate(['authenticated-user', 'scheduling', 'landing']);
         } else {
           this.loginErrorListener.next(true);
@@ -297,70 +287,15 @@ export class AuthService { // testing out alternative version with subsription f
     }
   }
 
- // Start a more reliable token expiration monitoring system using interval
-  private startTokenExpirationTimer() {
-    // Clear any existing timer
-    this.stopTokenExpirationTimer();
-    
-    // Create a more reliable monitoring system using intervals
-    this.tokenSubscription = interval(this.checkIntervalMs)
-      .pipe(
-        takeWhile(() => this.isAuthenticated)
-      )
-      .subscribe(() => {
-        // Check if token is about to expire (within 1 minute)
-        const now = new Date();
-        const expiresIn = this.tokenExpTime.getTime() - now.getTime();
-        
-        // If token expires in less than 1 minute and user was active recently, refresh token
-        if (expiresIn < 60000) {
-          console.log('Token is about to expire, refreshing...');
-          this.refreshTokenOrLogout();
-        }
-        
-        // As an additional safety measure, check if refresh token has expired
-        if (this.refreshExpTime < now) {
-          console.log('Refresh token expired');
-          this.logout();
-        }
-      });
-    
-    // Add event listener for visibility changes for mobile support
-    document.addEventListener('visibilitychange', this.handleVisibilityChange.bind(this));
-  }
-  
- // Handle browser visibility changes (when app comes to foreground)
-  private handleVisibilityChange() {
-    if (document.visibilityState === 'visible' && this.isAuthenticated) {
-      // Check token when app comes back to foreground
-      const now = new Date();
-      if (this.tokenExpTime <= now) {
-        console.log('Token has expired while app was in background');
-        this.refreshTokenOrLogout();
-      }
-    }
-  }
-  
-  // Stop token monitoring
-  private stopTokenExpirationTimer() {
-    if (this.tokenSubscription) {
-      this.tokenSubscription.unsubscribe();
-      this.tokenSubscription = null;
-    }
-    
-    // Remove visibility change event listener
-    document.removeEventListener('visibilitychange', this.handleVisibilityChange.bind(this));
-  }
 
   logout() {
     this.isAuthenticated = false;
     this.authStatusListener.next(false);
-    this.stopTokenExpirationTimer();
+    clearTimeout(this.tokenTimer);
     this.clearLocalStorage();
     this.clearNgrxStore();
     this.router.navigate(['/']);
   }
-
 
   private saveAuthData(refresh: string, refreshExpDate: Date,
     token: string, expirationDate: Date) {
@@ -370,4 +305,15 @@ export class AuthService { // testing out alternative version with subsription f
       localStorage.setItem('expiration', expirationDate.toISOString());
   }
 
+  private setAuthTimer(duration: number) {
+    // auth timer is being set');
+    // for this long: ${duration}`);
+    this.tokenTimer = setTimeout(() => {
+      //'time is up
+      let dt:Date = new Date();
+      console.log(dt);
+      this.refreshTokenOrLogout();
+    }, duration);
+  }
+  
 }

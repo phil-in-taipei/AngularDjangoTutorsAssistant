@@ -53,15 +53,11 @@ export function studentsOrClassesReducer(
         case StudentOrClassActionTypes.FreelanceAccountPurchasedHoursSaved:
             // clone with spead operator and add the new value before saving the clone
             let studentOrClass:StudentOrClassModel = { ...action.payload.studentOrClass }
-            console.log('this is the account balance prior to ')
-            console.log(studentOrClass.purchased_class_hours)
             if (studentOrClass.purchased_class_hours) {
                 let newBalance:number = +studentOrClass.purchased_class_hours + +action.payload.class_hours_purchased_or_refunded;
                 studentOrClass.purchased_class_hours = newBalance;    
             }
-        
-            console.log('this is the new account balance:')
-            console.log(studentOrClass.purchased_class_hours);
+    
             return adapter.updateOne(
                 {
                     id: action.payload.studentOrClass.id,
