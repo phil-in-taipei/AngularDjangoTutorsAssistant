@@ -48,18 +48,18 @@ export class AuthService { // testing out alternative version with subsription f
   private refreshExpTime: Date;
   private authStatusListener = new Subject<boolean>();
   private loginErrorListener = new Subject<boolean>();
-  private encryptionKey: string | null = null;
-  private SECRET_KEY = 'djkljadfsaoasddd82k22kds;o;kjpvsajsjlxoijjdis';
+  //private encryptionKey: string | null = null;
+  //private SECRET_KEY = 'djkljadfsaoasddd82k22kds;o;kjpvsajsjlxoijjdis';
   private checkIntervalMs = 30000; // Check every 30 seconds
 
   constructor(
     private http: HttpClient, private router: Router, 
     private store: Store<AppState>
   ) { 
-    this.loadEncryptionKey(); 
-    if (this.encryptionKey) {
-      this.SECRET_KEY = this.encryptionKey
-    }
+    //this.loadEncryptionKey(); 
+    //if (this.encryptionKey) {
+    //  this.SECRET_KEY = this.encryptionKey
+    //}
     // Monitor user activity
     this.setupActivityListeners();
   }
@@ -109,6 +109,10 @@ export class AuthService { // testing out alternative version with subsription f
     }
   }
 
+  // the encryption key fetched from backend in this prototype is insecure,
+  // so this approach was abandoned in favor of using environment variables
+  //  on a separate frontend server with SSR in the future
+  /*
   private loadEncryptionKey(): void {
     try {
       // Get the script element by ID
@@ -128,7 +132,7 @@ export class AuthService { // testing out alternative version with subsription f
       return;
     }
   }
-
+  */
 
   private clearLocalStorage():void {
     localStorage.removeItem('token');
@@ -183,7 +187,9 @@ export class AuthService { // testing out alternative version with subsription f
 
   public decryptToken(encryptedToken: string): string|null {
     try {
-      const bytes = AES.decrypt(encryptedToken, `${this.SECRET_KEY}`);
+      const bytes = AES.decrypt(
+        encryptedToken, environment.serial//`${this.SECRET_KEY}`
+      );
       const decryptedToken = bytes.toString(Utf8);
 
       // Add validation to check if the decrypted token is valid
@@ -199,7 +205,7 @@ export class AuthService { // testing out alternative version with subsription f
 
   public encryptToken(authToken: string): string {
     const encryptedToken: string = AES.encrypt(
-      authToken, `${this.SECRET_KEY}`
+      authToken, environment.serial//`${this.SECRET_KEY}`
     ).toString();
     return encryptedToken
   }

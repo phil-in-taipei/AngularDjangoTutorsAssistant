@@ -19,15 +19,23 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from django.views.generic import TemplateView
 
+"""
 class AngularAppView(TemplateView):
     template_name = "index.html"
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # this can be used to pass any customized data to frontend
+        # for SPA configuration ie app name, color variables etc.
+        # the encryption key in this prototype is insecure
+        # so this approach was abandoned in favor of environment variables
+        # on seperate frontend server with SSR
         context['encryption_config'] = {
             'frontend_encryption_key': settings.FRONTEND_ENCRYPTION_KEY
         }
         return context
+"""
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -38,5 +46,5 @@ urlpatterns = [
     path('api/schools/', include('school.urls')),
     path('api/scheduling/', include('class_scheduling.urls')),
     path('api/accounts/', include('student_account.urls')),
-    re_path(r'^.*$', AngularAppView.as_view()),
+    re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),
 ]
