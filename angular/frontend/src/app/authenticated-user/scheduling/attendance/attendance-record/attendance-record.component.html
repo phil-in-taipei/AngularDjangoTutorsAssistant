@@ -82,8 +82,20 @@
                   {{ pastClass.start_time.slice(0, -3) }}-{{ pastClass.finish_time.slice(0, -3) }}
                 </p>
               </th>
-              <th class="col bg-transparent">
+              <th class="col bg-transparent hidden-small">
                 <p class="capitalize">{{ pastClass.class_status.toString().split('_').join(' ') }}</p>
+              </th>
+              <th class="col bg-transparent small-scr">
+                <p 
+                  *ngIf="pastClass.class_status !== 'same_day_cancellation'; else no_show"
+                  class="capitalize"
+                >
+                  {{ pastClass.class_status.toString().split('_').join(' ') }}
+                </p>
+                <ng-template #no_show>
+                  <p>No Show</p>
+                </ng-template>
+
               </th>
               <th class="col hidden-small">
                 <p>{{ pastClass.class_content }}</p>
