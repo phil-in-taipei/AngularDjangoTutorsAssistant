@@ -7,7 +7,7 @@
               data-testid="password-confirmation-failure-msg"
               class="alert alert-danger alert-dismissible fade show" role="alert"
             >
-              <h3>{{ passwordErrorMsg }}</h3>
+              <h3 class="text-center">{{ passwordErrorMsg }}</h3>
               <button type="button" class="btn-close" (click)="onClearFormPasswordError()"
               data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -17,17 +17,17 @@
               data-testid="registration-api-failure-msg"
               class="alert alert-danger alert-dismissible fade show" role="alert"
             >
-              <h3>{{ apiErrorMsg }}</h3>
+              <h3 class="text-center">{{ apiErrorMsg }}</h3>
               <button type="button" class="btn-close" (click)="onClearApiError()"
               data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
           </div>
           <div *ngIf="apiSuccessResponse" class="container">
-            <div *ngIf="apiSuccessResponse.message == 'Account successfully created for user'">
+            <div *ngIf="apiSuccessResponse.message">
                 <div data-testid="registration-success-msg"
                   class="alert alert-primary alert-dismissible fade show" 
                   role="alert">
-                  <h3>{{ apiSuccessResponse.message }}</h3>
+                  <h3 class="text-center">{{ apiSuccessResponse.message }}</h3>
                   <button type="button" class="btn-close" (click)="onClearApiSuccessResponse()"
                   data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -96,7 +96,7 @@
                   <input
                   class="form-control"
                   type="text"
-                  minlength="5"
+                  minlength="2"
                   rows="4"
                   name="surname"
                   ngModel
@@ -114,7 +114,7 @@
                   <input
                   class="form-control"
                   type="text"
-                  minlength="5"
+                  minlength="2"
                   rows="4"
                   name="given_name"
                   ngModel
