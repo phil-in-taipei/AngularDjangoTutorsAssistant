@@ -53,7 +53,10 @@ export function studentsOrClassesReducer(
         case StudentOrClassActionTypes.FreelanceAccountPurchasedHoursSaved:
             // clone with spead operator and add the new value before saving the clone
             let studentOrClass:StudentOrClassModel = { ...action.payload.studentOrClass }
-            if (studentOrClass.purchased_class_hours) {
+            if (
+                studentOrClass.purchased_class_hours !== null && 
+                studentOrClass.purchased_class_hours !== undefined
+            ) {
                 let newBalance:number = +studentOrClass.purchased_class_hours + +action.payload.class_hours_purchased_or_refunded;
                 studentOrClass.purchased_class_hours = newBalance;    
             }
@@ -65,7 +68,7 @@ export function studentsOrClassesReducer(
                 },
                 {
                     ...state, errorMessage:undefined,
-                    successMessage: `The number of purchased hours is: ${studentOrClass.purchased_class_hours}`
+                    successMessage: `Total purchased hours: ${studentOrClass.purchased_class_hours}`
                 }
             );
 
@@ -74,7 +77,10 @@ export function studentsOrClassesReducer(
             // clone with spead operator and add the new value before saving the clone
             let freelanceAccount:StudentOrClassModel = { ...action.payload.studentOrClass }
             
-            if (freelanceAccount.purchased_class_hours) {
+            if (
+                freelanceAccount.purchased_class_hours !== null && 
+                freelanceAccount.purchased_class_hours !== undefined
+            ) {
                 let updatedBalance:number = +freelanceAccount.purchased_class_hours - +action.payload.class_hours_purchased_or_refunded;
                 freelanceAccount.purchased_class_hours = updatedBalance;    
             }
@@ -86,7 +92,7 @@ export function studentsOrClassesReducer(
                 },
                 {
                     ...state, errorMessage:undefined,
-                    successMessage: `The number of purchased hours is: ${freelanceAccount.purchased_class_hours}`
+                    successMessage: `Total purchased hours: ${freelanceAccount.purchased_class_hours}`
                 }
             );  
 

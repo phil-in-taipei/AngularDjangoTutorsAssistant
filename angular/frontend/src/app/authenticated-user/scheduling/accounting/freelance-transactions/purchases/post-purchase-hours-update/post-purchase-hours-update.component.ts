@@ -41,8 +41,6 @@ export class PostPurchaseHoursUpdateComponent implements OnInit{
       class_hours_purchased_or_refunded: this.purchaseRecord.class_hours_purchased_or_refunded, 
       studentOrClass: this.freelanceAccount
     }
-    console.log("*******PAYLOAD*******")
-    console.log(payload)
     this.store.dispatch(
       new FreelanceAccountPurchasedHoursSaved(payload)
     );

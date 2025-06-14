@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { AsyncPipe, NgIf } from '@angular/common';
-import { first, Subscription } from 'rxjs';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { NgIf } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 
@@ -16,7 +16,6 @@ import {
   selector: 'app-login',
   standalone: true,
   imports: [
-    AsyncPipe,
     FormsModule,
     NgIf,
     UnauthenticatedFooterComponent,
@@ -25,7 +24,7 @@ import {
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
 
   isErrorLogin:boolean = false;
   private errorLogin$: Subscription;
@@ -45,6 +44,10 @@ export class LoginComponent implements OnInit {
 
   onClearLoginError() {
     this.authService.clearLoginError();
+  }
+
+  ngOnDestroy() {
+    this.errorLogin$.unsubscribe();
   }
 
   onLogin(form: NgForm) {

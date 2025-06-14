@@ -1,12 +1,18 @@
 <div *ngIf="successMsg$ | async as successMsg">
     <div class="alert alert-secondary alert-dismissible fade show" role="alert">
-      <h6>{{ successMsg }}</h6>
+      <h5 class="text-center">{{ successMsg }}</h5>
       <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
       data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     <div>
-      <h4>Purchased hours: {{ purchaseRecord.class_hours_purchased_or_refunded }}</h4>
-      <h4>Transaction Amount: NT${{ purchaseRecord.transaction_amount }}</h4>
-      <h4>New balance: {{ freelanceAccount.purchased_class_hours }}</h4>
+      <h4 class="text-center">
+        Updated Account: {{ freelanceAccount.student_or_class_name }}
+      </h4>
+      <h4 class="text-center">
+        Newly purchased hours: {{ purchaseRecord.class_hours_purchased_or_refunded }}
+      </h4>
+      <h4 class="text-center">
+        Transaction Amount: NT${{ purchaseRecord.transaction_amount }}
+      </h4>
     </div>
 </div>

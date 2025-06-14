@@ -1,7 +1,7 @@
 <div class="container">
   <div *ngIf="errorMessage">
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-      <h4 class="text-danger">{{ errorMessage }}</h4>
+      <h5 class="text-center">{{ errorMessage }}</h5>
       <button type="button" class="btn-close" (click)="onClearErrorMessage()"
       data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
@@ -9,7 +9,7 @@
 
   <div *ngIf="freelanceTuitionTransactionResponse; else purchaseForm">
       <div class="alert alert-secondary alert-dismissible fade show" role="alert">
-          <h6>Purchase Successfully Submitted!</h6>
+          <h5 class="text-center">Purchase Successfully Submitted!</h5>
           <button type="button" class="btn-close" (click)="onClearNewlySubmittedTransactionResponse()"
           data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
