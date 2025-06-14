@@ -5,7 +5,7 @@ from user_profiles.models import UserProfile
 
 
 class School(models.Model):
-    school_name = models.CharField(max_length=200, unique=True)
+    school_name = models.CharField(max_length=200)
     address_line_1 = models.CharField(max_length=120)
     address_line_2 = models.CharField(max_length=120)
     contact_phone = models.CharField(
@@ -27,4 +27,5 @@ class School(models.Model):
         return F"{self.scheduling_teacher}: {self.school_name}"
 
     class Meta:
+        unique_together = ('scheduling_teacher', 'school_name')
         ordering = ['scheduling_teacher', 'school_name']
