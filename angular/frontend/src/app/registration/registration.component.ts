@@ -21,7 +21,6 @@ import { RegistrationService } from './registration.service';
   imports: [
     UnauthenticatedHeaderComponent, 
     UnauthenticatedFooterComponent,
-    AsyncPipe,
     NgIf,
     FormsModule,
   ],

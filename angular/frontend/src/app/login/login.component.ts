@@ -47,7 +47,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.errorLogin$.unsubscribe();
+    if (this.errorLogin$) {
+      this.errorLogin$.unsubscribe();
+    }
   }
 
   onLogin(form: NgForm) {
