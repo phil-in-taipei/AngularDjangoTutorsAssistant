@@ -1,31 +1,76 @@
+/* Remove borders from Bootstrap tables (large/medium screens) */
+.class-info-display {
+    border: 1px solid #758d97;
+    border-radius: 3%;
+}
 
-  
-table {
-      border:1px solid #758d97;
-      border-collapse: collapse;
-  }
-  
-table tr {
-    border-left: 1px solid #758d97;
-    border-right: 1px solid #758d97;
-      border-bottom: 1pt solid #758d97;
-      padding: 1em;
+.table {
+  border-collapse: separate;
 }
-  
-table th {
-      padding: 1em;
+
+.table tr {
+    border-top: 1pt solid #758d97;
+    padding: 1em;
 }
-  
-table td {
-    border-left: 1px solid #758d97;
-    border-right: 1px solid #758d97;
-        padding: 1em;
+
+
+/* Remove border-top from the first row in each table */
+.table thead tr:first-child {
+  border-top: none;
 }
-  
+
+.table tbody tr {
+    border-bottom: 1pt solid #758d97;
+}
+
+.class-records-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.table th {
+  border: none !important;
+  padding: 1em;
+  color: #758d97;
+}
+
+.table td {
+  border: none !important;
+  padding: 1em;
+  color: #758d97;
+}
+
+/* Keep borders only for profile-table (small screens) */
+.profile-table {
+  border: 1px solid #758d97;
+  border-collapse: collapse;
+}
+
+.profile-table tr {
+  border-left: 1px solid #758d97;
+  border-right: 1px solid #758d97;
+  border-bottom: 1pt solid #758d97;
+  padding: 1em;
+}
+
+.profile-table th {
+  border-left: 1px solid #758d97;
+  border-right: 1px solid #758d97;
+  padding: 1em;
+  color: #758d97;
+}
+
+.profile-table td {
+  border-left: 1px solid #758d97;
+  border-right: 1px solid #758d97;
+  padding: 1em;
+  color: #758d97;
+}
+
+/* Keep your existing HR styles */
 hr.thick-or {
-    border: 2px solid #cb410b;
+  border: 2px solid #cb410b;
 }
-  
+
 hr.thin-white {
-    border: 1px solid white;
+  border: 1px solid white;
 }

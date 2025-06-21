@@ -42,8 +42,77 @@
           </app-edit-class-status-response>
         </div>
 
+         <div class="container hidden-small" [hidden]="rescheduleFormVisible || editStatusFormVisible">
+            <hr class="thin-br"/>
+
+            <div class="container class-info-display">
+            <table class="table bg-transparent">
+                <thead class="bg-transparent">
+                    <tr class="bg-transparent row">
+                      <th class="text-center bg-transparent col"><h4>Date</h4></th>
+                      <th class="text-center bg-transparent col"><h4>Time</h4></th>
+                      <th class="text-center bg-transparent col"><h4>Duration</h4></th>
+
+                    </tr>
+                </thead>
+                  <tbody class="bg-transparent">
+                    <tr class="bg-transparent row">
+                      <td class="text-center bg-transparent col">
+                        {{ 
+                          (scheduledClass.date.split('-') || []).length === 3 ? 
+                          monthsAndIntegers[(+scheduledClass.date.split('-')[1]) - 1][0] + ' ' + 
+                          (+scheduledClass.date.split('-')[2]) + ', ' + 
+                          scheduledClass.date.split('-')[0] : 
+                          scheduledClass.date 
+                        }}
+                      </td>
+                      <td class="text-center bg-transparent col">
+                        {{ scheduledClass.start_time.slice(0, -3) }} -
+                          {{scheduledClass.finish_time.slice(0, -3) }}
+                      </td>
+                      <td class="text-center bg-transparent col">
+                          <app-time-in-hours
+                          [startTime]=scheduledClass.start_time
+                          [finishTime]=scheduledClass.finish_time
+                        ></app-time-in-hours> hour(s)
+                      </td>
+
+                    </tr>
+                  </tbody>
+            </table>
+
+            <table class="table bg-transparent class-records-table">
+                <thead class="bg-transparent">
+                    <tr class="bg-transparent row">
+                      <th class="text-center bg-transparent col"><h4>Contents</h4></th>
+                      <th class="text-center bg-transparent col"><h4>Status</h4></th>
+                      <th class="text-center bg-transparent col"><h4>Notes</h4></th>
+                    </tr>
+                </thead>
+                  <tbody class="bg-transparent">
+                    <tr class="bg-transparent row">
+                      <td class="text-center bg-transparent col">{{ scheduledClass.class_content }}</td>
+                      <td
+                        *ngIf="scheduledClass.class_status==='cancellation_request'"
+                          class="errMsg text-capitalize text-center bg-transparent col">
+                          {{ scheduledClass.class_status.split('_').join(' ') }}
+                      </td>
+                      <td class="text-capitalize text-center bg-transparent col"
+                        *ngIf="scheduledClass.class_status!=='cancellation_request'">
+                        {{ scheduledClass.class_status.split('_').join(' ') }}
+                      </td>
+                      <td class="text-center bg-transparent col">
+                        {{ scheduledClass.teacher_notes }}
+                      </td>
+                    </tr>
+                  </tbody>
+            </table>
+            </div>
+        </div>
+
+
         <hr class="thin-br"/>
-        <div class="container" [hidden]="rescheduleFormVisible || editStatusFormVisible">
+        <div class="container small-scr" [hidden]="rescheduleFormVisible || editStatusFormVisible">
           <table class="profile-table" style="width:100%">
               <tr>
                   <th><h4>Date</h4></th>
@@ -60,8 +129,7 @@
               <tr>
                   <th><h4>Time</h4></th>
                   <td>
-                    <h4>{{ scheduledClass.start_time.slice(0, -3) }} -
-                      {{scheduledClass.finish_time.slice(0, -3) }} / 
+                    <h4>{{ scheduledClass.start_time.slice(0, -3) }} - {{scheduledClass.finish_time.slice(0, -3) }} / 
                       <app-time-in-hours
                       [startTime]=scheduledClass.start_time
                       [finishTime]=scheduledClass.finish_time
