@@ -91,18 +91,28 @@
                 </thead>
                   <tbody class="bg-transparent">
                     <tr class="bg-transparent row">
-                      <td class="text-center bg-transparent col">{{ scheduledClass.class_content }}</td>
+                      <td class="text-center bg-transparent col">
+                        <p>
+                          {{ scheduledClass.class_content }}
+                        </p>
+                      </td>
                       <td
                         *ngIf="scheduledClass.class_status==='cancellation_request'"
                           class="errMsg text-capitalize text-center bg-transparent col">
-                          {{ scheduledClass.class_status.split('_').join(' ') }}
+                          <p>
+                            {{ scheduledClass.class_status.split('_').join(' ') }}
+                          </p>
                       </td>
                       <td class="text-capitalize text-center bg-transparent col"
                         *ngIf="scheduledClass.class_status!=='cancellation_request'">
-                        {{ scheduledClass.class_status.split('_').join(' ') }}
+                        <p>
+                          {{ scheduledClass.class_status.split('_').join(' ') }}
+                        </p>
                       </td>
                       <td class="text-center bg-transparent col">
-                        {{ scheduledClass.teacher_notes }}
+                        <p>
+                          {{ scheduledClass.teacher_notes }}
+                        </p>
                       </td>
                     </tr>
                   </tbody>
