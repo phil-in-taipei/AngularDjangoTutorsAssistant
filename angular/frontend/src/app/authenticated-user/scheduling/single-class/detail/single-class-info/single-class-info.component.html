@@ -58,25 +58,31 @@
                   <tbody class="bg-transparent">
                     <tr class="bg-transparent row">
                       <td class="text-center bg-transparent col">
-                        {{ 
-                          (scheduledClass.date.split('-') || []).length === 3 ? 
-                          monthsAndIntegers[(+scheduledClass.date.split('-')[1]) - 1][0] + ' ' + 
-                          (+scheduledClass.date.split('-')[2]) + ', ' + 
-                          scheduledClass.date.split('-')[0] : 
-                          scheduledClass.date 
-                        }}
-                      </td>
-                      <td class="text-center bg-transparent col">
-                        {{ scheduledClass.start_time.slice(0, -3) }} -
-                          {{scheduledClass.finish_time.slice(0, -3) }}
-                      </td>
-                      <td class="text-center bg-transparent col">
-                          <app-time-in-hours
-                          [startTime]=scheduledClass.start_time
-                          [finishTime]=scheduledClass.finish_time
-                        ></app-time-in-hours> hour(s)
-                      </td>
+                        <p>
+                          {{ 
+                            (scheduledClass.date.split('-') || []).length === 3 ? 
+                            monthsAndIntegers[(+scheduledClass.date.split('-')[1]) - 1][0] + ' ' + 
+                            (+scheduledClass.date.split('-')[2]) + ', ' + 
+                            scheduledClass.date.split('-')[0] : 
+                            scheduledClass.date 
+                          }}
+                        </p>
 
+                      </td>
+                      <td class="text-center bg-transparent col">
+                        <p>
+                          {{ scheduledClass.start_time.slice(0, -3) }} -
+                          {{scheduledClass.finish_time.slice(0, -3) }}
+                        </p>
+                      </td>
+                      <td class="text-center bg-transparent col">
+                        <p>
+                          <app-time-in-hours
+                            [startTime]=scheduledClass.start_time
+                            [finishTime]=scheduledClass.finish_time
+                          ></app-time-in-hours> hour(s)
+                        </p>
+                      </td>
                     </tr>
                   </tbody>
             </table>
