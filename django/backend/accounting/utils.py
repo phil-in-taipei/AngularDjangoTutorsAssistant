@@ -7,7 +7,7 @@ from class_scheduling.utils import determine_duration_of_class_time
 from student_account.models import StudentOrClass
 from .models import PurchasedHoursModificationRecord
  
-#from pprint import pprint
+from pprint import pprint
 
 
 def create_purchased_hours_modification_record_for_tuition_transaction(
@@ -199,6 +199,36 @@ def organize_scheduled_classes(classes):
         })
     
     return organized_data
+
+
+# this will prepare data for a school report in which 
+# each student or classes' recorded classes will be sub-sorted by 
+# duration of class time. This is to match the format of the accouning report
+# at my current school
+def organize_scheduled_classes_by_duration_for_emailed_report(organized_classes):
+    school_data = organized_classes['classes_in_schools'][0]
+    reorganized_school_report = {
+        "school_name": school_data['school_name'],
+        "students_classes": []
+    }
+    students_classes = school_data['students_classes']
+    for batch_of_classes in students_classes:
+        reorganized_batch = {
+            'student_or_class_name': batch_of_classes['student_or_class_name'],
+            'scheduled_classes': {}
+        }
+        scheduled_classes = batch_of_classes['scheduled_classes']
+        scheduled_classes_sorted_by_duration = {}
+        for scheduled_class in scheduled_classes:
+            duration_of_class_time = determine_duration_of_class_time(
+                scheduled_class.start_time, scheduled_class.finish_time
+            )
+            if duration_of_class_time not in scheduled_classes_sorted_by_duration:
+                scheduled_classes_sorted_by_duration[duration_of_class_time] = [scheduled_class]
+            else: scheduled_classes_sorted_by_duration[duration_of_class_time].append(scheduled_class)
+        reorganized_batch["scheduled_classes"] = scheduled_classes_sorted_by_duration
+        reorganized_school_report['students_classes'].append(reorganized_batch)
+    return reorganized_school_report
 
 
 def process_school_classes(accounting_data, organized_classes_data):
@@ -436,5 +466,25 @@ def generate_estimated_monthly_earnings_report_for_single_school(
             "student_reports": [],
             "school_total": float(0)
         }
+
+# this will send an excel file with the monthly report formated
+# so that each students'/class' data will be sorted by duration
+# to match the accounting report format used at my current job
+def generate_and_email_school_monthly_earnings_report_file(
+        teacher, school, month, year
+    ):
+    print("*****Generating School Report*****")
+    classes_during_period = get_scheduled_classes_at_school_during_month_period(
+        teacher, school, month, year
+    )
+    organized_classes_data = organize_scheduled_classes(classes=classes_during_period)
+    pprint(organized_classes_data)
+    print("**********************************************************")
+    classes_data_sorted_by_duration = organize_scheduled_classes_by_duration_for_emailed_report(
+        organized_classes_data=organized_classes_data
+    )
+    pprint(classes_data_sorted_by_duration)
+    return classes_data_sorted_by_duration
+
 
 

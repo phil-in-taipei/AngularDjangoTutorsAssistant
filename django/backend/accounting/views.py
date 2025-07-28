@@ -20,7 +20,8 @@ from .utils import (
     create_timestamps_for_beginning_and_end_of_month_and_year,
     generate_estimated_earnings_report,
     generate_estimated_monthly_earnings_report_for_single_school,
-    generate_estimated_earnings_report_for_single_school_within_date_range
+    generate_estimated_earnings_report_for_single_school_within_date_range,
+    generate_and_email_school_monthly_earnings_report_file
 )
 
 
@@ -56,6 +57,38 @@ class EstimatedSchoolEarningsByMonthAndYear(APIView):
         )
         
         return Response(monthly_accounting_report)
+
+
+
+# this will send an excel file with the monthly report formated
+# so that each students'/class' data will be sorted by duration
+# to match the accounting report format used at my current job
+class EstimatedSchoolEarningsEmailReportByMonthAndYear(APIView):
+    permission_classes = (
+        IsAuthenticated,
+    )
+
+    def get(self, *args, **kwargs):
+        school_id = self.kwargs.get("school_id")
+        school = get_object_or_404(School, id=school_id)
+        teacher = get_object_or_404(UserProfile, user=self.request.user)
+        month = self.kwargs.get("month")
+        year = self.kwargs.get("year")
+        try:
+            data = generate_and_email_school_monthly_earnings_report_file(
+                    teacher=teacher, school=school, 
+                    month=month, year=year
+                )
+            print("-------------------------------------------------------------")
+            #print(data)
+            return Response({"message": "Data Recieved"}
+            )
+        except Exception as e:
+            return Response(
+                {"Error": "There was an error generating the report"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
 
 
 class EstimatedSchoolEarningsWithinDateRange(APIView):

@@ -6,7 +6,8 @@ from .views import (
     FreelanceTuitionTransactionsListViewByMonthAndYear,
     FreelanceTuitionTransactionViewSet,
     PurchasedHoursModificationRecordsListViewByAccountAndMonth,
-    EstimatedSchoolEarningsByMonthAndYear, 
+    EstimatedSchoolEarningsByMonthAndYear,
+    EstimatedSchoolEarningsEmailReportByMonthAndYear, 
     EstimatedSchoolEarningsWithinDateRange
 )
 
@@ -21,6 +22,11 @@ urlpatterns = [
         'estimated-earnings-by-month-year/<int:month>/<int:year>/',
         EstimatedEarningsByMonthAndYear.as_view(),
         name='estimated-earnings-by-month-year'
+    ),
+    path(
+        'email-estimated-school-earnings-by-month-year/<int:month>/<int:year>/<int:school_id>/',
+        EstimatedSchoolEarningsEmailReportByMonthAndYear.as_view(),
+        name='email-estimated-school-earnings-by-month-year'
     ),
     path(
         'estimated-school-earnings-by-month-year/<int:month>/<int:year>/<int:school_id>/',
