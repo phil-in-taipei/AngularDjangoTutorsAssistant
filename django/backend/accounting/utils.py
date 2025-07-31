@@ -10,6 +10,34 @@ from .models import PurchasedHoursModificationRecord
 from pprint import pprint
 
 
+def format_date_range_same_month(dates):
+    if not dates:
+        return ""
+    
+    # Convert to date objects and sort
+    date_objects = []
+    for date in dates:
+        if hasattr(date, 'date'):
+            date_objects.append(date.date())
+        else:
+            date_objects.append(date)
+    
+    date_objects.sort()
+    
+    # Assuming all dates are in the same month
+    first_date = date_objects[0]
+    month = first_date.month
+    
+    # Get all days
+    days = [date.day for date in date_objects]
+    
+    # Format: first day with month, rest just days
+    if len(days) == 1:
+        return f"{month}/{days[0]}"
+    else:
+        return f"{month}/{days[0]}, " + ", ".join(str(day) for day in days[1:])
+
+
 def create_purchased_hours_modification_record_for_tuition_transaction(
         previous_hours_purchased, freelance_tuition_transaction_record,
 ):
@@ -232,7 +260,7 @@ def organize_scheduled_classes_by_duration_for_emailed_report(organized_classes)
     return reorganized_school_report
 
 
-def organize_sorted_classes_by_durations_into_list_of_dicts_for_dataframe_prep(
+def organize_sorted_classes_by_durations_into_list_of_dicts_for_excel_sheet(
         classes_data_sorted_by_duration
     ):
     print("inside next function")
@@ -244,13 +272,37 @@ def organize_sorted_classes_by_durations_into_list_of_dicts_for_dataframe_prep(
         
         #print(student_or_class_data)
         for k, v in student_or_class_data['scheduled_classes'].items():
-            #print(k, v)
-            student_duration_data = {
-                "student_or_class_name": student_or_class_data['student_or_class_name'],
-                "class_duration": k,
-                "scheduled_classes": v,
-            }
-            new_list_of_dicts.append(student_duration_data)
+            print(k, v)
+            classes_with_payments = [
+                scheduled_class 
+                for scheduled_class in v
+                if scheduled_class.class_status in ['same_day_cancellation', 'completed']
+            ]
+            print(classes_with_payments)
+
+            if len(classes_with_payments) > 0:
+                print(":::::These are the classes with payments::::::")
+                pprint(classes_with_payments)
+                print("This is the pay rate")
+                print(classes_with_payments[0])
+                pay_rate = classes_with_payments[0].student_or_class.tuition_per_hour
+                print(pay_rate)
+                pay_per_class = pay_rate * k
+                number_of_classes = len(classes_with_payments)
+                class_dates = [
+                    scheduled_class.date 
+                    for scheduled_class in classes_with_payments
+                ]
+                student_duration_data = {
+                    "student_or_class_name": student_or_class_data['student_or_class_name'],
+                    "scheduled_classes": format_date_range_same_month(class_dates),#classes_with_payments,
+                    "pay rate": pay_rate,
+                    "class_duration": k,
+                    "pay per class": pay_per_class,
+                    "number_of_classes": number_of_classes,
+                    "payment": number_of_classes * pay_per_class
+                }
+                new_list_of_dicts.append(student_duration_data)
     return new_list_of_dicts
 
 
@@ -510,7 +562,7 @@ def generate_and_email_school_monthly_earnings_report_file(
     )
     print('___________________This is the data after sorting by duration________________')
     #pprint(classes_data_sorted_by_duration)
-    classes_sorted_into_list_of_dicts_for_dataframe_prep = organize_sorted_classes_by_durations_into_list_of_dicts_for_dataframe_prep(
+    classes_sorted_into_list_of_dicts_for_dataframe_prep = organize_sorted_classes_by_durations_into_list_of_dicts_for_excel_sheet(
         classes_data_sorted_by_duration
     )
     print("*******************************************************************")
