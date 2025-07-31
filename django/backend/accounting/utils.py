@@ -206,6 +206,7 @@ def organize_scheduled_classes(classes):
 # duration of class time. This is to match the format of the accouning report
 # at my current school
 def organize_scheduled_classes_by_duration_for_emailed_report(organized_classes):
+    print('inside next function')
     school_data = organized_classes['classes_in_schools'][0]
     reorganized_school_report = {
         "school_name": school_data['school_name'],
@@ -229,6 +230,29 @@ def organize_scheduled_classes_by_duration_for_emailed_report(organized_classes)
         reorganized_batch["scheduled_classes"] = scheduled_classes_sorted_by_duration
         reorganized_school_report['students_classes'].append(reorganized_batch)
     return reorganized_school_report
+
+
+def organize_sorted_classes_by_durations_into_list_of_dicts_for_dataframe_prep(
+        classes_data_sorted_by_duration
+    ):
+    print("inside next function")
+    print("this is the data:")
+    #pprint(classes_data_sorted_by_duration)
+    new_list_of_dicts = []
+    for student_or_class_data in classes_data_sorted_by_duration['students_classes']:
+        #print("iteration")
+        
+        #print(student_or_class_data)
+        for k, v in student_or_class_data['scheduled_classes'].items():
+            #print(k, v)
+            student_duration_data = {
+                "student_or_class_name": student_or_class_data['student_or_class_name'],
+                "class_duration": k,
+                "scheduled_classes": v,
+            }
+            new_list_of_dicts.append(student_duration_data)
+    return new_list_of_dicts
+
 
 
 def process_school_classes(accounting_data, organized_classes_data):
@@ -478,13 +502,22 @@ def generate_and_email_school_monthly_earnings_report_file(
         teacher, school, month, year
     )
     organized_classes_data = organize_scheduled_classes(classes=classes_during_period)
-    pprint(organized_classes_data)
+    #pprint(organized_classes_data)
+    print('this is inside the utils function')
     print("**********************************************************")
     classes_data_sorted_by_duration = organize_scheduled_classes_by_duration_for_emailed_report(
-        organized_classes_data=organized_classes_data
+        organized_classes_data
     )
-    pprint(classes_data_sorted_by_duration)
-    return classes_data_sorted_by_duration
+    print('___________________This is the data after sorting by duration________________')
+    #pprint(classes_data_sorted_by_duration)
+    classes_sorted_into_list_of_dicts_for_dataframe_prep = organize_sorted_classes_by_durations_into_list_of_dicts_for_dataframe_prep(
+        classes_data_sorted_by_duration
+    )
+    print("*******************************************************************")
+    print("sorted_again by duration")
+    print("**************************************************************")
+    pprint(classes_sorted_into_list_of_dicts_for_dataframe_prep)
+    return classes_sorted_into_list_of_dicts_for_dataframe_prep
 
 
 
