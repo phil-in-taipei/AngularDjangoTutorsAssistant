@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 
 from user_profiles.models import UserProfile
 from school.models import School
+from .email_utils import send_class_data_excel_via_email
 
 from .models import (
     FreelanceTuitionTransactionRecord,
@@ -80,7 +81,7 @@ class EstimatedSchoolEarningsEmailReportByMonthAndYear(APIView):
                     month=month, year=year
                 )
             print("-------------------------------------------------------------")
-            #print(data)
+            send_class_data_excel_via_email(data)
             return Response({"message": "Data Recieved"}
             )
         except Exception as e:

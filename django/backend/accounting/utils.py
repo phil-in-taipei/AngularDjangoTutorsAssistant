@@ -287,8 +287,9 @@ def organize_sorted_classes_by_durations_into_list_of_dicts_for_excel_sheet(
                 print(classes_with_payments[0])
                 pay_rate = classes_with_payments[0].student_or_class.tuition_per_hour
                 print(pay_rate)
-                pay_per_class = pay_rate * k
+                #pay_per_class = pay_rate * k
                 number_of_classes = len(classes_with_payments)
+                total_hours = number_of_classes * k
                 class_dates = [
                     scheduled_class.date 
                     for scheduled_class in classes_with_payments
@@ -298,13 +299,13 @@ def organize_sorted_classes_by_durations_into_list_of_dicts_for_excel_sheet(
                     "scheduled_classes": format_date_range_same_month(class_dates),#classes_with_payments,
                     "pay rate": pay_rate,
                     "class_duration": k,
-                    "pay per class": pay_per_class,
+                    "total_hours": total_hours,
+                    #"pay per class": pay_per_class,
                     "number_of_classes": number_of_classes,
-                    "payment": number_of_classes * pay_per_class
+                    "payment": total_hours * pay_rate
                 }
                 new_list_of_dicts.append(student_duration_data)
     return new_list_of_dicts
-
 
 
 def process_school_classes(accounting_data, organized_classes_data):
@@ -408,6 +409,7 @@ def sort_accounting_reports_by_name(reports):
         list: The sorted list of accounting report dictionaries.
     """
     return sorted(reports, key=lambda report: report['name'])
+
 
 def sort_school_reports_alphabetically(accounting_data):
     for school_report in accounting_data["classes_in_schools"]:
@@ -562,14 +564,14 @@ def generate_and_email_school_monthly_earnings_report_file(
     )
     print('___________________This is the data after sorting by duration________________')
     #pprint(classes_data_sorted_by_duration)
-    classes_sorted_into_list_of_dicts_for_dataframe_prep = organize_sorted_classes_by_durations_into_list_of_dicts_for_excel_sheet(
+    classes_sorted_into_list_of_dicts_for_excel_prep = organize_sorted_classes_by_durations_into_list_of_dicts_for_excel_sheet(
         classes_data_sorted_by_duration
     )
     print("*******************************************************************")
     print("sorted_again by duration")
     print("**************************************************************")
-    pprint(classes_sorted_into_list_of_dicts_for_dataframe_prep)
-    return classes_sorted_into_list_of_dicts_for_dataframe_prep
+    pprint(classes_sorted_into_list_of_dicts_for_excel_prep)
+    return classes_sorted_into_list_of_dicts_for_excel_prep
 
 
 
