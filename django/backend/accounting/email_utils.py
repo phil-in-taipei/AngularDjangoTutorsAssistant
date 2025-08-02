@@ -23,6 +23,10 @@ def send_class_data_excel_via_email(data):
         cell = ws.cell(row=1, column=col_num, value=header)
         cell.alignment = Alignment(horizontal="center", vertical="center")
 
+    total_pay = 0
+    total_hours = 0
+    last_row = 0
+
     # Write data rows
     for row_num, entry in enumerate(data, start=2):
         ws.cell(row=row_num, column=2, value=f"{entry['student_or_class_name']} {entry['scheduled_classes']}")
@@ -32,6 +36,13 @@ def send_class_data_excel_via_email(data):
         ws.cell(row=row_num, column=6, value=entry['pay rate'])
         ws.cell(row=row_num, column=7, value=0)  # Taxi(A)
         ws.cell(row=row_num, column=8, value=entry['payment'])
+        total_pay += entry['payment']
+        total_hours += entry['total_hours']
+        last_row = row_num
+
+    ws.cell(row=last_row + 1, column=5, value=total_hours)
+    ws.cell(row=last_row + 1, column=8, value=total_pay)
+
 
     # Save to BytesIO buffer
     excel_stream = io.BytesIO()
