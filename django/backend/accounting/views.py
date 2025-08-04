@@ -75,14 +75,17 @@ class EstimatedSchoolEarningsEmailReportByMonthAndYear(APIView):
         teacher = get_object_or_404(UserProfile, user=self.request.user)
         month = self.kwargs.get("month")
         year = self.kwargs.get("year")
+        teacher_name = teacher.given_name
         try:
             data = generate_and_email_school_monthly_earnings_report_file(
                     teacher=teacher, school=school, 
                     month=month, year=year
                 )
-            print("-------------------------------------------------------------")
-            send_class_data_excel_via_email(data)
-            return Response({"message": "Data Recieved"}
+            email_address=teacher.contact_email
+            send_class_data_excel_via_email(
+                data, month, year, email_address, teacher_name
+            )
+            return Response({"message": "The report has been emailed to you"}
             )
         except Exception as e:
             return Response(

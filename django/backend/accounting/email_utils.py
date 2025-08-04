@@ -4,12 +4,19 @@ from openpyxl.styles import Alignment
 from django.core.mail import EmailMessage
 
 
-def send_class_data_excel_via_email(data):
+def send_class_data_excel_via_email(
+        data, month, year, email_address, teacher_name
+    ):
     # Create workbook in memory
-    print("In the email sending function")
     wb = Workbook()
     ws = wb.active
     ws.title = "10"
+    date_string = F'{month}/{year}'
+
+    # write date, teacher's name, and email address
+    ws.cell(1, column=1, value=date_string)
+    ws.cell(1, column=2, value=teacher_name)
+    ws.cell(1, column=9, value=email_address)
 
     # Set column B width
     ws.column_dimensions['B'].width = 32.5
@@ -20,7 +27,7 @@ def send_class_data_excel_via_email(data):
         "Total Hrs(TH=T*H)", "Pay per HR(P)", "Taxi(A)", "Total Pay(TP=TH*P+A*T)"
     ]
     for col_num, header in enumerate(headers, start=1):
-        cell = ws.cell(row=1, column=col_num, value=header)
+        cell = ws.cell(row=2, column=col_num, value=header)
         cell.alignment = Alignment(horizontal="center", vertical="center")
 
     total_pay = 0
@@ -28,7 +35,7 @@ def send_class_data_excel_via_email(data):
     last_row = 0
 
     # Write data rows
-    for row_num, entry in enumerate(data, start=2):
+    for row_num, entry in enumerate(data, start=3):
         ws.cell(row=row_num, column=2, value=f"{entry['student_or_class_name']} {entry['scheduled_classes']}")
         ws.cell(row=row_num, column=3, value=entry['class_duration'])
         ws.cell(row=row_num, column=4, value=entry['number_of_classes'])
@@ -40,6 +47,7 @@ def send_class_data_excel_via_email(data):
         total_hours += entry['total_hours']
         last_row = row_num
 
+    ws.cell(row=last_row + 1, column=1, value="FS")
     ws.cell(row=last_row + 1, column=5, value=total_hours)
     ws.cell(row=last_row + 1, column=8, value=total_pay)
 
@@ -52,9 +60,14 @@ def send_class_data_excel_via_email(data):
     # Send email using Django's default from_email
     try:
         email = EmailMessage(
-            subject='Test email',
-            body='This is the monthly hours report.',
-            to=['sweeney.phil@gmx.com']
+            subject=f'Monthly Report: {month}/{year}',
+            body='''Dear Teacher,
+
+        Please find the attached file with your monthly hours payment information.
+
+        Best,
+        -Teacher's Assistant''',
+            to=[email_address]
         )
         email.attach(
             'ClassDataReport.xlsx', excel_stream.read(),

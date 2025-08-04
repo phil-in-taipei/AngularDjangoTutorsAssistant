@@ -7,7 +7,7 @@ from class_scheduling.utils import determine_duration_of_class_time
 from student_account.models import StudentOrClass
 from .models import PurchasedHoursModificationRecord
  
-from pprint import pprint
+#from pprint import pprint
 
 
 def format_date_range_same_month(dates):
@@ -234,7 +234,7 @@ def organize_scheduled_classes(classes):
 # duration of class time. This is to match the format of the accouning report
 # at my current school
 def organize_scheduled_classes_by_duration_for_emailed_report(organized_classes):
-    print('inside next function')
+    #print('inside next function')
     school_data = organized_classes['classes_in_schools'][0]
     reorganized_school_report = {
         "school_name": school_data['school_name'],
@@ -263,8 +263,8 @@ def organize_scheduled_classes_by_duration_for_emailed_report(organized_classes)
 def organize_sorted_classes_by_durations_into_list_of_dicts_for_excel_sheet(
         classes_data_sorted_by_duration
     ):
-    print("inside next function")
-    print("this is the data:")
+    #print("inside next function")
+    #print("this is the data:")
     #pprint(classes_data_sorted_by_duration)
     new_list_of_dicts = []
     for student_or_class_data in classes_data_sorted_by_duration['students_classes']:
@@ -272,21 +272,21 @@ def organize_sorted_classes_by_durations_into_list_of_dicts_for_excel_sheet(
         
         #print(student_or_class_data)
         for k, v in student_or_class_data['scheduled_classes'].items():
-            print(k, v)
+            #print(k, v)
             classes_with_payments = [
                 scheduled_class 
                 for scheduled_class in v
                 if scheduled_class.class_status in ['same_day_cancellation', 'completed']
             ]
-            print(classes_with_payments)
+            #print(classes_with_payments)
 
             if len(classes_with_payments) > 0:
-                print(":::::These are the classes with payments::::::")
-                pprint(classes_with_payments)
-                print("This is the pay rate")
-                print(classes_with_payments[0])
+                #print(":::::These are the classes with payments::::::")
+                #pprint(classes_with_payments)
+                #print("This is the pay rate")
+                #print(classes_with_payments[0])
                 pay_rate = classes_with_payments[0].student_or_class.tuition_per_hour
-                print(pay_rate)
+                #print(pay_rate)
                 #pay_per_class = pay_rate * k
                 number_of_classes = len(classes_with_payments)
                 total_hours = number_of_classes * k
@@ -551,26 +551,25 @@ def generate_estimated_monthly_earnings_report_for_single_school(
 def generate_and_email_school_monthly_earnings_report_file(
         teacher, school, month, year
     ):
-    print("*****Generating School Report*****")
     classes_during_period = get_scheduled_classes_at_school_during_month_period(
         teacher, school, month, year
     )
     organized_classes_data = organize_scheduled_classes(classes=classes_during_period)
     #pprint(organized_classes_data)
-    print('this is inside the utils function')
-    print("**********************************************************")
+    #print('this is inside the utils function')
+    #print("**********************************************************")
     classes_data_sorted_by_duration = organize_scheduled_classes_by_duration_for_emailed_report(
         organized_classes_data
     )
-    print('___________________This is the data after sorting by duration________________')
+    #print('___________________This is the data after sorting by duration________________')
     #pprint(classes_data_sorted_by_duration)
     classes_sorted_into_list_of_dicts_for_excel_prep = organize_sorted_classes_by_durations_into_list_of_dicts_for_excel_sheet(
         classes_data_sorted_by_duration
     )
-    print("*******************************************************************")
-    print("sorted_again by duration")
-    print("**************************************************************")
-    pprint(classes_sorted_into_list_of_dicts_for_excel_prep)
+    #print("*******************************************************************")
+    #print("sorted_again by duration")
+    #print("**************************************************************")
+    #pprint(classes_sorted_into_list_of_dicts_for_excel_prep)
     return classes_sorted_into_list_of_dicts_for_excel_prep
 
 
