@@ -18,9 +18,37 @@
 </div>
 
 <div *ngIf="schoolMonthlyAccountingReport" class="container">
-  <hr class="thick-br"/>
+  <hr class="thin-br"/>
   <h1 class="text-center">{{ schoolMonthlyAccountingReport.school_name }}</h1>
+  <div *ngIf="submittingEmailReportRequestInProgress; else email_request_button">
+    <div class="text-center">
+      <div class="spinner-border text-secondary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <br />
+    </div>
+  </div>
+  <ng-template #email_request_button>
+  <div *ngIf="!emailSuccessMsg" class="text-center">
+    <button class="btn btn-sm btn-outline-secondary text"
+    (click)="onSendEmailReportRequest()">
+      Click to Email Report
+    </button>
+  </div>
+  <hr class="thin-br"/>
+  </ng-template>
+  <div *ngIf="emailSuccessMsg">
+    <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+      <h5 class="text-center">{{ emailSuccessMsg.message }}</h5>
+        <button type="button" class="btn-close" (click)="onClearEmailSuccesstatus()"
+        data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+   <hr class="thick-br"/>
+
+  </div>
   <h5 class="text-center">(Click Class for attendance record)</h5>
+  <hr class="thin-br"/>
+
   <div class="table-responsive">
     <table style="width:100%">
       <thead>

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/authentication/auth.service';
+import { EmailSuccessModel } from 'src/app/models/email-status.model';
 import { 
   FreelanceTuitionTransactionModel, FreelanceTuitionTransactionRecordModel, 
   PurchasedHoursModificationRecordModel, SchoolAccountingReportModel, 
@@ -82,6 +83,17 @@ export class AccountingService {
       {
         headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
       });
+  }
+
+  submitSchoolAccountingEmailReportRequest(
+    month: number, year: number, school_id: number
+  ) {
+    let token = this.authService.getAuthToken();
+    return this.http.get<EmailSuccessModel>(
+      `${environment.apiUrl}/api/accounting/email-estimated-school-earnings-by-month-year/${month}/${year}/${school_id}/`,
+        {
+          headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
+        })
   }
 
 }

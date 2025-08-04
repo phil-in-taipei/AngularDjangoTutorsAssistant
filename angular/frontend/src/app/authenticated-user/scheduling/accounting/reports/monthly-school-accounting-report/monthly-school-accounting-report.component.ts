@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { single } from 'rxjs';
 import { ActivatedRoute } from "@angular/router";
+import { EmailSuccessModel } from 'src/app/models/email-status.model';
 import { SchoolAccountingReportModel } from 'src/app/models/accounting.model';
 
 import { AccountingService } from '../../accounting-service/accounting.service';
+import { E } from '@fullcalendar/core/internal-common';
 
 @Component({
   selector: 'app-monthly-school-accounting-report',
@@ -13,12 +15,14 @@ import { AccountingService } from '../../accounting-service/accounting.service';
 })
 export class MonthlySchoolAccountingReportComponent implements OnInit {
 
+  emailSuccessMsg: EmailSuccessModel|undefined;
   errorMessage: string|undefined = undefined;
   fetchingReportInProgress:boolean = true;
   monthFromRouteData:number;
   yearFromRouteData:number;
   schoolIdFromRouteData:number;
   schoolMonthlyAccountingReport: SchoolAccountingReportModel|undefined = undefined;
+  submittingEmailReportRequestInProgress:boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -27,6 +31,32 @@ export class MonthlySchoolAccountingReportComponent implements OnInit {
 
   onClearErrorMessage() {
     this.errorMessage = undefined;
+  }
+
+  onClearEmailSuccesstatus() {
+    this.emailSuccessMsg = undefined;
+  }
+
+  onSendEmailReportRequest() {
+      this.submittingEmailReportRequestInProgress = true;    
+      this.accountingService.submitSchoolAccountingEmailReportRequest(
+      this.monthFromRouteData,
+      this.yearFromRouteData,
+      this.schoolIdFromRouteData
+    ).pipe(single()
+      ).subscribe({
+        next: (res) => { 
+          this.emailSuccessMsg = res; 
+          this.submittingEmailReportRequestInProgress = false;
+        },
+        error: (err) => {
+          this.errorMessage = 'There was an error sending the report email';
+          this.submittingEmailReportRequestInProgress = false;
+          if (err.error.Error) {
+            this.errorMessage = err.error.Error;
+          }
+        }
+      });
   }
 
   ngOnInit(): void {
