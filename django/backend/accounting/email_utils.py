@@ -5,13 +5,15 @@ from django.core.mail import EmailMessage
 
 
 def send_class_data_excel_via_email(
-        data, month, year, email_address, teacher_name
+        data, month, year, email_address, 
+        teacher_name, school_name
     ):
     # Create workbook in memory
     wb = Workbook()
     ws = wb.active
     ws.title = "10"
     date_string = F'{month}/{year}'
+    file_name = F'{teacher_name}_{school_name}_{date_string}.xlsx'
 
     # write date, teacher's name, and email address
     ws.cell(1, column=1, value=date_string)
@@ -60,17 +62,18 @@ def send_class_data_excel_via_email(
     # Send email using Django's default from_email
     try:
         email = EmailMessage(
-            subject=f'Monthly Report: {month}/{year}',
-            body='''Dear Teacher,
+            subject=f'{school_name} Monthly Report: {month}/{year}',
+            body=f"""Dear {teacher_name},
 
-        Please find the attached file with your monthly hours payment information.
+        Please find the attached file with your monthly hours payment 
+        information at {school_name} in {date_string}
 
         Best,
-        -Teacher's Assistant''',
+        -Teacher's Assistant""",
             to=[email_address]
         )
         email.attach(
-            'ClassDataReport.xlsx', excel_stream.read(),
+            file_name, excel_stream.read(),
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
         email.send()
