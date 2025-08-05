@@ -305,8 +305,9 @@ def organize_sorted_classes_by_durations_into_list_of_dicts_for_excel_sheet(
                     "payment": total_hours * pay_rate
                 }
                 new_list_of_dicts.append(student_duration_data)
-    return new_list_of_dicts
-
+    return sorted(
+        new_list_of_dicts, key=lambda report: report['student_or_class_name']
+    )
 
 def process_school_classes(accounting_data, organized_classes_data):
     for school_data in organized_classes_data["classes_in_schools"]:
