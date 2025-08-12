@@ -8,6 +8,7 @@ from .views import (
     ScheduledClassViewSet,
     ScheduledClassByTeacherByDateViewSet,
     ScheduledClassByTeacherByMonthViewSet,
+    ScheduledClassGoogleCalendarViewSet,
     StudentOrClassAttendanceViewSet,
     UnconfirmedStatusClassesViewSet
 )
@@ -33,6 +34,11 @@ urlpatterns = [
         'classes/by-teacher/by-month-year/<int:month>/<int:year>/',
         ScheduledClassByTeacherByMonthViewSet.as_view(),
         name='class-scheduling-by-teacher-month-year'
+    ),
+    path(
+        'classes/google-calendar/by-month-year/<int:month>/<int:year>/',
+        ScheduledClassGoogleCalendarViewSet.as_view(),
+        name='class-scheduling-google-calendar'
     ),
     path(
         'class-status-confirmation/',

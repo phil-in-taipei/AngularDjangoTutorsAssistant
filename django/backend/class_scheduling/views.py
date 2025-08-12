@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 
 from .models import ScheduledClass
 from .pagination import SmallSetPagination
-from .serializers import ScheduledClassSerializer
+from .serializers import ScheduledClassSerializer, ScheduledClassGoogleCalendarSerializer
 from .utils import (
     adjust_number_of_hours_purchased,
     class_is_double_booked,
@@ -200,6 +200,34 @@ class ScheduledClassByTeacherByDateViewSet(generics.ListAPIView):
         date = datetime.date(int(date_list[0]), int(date_list[1]), int(date_list[2]))
         queryset = self.model.objects.filter(date=date, teacher__user=self.request.user)
         return queryset.order_by('start_time')
+    
+
+class ScheduledClassGoogleCalendarViewSet(generics.ListAPIView):
+    permission_classes = (
+        IsAuthenticated,
+    )
+    queryset = ScheduledClass.objects.all()
+    serializer_class = ScheduledClassGoogleCalendarSerializer
+    lookup_field = 'id'
+    model = serializer_class.Meta.model
+
+    def get_queryset(self):
+        month = self.kwargs.get("month")
+        year = self.kwargs.get("year")
+        start_date = datetime.date(int(year), int(month), 1)
+        if int(month) == 12:
+            finish_date = datetime.date(int(year) + 1, 1, 1)
+        else:
+            finish_date = datetime.date(int(year), int(month) + 1, 1)
+
+        queryset = self.model.objects.filter(
+                date__gte=start_date,
+                date__lt=finish_date,
+                teacher__user=self.request.user
+        )
+        return queryset.order_by('date', 'start_time')
+
+
 
 
 class ScheduledClassByTeacherByMonthViewSet(generics.ListAPIView):

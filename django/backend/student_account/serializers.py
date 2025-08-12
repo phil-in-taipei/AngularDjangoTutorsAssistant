@@ -14,3 +14,13 @@ class StudentOrClassSerializer(serializers.ModelSerializer):
             'account_id', 'slug', 'template_str'
         )
 
+class StudentOrClassGoogleCalendarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentOrClass
+        template_str = serializers.ReadOnlyField()
+        
+        fields = (
+            'id', 'student_or_class_name', #'template_str'
+        )
+
+
