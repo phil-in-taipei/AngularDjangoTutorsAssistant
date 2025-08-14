@@ -1,0 +1,218 @@
+function getCalendarOptions() {
+  const myCalendars = {
+    "*****SchoolNameA******": "********************************************************",
+    "*****SchoolNameB******": "********************************************************",,
+    "Freelance": "********************************************************",
+  }
+  return myCalendars;
+}
+
+function getTokenFromTutorsAssistant() {
+  Logger.log('Logging into app...');
+
+  const url = "https://tutorsassistant.pythonanywhere.com/auth/jwt/create"
+  const data = {"username": "**************", "password": "**********************"}
+  const payload = JSON.stringify(data);
+
+  const options = {
+    method: 'post',
+    contentType: 'application/json',
+    payload: payload
+  };
+
+  try {
+    const response = UrlFetchApp.fetch(url, options);
+    const responseCode = response.getResponseCode();
+    const responseBody = response.getContentText();
+
+    if (responseCode === 200) { // 201 is the standard success code for a POST request that creates a resource
+      const jsonResponse = JSON.parse(responseBody);
+      Logger.log('Successful login');
+      //Logger.log(jsonResponse);
+      return jsonResponse;
+    } else {
+      Logger.log(`Request failed with status code: ${responseCode}`);
+      Logger.log(`Response body: ${responseBody}`);
+      return null;
+    }
+  } catch (e) {
+    Logger.log(`Error during API call: ${e.message}`);
+    return null;
+  }
+}
+
+function fetchUserClassesAndSaveInCalendar(month, year) {
+  Logger.log('*********Commence calendar syncing*********');
+
+  const authData = getTokenFromTutorsAssistant();
+  //Logger.log('This is the auth data');
+  //Logger.log(authData);
+
+
+  const url = `https://tutorsassistant.pythonanywhere.com/api/scheduling/classes/google-calendar/by-month-year/${month}/${year}/`; 
+  const token = authData.access; // Replace with your actual token
+
+
+  // Define the headers for the request
+  const headers = {
+    'Authorization': 'Token ' + token,
+    'Content-Type': 'application/json'
+  };
+
+  // Define the options for the UrlFetchApp.fetch() method
+  const options = {
+    method: 'get', // Use 'get' for fetching data
+    headers: headers
+  };
+
+  try {
+    const response = UrlFetchApp.fetch(url, options);
+    const responseCode = response.getResponseCode();
+    const responseBody = response.getContentText();
+
+    if (responseCode === 200) {
+      const jsonData = JSON.parse(responseBody);
+      Logger.log('Success! Calendar data received:');
+      //Logger.log(jsonData);
+      handleCalendarUpdate(jsonData)
+      return jsonData;
+    } else {
+      Logger.log(`Request failed with status code: ${responseCode}`);
+      Logger.log(`Response body: ${responseBody}`);
+      return null;
+    }
+  } catch (e) {
+    Logger.log(`Error during API call: ${e.message}`);
+    return null;
+  }
+}
+
+deleteDataFromSchedulingCalendars(7, 2025)
+fetchUserClassesAndSaveInCalendar(7, 2025);
+
+function handleCalendarUpdate(jsonData) {
+  Logger.log("Updating calendar ...");
+
+  if (jsonData.length) {
+    for (let i = 0; i < jsonData.length; i++) {
+      createTeachingEvent(jsonData[i]);
+    }
+  }
+}
+
+function createTeachingEvent(classData) {
+  // Replace with your actual Calendar ID
+  const calendarOptions = getCalendarOptions()
+
+  let calendarId = calendarOptions['Freelance'];
+  let classLocation = "Freelance"
+
+  if (classData.student_or_class.template_str.includes("*****SchoolNameA******")) {
+    calendarId = calendarOptions["*****SchoolNameA******"]
+    classLocation = "David's English"
+  } else if (classData.student_or_class.template_str.includes("TLI")) {
+    calendarId = calendarOptions["*****SchoolNameB******"]
+    classLocation = "*****SchoolNameB******"
+  }
+
+
+  // Get the calendar by its ID
+  const calendar = CalendarApp.getCalendarById(calendarId);
+
+  // Define event details
+  let eventTitle = `${classData.student_or_class.student_or_class_name}`;
+  const startTime = new Date(`${classData.date} ${classData.start_time}`);
+  const endTime = new Date(`${classData.date} ${classData.finish_time}`);
+ 
+   
+  let color;
+  //Logger.log(classData.class_status);
+
+  if (classData.class_status === "completed") {
+    color = CalendarApp.EventColor.YELLOW;
+    eventTitle = `${eventTitle}: completed`
+  } else if (classData.class_status === "same_day_cancellation") {
+    color = CalendarApp.EventColor.PALE_RED;
+    eventTitle = `${eventTitle}: No Show`
+
+  } else if (classData.class_status === "cancelled") {
+    color = CalendarApp.EventColor.RED;
+    eventTitle = `${eventTitle}: Cancelled`
+  } else {
+    // Default color if status doesn't match
+    color = CalendarApp.EventColor.BLUE;
+    eventTitle = `${eventTitle}: Scheduled`
+  }
+  //color: A string or an EventColor enum value to set the event's color. You can use a hexadecimal color code or one of the predefined enums like CalendarApp.EventColor.BLUE or CalendarApp.EventColor.PALE_RED
+
+  //guests: A string of comma-separated email addresses of the people you want to invite to the event. For example, 'user1@example.com,user2@example.com'
+
+  //attachments: An array of Blob or DriveApp.File objects to add attachments to the event.
+
+  // Create the event
+  const event = calendar.createEvent(eventTitle, startTime, endTime, {
+    description: eventTitle,
+    location: classLocation,
+  });
+    // Set the color on the newly created event object
+  if (color) {
+    event.setColor(color);
+  }
+  
+  
+  //Logger.log("Event created successfully!");
+}
+
+function deleteDataFromSchedulingCalendars(year, month) {
+  const calendarData = getCalendarOptions();
+  for (const key in calendarData) {
+  // `key` is the object's key
+  // `user[key]` is the object's value
+    deleteAllEventsInMonth(year, month, calendarData[key])
+  }
+}
+
+/**
+ * Deletes all events for a specified month and year from a Google Calendar.
+ * @param {number} year The year of the month (e.g., 2025).
+ * @param {number} month The month (1 for January, 2 for February, ..., 12 for December).
+ */
+function deleteAllEventsInMonth(month, year, calendarId) {
+  Logger.log(`Deleting all events in ${month}/${year}...`);
+
+  // Get the calendar object.
+  const calendar = CalendarApp.getCalendarById(calendarId);
+
+  if (!calendar) {
+    Logger.log("Calendar not found. Please check the ID.");
+    return;
+  }
+
+  // Define the start and end dates for the given month.
+  // Note: The month parameter is 0-indexed for the Date object (0-11).
+  const firstDayOfMonth = new Date(year, month - 1, 1);
+  const lastDayOfMonth = new Date(year, month, 0); // Day 0 of the next month is the last day of the current month.
+
+  // Get all events within the defined date range.
+  const events = calendar.getEvents(firstDayOfMonth, lastDayOfMonth);
+
+  if (events.length === 0) {
+    Logger.log(`No events found for ${month}/${year}.`);
+    return;
+  }
+
+  // Loop through the events and delete each one.
+  for (let i = 0; i < events.length; i++) {
+    const event = events[i];
+    try {
+      event.deleteEvent();
+      //Logger.log(`Deleted event: ${event.getTitle()} on ${event.getStartTime()}`);
+    } catch (e) {
+      Logger.log(`Failed to delete event ${event.getTitle()}. Error: ${e.message}`);
+    }
+  }
+
+  Logger.log(`Successfully deleted ${events.length} events for ${month}/${year}.`);
+}
+
+
