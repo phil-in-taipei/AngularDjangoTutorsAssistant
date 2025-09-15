@@ -19,7 +19,7 @@ class StudentBillingManager(models.Manager):
     def under_two_hours(self):
         return [
             account for account in self.get_queryset()
-            if account.purchased_class_hours <= 2
+            if account.purchased_class_hours is not None and account.purchased_class_hours <= 2
         ]
 
 
