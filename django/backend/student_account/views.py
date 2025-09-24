@@ -21,6 +21,11 @@ class StudentOrClassEditAndDeleteView(
     http_method_names = ['patch', 'delete']
     queryset = StudentOrClass.objects.all()
 
+    def get_queryset(self):
+        # Filter by the current user's teacher profile
+        teacher = get_object_or_404(UserProfile, user=self.request.user)
+        return StudentOrClass.objects.filter(teacher=teacher)
+
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         deleted_object_id = instance.id
