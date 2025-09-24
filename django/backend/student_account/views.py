@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from .models import StudentOrClass
 from .serializers import StudentOrClassSerializer
 from user_profiles.models import UserProfile
+from django.db import IntegrityError
 
 
 class StudentOrClassEditAndDeleteView(
@@ -64,6 +65,12 @@ class StudentOrClassListView(APIView):
         serializer = StudentOrClassSerializer(data=request.data)
         teacher = get_object_or_404(UserProfile, user=request.user)
         if serializer.is_valid():
-            serializer.save(teacher_id=teacher.id)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            try:
+                serializer.save(teacher_id=teacher.id)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except IntegrityError as e:
+                return Response(
+                    {"error": "An account with this name already exists for this teacher."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

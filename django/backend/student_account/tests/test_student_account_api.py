@@ -198,8 +198,7 @@ class StudentOrClassListViewTests(StudentAccountAPITestCase):
         response = self.client.post(self.list_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    """
-        def test_post_duplicate_student_name_for_teacher(self):
+    def test_post_duplicate_student_name_for_teacher(self):
         self.client.force_authenticate(user=self.user1)
 
         # Try to create another student with the same name as existing freelance_student
@@ -213,8 +212,6 @@ class StudentOrClassListViewTests(StudentAccountAPITestCase):
         # Should get 400 due to unique_together constraint validation
         # The actual response depends on how DRF handles the IntegrityError
         self.assertIn(response.status_code, [status.HTTP_400_BAD_REQUEST, status.HTTP_500_INTERNAL_SERVER_ERROR])
-
-    """
 
     def test_post_same_student_name_different_teacher_allowed(self):
         """Test that same student name is allowed for different teachers."""
