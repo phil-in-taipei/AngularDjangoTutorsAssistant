@@ -1,6 +1,6 @@
 import { 
     stateWithLoadedUser, stateWithRevisedUser 
-} from "src/app/test-data/authenticated-user-module-tests/user-state";
+} from "src/app/test-data/authenticated-user-module-tests/user-related-tests/user-state";
 import { 
     userProfileReducer, initialUserProfileState 
 } from "./user.reducers";

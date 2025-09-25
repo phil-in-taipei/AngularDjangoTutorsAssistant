@@ -2,7 +2,7 @@ import { UserProfileState } from "src/app/authenticated-user/user/user-state/use
 import { 
     userProfileData, 
     userProfileEdited
-} from "./user-related-tests/user-data";
+} from "./user-data";
 
 
 export const stateWithLoadedUser: UserProfileState = {

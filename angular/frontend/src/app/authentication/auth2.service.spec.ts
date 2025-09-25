@@ -12,7 +12,7 @@ import { UserProfileComponent } from '../authenticated-user/user/user-profile/us
 import { AuthService } from './auth.service';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 
-fdescribe('AuthService', () => {
+describe('AuthService', () => {
   let testRouter: Router; 
   let service: AuthService;
   let httpTestingController: HttpTestingController;
