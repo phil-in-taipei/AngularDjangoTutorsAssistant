@@ -109,11 +109,11 @@ function createTeachingEvent(classData) {
 
   if (classData.student_or_class.template_str.includes("*****SchoolNameA******")) {
     calendarId = calendarOptions["*****SchoolNameA******"]
-    classLocation = "David's English"
+    classLocation = "*****SchoolNameA*****"
   } else if (classData.student_or_class.template_str.includes("TLI")) {
     calendarId = calendarOptions["*****SchoolNameB******"]
     classLocation = "*****SchoolNameB******"
-  }
+  } // more else if clauses if there are more schools/calendars
 
 
   // Get the calendar by its ID
@@ -163,12 +163,13 @@ function createTeachingEvent(classData) {
   //Logger.log("Event created successfully!");
 }
 
-function deleteDataFromSchedulingCalendars(year, month) {
+function deleteDataFromSchedulingCalendars(month, year) {
   const calendarData = getCalendarOptions();
   for (const key in calendarData) {
   // `key` is the object's key
   // `user[key]` is the object's value
-    deleteAllEventsInMonth(year, month, calendarData[key])
+    console.log(`${key} Calendar`)
+    deleteAllEventsInMonth(month, year, calendarData[key])
   }
 }
 
@@ -179,6 +180,10 @@ function deleteDataFromSchedulingCalendars(year, month) {
  */
 function deleteAllEventsInMonth(month, year, calendarId) {
   Logger.log(`Deleting all events in ${month}/${year}...`);
+
+  // Replace with the ID of the calendar you want to clear.
+  //const calendarId = "210b5af4c88f95db23645ba5c5fd3eb65d032039f5a65116a6face2b22d4e4d0@group.calendar.google.com";
+
 
   // Get the calendar object.
   const calendar = CalendarApp.getCalendarById(calendarId);
@@ -191,10 +196,13 @@ function deleteAllEventsInMonth(month, year, calendarId) {
   // Define the start and end dates for the given month.
   // Note: The month parameter is 0-indexed for the Date object (0-11).
   const firstDayOfMonth = new Date(year, month - 1, 1);
-  const lastDayOfMonth = new Date(year, month, 0); // Day 0 of the next month is the last day of the current month.
+  //const lastDayOfMonth = new Date(year, month, 0); // Day 0 of the next month is the last day of the current month.
+  const firstDayOfNextMonth = new Date(year, month, 1);
+  //console.log(`This is the first date for deletion: ${firstDayOfMonth}`)
+  //console.log(`This is the last date for deletion: ${lastDayOfMonth}`)
 
   // Get all events within the defined date range.
-  const events = calendar.getEvents(firstDayOfMonth, lastDayOfMonth);
+  const events = calendar.getEvents(firstDayOfMonth, firstDayOfNextMonth);
 
   if (events.length === 0) {
     Logger.log(`No events found for ${month}/${year}.`);
@@ -215,4 +223,7 @@ function deleteAllEventsInMonth(month, year, calendarId) {
   Logger.log(`Successfully deleted ${events.length} events for ${month}/${year}.`);
 }
 
+// enter in the month/year to update calendars
 
+//deleteDataFromSchedulingCalendars(9, 2025);
+//fetchUserClassesAndSaveInCalendar(9, 2025);
