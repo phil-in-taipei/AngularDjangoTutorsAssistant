@@ -17,7 +17,7 @@ import {
   deletionResponseSuccess
 } from 'src/app/test-data/authenticated-user-module-tests/student-or-class-related-tests/student-or-class-data';
 
-fdescribe('StudentOrClassService', () => {
+describe('StudentOrClassService', () => {
   let service: StudentOrClassService;
   let httpTestingController: HttpTestingController;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
