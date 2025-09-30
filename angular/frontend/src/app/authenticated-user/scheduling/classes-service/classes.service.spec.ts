@@ -26,7 +26,7 @@ import {
   httpSingleDeleteError1
 } from 'src/app/test-data/authenticated-user-module-tests/scheduling-module-tests/scheduled-classes-related-tests/scheduled-classes-data';
 
-fdescribe('ClassesService', () => {
+describe('ClassesService', () => {
   let service: ClassesService;
   let httpTestingController: HttpTestingController;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
