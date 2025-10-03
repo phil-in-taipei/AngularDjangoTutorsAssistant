@@ -48,7 +48,7 @@ export interface ScheduledClassModel {
 
 export interface StudentOrClassAttendanceRecordResponse {
     count: number,
-    next: string,
-    previous: string,
+    next: string | null | undefined,
+    previous: string | null | undefined,
     results: ScheduledClassModel[]
 }

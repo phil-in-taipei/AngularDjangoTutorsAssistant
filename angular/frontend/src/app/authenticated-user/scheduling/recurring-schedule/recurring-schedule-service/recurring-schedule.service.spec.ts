@@ -22,7 +22,7 @@ import {
  } from 'src/app/test-data/authenticated-user-module-tests/scheduling-module-tests/scheduled-classes-related-tests/recurring-schedule-module-tests/recurring-schedule-related-tests/recurring-schedule-data';
 
 
-fdescribe('RecurringScheduleService', () => {
+describe('RecurringScheduleService', () => {
   let service: RecurringScheduleService;
   let httpTestingController: HttpTestingController;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
