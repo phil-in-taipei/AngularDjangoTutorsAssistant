@@ -16,7 +16,7 @@ import {
   httpAttendanceRecordError1
 } from 'src/app/test-data/authenticated-user-module-tests/scheduling-module-tests/scheduled-classes-related-tests/attendance-data';
 
-fdescribe('AttendanceService', () => {
+describe('AttendanceService', () => {
   let service: AttendanceService;
   let httpTestingController: HttpTestingController;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
