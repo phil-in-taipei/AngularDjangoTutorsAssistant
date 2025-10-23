@@ -16,7 +16,7 @@ import {
 } from 'src/app/models/student-or-class.model';
 
 
-function compareByDateAndTime(
+export function compareByDateAndTime(
         a: ScheduledClassModel,
         b: ScheduledClassModel
     ) {
@@ -94,7 +94,7 @@ export function scheduledClassesReducer(
                 return adapter.updateOne(
                     { id: updatedScheduledClass.id, changes: updatedScheduledClass }, 
                     {
-                        ...state, errMsg:undefined,
+                        ...state, errorMessage: undefined,
                         successMessage: 'You have successfully edited the class status!',
                         updatedPurchasedHours: action.payload.scheduledClassUpdateResponse.student_or_class_update
                     }

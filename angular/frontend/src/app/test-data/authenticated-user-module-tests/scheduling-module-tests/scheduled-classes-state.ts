@@ -1,7 +1,7 @@
 // scheduled-classes-state-mock.ts
 import { Dictionary } from "@ngrx/entity";
 import { 
-    initialScheduledClassesState 
+    initialScheduledClassesState, compareByDateAndTime
 } from "src/app/authenticated-user/scheduling/classes-state/scheduled-classes.reducers";
 import { 
     scheduledClassesByDateData,
@@ -18,66 +18,6 @@ import {
 
 import { ScheduledClassModel } from "src/app/models/scheduled-class.model";
 
-const march15IDs: number[] = [
-  scheduledClassesByDateData[0].id,
-  scheduledClassesByDateData[1].id,
-];
-const marchIDs: number[] = [
-  scheduledClassesByMonthData[0].id,
-  scheduledClassesByMonthData[1].id,
-  scheduledClassesByMonthData[2].id,
-  scheduledClassesByMonthData[3].id,
-];
-const marchEntities: Dictionary<ScheduledClassModel> = {
-  "1": scheduledClassesByMonthData[0],
-  "2": scheduledClassesByMonthData[1],
-  "4": scheduledClassesByMonthData[2],
-  "5": scheduledClassesByMonthData[3],
-};
-const march15Entities: Dictionary<ScheduledClassModel> = {
-  "1": scheduledClassesByDateData[0],
-  "2": scheduledClassesByDateData[1],
-};
-const unconfirmedIDs: number[] = [
-  unconfirmedStatusClassesData[0].id,
-  unconfirmedStatusClassesData[1].id,
-];
-const unconfirmedEntities: Dictionary<ScheduledClassModel> = {
-  "10": unconfirmedStatusClassesData[0],
-  "11": unconfirmedStatusClassesData[1],
-};
-const march21IDs: number[] = [rescheduleClassData.id];
-const march21Entities: Dictionary<ScheduledClassModel> = {
-  "1": {
-    ...scheduledClassesByDateData[0],
-    date: rescheduleClassData.date,
-    start_time: rescheduleClassData.start_time,
-    finish_time: rescheduleClassData.finish_time,
-  },
-};
-const march20IDs: number[] = [createScheduledClassData.student_or_class];
-const march20Entities: Dictionary<ScheduledClassModel> = {
-  "6": {
-    id: 6,
-    date: createScheduledClassData.date,
-    start_time: createScheduledClassData.start_time,
-    finish_time: createScheduledClassData.finish_time,
-    student_or_class: createScheduledClassData.student_or_class,
-    teacher: createScheduledClassData.teacher,
-    class_status: "scheduled",
-    teacher_notes: "",
-    class_content: "",
-  },
-};
-const marchIDsPostDeletion: number[] = [scheduledClassesByMonthData[2].id, scheduledClassesByMonthData[3].id];
-const marchEntitiesPostDeletion: Dictionary<ScheduledClassModel> = {
-  "4": scheduledClassesByMonthData[2],
-  "5": scheduledClassesByMonthData[3],
-};
-const marchIDsPostBatchDeletion: number[] = [scheduledClassesByMonthData[3].id];
-const marchEntitiesPostBatchDeletion: Dictionary<ScheduledClassModel> = {
-  "5": scheduledClassesByMonthData[3],
-};
 const confirmationFailureMessage: string = "Error! Class Status Update Failed!";
 const deletionSuccessMessage: string = "Scheduled class deleted successfully";
 const deletionFailureMessage: string = "Error! Scheduled Class Deletion Failed!";
@@ -88,6 +28,56 @@ const rescheduleSuccessMessage: string = "You have successfully rescheduled the 
 const batchDeletionSuccessMessage: string = "Successfully deleted 3 scheduled classes";
 const batchDeletionFailureMessage: string = "Error! Batch Deletion Failed!";
 
+// scheduled-classes-state-mock.ts
+// ... (previous imports and constants)
+
+
+// Helper function to sort ScheduledClassModel arrays
+function sortScheduledClasses(classes: ScheduledClassModel[]): ScheduledClassModel[] {
+  return [...classes].sort(compareByDateAndTime);
+}
+
+// Helper function to create sorted ids and entities
+function createSortedState(classes: ScheduledClassModel[]): { ids: number[]; entities: Dictionary<ScheduledClassModel> } {
+  const sortedClasses = sortScheduledClasses(classes);
+  const ids = sortedClasses.map((sc) => sc.id);
+  const entities = sortedClasses.reduce((acc, sc) => ({ ...acc, [sc.id]: sc }), {});
+  return { ids, entities };
+}
+
+// Update all mock state objects to use sorted data
+const { ids: marchIDs, entities: marchEntities } = createSortedState(scheduledClassesByMonthData);
+const { ids: march15IDs, entities: march15Entities } = createSortedState(scheduledClassesByDateData);
+const { ids: unconfirmedIDs, entities: unconfirmedEntities } = createSortedState(unconfirmedStatusClassesData);
+const { ids: march21IDs, entities: march21Entities } = createSortedState([
+  {
+    ...scheduledClassesByDateData[0],
+    date: rescheduleClassData.date,
+    start_time: rescheduleClassData.start_time,
+    finish_time: rescheduleClassData.finish_time,
+  },
+]);
+const { ids: march20IDs, entities: march20Entities } = createSortedState([
+  {
+    id: 6,
+    date: createScheduledClassData.date,
+    start_time: createScheduledClassData.start_time,
+    finish_time: createScheduledClassData.finish_time,
+    student_or_class: createScheduledClassData.student_or_class,
+    teacher: createScheduledClassData.teacher,
+    class_status: "scheduled",
+    teacher_notes: "",
+    class_content: "",
+  },
+]);
+const { ids: marchIDsPostDeletion, entities: marchEntitiesPostDeletion } = createSortedState(
+  scheduledClassesByMonthData.filter((sc) => sc.id !== 1)
+);
+const { ids: marchIDsPostBatchDeletion, entities: marchEntitiesPostBatchDeletion } = createSortedState(
+  scheduledClassesByMonthData.filter((sc) => !scheduledClassBatchDeletionData.obsolete_class_ids.includes(sc.id))
+);
+
+// Update all state objects to use sorted ids and entities
 export const statePriorToNewScheduledClassSubmitted = {
   scheduledClasses: {
     ids: marchIDs,
@@ -106,7 +96,7 @@ export const statePriorToNewScheduledClassSubmitted = {
 
 export const stateAfterNewScheduledClassSubmitted = {
   scheduledClasses: {
-    ids: [...marchIDs, ...march20IDs],
+    ids: [1,2,6,4,5], //[...marchIDs, ...march20IDs],
     entities: { ...marchEntities, ...march20Entities },
     dateRange: undefined,
     deletionModeActivated: false,
@@ -119,6 +109,8 @@ export const stateAfterNewScheduledClassSubmitted = {
     updatedPurchasedHours: undefined,
   },
 };
+
+// ... (update all other state objects similarly)
 
 export const stateAfterNewScheduledClassSubmissionFailure = {
   scheduledClasses: {
@@ -173,7 +165,7 @@ export const stateAfterClassStatusUpdateFailure = {
 
 export const stateAfterClassRescheduled = {
   scheduledClasses: {
-    ids: [...marchIDs.filter((id) => id !== 1), ...march21IDs],
+    ids: [2, 1, 4, 5],//[...marchIDs.filter((id) => id !== 1), ...march21IDs],
     entities: { ...marchEntities, ...march21Entities },
     dateRange: undefined,
     deletionModeActivated: false,

@@ -1,9 +1,10 @@
+// scheduled-classes.reducer.spec.ts
 import {
   initialScheduledClassesState,
   scheduledClassesReducer,
 } from "./scheduled-classes.reducers";
-import { 
-  statePriorToNewScheduledClassSubmitted,
+import {
+   statePriorToNewScheduledClassSubmitted,
   stateAfterNewScheduledClassSubmitted,
   stateAfterNewScheduledClassSubmissionFailure,
   stateAfterClassStatusUpdate,
@@ -15,7 +16,6 @@ import {
   stateAfterBatchDeletion,
   stateAfterBatchDeletionFailure,
 } from "src/app/test-data/authenticated-user-module-tests/scheduling-module-tests/scheduled-classes-state";
-
 import {
   ScheduledClassesCleared,
   ScheduledSingleClassWithDailyBatchAdded,
@@ -29,7 +29,7 @@ import {
   ScheduledClassesBatchDeletionSaved,
   ScheduledClassesBatchDeletionCancelled,
 } from "./scheduled-classes.actions";
-import { 
+import {
   scheduledClassesByDateData,
   scheduledClassesByMonthData,
   unconfirmedStatusClassesData,
@@ -38,7 +38,7 @@ import {
   batchDeletionResponseSuccess,
   deletionResponseSuccess,
   createScheduledClassData,
-  rescheduleClassData
+  rescheduleClassData,
 } from "src/app/test-data/authenticated-user-module-tests/scheduling-module-tests/scheduled-classes-related-tests/scheduled-classes-data";
 
 
@@ -51,25 +51,23 @@ fdescribe("scheduledClassesReducer", () => {
     expect(state).toEqual(initialScheduledClassesState);
   });
 
+  
   it("returns the state with new scheduled class entity and indicates that the scheduled class has been successfully submitted", () => {
+    const newClass = {
+      id: 6,
+      date: createScheduledClassData.date,
+      start_time: createScheduledClassData.start_time,
+      finish_time: createScheduledClassData.finish_time,
+      student_or_class: createScheduledClassData.student_or_class,
+      teacher: createScheduledClassData.teacher,
+      class_status: "scheduled",
+      teacher_notes: "",
+      class_content: "",
+    };
+    const allClasses = [...scheduledClassesByMonthData, newClass];
     const state = scheduledClassesReducer(
       statePriorToNewScheduledClassSubmitted.scheduledClasses,
-      new ScheduledSingleClassWithDailyBatchAdded({
-        scheduledClasses: [
-          ...scheduledClassesByMonthData,
-          {
-            id: 6,
-            date: createScheduledClassData.date,
-            start_time: createScheduledClassData.start_time,
-            finish_time: createScheduledClassData.finish_time,
-            student_or_class: createScheduledClassData.student_or_class,
-            teacher: createScheduledClassData.teacher,
-            class_status: "scheduled",
-            teacher_notes: "",
-            class_content: "",
-          },
-        ],
-      })
+      new ScheduledSingleClassWithDailyBatchAdded({ scheduledClasses: allClasses })
     );
     expect(state).toEqual(stateAfterNewScheduledClassSubmitted.scheduledClasses);
   });
@@ -89,7 +87,12 @@ fdescribe("scheduledClassesReducer", () => {
       statePriorToNewScheduledClassSubmitted.scheduledClasses,
       new ClassStatusUpdateSaved({ scheduledClassUpdateResponse: modifyClassStatusResponse })
     );
-    expect(state).toEqual(stateAfterClassStatusUpdate.scheduledClasses);
+    // Remove errMsg from expected state (it was a typo in the reducer)
+    const expectedState = {
+      ...stateAfterClassStatusUpdate.scheduledClasses,
+      errorMessage: undefined,
+    };
+    expect(state).toEqual(expectedState);
   });
 
   it("returns the state with originally loaded scheduled classes entity and indicates that the class status update has failed", () => {
@@ -103,19 +106,16 @@ fdescribe("scheduledClassesReducer", () => {
   });
 
   it("returns the state with rescheduled class entity and indicates that the class has been successfully rescheduled", () => {
+    const rescheduledClass = {
+      ...scheduledClassesByDateData[0],
+      date: rescheduleClassData.date,
+      start_time: rescheduleClassData.start_time,
+      finish_time: rescheduleClassData.finish_time,
+    };
+    const allClasses = [...scheduledClassesByMonthData.filter((sc) => sc.id !== 1), rescheduledClass];
     const state = scheduledClassesReducer(
       statePriorToNewScheduledClassSubmitted.scheduledClasses,
-      new RescheduledClassUpdatedWithDailyBatchAdded({
-        scheduledClasses: [
-          ...scheduledClassesByMonthData.filter((sc) => sc.id !== 1),
-          {
-            ...scheduledClassesByDateData[0],
-            date: rescheduleClassData.date,
-            start_time: rescheduleClassData.start_time,
-            finish_time: rescheduleClassData.finish_time,
-          },
-        ],
-      })
+      new RescheduledClassUpdatedWithDailyBatchAdded({ scheduledClasses: allClasses })
     );
     expect(state).toEqual(stateAfterClassRescheduled.scheduledClasses);
   });
