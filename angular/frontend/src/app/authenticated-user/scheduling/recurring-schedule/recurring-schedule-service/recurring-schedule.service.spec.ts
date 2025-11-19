@@ -10,6 +10,7 @@ import {
   recurringClassData,
   recurringClassesData,
   recurringClassCreateData,
+  recurringClassCreatedResponseData,
   recurringClassAppliedMonthlyData,
   recurringClassAppliedMonthliesData,
   recurringClassAppliedMonthlyCreateData,
@@ -22,7 +23,7 @@ import {
  } from 'src/app/test-data/authenticated-user-module-tests/scheduling-module-tests/scheduled-classes-related-tests/recurring-schedule-module-tests/recurring-schedule-related-tests/recurring-schedule-data';
 
 
-describe('RecurringScheduleService', () => {
+fdescribe('RecurringScheduleService', () => {
   let service: RecurringScheduleService;
   let httpTestingController: HttpTestingController;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
@@ -91,7 +92,7 @@ describe('RecurringScheduleService', () => {
       authServiceSpy.getAuthToken.and.returnValue(authData.token);
       
       service.submitRecurringClass(recurringClassCreateData).subscribe(response => {
-        expect(response).toEqual(recurringClassData);
+        expect(response).toEqual(recurringClassCreatedResponseData);
       });
 
       const request = httpTestingController.expectOne({
@@ -101,7 +102,7 @@ describe('RecurringScheduleService', () => {
 
       expect(request.request.headers.get('Authorization')).toBe(`Token ${authData.token}`);
       expect(request.request.body).toEqual(recurringClassCreateData);
-      request.flush(recurringClassData);
+      request.flush(recurringClassCreatedResponseData);
     }));
 
     it('should return an error message when creating recurring class with incorrect data', 

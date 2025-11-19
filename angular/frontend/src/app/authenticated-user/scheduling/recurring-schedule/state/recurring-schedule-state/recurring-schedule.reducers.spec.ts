@@ -3,7 +3,7 @@ import {
     recurringClassesReducer 
 } from "./recurring-schedule.reducers";
 import { 
-    recurringClassData, recurringClassesData 
+    recurringClassData, recurringClassesData, recurringClassCreatedResponseData 
 } from "src/app/test-data/authenticated-user-module-tests/scheduling-module-tests/scheduled-classes-related-tests/recurring-schedule-module-tests/recurring-schedule-related-tests/recurring-schedule-data";
 
 import { 
@@ -79,7 +79,7 @@ fdescribe('recurringClassesReducer', () => {
         + 'the recurring class has been successfully submitted', () => {
         const state = recurringClassesReducer(
             statePriorToNewRecurringClassSubmission.recurringClasses, 
-            new RecurringClassAdded({ recurringClass: recurringClassData })
+            new RecurringClassAdded({ recurringClass: recurringClassCreatedResponseData })
         );
         expect(state).toEqual(
             stateAfterNewRecurringClassSubmission.recurringClasses

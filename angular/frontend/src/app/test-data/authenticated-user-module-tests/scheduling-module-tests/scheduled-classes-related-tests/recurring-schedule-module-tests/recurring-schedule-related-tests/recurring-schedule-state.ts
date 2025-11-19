@@ -1,7 +1,8 @@
 import { Dictionary } from "@ngrx/entity";
 import { 
   recurringClassData, 
-  recurringClassesData 
+  recurringClassesData,
+  recurringClassCreatedResponseData 
 } from "./recurring-schedule-data"; // <-- Your existing mock data file
 import { RecurringClassModel } from "src/app/models/recurring-schedule.model";
 
@@ -15,7 +16,7 @@ const recurringClassIdsPriorToSubmission: number[] = [
 
 const recurringClassIdsAfterPost: number[] = [
   ...recurringClassIdsPriorToSubmission,
-  recurringClassData.id // Assuming this is the new one created in the test
+  recurringClassCreatedResponseData.id // Assuming this is the new one created in the test
 ];
 
 // --- Define entity dictionaries (keyed by ID as strings) ---
@@ -30,7 +31,7 @@ const entitiesAfterPost: Dictionary<RecurringClassModel> = {
   [recurringClassesData[0].id]: recurringClassesData[0],
   [recurringClassesData[1].id]: recurringClassesData[1],
   [recurringClassesData[2].id]: recurringClassesData[2],
-  [recurringClassData.id]: recurringClassData,
+  [recurringClassCreatedResponseData.id]: recurringClassCreatedResponseData,
 };
 
 // --- Define success & error messages for test assertions ---

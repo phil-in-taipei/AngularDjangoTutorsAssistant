@@ -49,11 +49,21 @@ export const recurringClassesData: RecurringClassModel[] = [
 ];
 
 export const recurringClassCreateData: RecurringClassCreateModel = {
-  recurring_start_time: '14:00:00',
-  recurring_finish_time: '15:00:00',
-  recurring_day_of_week: 1,
+  recurring_start_time: '17:00:00',
+  recurring_finish_time: '18:00:00',
+  recurring_day_of_week: 6,
   student_or_class: 1,
   teacher: 1
+};
+
+export const recurringClassCreatedResponseData: RecurringClassModel = {
+  id: 4,
+  recurring_start_time: '17:00:00',
+  recurring_finish_time: '18:00:00',
+  recurring_day_of_week: 6,
+  student_or_class: 1,
+  teacher: 1,
+  day_of_week_string: 'Saturday'
 };
 
 export const recurringClassAppliedMonthlyData: RecurringClassAppliedMonthlyModel = {
