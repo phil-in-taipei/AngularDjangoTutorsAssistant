@@ -3,6 +3,7 @@ import {
   recurringClassAppliedMonthlyData,
   recurringClassAppliedMonthliesData,
   recurringClassAppliedMonthlyDeletionResponse,
+  newlyCreatedRecurringClassAppliedMonthlyData,
   scheduledClassBatchDeletionData
 } from "./recurring-schedule-data";
 import { 
@@ -25,8 +26,8 @@ const recurringClassAppliedMonthlyIdsPriorToSubmission: number[] = [
 
 // IDs after new monthly application (added recurringClassAppliedMonthlyData)
 const recurringClassAppliedMonthlyIdsAfterPost: number[] = [
+  newlyCreatedRecurringClassAppliedMonthlyData.id,
   ...recurringClassAppliedMonthlyIdsPriorToSubmission,
-  recurringClassAppliedMonthlyData.id,
 ];
 
 // Entities dictionary before POST
@@ -38,10 +39,10 @@ const entitiesPriorToSubmission: Dictionary<RecurringClassAppliedMonthlyModel> =
 
 // Entities dictionary after POST (includes the new record)
 const entitiesAfterPost: Dictionary<RecurringClassAppliedMonthlyModel> = {
+  [newlyCreatedRecurringClassAppliedMonthlyData.id]: newlyCreatedRecurringClassAppliedMonthlyData,
   [recurringClassAppliedMonthliesData[0].id]: recurringClassAppliedMonthliesData[0],
   [recurringClassAppliedMonthliesData[1].id]: recurringClassAppliedMonthliesData[1],
   [recurringClassAppliedMonthliesData[2].id]: recurringClassAppliedMonthliesData[2],
-  [recurringClassAppliedMonthlyData.id]: recurringClassAppliedMonthlyData,
 };
 
 // -----------------------------------------------------------------------------

@@ -108,14 +108,23 @@ export const recurringClassAppliedMonthlyCreateData: RecurringClassAppliedMonthl
   recurring_class: 1
 };
 
+export const newlyCreatedRecurringClassAppliedMonthlyData: RecurringClassAppliedMonthlyModel = {
+  id: 4,
+  scheduling_month: 3,
+  scheduling_year: 2025,
+  recurring_class: 1,
+  recurring_start_time: '14:00:00',
+  recurring_day_of_week: 1,
+};
+
 export const scheduledClassBatchDeletionData: ScheduledClassBatchDeletionDataModel = {
   obsolete_class_strings: 'Class 1, Class 2, Class 3, Class 4',
   obsolete_class_ids: [10, 11, 12, 13]
 };
 
 export const recurringClassAppliedMonthlyDeletionResponse: RecurringClassAppliedMonthlyDeletionResponse = {
-  id: 1,
-  message: 'Recurring class applied monthly deleted successfully',
+  id: 3,
+  message: 'Recurring Class Applied Monthly successfully deleted!',
   scheduled_class_batch_deletion_data: scheduledClassBatchDeletionData
 };
 

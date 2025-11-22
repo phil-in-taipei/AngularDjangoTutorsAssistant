@@ -6,7 +6,8 @@ import {
 import { 
     recurringClassAppliedMonthliesData,
     recurringClassAppliedMonthlyData,
-    recurringClassAppliedMonthlyDeletionResponse
+    recurringClassAppliedMonthlyDeletionResponse,
+    newlyCreatedRecurringClassAppliedMonthlyData
 } from "src/app/test-data/authenticated-user-module-tests/scheduling-module-tests/scheduled-classes-related-tests/recurring-schedule-module-tests/recurring-schedule-related-tests/recurring-schedule-data";
 import { 
     statePriorToNewRecurringClassAppliedMonthlySubmission,
@@ -89,7 +90,7 @@ fdescribe('recurringClassAppliedMonthlysReducer', () => {
         const state = recurringClassAppliedMonthlysReducer(
             statePriorToNewRecurringClassAppliedMonthlySubmission.recurringClassAppliedMonthlys, 
             new RecurringClassAppliedMonthlyAdded({
-                recurringClassAppliedMonthly: recurringClassAppliedMonthlyData
+                recurringClassAppliedMonthly: newlyCreatedRecurringClassAppliedMonthlyData
             })
         );
         expect(state).toEqual(
