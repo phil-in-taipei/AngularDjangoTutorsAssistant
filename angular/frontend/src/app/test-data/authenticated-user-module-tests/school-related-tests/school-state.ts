@@ -1,6 +1,9 @@
 import { SchoolsState } from 'src/app/authenticated-user/schools/state/school.reducers';
 import { SchoolModel } from 'src/app/models/school.model';
-import { schoolData, schoolsData } from './school-data';
+import { 
+  newlyCreatedSchoolData, 
+  schoolData, schoolsData 
+} from './school-data';
 import { deletionResponseSuccess } from './school-data';
 /**
  * Mock NgRx entity-based state data for Schools feature.
@@ -41,10 +44,10 @@ export const stateAfterSchoolsLoadFailure: SchoolsState = {
 };
 
 export const stateAfterSchoolCreatedAdded: SchoolsState = {
-  ids: [...(stateAfterSchoolsLoadedSuccess.ids as number[]), schoolData.id] as number[],
+  ids: [...(stateAfterSchoolsLoadedSuccess.ids as number[]), newlyCreatedSchoolData.id] as number[],
   entities: {
     ...stateAfterSchoolsLoadedSuccess.entities,
-    [schoolData.id]: schoolData,
+    [newlyCreatedSchoolData.id]: newlyCreatedSchoolData,
   },
   deletionModeActivated: false,
   fetchingSchoolsInProgress: false,
@@ -65,7 +68,7 @@ export const stateAfterSchoolEditUpdated: SchoolsState = {
     ...stateAfterSchoolsLoadedSuccess.entities,
     [schoolData.id]: {
       ...stateAfterSchoolsLoadedSuccess.entities[schoolData.id],
-      school_name: 'Updated Test School',
+      school_name: 'Test School A updated!',
       address_line_1: '789 Updated Street',
       address_line_2: 'Floor 2',
       contact_phone: '555-111-2222',

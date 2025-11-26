@@ -13,7 +13,7 @@ export const schoolData: SchoolModel = {
 export const schoolsData: SchoolModel[] = [
   {
     id: 1,
-    school_name: 'Test Elementary School',
+    school_name: 'Test School A',
     address_line_1: '123 Main Street',
     address_line_2: 'Suite 100',
     contact_phone: '555-123-4567',
@@ -21,7 +21,7 @@ export const schoolsData: SchoolModel[] = [
   },
   {
     id: 2,
-    school_name: 'Another Test School',
+    school_name: 'Test School B',
     address_line_1: '456 Oak Avenue',
     address_line_2: '',
     contact_phone: '555-987-6543',
@@ -29,8 +29,27 @@ export const schoolsData: SchoolModel[] = [
   }
 ];
 
+
+export const creatSchoolData: SchoolCreateAndEditModel = {
+  school_name: 'Test School C',
+  address_line_1: '789 Scholar Street',
+  address_line_2: 'Floor 2',
+  contact_phone: '555-111-2222',
+  other_information: 'New school information'
+};
+
+export const newlyCreatedSchoolData: SchoolModel = {
+  id: 3,
+  school_name: 'Test School C',
+  address_line_1: '789 Scholar Street',
+  address_line_2: 'Floor 2',
+  contact_phone: '555-111-2222',
+  other_information: 'New school information'
+};
+
+
 export const schoolCreateAndEditData: SchoolCreateAndEditModel = {
-  school_name: 'Updated Test School',
+  school_name: 'Test School A updated!',
   address_line_1: '789 Updated Street',
   address_line_2: 'Floor 2',
   contact_phone: '555-111-2222',
