@@ -6,6 +6,7 @@ import {
     deletionResponseSuccess, 
     studentOrClassConfirmationModificationResponse 
 } from './student-or-class-data';
+import { StudentOrClassModel } from 'src/app/models/student-or-class.model';
 
 
 export const statePriorToStudentsOrClassesLoadRequest: StudentsOrClassesState = {
@@ -49,7 +50,7 @@ export const stateAfterStudentOrClassCreatedAdded: StudentsOrClassesState = {
     ...stateAfterStudentsOrClassesLoadSuccess.entities,
     4: {
       id: 4,
-      student_or_class_name: 'New Student',
+      student_or_class_name: 'The New Student',
       account_type: 'individual',
       school: 2,
       comments: 'Newly added student record',
@@ -70,11 +71,11 @@ export const stateAfterStudentOrClassEditUpdated: StudentsOrClassesState = {
   entities: {
     ...stateAfterStudentsOrClassesLoadSuccess.entities,
     1: {
-      ...stateAfterStudentsOrClassesLoadSuccess.entities[1],
-      student_or_class_name: 'Updated Student Name',
+      ...(stateAfterStudentsOrClassesLoadSuccess.entities[1]!),
+      student_or_class_name: 'John Updated Doe',
       comments: 'Updated student comments',
       tuition_per_hour: 35.0
-    }
+    } as StudentOrClassModel
   },
   successMessage: 'Student Or Class information edited!',
   errorMessage: undefined

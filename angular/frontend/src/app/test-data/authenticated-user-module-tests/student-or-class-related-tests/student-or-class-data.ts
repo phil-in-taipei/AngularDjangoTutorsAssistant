@@ -46,20 +46,20 @@ export const studentsOrClassesData: StudentOrClassModel[] = [
   },
   {
     id: 3,
-    student_or_class_name: 'Jane Smith',
+    student_or_class_name: 'Tanya Smith',
     account_type: 'individual',
     school: undefined,
     comments: 'Private tutoring student',
     purchased_class_hours: undefined,
     tuition_per_hour: 40.00,
     account_id: 'STU002',
-    slug: 'jane-smith',
-    template_str: 'Jane Smith - Individual Student'
+    slug: 'tanya-smith',
+    template_str: 'Tanya Smith - Individual Student'
   }
 ];
 
 export const studentOrClassCreateAndEditData: StudentOrClassCreateAndEditModel = {
-  student_or_class_name: 'Updated Student Name',
+  student_or_class_name: 'John Updated Doe',
   account_type: 'individual',
   school: 2,
   comments: 'Updated student comments',
@@ -68,7 +68,7 @@ export const studentOrClassCreateAndEditData: StudentOrClassCreateAndEditModel =
 };
 
 export const studentOrClassEditData: StudentOrClassEditModel = {
-  student_or_class_name: 'Updated Student Name',
+  student_or_class_name: 'John Updated Doe',
   comments: 'Updated student comments',
   tuition_per_hour: 35.00
 };
