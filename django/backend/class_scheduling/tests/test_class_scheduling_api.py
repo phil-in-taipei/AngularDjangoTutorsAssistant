@@ -154,7 +154,7 @@ class ScheduledClassViewSetTests(ClassSchedulingAPITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(isinstance(response.data, list))
-
+        
         # Verify class was created in database
         self.assertTrue(
             ScheduledClass.objects.filter(
@@ -289,7 +289,7 @@ class ScheduledClassViewSetTests(ClassSchedulingAPITestCase):
         response = self.client.put(url, data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
-
+        
         # Verify database was updated
         updated_class = ScheduledClass.objects.get(id=self.scheduled_class1.id)
         self.assertEqual(updated_class.start_time, datetime.time(11, 0))
@@ -338,14 +338,22 @@ class ScheduledClassViewSetTests(ClassSchedulingAPITestCase):
         self.client.force_authenticate(user=self.user1)
         url = self.base_url + f'class/submit/{self.scheduled_class1.id}/'
 
+        # For partial updates, the view's update method still requires
+        # date, start_time, finish_time, and teacher to check for conflicts
         data = {
+            'student_or_class': self.scheduled_class1.student_or_class.id,
+            'teacher': self.scheduled_class1.teacher.id,
+            'date': str(self.scheduled_class1.date),
+            'start_time': str(self.scheduled_class1.start_time),
+            'finish_time': str(self.scheduled_class1.finish_time),
+            'class_status': self.scheduled_class1.class_status,
             'teacher_notes': 'Partially updated notes'
         }
 
         response = self.client.patch(url, data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
-
+        
         # Verify database was updated
         updated_class = ScheduledClass.objects.get(id=self.scheduled_class1.id)
         self.assertEqual(updated_class.teacher_notes, 'Partially updated notes')
@@ -439,7 +447,7 @@ class ScheduledClassStatusConfirmationTests(ClassSchedulingAPITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
         self.assertIsNotNone(response.data['student_or_class_update'])
-
+        
         # Class is 1 hour (10:00-11:00, calibrated to 1.02 hours)
         updated_student = StudentOrClass.objects.get(id=self.freelance_student.id)
         self.assertLess(updated_student.purchased_class_hours, initial_hours)
@@ -462,7 +470,7 @@ class ScheduledClassStatusConfirmationTests(ClassSchedulingAPITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
         self.assertIsNotNone(response.data['student_or_class_update'])
-
+        
         updated_student = StudentOrClass.objects.get(id=self.freelance_student.id)
         self.assertLess(updated_student.purchased_class_hours, initial_hours)
 
@@ -484,14 +492,14 @@ class ScheduledClassStatusConfirmationTests(ClassSchedulingAPITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
         self.assertIsNone(response.data['student_or_class_update'])
-
+        
         updated_student = StudentOrClass.objects.get(id=self.freelance_student.id)
         self.assertEqual(updated_student.purchased_class_hours, initial_hours)
 
     def test_update_class_status_from_completed_to_scheduled_adds_hours_back(self):
         """Test that changing from completed to scheduled adds hours back."""
         self.client.force_authenticate(user=self.user1)
-
+        
         # First complete the class
         url = self.base_url + 'class-status-confirmation/'
         data = {
@@ -512,7 +520,7 @@ class ScheduledClassStatusConfirmationTests(ClassSchedulingAPITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
         self.assertIsNotNone(response.data['student_or_class_update'])
-
+        
         updated_student = StudentOrClass.objects.get(id=self.freelance_student.id)
         self.assertGreater(updated_student.purchased_class_hours, hours_after_completion)
 
@@ -555,7 +563,7 @@ class ScheduledClassStatusConfirmationTests(ClassSchedulingAPITestCase):
         response = self.client.patch(url, data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
-
+        
         # Verify a modification record was created
         final_record_count = PurchasedHoursModificationRecord.objects.count()
         self.assertEqual(final_record_count, initial_record_count + 1)
@@ -671,7 +679,7 @@ class ScheduledClassByTeacherByDateTests(ClassSchedulingAPITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)  # Both classes on this date
-
+        
         # Verify ordering by start_time
         self.assertLessEqual(
             response.data[0]['start_time'],
@@ -734,7 +742,7 @@ class ScheduledClassByTeacherByMonthTests(ClassSchedulingAPITestCase):
     def test_get_classes_by_month_december_boundary(self):
         """Test retrieval for December (special case for year boundary)."""
         self.client.force_authenticate(user=self.user1)
-
+        
         # Create a class in December 2024
         ScheduledClass.objects.create(
             student_or_class=self.freelance_student,
@@ -777,7 +785,7 @@ class ScheduledClassByTeacherByMonthTests(ClassSchedulingAPITestCase):
     def test_get_classes_by_month_ordering(self):
         """Test that classes are ordered by date and start_time."""
         self.client.force_authenticate(user=self.user1)
-
+        
         # Create classes on different dates
         ScheduledClass.objects.create(
             student_or_class=self.freelance_student,
@@ -787,7 +795,7 @@ class ScheduledClassByTeacherByMonthTests(ClassSchedulingAPITestCase):
             finish_time=datetime.time(16, 0),
             class_status='scheduled'
         )
-
+        
         ScheduledClass.objects.create(
             student_or_class=self.freelance_student,
             teacher=self.teacher1_profile,
@@ -827,7 +835,7 @@ class ScheduledClassGoogleCalendarTests(ClassSchedulingAPITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 2)
-
+        
         # Verify response contains expected fields
         if len(response.data) > 0:
             expected_fields = {
@@ -874,7 +882,7 @@ class StudentOrClassAttendanceTests(ClassSchedulingAPITestCase):
     def test_get_attendance_only_past_classes(self):
         """Test that only past classes are returned."""
         self.client.force_authenticate(user=self.user1)
-
+        
         # Create a future class
         future_class = ScheduledClass.objects.create(
             student_or_class=self.freelance_student,
@@ -895,13 +903,13 @@ class StudentOrClassAttendanceTests(ClassSchedulingAPITestCase):
     def test_get_attendance_pagination(self):
         """Test that attendance records are paginated."""
         self.client.force_authenticate(user=self.user1)
-
+        
         # Create multiple past classes (more than page_size of 3)
         for i in range(5):
             ScheduledClass.objects.create(
                 student_or_class=self.freelance_student,
                 teacher=self.teacher1_profile,
-                date=datetime.date.today() - datetime.timedelta(days=i + 3),
+                date=datetime.date.today() - datetime.timedelta(days=i+3),
                 start_time=datetime.time(10, 0),
                 finish_time=datetime.time(11, 0),
                 class_status='completed'
@@ -921,7 +929,7 @@ class StudentOrClassAttendanceTests(ClassSchedulingAPITestCase):
     def test_get_attendance_ordering(self):
         """Test that attendance records are ordered by date descending."""
         self.client.force_authenticate(user=self.user1)
-
+        
         # Create classes on different past dates
         class1 = ScheduledClass.objects.create(
             student_or_class=self.freelance_student,
@@ -931,7 +939,7 @@ class StudentOrClassAttendanceTests(ClassSchedulingAPITestCase):
             finish_time=datetime.time(11, 0),
             class_status='completed'
         )
-
+        
         class2 = ScheduledClass.objects.create(
             student_or_class=self.freelance_student,
             teacher=self.teacher1_profile,
@@ -973,9 +981,9 @@ class UnconfirmedStatusClassesTests(ClassSchedulingAPITestCase):
     def test_get_unconfirmed_classes_includes_all_statuses_on_date_with_scheduled(self):
         """Test that all classes on dates with scheduled classes are returned."""
         self.client.force_authenticate(user=self.user1)
-
+        
         past_date = datetime.date.today() - datetime.timedelta(days=5)
-
+        
         # Create a scheduled class (unconfirmed)
         scheduled = ScheduledClass.objects.create(
             student_or_class=self.freelance_student,
@@ -985,7 +993,7 @@ class UnconfirmedStatusClassesTests(ClassSchedulingAPITestCase):
             finish_time=datetime.time(11, 0),
             class_status='scheduled'
         )
-
+        
         # Create a completed class on the same date
         completed = ScheduledClass.objects.create(
             student_or_class=self.school_student,
@@ -1007,7 +1015,7 @@ class UnconfirmedStatusClassesTests(ClassSchedulingAPITestCase):
     def test_get_unconfirmed_classes_excludes_future_dates(self):
         """Test that future classes are not included."""
         self.client.force_authenticate(user=self.user1)
-
+        
         # Create a scheduled class in the future
         future_class = ScheduledClass.objects.create(
             student_or_class=self.freelance_student,
@@ -1027,9 +1035,9 @@ class UnconfirmedStatusClassesTests(ClassSchedulingAPITestCase):
     def test_get_unconfirmed_classes_excludes_dates_with_all_confirmed(self):
         """Test that dates with only confirmed classes are excluded."""
         self.client.force_authenticate(user=self.user1)
-
+        
         past_date = datetime.date.today() - datetime.timedelta(days=10)
-
+        
         # Create only completed/cancelled classes on this date
         completed_only = ScheduledClass.objects.create(
             student_or_class=self.freelance_student,
@@ -1050,7 +1058,7 @@ class UnconfirmedStatusClassesTests(ClassSchedulingAPITestCase):
     def test_get_unconfirmed_classes_filters_by_teacher(self):
         """Test that classes are filtered by the authenticated teacher."""
         past_date = datetime.date.today() - datetime.timedelta(days=3)
-
+        
         # Create a scheduled class for teacher2
         teacher2_class = ScheduledClass.objects.create(
             student_or_class=self.freelance_student,
@@ -1145,7 +1153,7 @@ class ClassSchedulingEdgeCaseTests(ClassSchedulingAPITestCase):
     def test_hour_deduction_precision(self):
         """Test that hour deduction maintains proper decimal precision."""
         self.client.force_authenticate(user=self.user1)
-
+        
         # Create a class with specific duration (1.5 hours)
         class_obj = ScheduledClass.objects.create(
             student_or_class=self.freelance_student,
@@ -1157,7 +1165,7 @@ class ClassSchedulingEdgeCaseTests(ClassSchedulingAPITestCase):
         )
 
         initial_hours = self.freelance_student.purchased_class_hours
-
+        
         url = self.base_url + 'class-status-confirmation/'
         data = {
             'id': class_obj.id,
@@ -1167,7 +1175,7 @@ class ClassSchedulingEdgeCaseTests(ClassSchedulingAPITestCase):
         }
 
         response = self.client.patch(url, data, format='json')
-
+        
         updated_student = StudentOrClass.objects.get(id=self.freelance_student.id)
         # Verify precision is maintained (should be close to 1.52 hours with calibration)
         difference = initial_hours - updated_student.purchased_class_hours
