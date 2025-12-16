@@ -2,12 +2,19 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from datetime import date, time
 from decimal import Decimal
+from unittest.mock import patch, call
 
 from user_profiles.models import UserProfile
 from student_account.models import StudentOrClass
 from school.models import School
 from class_scheduling.models import ScheduledClass
-from accounting.utils import get_scheduled_classes_during_month_period
+from accounting.utils import (
+    get_estimated_number_of_worked_hours,
+    get_scheduled_classes_during_month_period, 
+    organize_scheduled_classes, process_school_classes,
+    process_freelance_students
+)
+
 
 User = get_user_model()
 
@@ -457,3 +464,1344 @@ class TestGetScheduledClassesDuringMonthPeriod(TestCase):
             self.assertIsNotNone(cls.student_or_class.school)
             self.assertEqual(cls.student_or_class.account_type, 'school')
             self.assertIsNone(cls.student_or_class.purchased_class_hours)
+
+
+
+
+
+class TestOrganizeScheduledClasses(TestCase):
+    """
+    Test suite for organize_scheduled_classes utility function.
+    This function takes a queryset of scheduled classes and organizes them into
+    a nested dictionary structure with separate sections for school classes and
+    freelance students.
+    """
+
+    def setUp(self):
+        """
+        Set up test data including:
+        - 1 Teacher
+        - 2 Schools (Alpha Academy and Beta School)
+        - 2 Freelance students
+        - 2 School-affiliated students (one per school)
+        - Various scheduled classes
+        """
+        # Create user and user profile
+        self.teacher_user = User.objects.create_user(
+            username='teacher1',
+            password='testpass123'
+        )
+        self.teacher_profile = UserProfile.objects.create(
+            user=self.teacher_user,
+            contact_email='teacher1@example.com',
+            surname='Smith',
+            given_name='John'
+        )
+
+        # Create 2 schools
+        self.school_alpha = School.objects.create(
+            school_name='Alpha Academy',
+            address_line_1='123 Main St',
+            address_line_2='Suite 100',
+            contact_phone='5551234567',
+            scheduling_teacher=self.teacher_profile
+        )
+        self.school_beta = School.objects.create(
+            school_name='Beta School',
+            address_line_1='456 Oak Ave',
+            address_line_2='Building B',
+            contact_phone='5559876543',
+            scheduling_teacher=self.teacher_profile
+        )
+
+        # Create 2 freelance students
+        self.freelance_student_1 = StudentOrClass.objects.create(
+            student_or_class_name='Alice Brown',
+            account_type='freelance',
+            school=None,
+            teacher=self.teacher_profile,
+            purchased_class_hours=Decimal('10.00'),
+            tuition_per_hour=1000
+        )
+        self.freelance_student_2 = StudentOrClass.objects.create(
+            student_or_class_name='Bob Wilson',
+            account_type='freelance',
+            school=None,
+            teacher=self.teacher_profile,
+            purchased_class_hours=Decimal('15.00'),
+            tuition_per_hour=1200
+        )
+
+        # Create 2 school-affiliated students
+        self.school_alpha_student = StudentOrClass.objects.create(
+            student_or_class_name='Charlie Davis',
+            account_type='school',
+            school=self.school_alpha,
+            teacher=self.teacher_profile,
+            purchased_class_hours=None,
+            tuition_per_hour=900
+        )
+        self.school_beta_student = StudentOrClass.objects.create(
+            student_or_class_name='Diana Miller',
+            account_type='school',
+            school=self.school_beta,
+            teacher=self.teacher_profile,
+            purchased_class_hours=None,
+            tuition_per_hour=950
+        )
+
+        # Create scheduled classes
+        # Freelance classes for Alice
+        self.alice_class_1 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.freelance_student_1,
+            date=date(2024, 11, 5),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),
+            class_status='completed'
+        )
+        self.alice_class_2 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.freelance_student_1,
+            date=date(2024, 11, 12),
+            start_time=time(14, 0),
+            finish_time=time(15, 0),
+            class_status='completed'
+        )
+
+        # Freelance classes for Bob
+        self.bob_class_1 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.freelance_student_2,
+            date=date(2024, 11, 8),
+            start_time=time(9, 0),
+            finish_time=time(10, 30),
+            class_status='scheduled'
+        )
+
+        # School classes for Alpha Academy - Charlie
+        self.charlie_class_1 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.school_alpha_student,
+            date=date(2024, 11, 10),
+            start_time=time(13, 0),
+            finish_time=time(14, 0),
+            class_status='completed'
+        )
+        self.charlie_class_2 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.school_alpha_student,
+            date=date(2024, 11, 17),
+            start_time=time(13, 0),
+            finish_time=time(14, 0),
+            class_status='completed'
+        )
+
+        # School classes for Beta School - Diana
+        self.diana_class_1 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.school_beta_student,
+            date=date(2024, 11, 15),
+            start_time=time(11, 0),
+            finish_time=time(12, 30),
+            class_status='completed'
+        )
+
+    def test_basic_structure(self):
+        """Test that the function returns the correct dictionary structure."""
+        classes = ScheduledClass.objects.filter(teacher=self.teacher_profile)
+        result = organize_scheduled_classes(classes)
+
+        # Check top-level keys
+        self.assertIn('classes_in_schools', result)
+        self.assertIn('freelance_students', result)
+        self.assertIsInstance(result['classes_in_schools'], list)
+        self.assertIsInstance(result['freelance_students'], list)
+
+    def test_school_classes_organization(self):
+        """Test that school classes are correctly organized by school and student."""
+        classes = ScheduledClass.objects.filter(teacher=self.teacher_profile)
+        result = organize_scheduled_classes(classes)
+
+        schools = result['classes_in_schools']
+        
+        # Should have 2 schools
+        self.assertEqual(len(schools), 2)
+
+        # Find Alpha Academy and Beta School in results
+        alpha_school = next((s for s in schools if s['school_name'] == 'Alpha Academy'), None)
+        beta_school = next((s for s in schools if s['school_name'] == 'Beta School'), None)
+
+        self.assertIsNotNone(alpha_school)
+        self.assertIsNotNone(beta_school)
+
+        # Check Alpha Academy structure
+        self.assertIn('school_name', alpha_school)
+        self.assertIn('students_classes', alpha_school)
+        self.assertEqual(alpha_school['school_name'], 'Alpha Academy')
+        self.assertEqual(len(alpha_school['students_classes']), 1)  # Charlie only
+
+        # Check Charlie's data
+        charlie_data = alpha_school['students_classes'][0]
+        self.assertEqual(charlie_data['student_or_class_name'], 'Charlie Davis')
+        self.assertEqual(len(charlie_data['scheduled_classes']), 2)
+        self.assertIn(self.charlie_class_1, charlie_data['scheduled_classes'])
+        self.assertIn(self.charlie_class_2, charlie_data['scheduled_classes'])
+
+        # Check Beta School structure
+        self.assertEqual(beta_school['school_name'], 'Beta School')
+        self.assertEqual(len(beta_school['students_classes']), 1)  # Diana only
+
+        # Check Diana's data
+        diana_data = beta_school['students_classes'][0]
+        self.assertEqual(diana_data['student_or_class_name'], 'Diana Miller')
+        self.assertEqual(len(diana_data['scheduled_classes']), 1)
+        self.assertIn(self.diana_class_1, diana_data['scheduled_classes'])
+
+    def test_freelance_students_organization(self):
+        """Test that freelance students are correctly organized."""
+        classes = ScheduledClass.objects.filter(teacher=self.teacher_profile)
+        result = organize_scheduled_classes(classes)
+
+        freelance = result['freelance_students']
+        
+        # Should have 2 freelance students
+        self.assertEqual(len(freelance), 2)
+
+        # Find Alice and Bob in results
+        alice_data = next((s for s in freelance if s['student_or_class_name'] == 'Alice Brown'), None)
+        bob_data = next((s for s in freelance if s['student_or_class_name'] == 'Bob Wilson'), None)
+
+        self.assertIsNotNone(alice_data)
+        self.assertIsNotNone(bob_data)
+
+        # Check Alice's data
+        self.assertIn('student_or_class_name', alice_data)
+        self.assertIn('scheduled_classes', alice_data)
+        self.assertEqual(alice_data['student_or_class_name'], 'Alice Brown')
+        self.assertEqual(len(alice_data['scheduled_classes']), 2)
+        self.assertIn(self.alice_class_1, alice_data['scheduled_classes'])
+        self.assertIn(self.alice_class_2, alice_data['scheduled_classes'])
+
+        # Check Bob's data
+        self.assertEqual(bob_data['student_or_class_name'], 'Bob Wilson')
+        self.assertEqual(len(bob_data['scheduled_classes']), 1)
+        self.assertIn(self.bob_class_1, bob_data['scheduled_classes'])
+
+    def test_empty_queryset(self):
+        """Test that function handles empty queryset correctly."""
+        empty_classes = ScheduledClass.objects.none()
+        result = organize_scheduled_classes(empty_classes)
+
+        self.assertEqual(len(result['classes_in_schools']), 0)
+        self.assertEqual(len(result['freelance_students']), 0)
+
+    def test_only_school_classes(self):
+        """Test organization when only school classes exist."""
+        # Only get school classes
+        classes = ScheduledClass.objects.filter(
+            teacher=self.teacher_profile,
+            student_or_class__school__isnull=False
+        )
+        result = organize_scheduled_classes(classes)
+
+        # Should have school data but no freelance data
+        self.assertEqual(len(result['classes_in_schools']), 2)
+        self.assertEqual(len(result['freelance_students']), 0)
+
+    def test_only_freelance_classes(self):
+        """Test organization when only freelance classes exist."""
+        # Only get freelance classes
+        classes = ScheduledClass.objects.filter(
+            teacher=self.teacher_profile,
+            student_or_class__school__isnull=True
+        )
+        result = organize_scheduled_classes(classes)
+
+        # Should have freelance data but no school data
+        self.assertEqual(len(result['classes_in_schools']), 0)
+        self.assertEqual(len(result['freelance_students']), 2)
+
+    def test_multiple_students_same_school(self):
+        """Test organization when a school has multiple students."""
+        # Create another student at Alpha Academy
+        second_alpha_student = StudentOrClass.objects.create(
+            student_or_class_name='Emily Johnson',
+            account_type='school',
+            school=self.school_alpha,
+            teacher=self.teacher_profile,
+            purchased_class_hours=None,
+            tuition_per_hour=900
+        )
+
+        # Create class for the new student
+        emily_class = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=second_alpha_student,
+            date=date(2024, 11, 20),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),
+            class_status='scheduled'
+        )
+
+        classes = ScheduledClass.objects.filter(teacher=self.teacher_profile)
+        result = organize_scheduled_classes(classes)
+
+        # Find Alpha Academy
+        alpha_school = next((s for s in result['classes_in_schools'] 
+                           if s['school_name'] == 'Alpha Academy'), None)
+
+        # Should have 2 students now
+        self.assertEqual(len(alpha_school['students_classes']), 2)
+
+        # Verify both students are present
+        student_names = [s['student_or_class_name'] for s in alpha_school['students_classes']]
+        self.assertIn('Charlie Davis', student_names)
+        self.assertIn('Emily Johnson', student_names)
+
+    def test_class_status_preserved(self):
+        """Test that various class statuses are preserved in the organization."""
+        # Create classes with different statuses
+        cancelled_class = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.freelance_student_1,
+            date=date(2024, 11, 25),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),
+            class_status='cancelled'
+        )
+        
+        same_day_cancel = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.school_alpha_student,
+            date=date(2024, 11, 26),
+            start_time=time(14, 0),
+            finish_time=time(15, 0),
+            class_status='same_day_cancellation'
+        )
+
+        classes = ScheduledClass.objects.filter(teacher=self.teacher_profile)
+        result = organize_scheduled_classes(classes)
+
+        # Check that all classes are included regardless of status
+        alice_data = next((s for s in result['freelance_students'] 
+                         if s['student_or_class_name'] == 'Alice Brown'), None)
+        self.assertEqual(len(alice_data['scheduled_classes']), 3)  # Now has 3 classes
+        
+        # Verify the cancelled class is included
+        statuses = [c.class_status for c in alice_data['scheduled_classes']]
+        self.assertIn('cancelled', statuses)
+
+    def test_class_details_preserved(self):
+        """Test that all class details (date, time, notes) are preserved."""
+        classes = ScheduledClass.objects.filter(teacher=self.teacher_profile)
+        result = organize_scheduled_classes(classes)
+
+        # Get Alice's first class from the result
+        alice_data = next((s for s in result['freelance_students'] 
+                         if s['student_or_class_name'] == 'Alice Brown'), None)
+        alice_first_class = next((c for c in alice_data['scheduled_classes'] 
+                                 if c.id == self.alice_class_1.id), None)
+
+        # Verify all details are intact
+        self.assertEqual(alice_first_class.date, date(2024, 11, 5))
+        self.assertEqual(alice_first_class.start_time, time(10, 0))
+        self.assertEqual(alice_first_class.finish_time, time(11, 0))
+        self.assertEqual(alice_first_class.class_status, 'completed')
+        self.assertEqual(alice_first_class.teacher, self.teacher_profile)
+
+    def test_order_preservation_within_student(self):
+        """Test that classes for each student maintain their order from the queryset."""
+        # Create classes in a specific order
+        classes = ScheduledClass.objects.filter(
+            teacher=self.teacher_profile
+        ).order_by('date', 'start_time')
+
+        result = organize_scheduled_classes(classes)
+
+        # Check Alice's classes are in date order
+        alice_data = next((s for s in result['freelance_students'] 
+                         if s['student_or_class_name'] == 'Alice Brown'), None)
+        
+        alice_dates = [c.date for c in alice_data['scheduled_classes']]
+        self.assertEqual(alice_dates, sorted(alice_dates))
+
+    def test_queryset_versus_list_input(self):
+        """Test that function works with both querysets and lists."""
+        classes_queryset = ScheduledClass.objects.filter(teacher=self.teacher_profile)
+        classes_list = list(classes_queryset)
+
+        result_from_queryset = organize_scheduled_classes(classes_queryset)
+        result_from_list = organize_scheduled_classes(classes_list)
+
+        # Both should produce the same counts
+        self.assertEqual(
+            len(result_from_queryset['classes_in_schools']),
+            len(result_from_list['classes_in_schools'])
+        )
+        self.assertEqual(
+            len(result_from_queryset['freelance_students']),
+            len(result_from_list['freelance_students'])
+        )
+
+    def test_student_with_single_class(self):
+        """Test organization for students with only one class."""
+        # Bob only has one class
+        classes = ScheduledClass.objects.filter(teacher=self.teacher_profile)
+        result = organize_scheduled_classes(classes)
+
+        bob_data = next((s for s in result['freelance_students'] 
+                       if s['student_or_class_name'] == 'Bob Wilson'), None)
+
+        self.assertEqual(len(bob_data['scheduled_classes']), 1)
+        self.assertEqual(bob_data['scheduled_classes'][0], self.bob_class_1)
+
+    def test_no_duplicate_entries(self):
+        """Test that students/schools don't appear multiple times in the structure."""
+        classes = ScheduledClass.objects.filter(teacher=self.teacher_profile)
+        result = organize_scheduled_classes(classes)
+
+        # Check school names are unique
+        school_names = [s['school_name'] for s in result['classes_in_schools']]
+        self.assertEqual(len(school_names), len(set(school_names)))
+
+        # Check freelance student names are unique
+        freelance_names = [s['student_or_class_name'] for s in result['freelance_students']]
+        self.assertEqual(len(freelance_names), len(set(freelance_names)))
+
+        # Check student names within each school are unique
+        for school in result['classes_in_schools']:
+            student_names = [s['student_or_class_name'] for s in school['students_classes']]
+            self.assertEqual(len(student_names), len(set(student_names)))
+
+
+
+class TestGetEstimatedNumberOfWorkedHours(TestCase):
+    """
+    Test suite for get_estimated_number_of_worked_hours utility function.
+    This function calculates total worked hours for a list of scheduled classes,
+    only counting classes with status 'completed' or 'same_day_cancellation'.
+    """
+
+    def setUp(self):
+        """
+        Set up test data including:
+        - 1 Teacher
+        - 1 School and 1 Freelance student
+        - Scheduled classes with various statuses
+        """
+        # Create user and user profile
+        self.teacher_user = User.objects.create_user(
+            username='teacher1',
+            password='testpass123'
+        )
+        self.teacher_profile = UserProfile.objects.create(
+            user=self.teacher_user,
+            contact_email='teacher1@example.com',
+            surname='Smith',
+            given_name='John'
+        )
+
+        # Create school
+        self.school = School.objects.create(
+            school_name='Alpha Academy',
+            address_line_1='123 Main St',
+            address_line_2='Suite 100',
+            contact_phone='5551234567',
+            scheduling_teacher=self.teacher_profile
+        )
+
+        # Create student
+        self.student = StudentOrClass.objects.create(
+            student_or_class_name='Alice Brown',
+            account_type='school',
+            school=self.school,
+            teacher=self.teacher_profile,
+            purchased_class_hours=None,
+            tuition_per_hour=900
+        )
+
+        # Create classes with different statuses
+        # Completed class - should count
+        self.completed_class = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.student,
+            date=date(2024, 11, 5),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),  # 1 hour
+            class_status='completed'
+        )
+
+        # Same day cancellation - should count
+        self.same_day_cancel = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.student,
+            date=date(2024, 11, 8),
+            start_time=time(14, 0),
+            finish_time=time(15, 30),  # 1.5 hours
+            class_status='same_day_cancellation'
+        )
+
+        # Scheduled class - should NOT count
+        self.scheduled_class = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.student,
+            date=date(2024, 11, 12),
+            start_time=time(9, 0),
+            finish_time=time(10, 0),  # 1 hour
+            class_status='scheduled'
+        )
+
+        # Cancelled class - should NOT count
+        self.cancelled_class = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.student,
+            date=date(2024, 11, 15),
+            start_time=time(13, 0),
+            finish_time=time(14, 30),  # 1.5 hours
+            class_status='cancelled'
+        )
+
+        # Cancellation request - should NOT count
+        self.cancel_request = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.student,
+            date=date(2024, 11, 20),
+            start_time=time(11, 0),
+            finish_time=time(12, 0),  # 1 hour
+            class_status='cancellation_request'
+        )
+
+    @patch('accounting.utils.determine_duration_of_class_time')
+    def test_completed_class_counts(self, mock_duration):
+        """Test that completed classes are counted."""
+        mock_duration.return_value = Decimal('1.0')
+
+        classes = [self.completed_class]
+        result = get_estimated_number_of_worked_hours(classes)
+
+        # Should call duration function once
+        mock_duration.assert_called_once_with(time(10, 0), time(11, 0))
+        # Should return the duration
+        self.assertEqual(result, Decimal('1.0'))
+
+    @patch('accounting.utils.determine_duration_of_class_time')
+    def test_same_day_cancellation_counts(self, mock_duration):
+        """Test that same day cancellations are counted."""
+        mock_duration.return_value = Decimal('1.5')
+
+        classes = [self.same_day_cancel]
+        result = get_estimated_number_of_worked_hours(classes)
+
+        # Should call duration function once
+        mock_duration.assert_called_once_with(time(14, 0), time(15, 30))
+        # Should return the duration
+        self.assertEqual(result, Decimal('1.5'))
+
+    @patch('accounting.utils.determine_duration_of_class_time')
+    def test_scheduled_class_not_counted(self, mock_duration):
+        """Test that scheduled classes are NOT counted."""
+        classes = [self.scheduled_class]
+        result = get_estimated_number_of_worked_hours(classes)
+
+        # Should NOT call duration function
+        mock_duration.assert_not_called()
+        # Should return 0
+        self.assertEqual(result, 0)
+
+    @patch('accounting.utils.determine_duration_of_class_time')
+    def test_cancelled_class_not_counted(self, mock_duration):
+        """Test that cancelled classes are NOT counted."""
+        classes = [self.cancelled_class]
+        result = get_estimated_number_of_worked_hours(classes)
+
+        # Should NOT call duration function
+        mock_duration.assert_not_called()
+        # Should return 0
+        self.assertEqual(result, 0)
+
+    @patch('accounting.utils.determine_duration_of_class_time')
+    def test_cancellation_request_not_counted(self, mock_duration):
+        """Test that cancellation requests are NOT counted."""
+        classes = [self.cancel_request]
+        result = get_estimated_number_of_worked_hours(classes)
+
+        # Should NOT call duration function
+        mock_duration.assert_not_called()
+        # Should return 0
+        self.assertEqual(result, 0)
+
+    @patch('accounting.utils.determine_duration_of_class_time')
+    def test_multiple_completed_classes(self, mock_duration):
+        """Test summing hours across multiple completed classes."""
+        # Create another completed class
+        completed_class_2 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.student,
+            date=date(2024, 11, 22),
+            start_time=time(10, 0),
+            finish_time=time(11, 30),  # 1.5 hours
+            class_status='completed'
+        )
+
+        # Mock different durations for each class
+        mock_duration.side_effect = [Decimal('1.0'), Decimal('1.5')]
+
+        classes = [self.completed_class, completed_class_2]
+        result = get_estimated_number_of_worked_hours(classes)
+
+        # Should call duration function twice
+        self.assertEqual(mock_duration.call_count, 2)
+        # Should return sum of durations
+        self.assertEqual(result, Decimal('2.5'))
+
+    @patch('accounting.utils.determine_duration_of_class_time')
+    def test_mixed_statuses(self, mock_duration):
+        """Test that only completed and same_day_cancellation classes are counted."""
+        # Mock durations for countable classes
+        mock_duration.side_effect = [Decimal('1.0'), Decimal('1.5')]
+
+        # Mix of all statuses
+        classes = [
+            self.completed_class,       # Should count (1.0)
+            self.same_day_cancel,       # Should count (1.5)
+            self.scheduled_class,       # Should NOT count
+            self.cancelled_class,       # Should NOT count
+            self.cancel_request         # Should NOT count
+        ]
+        
+        result = get_estimated_number_of_worked_hours(classes)
+
+        # Should only call duration function twice (for completed and same_day_cancel)
+        self.assertEqual(mock_duration.call_count, 2)
+        # Should return sum of only the countable classes
+        self.assertEqual(result, Decimal('2.5'))
+
+    @patch('accounting.utils.determine_duration_of_class_time')
+    def test_empty_list(self, mock_duration):
+        """Test that empty list returns 0 hours."""
+        classes = []
+        result = get_estimated_number_of_worked_hours(classes)
+
+        # Should not call duration function
+        mock_duration.assert_not_called()
+        # Should return 0
+        self.assertEqual(result, 0)
+
+    @patch('accounting.utils.determine_duration_of_class_time')
+    def test_only_non_countable_classes(self, mock_duration):
+        """Test that list with only non-countable classes returns 0 hours."""
+        classes = [
+            self.scheduled_class,
+            self.cancelled_class,
+            self.cancel_request
+        ]
+        
+        result = get_estimated_number_of_worked_hours(classes)
+
+        # Should not call duration function
+        mock_duration.assert_not_called()
+        # Should return 0
+        self.assertEqual(result, 0)
+
+    @patch('accounting.utils.determine_duration_of_class_time')
+    def test_duration_function_called_with_correct_times(self, mock_duration):
+        """Test that determine_duration_of_class_time is called with correct start and finish times."""
+        mock_duration.return_value = Decimal('1.0')
+
+        classes = [self.completed_class, self.same_day_cancel]
+        get_estimated_number_of_worked_hours(classes)
+
+        # Verify the function was called with correct arguments
+        expected_calls = [
+            call(time(10, 0), time(11, 0)),      # completed_class times
+            call(time(14, 0), time(15, 30))       # same_day_cancel times
+        ]
+        mock_duration.assert_has_calls(expected_calls, any_order=False)
+
+    @patch('accounting.utils.determine_duration_of_class_time')
+    def test_accumulation_logic(self, mock_duration):
+        """Test that hours are accumulated correctly, not replaced."""
+        # Return different values for each call
+        mock_duration.side_effect = [
+            Decimal('1.0'),
+            Decimal('0.5'),
+            Decimal('2.0')
+        ]
+
+        # Create additional completed classes
+        completed_2 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.student,
+            date=date(2024, 11, 25),
+            start_time=time(9, 0),
+            finish_time=time(9, 30),
+            class_status='completed'
+        )
+        completed_3 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.student,
+            date=date(2024, 11, 26),
+            start_time=time(14, 0),
+            finish_time=time(16, 0),
+            class_status='completed'
+        )
+
+        classes = [self.completed_class, completed_2, completed_3]
+        result = get_estimated_number_of_worked_hours(classes)
+
+        # Should return 1.0 + 0.5 + 2.0 = 3.5
+        self.assertEqual(result, Decimal('3.5'))
+
+    @patch('accounting.utils.determine_duration_of_class_time')
+    def test_various_time_durations(self, mock_duration):
+        """Test with various class durations."""
+        # Create classes with different durations
+        short_class = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.student,
+            date=date(2024, 11, 10),
+            start_time=time(10, 0),
+            finish_time=time(10, 30),  # 0.5 hours
+            class_status='completed'
+        )
+        long_class = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.student,
+            date=date(2024, 11, 11),
+            start_time=time(9, 0),
+            finish_time=time(12, 0),  # 3 hours
+            class_status='completed'
+        )
+
+        mock_duration.side_effect = [Decimal('0.5'), Decimal('3.0')]
+
+        classes = [short_class, long_class]
+        result = get_estimated_number_of_worked_hours(classes)
+
+        self.assertEqual(result, Decimal('3.5'))
+
+    @patch('accounting.utils.determine_duration_of_class_time')
+    def test_integer_return_when_no_decimal_hours(self, mock_duration):
+        """Test return type when all durations are whole numbers."""
+        mock_duration.side_effect = [Decimal('1.0'), Decimal('2.0')]
+
+        completed_2 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.student,
+            date=date(2024, 11, 25),
+            start_time=time(9, 0),
+            finish_time=time(11, 0),
+            class_status='completed'
+        )
+
+        classes = [self.completed_class, completed_2]
+        result = get_estimated_number_of_worked_hours(classes)
+
+        # Result should be 3.0
+        self.assertEqual(result, 3.0)  # Changed from Decimal('3.0')
+
+    @patch('accounting.utils.determine_duration_of_class_time')
+    def test_class_status_case_sensitivity(self, mock_duration):
+        """Test that class status matching is case-sensitive (as per the code)."""
+        mock_duration.return_value = Decimal('1.0')
+
+        # Create class with uppercase status (should NOT match)
+        uppercase_class = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.student,
+            date=date(2024, 11, 28),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),
+            class_status='COMPLETED'  # uppercase
+        )
+
+        classes = [uppercase_class]
+        result = get_estimated_number_of_worked_hours(classes)
+
+        # Should not count because status doesn't match exactly
+        mock_duration.assert_not_called()
+        self.assertEqual(result, 0)
+
+
+
+class TestProcessSchoolClasses(TestCase):
+    """
+    Test suite for process_school_classes utility function.
+    This function takes organized class data and generates accounting reports
+    for school-affiliated students, including hours worked and totals.
+    """
+
+    def setUp(self):
+        """
+        Set up test data including:
+        - 1 Teacher
+        - 2 Schools (Alpha Academy and Beta School)
+        - School-affiliated students and their classes
+        """
+        # Create user and user profile
+        self.teacher_user = User.objects.create_user(
+            username='teacher1',
+            password='testpass123'
+        )
+        self.teacher_profile = UserProfile.objects.create(
+            user=self.teacher_user,
+            contact_email='teacher1@example.com',
+            surname='Smith',
+            given_name='John'
+        )
+
+        # Create 2 schools
+        self.school_alpha = School.objects.create(
+            school_name='Alpha Academy',
+            address_line_1='123 Main St',
+            address_line_2='Suite 100',
+            contact_phone='5551234567',
+            scheduling_teacher=self.teacher_profile
+        )
+        self.school_beta = School.objects.create(
+            school_name='Beta School',
+            address_line_1='456 Oak Ave',
+            address_line_2='Building B',
+            contact_phone='5559876543',
+            scheduling_teacher=self.teacher_profile
+        )
+
+        # Create school-affiliated students
+        self.charlie = StudentOrClass.objects.create(
+            student_or_class_name='Charlie Davis',
+            account_type='school',
+            school=self.school_alpha,
+            teacher=self.teacher_profile,
+            purchased_class_hours=None,
+            tuition_per_hour=900
+        )
+        self.diana = StudentOrClass.objects.create(
+            student_or_class_name='Diana Miller',
+            account_type='school',
+            school=self.school_beta,
+            teacher=self.teacher_profile,
+            purchased_class_hours=None,
+            tuition_per_hour=950
+        )
+        self.emily = StudentOrClass.objects.create(
+            student_or_class_name='Emily Johnson',
+            account_type='school',
+            school=self.school_alpha,
+            teacher=self.teacher_profile,
+            purchased_class_hours=None,
+            tuition_per_hour=1000
+        )
+
+        # Create scheduled classes for Charlie (2 classes, 1 hour each)
+        self.charlie_class_1 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.charlie,
+            date=date(2024, 11, 10),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),
+            class_status='completed'
+        )
+        self.charlie_class_2 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.charlie,
+            date=date(2024, 11, 17),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),
+            class_status='completed'
+        )
+
+        # Create scheduled classes for Diana (1 class, 1.5 hours)
+        self.diana_class_1 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.diana,
+            date=date(2024, 11, 15),
+            start_time=time(14, 0),
+            finish_time=time(15, 30),
+            class_status='completed'
+        )
+
+        # Create scheduled classes for Emily (3 classes, 1 hour each)
+        self.emily_class_1 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.emily,
+            date=date(2024, 11, 5),
+            start_time=time(9, 0),
+            finish_time=time(10, 0),
+            class_status='completed'
+        )
+        self.emily_class_2 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.emily,
+            date=date(2024, 11, 12),
+            start_time=time(9, 0),
+            finish_time=time(10, 0),
+            class_status='completed'
+        )
+        self.emily_class_3 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.emily,
+            date=date(2024, 11, 19),
+            start_time=time(9, 0),
+            finish_time=time(10, 0),
+            class_status='completed'
+        )
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_basic_structure(self, mock_hours):
+        """Test that the function returns the correct structure."""
+        mock_hours.return_value = Decimal('2.0')
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1, self.charlie_class_2]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_school_classes(accounting_data, organized_data)
+
+        # Check that result has the correct keys
+        self.assertIn('classes_in_schools', result)
+        self.assertIn('freelance_students', result)
+        
+        # Check that school data was added
+        self.assertEqual(len(result['classes_in_schools']), 1)
+        
+        # Check school report structure
+        school_report = result['classes_in_schools'][0]
+        self.assertIn('school_name', school_report)
+        self.assertIn('students_reports', school_report)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_single_school_single_student(self, mock_hours):
+        """Test processing a single school with a single student."""
+        mock_hours.return_value = Decimal('2.0')
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1, self.charlie_class_2]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_school_classes(accounting_data, organized_data)
+
+        # Verify school report
+        self.assertEqual(len(result['classes_in_schools']), 1)
+        school_report = result['classes_in_schools'][0]
+        self.assertEqual(school_report['school_name'], 'Alpha Academy')
+        
+        # Verify student report
+        self.assertEqual(len(school_report['students_reports']), 1)
+        student_report = school_report['students_reports'][0]
+        
+        self.assertEqual(student_report['name'], 'Charlie Davis')
+        self.assertEqual(student_report['account_id'], self.charlie.id)
+        self.assertEqual(student_report['rate'], 900)
+        self.assertEqual(student_report['hours'], Decimal('2.0'))
+        self.assertEqual(student_report['total'], 900 * Decimal('2.0'))
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_single_school_multiple_students(self, mock_hours):
+        """Test processing a single school with multiple students."""
+        # Return different hours for different students
+        mock_hours.side_effect = [Decimal('2.0'), Decimal('3.0')]
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1, self.charlie_class_2]
+                        },
+                        {
+                            "student_or_class_name": "Emily Johnson",
+                            "scheduled_classes": [self.emily_class_1, self.emily_class_2, self.emily_class_3]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_school_classes(accounting_data, organized_data)
+
+        # Verify school report
+        self.assertEqual(len(result['classes_in_schools']), 1)
+        school_report = result['classes_in_schools'][0]
+        self.assertEqual(school_report['school_name'], 'Alpha Academy')
+        
+        # Verify we have 2 student reports
+        self.assertEqual(len(school_report['students_reports']), 2)
+        
+        # Verify Charlie's report
+        charlie_report = next((r for r in school_report['students_reports'] 
+                              if r['name'] == 'Charlie Davis'), None)
+        self.assertIsNotNone(charlie_report)
+        self.assertEqual(charlie_report['rate'], 900)
+        self.assertEqual(charlie_report['hours'], Decimal('2.0'))
+        self.assertEqual(charlie_report['total'], 1800)
+        
+        # Verify Emily's report
+        emily_report = next((r for r in school_report['students_reports'] 
+                           if r['name'] == 'Emily Johnson'), None)
+        self.assertIsNotNone(emily_report)
+        self.assertEqual(emily_report['rate'], 1000)
+        self.assertEqual(emily_report['hours'], Decimal('3.0'))
+        self.assertEqual(emily_report['total'], 3000)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_multiple_schools(self, mock_hours):
+        """Test processing multiple schools."""
+        mock_hours.side_effect = [Decimal('2.0'), Decimal('1.5')]
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1, self.charlie_class_2]
+                        }
+                    ]
+                },
+                {
+                    "school_name": "Beta School",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Diana Miller",
+                            "scheduled_classes": [self.diana_class_1]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_school_classes(accounting_data, organized_data)
+
+        # Verify we have 2 schools
+        self.assertEqual(len(result['classes_in_schools']), 2)
+        
+        # Find each school
+        alpha_report = next((s for s in result['classes_in_schools'] 
+                           if s['school_name'] == 'Alpha Academy'), None)
+        beta_report = next((s for s in result['classes_in_schools'] 
+                          if s['school_name'] == 'Beta School'), None)
+        
+        self.assertIsNotNone(alpha_report)
+        self.assertIsNotNone(beta_report)
+        
+        # Verify Alpha Academy report
+        self.assertEqual(len(alpha_report['students_reports']), 1)
+        charlie_report = alpha_report['students_reports'][0]
+        self.assertEqual(charlie_report['name'], 'Charlie Davis')
+        self.assertEqual(charlie_report['total'], 1800)
+        
+        # Verify Beta School report
+        self.assertEqual(len(beta_report['students_reports']), 1)
+        diana_report = beta_report['students_reports'][0]
+        self.assertEqual(diana_report['name'], 'Diana Miller')
+        self.assertEqual(diana_report['total'], Decimal('950') * Decimal('1.5'))
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_empty_school_classes(self, mock_hours):
+        """Test processing when there are no school classes."""
+        organized_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_school_classes(accounting_data, organized_data)
+
+        # Should return empty school classes
+        self.assertEqual(len(result['classes_in_schools']), 0)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_does_not_modify_freelance_data(self, mock_hours):
+        """Test that the function doesn't modify freelance student data."""
+        mock_hours.return_value = Decimal('2.0')
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        # Start with some freelance data in accounting_data
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": [{"name": "Test Student"}]
+        }
+
+        result = process_school_classes(accounting_data, organized_data)
+
+        # Freelance data should remain unchanged
+        self.assertEqual(len(result['freelance_students']), 1)
+        self.assertEqual(result['freelance_students'][0]['name'], 'Test Student')
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_accounting_report_fields(self, mock_hours):
+        """Test that all required fields are present in the accounting report."""
+        mock_hours.return_value = Decimal('2.5')
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1, self.charlie_class_2]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_school_classes(accounting_data, organized_data)
+
+        student_report = result['classes_in_schools'][0]['students_reports'][0]
+
+        # Verify all required fields are present
+        self.assertIn('name', student_report)
+        self.assertIn('account_id', student_report)
+        self.assertIn('rate', student_report)
+        self.assertIn('hours', student_report)
+        self.assertIn('total', student_report)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_total_calculation(self, mock_hours):
+        """Test that the total is calculated correctly (rate × hours)."""
+        mock_hours.return_value = Decimal('2.5')
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_school_classes(accounting_data, organized_data)
+
+        student_report = result['classes_in_schools'][0]['students_reports'][0]
+
+        # Charlie's rate is 900, hours is 2.5
+        expected_total = 900 * Decimal('2.5')
+        self.assertEqual(student_report['total'], expected_total)
+        self.assertEqual(student_report['total'], 2250)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_different_tuition_rates(self, mock_hours):
+        """Test that different tuition rates are handled correctly."""
+        mock_hours.side_effect = [Decimal('2.0'), Decimal('2.0')]
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1]
+                        },
+                        {
+                            "student_or_class_name": "Emily Johnson",
+                            "scheduled_classes": [self.emily_class_1]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_school_classes(accounting_data, organized_data)
+
+        students_reports = result['classes_in_schools'][0]['students_reports']
+
+        # Charlie: 900/hour × 2 hours = 1800
+        charlie_report = next((r for r in students_reports if r['name'] == 'Charlie Davis'), None)
+        self.assertEqual(charlie_report['rate'], 900)
+        self.assertEqual(charlie_report['total'], 1800)
+
+        # Emily: 1000/hour × 2 hours = 2000
+        emily_report = next((r for r in students_reports if r['name'] == 'Emily Johnson'), None)
+        self.assertEqual(emily_report['rate'], 1000)
+        self.assertEqual(emily_report['total'], 2000)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_calls_hours_function_correctly(self, mock_hours):
+        """Test that get_estimated_number_of_worked_hours is called with correct arguments."""
+        mock_hours.return_value = Decimal('2.0')
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1, self.charlie_class_2]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        process_school_classes(accounting_data, organized_data)
+
+        # Verify the function was called once with Charlie's classes
+        mock_hours.assert_called_once()
+        called_classes = mock_hours.call_args[0][0]
+        self.assertEqual(len(called_classes), 2)
+        self.assertIn(self.charlie_class_1, called_classes)
+        self.assertIn(self.charlie_class_2, called_classes)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_zero_hours(self, mock_hours):
+        """Test handling when a student has zero hours."""
+        mock_hours.return_value = Decimal('0.0')
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_school_classes(accounting_data, organized_data)
+
+        student_report = result['classes_in_schools'][0]['students_reports'][0]
+        
+        self.assertEqual(student_report['hours'], Decimal('0.0'))
+        self.assertEqual(student_report['total'], 0)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_preserves_account_id(self, mock_hours):
+        """Test that the student's database ID is correctly stored as account_id."""
+        mock_hours.return_value = Decimal('2.0')
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_school_classes(accounting_data, organized_data)
+
+        student_report = result['classes_in_schools'][0]['students_reports'][0]
+        
+        # Verify account_id matches the student's database ID
+        self.assertEqual(student_report['account_id'], self.charlie.id)
+        self.assertIsInstance(student_report['account_id'], int)
