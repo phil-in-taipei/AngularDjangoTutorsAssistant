@@ -1805,3 +1805,553 @@ class TestProcessSchoolClasses(TestCase):
         # Verify account_id matches the student's database ID
         self.assertEqual(student_report['account_id'], self.charlie.id)
         self.assertIsInstance(student_report['account_id'], int)
+
+
+class TestProcessFreelanceStudents(TestCase):
+    """
+    Test suite for process_freelance_students utility function.
+    This function takes organized class data and generates accounting reports
+    for freelance students, including hours worked and totals.
+    """
+
+    def setUp(self):
+        """
+        Set up test data including:
+        - 1 Teacher
+        - 2 Freelance students
+        - Scheduled classes for each student
+        """
+        # Create user and user profile
+        self.teacher_user = User.objects.create_user(
+            username='teacher1',
+            password='testpass123'
+        )
+        self.teacher_profile = UserProfile.objects.create(
+            user=self.teacher_user,
+            contact_email='teacher1@example.com',
+            surname='Smith',
+            given_name='John'
+        )
+
+        # Create 2 freelance students
+        self.alice = StudentOrClass.objects.create(
+            student_or_class_name='Alice Brown',
+            account_type='freelance',
+            school=None,
+            teacher=self.teacher_profile,
+            purchased_class_hours=Decimal('10.00'),
+            tuition_per_hour=1000
+        )
+        self.bob = StudentOrClass.objects.create(
+            student_or_class_name='Bob Wilson',
+            account_type='freelance',
+            school=None,
+            teacher=self.teacher_profile,
+            purchased_class_hours=Decimal('15.00'),
+            tuition_per_hour=1200
+        )
+
+        # Create scheduled classes for Alice (2 classes, 1 hour each)
+        self.alice_class_1 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.alice,
+            date=date(2024, 11, 5),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),
+            class_status='completed'
+        )
+        self.alice_class_2 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.alice,
+            date=date(2024, 11, 12),
+            start_time=time(14, 0),
+            finish_time=time(15, 0),
+            class_status='completed'
+        )
+
+        # Create scheduled classes for Bob (1 class, 1.5 hours)
+        self.bob_class_1 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.bob,
+            date=date(2024, 11, 8),
+            start_time=time(9, 0),
+            finish_time=time(10, 30),
+            class_status='completed'
+        )
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_basic_structure(self, mock_hours):
+        """Test that the function returns the correct structure."""
+        mock_hours.return_value = Decimal('2.0')
+
+        organized_data = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1, self.alice_class_2]
+                }
+            ]
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_freelance_students(accounting_data, organized_data)
+
+        # Check that result has the correct keys
+        self.assertIn('classes_in_schools', result)
+        self.assertIn('freelance_students', result)
+
+        # Check that freelance data was added
+        self.assertEqual(len(result['freelance_students']), 1)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_single_freelance_student(self, mock_hours):
+        """Test processing a single freelance student."""
+        mock_hours.return_value = Decimal('2.0')
+
+        organized_data = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1, self.alice_class_2]
+                }
+            ]
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_freelance_students(accounting_data, organized_data)
+
+        # Verify freelance student report
+        self.assertEqual(len(result['freelance_students']), 1)
+        alice_report = result['freelance_students'][0]
+
+        self.assertEqual(alice_report['name'], 'Alice Brown')
+        self.assertEqual(alice_report['account_id'], self.alice.id)
+        self.assertEqual(alice_report['rate'], 1000)
+        self.assertEqual(alice_report['hours'], Decimal('2.0'))
+        self.assertEqual(alice_report['total'], 1000 * Decimal('2.0'))
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_multiple_freelance_students(self, mock_hours):
+        """Test processing multiple freelance students."""
+        # Return different hours for different students
+        mock_hours.side_effect = [Decimal('2.0'), Decimal('1.5')]
+
+        organized_data = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1, self.alice_class_2]
+                },
+                {
+                    "student_or_class_name": "Bob Wilson",
+                    "scheduled_classes": [self.bob_class_1]
+                }
+            ]
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_freelance_students(accounting_data, organized_data)
+
+        # Verify we have 2 freelance student reports
+        self.assertEqual(len(result['freelance_students']), 2)
+
+        # Verify Alice's report
+        alice_report = next((r for r in result['freelance_students']
+                             if r['name'] == 'Alice Brown'), None)
+        self.assertIsNotNone(alice_report)
+        self.assertEqual(alice_report['rate'], 1000)
+        self.assertEqual(alice_report['hours'], Decimal('2.0'))
+        self.assertEqual(alice_report['total'], 2000)
+
+        # Verify Bob's report
+        bob_report = next((r for r in result['freelance_students']
+                           if r['name'] == 'Bob Wilson'), None)
+        self.assertIsNotNone(bob_report)
+        self.assertEqual(bob_report['rate'], 1200)
+        self.assertEqual(bob_report['hours'], Decimal('1.5'))
+        self.assertEqual(bob_report['total'], 1800)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_empty_freelance_students(self, mock_hours):
+        """Test processing when there are no freelance students."""
+        organized_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_freelance_students(accounting_data, organized_data)
+
+        # Should return empty freelance students
+        self.assertEqual(len(result['freelance_students']), 0)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_does_not_modify_school_data(self, mock_hours):
+        """Test that the function doesn't modify school class data."""
+        mock_hours.return_value = Decimal('2.0')
+
+        organized_data = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1]
+                }
+            ]
+        }
+
+        # Start with some school data in accounting_data
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Test School",
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = process_freelance_students(accounting_data, organized_data)
+
+        # School data should remain unchanged
+        self.assertEqual(len(result['classes_in_schools']), 1)
+        self.assertEqual(result['classes_in_schools'][0]['school_name'], 'Test School')
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_accounting_report_fields(self, mock_hours):
+        """Test that all required fields are present in the accounting report."""
+        mock_hours.return_value = Decimal('2.5')
+
+        organized_data = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1, self.alice_class_2]
+                }
+            ]
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_freelance_students(accounting_data, organized_data)
+
+        student_report = result['freelance_students'][0]
+
+        # Verify all required fields are present
+        self.assertIn('name', student_report)
+        self.assertIn('account_id', student_report)
+        self.assertIn('rate', student_report)
+        self.assertIn('hours', student_report)
+        self.assertIn('total', student_report)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_total_calculation(self, mock_hours):
+        """Test that the total is calculated correctly (rate × hours)."""
+        mock_hours.return_value = Decimal('2.5')
+
+        organized_data = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1]
+                }
+            ]
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_freelance_students(accounting_data, organized_data)
+
+        student_report = result['freelance_students'][0]
+
+        # Alice's rate is 1000, hours is 2.5
+        expected_total = 1000 * Decimal('2.5')
+        self.assertEqual(student_report['total'], expected_total)
+        self.assertEqual(student_report['total'], 2500)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_different_tuition_rates(self, mock_hours):
+        """Test that different tuition rates are handled correctly."""
+        mock_hours.side_effect = [Decimal('2.0'), Decimal('2.0')]
+
+        organized_data = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1]
+                },
+                {
+                    "student_or_class_name": "Bob Wilson",
+                    "scheduled_classes": [self.bob_class_1]
+                }
+            ]
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_freelance_students(accounting_data, organized_data)
+
+        # Alice: 1000/hour × 2 hours = 2000
+        alice_report = next((r for r in result['freelance_students']
+                             if r['name'] == 'Alice Brown'), None)
+        self.assertEqual(alice_report['rate'], 1000)
+        self.assertEqual(alice_report['total'], 2000)
+
+        # Bob: 1200/hour × 2 hours = 2400
+        bob_report = next((r for r in result['freelance_students']
+                           if r['name'] == 'Bob Wilson'), None)
+        self.assertEqual(bob_report['rate'], 1200)
+        self.assertEqual(bob_report['total'], 2400)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_calls_hours_function_correctly(self, mock_hours):
+        """Test that get_estimated_number_of_worked_hours is called with correct arguments."""
+        mock_hours.return_value = Decimal('2.0')
+
+        organized_data = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1, self.alice_class_2]
+                }
+            ]
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        process_freelance_students(accounting_data, organized_data)
+
+        # Verify the function was called once with Alice's classes
+        mock_hours.assert_called_once()
+        called_classes = mock_hours.call_args[0][0]
+        self.assertEqual(len(called_classes), 2)
+        self.assertIn(self.alice_class_1, called_classes)
+        self.assertIn(self.alice_class_2, called_classes)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_zero_hours(self, mock_hours):
+        """Test handling when a student has zero hours."""
+        mock_hours.return_value = Decimal('0.0')
+
+        organized_data = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1]
+                }
+            ]
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_freelance_students(accounting_data, organized_data)
+
+        student_report = result['freelance_students'][0]
+
+        self.assertEqual(student_report['hours'], Decimal('0.0'))
+        self.assertEqual(student_report['total'], 0)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_preserves_account_id(self, mock_hours):
+        """Test that the student's database ID is correctly stored as account_id."""
+        mock_hours.return_value = Decimal('2.0')
+
+        organized_data = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1]
+                }
+            ]
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_freelance_students(accounting_data, organized_data)
+
+        student_report = result['freelance_students'][0]
+
+        # Verify account_id matches the student's database ID
+        self.assertEqual(student_report['account_id'], self.alice.id)
+        self.assertIsInstance(student_report['account_id'], int)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_appends_to_existing_freelance_data(self, mock_hours):
+        """Test that new reports are appended to existing freelance data."""
+        mock_hours.return_value = Decimal('2.0')
+
+        organized_data = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1]
+                }
+            ]
+        }
+
+        # Start with existing freelance data
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {
+                    "name": "Existing Student",
+                    "account_id": 999,
+                    "rate": 800,
+                    "hours": Decimal('1.0'),
+                    "total": 800
+                }
+            ]
+        }
+
+        result = process_freelance_students(accounting_data, organized_data)
+
+        # Should have both the existing and new student
+        self.assertEqual(len(result['freelance_students']), 2)
+
+        # Verify existing student is still there
+        existing = result['freelance_students'][0]
+        self.assertEqual(existing['name'], 'Existing Student')
+
+        # Verify new student was appended
+        new_student = result['freelance_students'][1]
+        self.assertEqual(new_student['name'], 'Alice Brown')
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_student_with_single_class(self, mock_hours):
+        """Test processing a student with only one class."""
+        mock_hours.return_value = Decimal('1.0')
+
+        organized_data = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Bob Wilson",
+                    "scheduled_classes": [self.bob_class_1]
+                }
+            ]
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_freelance_students(accounting_data, organized_data)
+
+        self.assertEqual(len(result['freelance_students']), 1)
+        bob_report = result['freelance_students'][0]
+
+        self.assertEqual(bob_report['name'], 'Bob Wilson')
+        self.assertEqual(bob_report['hours'], Decimal('1.0'))
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_multiple_calls_with_different_data(self, mock_hours):
+        """Test calling the function multiple times with different data."""
+        mock_hours.side_effect = [Decimal('2.0'), Decimal('1.5')]
+
+        # First call
+        organized_data_1 = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1]
+                }
+            ]
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result_1 = process_freelance_students(accounting_data, organized_data_1)
+        self.assertEqual(len(result_1['freelance_students']), 1)
+
+        # Second call with different student
+        organized_data_2 = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Bob Wilson",
+                    "scheduled_classes": [self.bob_class_1]
+                }
+            ]
+        }
+
+        result_2 = process_freelance_students(result_1, organized_data_2)
+
+        # Should have both students now
+        self.assertEqual(len(result_2['freelance_students']), 2)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_preserves_freelance_student_attributes(self, mock_hours):
+        """Test that freelance-specific attributes are used correctly."""
+        mock_hours.return_value = Decimal('2.0')
+
+        organized_data = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1]
+                }
+            ]
+        }
+
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = process_freelance_students(accounting_data, organized_data)
+
+        alice_report = result['freelance_students'][0]
+
+        # Verify the tuition_per_hour for freelance student is used
+        self.assertEqual(alice_report['rate'], self.alice.tuition_per_hour)
+        self.assertEqual(alice_report['rate'], 1000)
