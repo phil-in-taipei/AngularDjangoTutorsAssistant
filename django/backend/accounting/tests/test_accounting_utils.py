@@ -12,7 +12,8 @@ from accounting.utils import (
     get_estimated_number_of_worked_hours,
     get_scheduled_classes_during_month_period, 
     organize_scheduled_classes, process_school_classes,
-    process_freelance_students
+    process_freelance_students,
+    generate_accounting_reports_for_classes_in_schools_and_freelance_teachers
 )
 
 
@@ -2355,3 +2356,649 @@ class TestProcessFreelanceStudents(TestCase):
         # Verify the tuition_per_hour for freelance student is used
         self.assertEqual(alice_report['rate'], self.alice.tuition_per_hour)
         self.assertEqual(alice_report['rate'], 1000)
+
+
+class TestGenerateAccountingReportsForClassesInSchoolsAndFreelanceTeachers(TestCase):
+    """
+    Test suite for generate_accounting_reports_for_classes_in_schools_and_freelance_teachers.
+    This function orchestrates the complete accounting report generation by processing
+    both school classes and freelance students.
+    """
+
+    def setUp(self):
+        """
+        Set up test data including:
+        - 1 Teacher
+        - 2 Schools
+        - 2 School-affiliated students
+        - 2 Freelance students
+        - Scheduled classes for all students
+        """
+        # Create user and user profile
+        self.teacher_user = User.objects.create_user(
+            username='teacher1',
+            password='testpass123'
+        )
+        self.teacher_profile = UserProfile.objects.create(
+            user=self.teacher_user,
+            contact_email='teacher1@example.com',
+            surname='Smith',
+            given_name='John'
+        )
+
+        # Create 2 schools
+        self.school_alpha = School.objects.create(
+            school_name='Alpha Academy',
+            address_line_1='123 Main St',
+            address_line_2='Suite 100',
+            contact_phone='5551234567',
+            scheduling_teacher=self.teacher_profile
+        )
+        self.school_beta = School.objects.create(
+            school_name='Beta School',
+            address_line_1='456 Oak Ave',
+            address_line_2='Building B',
+            contact_phone='5559876543',
+            scheduling_teacher=self.teacher_profile
+        )
+
+        # Create 2 school-affiliated students
+        self.charlie = StudentOrClass.objects.create(
+            student_or_class_name='Charlie Davis',
+            account_type='school',
+            school=self.school_alpha,
+            teacher=self.teacher_profile,
+            purchased_class_hours=None,
+            tuition_per_hour=900
+        )
+        self.diana = StudentOrClass.objects.create(
+            student_or_class_name='Diana Miller',
+            account_type='school',
+            school=self.school_beta,
+            teacher=self.teacher_profile,
+            purchased_class_hours=None,
+            tuition_per_hour=950
+        )
+
+        # Create 2 freelance students
+        self.alice = StudentOrClass.objects.create(
+            student_or_class_name='Alice Brown',
+            account_type='freelance',
+            school=None,
+            teacher=self.teacher_profile,
+            purchased_class_hours=Decimal('10.00'),
+            tuition_per_hour=1000
+        )
+        self.bob = StudentOrClass.objects.create(
+            student_or_class_name='Bob Wilson',
+            account_type='freelance',
+            school=None,
+            teacher=self.teacher_profile,
+            purchased_class_hours=Decimal('15.00'),
+            tuition_per_hour=1200
+        )
+
+        # Create scheduled classes for school students
+        self.charlie_class_1 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.charlie,
+            date=date(2024, 11, 10),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),
+            class_status='completed'
+        )
+        self.charlie_class_2 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.charlie,
+            date=date(2024, 11, 17),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),
+            class_status='completed'
+        )
+
+        self.diana_class_1 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.diana,
+            date=date(2024, 11, 15),
+            start_time=time(14, 0),
+            finish_time=time(15, 30),
+            class_status='completed'
+        )
+
+        # Create scheduled classes for freelance students
+        self.alice_class_1 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.alice,
+            date=date(2024, 11, 5),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),
+            class_status='completed'
+        )
+        self.alice_class_2 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.alice,
+            date=date(2024, 11, 12),
+            start_time=time(14, 0),
+            finish_time=time(15, 0),
+            class_status='completed'
+        )
+
+        self.bob_class_1 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.bob,
+            date=date(2024, 11, 8),
+            start_time=time(9, 0),
+            finish_time=time(10, 30),
+            class_status='completed'
+        )
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_basic_structure(self, mock_hours):
+        """Test that the function returns the correct overall structure."""
+        mock_hours.return_value = Decimal('2.0')
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1]
+                }
+            ]
+        }
+
+        result = generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
+            organized_data
+        )
+
+        # Check top-level structure
+        self.assertIn('classes_in_schools', result)
+        self.assertIn('freelance_students', result)
+        self.assertIsInstance(result['classes_in_schools'], list)
+        self.assertIsInstance(result['freelance_students'], list)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_processes_both_schools_and_freelance(self, mock_hours):
+        """Test that both school and freelance data are processed."""
+        mock_hours.side_effect = [Decimal('2.0'), Decimal('1.5'), Decimal('2.5')]
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1, self.charlie_class_2]
+                        }
+                    ]
+                },
+                {
+                    "school_name": "Beta School",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Diana Miller",
+                            "scheduled_classes": [self.diana_class_1]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1, self.alice_class_2]
+                }
+            ]
+        }
+
+        result = generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
+            organized_data
+        )
+
+        # Verify school data was processed
+        self.assertEqual(len(result['classes_in_schools']), 2)
+
+        # Verify freelance data was processed
+        self.assertEqual(len(result['freelance_students']), 1)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_school_reports_structure(self, mock_hours):
+        """Test that school reports have the correct nested structure."""
+        mock_hours.return_value = Decimal('2.0')
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
+            organized_data
+        )
+
+        school_report = result['classes_in_schools'][0]
+
+        # Verify school report structure
+        self.assertIn('school_name', school_report)
+        self.assertIn('students_reports', school_report)
+        self.assertEqual(school_report['school_name'], 'Alpha Academy')
+        self.assertEqual(len(school_report['students_reports']), 1)
+
+        # Verify student report within school
+        student_report = school_report['students_reports'][0]
+        self.assertIn('name', student_report)
+        self.assertIn('account_id', student_report)
+        self.assertIn('rate', student_report)
+        self.assertIn('hours', student_report)
+        self.assertIn('total', student_report)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_freelance_reports_structure(self, mock_hours):
+        """Test that freelance reports have the correct flat structure."""
+        mock_hours.return_value = Decimal('2.0')
+
+        organized_data = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1]
+                }
+            ]
+        }
+
+        result = generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
+            organized_data
+        )
+
+        # Verify freelance reports structure
+        self.assertEqual(len(result['freelance_students']), 1)
+
+        freelance_report = result['freelance_students'][0]
+        self.assertIn('name', freelance_report)
+        self.assertIn('account_id', freelance_report)
+        self.assertIn('rate', freelance_report)
+        self.assertIn('hours', freelance_report)
+        self.assertIn('total', freelance_report)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_complete_mixed_data(self, mock_hours):
+        """Test processing complete data with multiple schools and freelance students."""
+        # Mock hours for: Charlie, Diana, Alice, Bob
+        mock_hours.side_effect = [
+            Decimal('2.0'),  # Charlie
+            Decimal('1.5'),  # Diana
+            Decimal('2.0'),  # Alice
+            Decimal('1.5')  # Bob
+        ]
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1, self.charlie_class_2]
+                        }
+                    ]
+                },
+                {
+                    "school_name": "Beta School",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Diana Miller",
+                            "scheduled_classes": [self.diana_class_1]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1, self.alice_class_2]
+                },
+                {
+                    "student_or_class_name": "Bob Wilson",
+                    "scheduled_classes": [self.bob_class_1]
+                }
+            ]
+        }
+
+        result = generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
+            organized_data
+        )
+
+        # Verify school data
+        self.assertEqual(len(result['classes_in_schools']), 2)
+
+        alpha_school = next((s for s in result['classes_in_schools']
+                             if s['school_name'] == 'Alpha Academy'), None)
+        self.assertIsNotNone(alpha_school)
+        self.assertEqual(len(alpha_school['students_reports']), 1)
+
+        charlie_report = alpha_school['students_reports'][0]
+        self.assertEqual(charlie_report['name'], 'Charlie Davis')
+        self.assertEqual(charlie_report['hours'], Decimal('2.0'))
+        self.assertEqual(charlie_report['total'], 900 * Decimal('2.0'))
+
+        beta_school = next((s for s in result['classes_in_schools']
+                            if s['school_name'] == 'Beta School'), None)
+        self.assertIsNotNone(beta_school)
+
+        diana_report = beta_school['students_reports'][0]
+        self.assertEqual(diana_report['name'], 'Diana Miller')
+        self.assertEqual(diana_report['hours'], Decimal('1.5'))
+        self.assertEqual(diana_report['total'], 950 * Decimal('1.5'))
+
+        # Verify freelance data
+        self.assertEqual(len(result['freelance_students']), 2)
+
+        alice_report = next((r for r in result['freelance_students']
+                             if r['name'] == 'Alice Brown'), None)
+        self.assertIsNotNone(alice_report)
+        self.assertEqual(alice_report['hours'], Decimal('2.0'))
+        self.assertEqual(alice_report['total'], 1000 * Decimal('2.0'))
+
+        bob_report = next((r for r in result['freelance_students']
+                           if r['name'] == 'Bob Wilson'), None)
+        self.assertIsNotNone(bob_report)
+        self.assertEqual(bob_report['hours'], Decimal('1.5'))
+        self.assertEqual(bob_report['total'], 1200 * Decimal('1.5'))
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_only_school_classes(self, mock_hours):
+        """Test processing when only school classes exist."""
+        mock_hours.return_value = Decimal('2.0')
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
+            organized_data
+        )
+
+        # Should have school data but no freelance data
+        self.assertEqual(len(result['classes_in_schools']), 1)
+        self.assertEqual(len(result['freelance_students']), 0)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_only_freelance_students(self, mock_hours):
+        """Test processing when only freelance students exist."""
+        mock_hours.return_value = Decimal('2.0')
+
+        organized_data = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1]
+                }
+            ]
+        }
+
+        result = generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
+            organized_data
+        )
+
+        # Should have freelance data but no school data
+        self.assertEqual(len(result['classes_in_schools']), 0)
+        self.assertEqual(len(result['freelance_students']), 1)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_empty_organized_data(self, mock_hours):
+        """Test processing when organized data is completely empty."""
+        organized_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
+            organized_data
+        )
+
+        # Should return empty structure
+        self.assertEqual(len(result['classes_in_schools']), 0)
+        self.assertEqual(len(result['freelance_students']), 0)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_initializes_fresh_accounting_data(self, mock_hours):
+        """Test that function creates fresh accounting_data (doesn't reuse input)."""
+        mock_hours.return_value = Decimal('2.0')
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
+            organized_data
+        )
+
+        # Result should not be the same object as input
+        self.assertIsNot(result, organized_data)
+
+        # Result should have processed data (not raw classes)
+        self.assertIn('students_reports', result['classes_in_schools'][0])
+        self.assertNotIn('students_classes', result['classes_in_schools'][0])
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_calls_both_processing_functions(self, mock_hours):
+        """Test that both process_school_classes and process_freelance_students are called."""
+        mock_hours.side_effect = [Decimal('2.0'), Decimal('1.5')]
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1]
+                }
+            ]
+        }
+
+        result = generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
+            organized_data
+        )
+
+        # Verify both functions were called by checking the call count
+        # Should be called twice: once for school, once for freelance
+        self.assertEqual(mock_hours.call_count, 2)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_multiple_students_per_school(self, mock_hours):
+        """Test processing schools with multiple students."""
+        # Create another student at Alpha Academy
+        emily = StudentOrClass.objects.create(
+            student_or_class_name='Emily Johnson',
+            account_type='school',
+            school=self.school_alpha,
+            teacher=self.teacher_profile,
+            purchased_class_hours=None,
+            tuition_per_hour=1000
+        )
+        emily_class = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=emily,
+            date=date(2024, 11, 20),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),
+            class_status='completed'
+        )
+
+        mock_hours.side_effect = [Decimal('2.0'), Decimal('1.0')]
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1, self.charlie_class_2]
+                        },
+                        {
+                            "student_or_class_name": "Emily Johnson",
+                            "scheduled_classes": [emily_class]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
+            organized_data
+        )
+
+        alpha_school = result['classes_in_schools'][0]
+
+        # Should have 2 student reports
+        self.assertEqual(len(alpha_school['students_reports']), 2)
+
+        student_names = [r['name'] for r in alpha_school['students_reports']]
+        self.assertIn('Charlie Davis', student_names)
+        self.assertIn('Emily Johnson', student_names)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_preserves_calculation_accuracy(self, mock_hours):
+        """Test that financial calculations maintain precision."""
+        mock_hours.side_effect = [Decimal('2.5'), Decimal('1.75')]
+
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Charlie Davis",
+                            "scheduled_classes": [self.charlie_class_1]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1]
+                }
+            ]
+        }
+
+        result = generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
+            organized_data
+        )
+
+        # Verify precise calculations
+        charlie_report = result['classes_in_schools'][0]['students_reports'][0]
+        self.assertEqual(charlie_report['total'], 900 * Decimal('2.5'))
+        self.assertEqual(charlie_report['total'], 2250)
+
+        alice_report = result['freelance_students'][0]
+        self.assertEqual(alice_report['total'], 1000 * Decimal('1.75'))
+        self.assertEqual(alice_report['total'], 1750)
+
+    @patch('accounting.utils.get_estimated_number_of_worked_hours')
+    def test_integration_with_real_data_flow(self, mock_hours):
+        """Test the complete flow with realistic data scenario."""
+        mock_hours.side_effect = [Decimal('2.0'), Decimal('1.5'), Decimal('3.0')]
+
+        # Realistic scenario: One school with one student, two freelance students
+        organized_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Beta School",
+                    "students_classes": [
+                        {
+                            "student_or_class_name": "Diana Miller",
+                            "scheduled_classes": [self.diana_class_1]
+                        }
+                    ]
+                }
+            ],
+            "freelance_students": [
+                {
+                    "student_or_class_name": "Alice Brown",
+                    "scheduled_classes": [self.alice_class_1, self.alice_class_2]
+                },
+                {
+                    "student_or_class_name": "Bob Wilson",
+                    "scheduled_classes": [self.bob_class_1]
+                }
+            ]
+        }
+
+        result = generate_accounting_reports_for_classes_in_schools_and_freelance_teachers(
+            organized_data
+        )
+
+        # Verify complete result structure and data
+        self.assertEqual(len(result['classes_in_schools']), 1)
+        self.assertEqual(len(result['freelance_students']), 2)
+
+        # Check school report
+        school_report = result['classes_in_schools'][0]
+        self.assertEqual(school_report['school_name'], 'Beta School')
+        self.assertEqual(school_report['students_reports'][0]['name'], 'Diana Miller')
+
+        # Check freelance reports
+        alice_report = next((r for r in result['freelance_students']
+                             if r['name'] == 'Alice Brown'), None)
+        bob_report = next((r for r in result['freelance_students']
+                           if r['name'] == 'Bob Wilson'), None)
+
+        self.assertIsNotNone(alice_report)
+        self.assertIsNotNone(bob_report)
+        self.assertEqual(alice_report['hours'], Decimal('1.5'))
+        self.assertEqual(bob_report['hours'], Decimal('3.0'))
