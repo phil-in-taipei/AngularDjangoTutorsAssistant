@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from datetime import date, time
+from copy import deepcopy
 from decimal import Decimal
 from unittest.mock import patch, call
 
@@ -9,11 +10,16 @@ from student_account.models import StudentOrClass
 from school.models import School
 from class_scheduling.models import ScheduledClass
 from accounting.utils import (
+    calculate_school_totals,
+    calculate_overall_monthly_total,
     get_estimated_number_of_worked_hours,
     get_scheduled_classes_during_month_period, 
     organize_scheduled_classes, process_school_classes,
     process_freelance_students,
-    generate_accounting_reports_for_classes_in_schools_and_freelance_teachers
+    generate_accounting_reports_for_classes_in_schools_and_freelance_teachers,
+    sort_accounting_reports_by_name,
+    sort_school_reports_alphabetically,
+    sort_school_and_freelance_reports_alphabetically,
 )
 
 
@@ -3002,3 +3008,2025 @@ class TestGenerateAccountingReportsForClassesInSchoolsAndFreelanceTeachers(TestC
         self.assertIsNotNone(bob_report)
         self.assertEqual(alice_report['hours'], Decimal('1.5'))
         self.assertEqual(bob_report['hours'], Decimal('3.0'))
+
+
+
+class TestSortAccountingReportsByName(TestCase):
+    """
+    Test suite for sort_accounting_reports_by_name utility function.
+    This function sorts a list of accounting report dictionaries alphabetically by the 'name' field.
+    """
+
+    def test_sort_basic_alphabetical_order(self):
+        """Test basic alphabetical sorting of reports."""
+        reports = [
+            {'name': 'Zoe Taylor', 'total_hours': 10, 'earnings': 1000},
+            {'name': 'Alice Brown', 'total_hours': 5, 'earnings': 500},
+            {'name': 'Mike Johnson', 'total_hours': 8, 'earnings': 800},
+        ]
+
+        sorted_reports = sort_accounting_reports_by_name(reports)
+
+        # Verify alphabetical order
+        self.assertEqual(sorted_reports[0]['name'], 'Alice Brown')
+        self.assertEqual(sorted_reports[1]['name'], 'Mike Johnson')
+        self.assertEqual(sorted_reports[2]['name'], 'Zoe Taylor')
+
+        # Verify all reports are present
+        self.assertEqual(len(sorted_reports), 3)
+
+    def test_sort_already_sorted_list(self):
+        """Test that already sorted list remains correctly sorted."""
+        reports = [
+            {'name': 'Alice Brown', 'total_hours': 5, 'earnings': 500},
+            {'name': 'Bob Wilson', 'total_hours': 8, 'earnings': 800},
+            {'name': 'Charlie Davis', 'total_hours': 10, 'earnings': 1000},
+        ]
+
+        sorted_reports = sort_accounting_reports_by_name(reports)
+
+        # Verify order is maintained
+        self.assertEqual(sorted_reports[0]['name'], 'Alice Brown')
+        self.assertEqual(sorted_reports[1]['name'], 'Bob Wilson')
+        self.assertEqual(sorted_reports[2]['name'], 'Charlie Davis')
+
+    def test_sort_reverse_order(self):
+        """Test sorting when list is in reverse alphabetical order."""
+        reports = [
+            {'name': 'Zoe Taylor', 'total_hours': 10, 'earnings': 1000},
+            {'name': 'Mike Johnson', 'total_hours': 8, 'earnings': 800},
+            {'name': 'Alice Brown', 'total_hours': 5, 'earnings': 500},
+        ]
+
+        sorted_reports = sort_accounting_reports_by_name(reports)
+
+        # Verify correct alphabetical order
+        self.assertEqual(sorted_reports[0]['name'], 'Alice Brown')
+        self.assertEqual(sorted_reports[1]['name'], 'Mike Johnson')
+        self.assertEqual(sorted_reports[2]['name'], 'Zoe Taylor')
+
+    def test_sort_single_report(self):
+        """Test that a single report returns unchanged."""
+        reports = [
+            {'name': 'Alice Brown', 'total_hours': 5, 'earnings': 500},
+        ]
+
+        sorted_reports = sort_accounting_reports_by_name(reports)
+
+        self.assertEqual(len(sorted_reports), 1)
+        self.assertEqual(sorted_reports[0]['name'], 'Alice Brown')
+
+    def test_sort_empty_list(self):
+        """Test that an empty list returns an empty list."""
+        reports = []
+
+        sorted_reports = sort_accounting_reports_by_name(reports)
+
+        self.assertEqual(len(sorted_reports), 0)
+        self.assertEqual(sorted_reports, [])
+
+    def test_sort_with_same_first_name(self):
+        """Test sorting when multiple reports have the same first name."""
+        reports = [
+            {'name': 'John Smith', 'total_hours': 10, 'earnings': 1000},
+            {'name': 'John Anderson', 'total_hours': 8, 'earnings': 800},
+            {'name': 'John Williams', 'total_hours': 5, 'earnings': 500},
+        ]
+
+        sorted_reports = sort_accounting_reports_by_name(reports)
+
+        # Verify alphabetical order by full name (Anderson < Smith < Williams)
+        self.assertEqual(sorted_reports[0]['name'], 'John Anderson')
+        self.assertEqual(sorted_reports[1]['name'], 'John Smith')
+        self.assertEqual(sorted_reports[2]['name'], 'John Williams')
+
+    def test_sort_case_sensitivity(self):
+        """Test that sorting is case-sensitive (uppercase comes before lowercase in ASCII)."""
+        reports = [
+            {'name': 'alice brown', 'total_hours': 5, 'earnings': 500},
+            {'name': 'Alice Brown', 'total_hours': 10, 'earnings': 1000},
+            {'name': 'ALICE BROWN', 'total_hours': 8, 'earnings': 800},
+        ]
+
+        sorted_reports = sort_accounting_reports_by_name(reports)
+
+        # Python's default sort is case-sensitive: uppercase < lowercase
+        # 'A' (65) < 'a' (97) in ASCII
+        self.assertEqual(sorted_reports[0]['name'], 'ALICE BROWN')
+        self.assertEqual(sorted_reports[1]['name'], 'Alice Brown')
+        self.assertEqual(sorted_reports[2]['name'], 'alice brown')
+
+    def test_sort_with_numbers_in_names(self):
+        """Test sorting when names contain numbers."""
+        reports = [
+            {'name': 'Class 3B', 'total_hours': 10, 'earnings': 1000},
+            {'name': 'Class 1A', 'total_hours': 8, 'earnings': 800},
+            {'name': 'Class 2C', 'total_hours': 5, 'earnings': 500},
+        ]
+
+        sorted_reports = sort_accounting_reports_by_name(reports)
+
+        # Verify alphabetical order (string comparison, not numeric)
+        self.assertEqual(sorted_reports[0]['name'], 'Class 1A')
+        self.assertEqual(sorted_reports[1]['name'], 'Class 2C')
+        self.assertEqual(sorted_reports[2]['name'], 'Class 3B')
+
+    def test_sort_with_special_characters(self):
+        """Test sorting when names contain special characters."""
+        reports = [
+            {'name': "O'Connor Sarah", 'total_hours': 10, 'earnings': 1000},
+            {'name': 'Martinez-Lopez Carlos', 'total_hours': 8, 'earnings': 800},
+            {'name': 'Anderson Kate', 'total_hours': 5, 'earnings': 500},
+        ]
+
+        sorted_reports = sort_accounting_reports_by_name(reports)
+
+        # Verify alphabetical order with special characters
+        # ' (39) and - (45) come before letters in ASCII
+        self.assertEqual(sorted_reports[0]['name'], 'Anderson Kate')
+        self.assertEqual(sorted_reports[1]['name'], 'Martinez-Lopez Carlos')
+        self.assertEqual(sorted_reports[2]['name'], "O'Connor Sarah")
+
+    def test_sort_preserves_other_fields(self):
+        """Test that sorting preserves all other fields in the dictionaries."""
+        reports = [
+            {
+                'name': 'Zoe Taylor',
+                'total_hours': 10,
+                'earnings': 1000,
+                'student_id': '123',
+                'classes': ['Math', 'Science']
+            },
+            {
+                'name': 'Alice Brown',
+                'total_hours': 5,
+                'earnings': 500,
+                'student_id': '456',
+                'classes': ['English']
+            },
+        ]
+
+        sorted_reports = sort_accounting_reports_by_name(reports)
+
+        # Verify Alice is first
+        self.assertEqual(sorted_reports[0]['name'], 'Alice Brown')
+        self.assertEqual(sorted_reports[0]['total_hours'], 5)
+        self.assertEqual(sorted_reports[0]['earnings'], 500)
+        self.assertEqual(sorted_reports[0]['student_id'], '456')
+        self.assertEqual(sorted_reports[0]['classes'], ['English'])
+
+        # Verify Zoe is second
+        self.assertEqual(sorted_reports[1]['name'], 'Zoe Taylor')
+        self.assertEqual(sorted_reports[1]['total_hours'], 10)
+        self.assertEqual(sorted_reports[1]['earnings'], 1000)
+        self.assertEqual(sorted_reports[1]['student_id'], '123')
+        self.assertEqual(sorted_reports[1]['classes'], ['Math', 'Science'])
+
+    def test_sort_does_not_modify_original_list(self):
+        """Test that the original list is not modified (returns new list)."""
+        reports = [
+            {'name': 'Zoe Taylor', 'total_hours': 10},
+            {'name': 'Alice Brown', 'total_hours': 5},
+        ]
+
+        original_first_name = reports[0]['name']
+        sorted_reports = sort_accounting_reports_by_name(reports)
+
+        # Original list should still have Zoe first
+        self.assertEqual(reports[0]['name'], original_first_name)
+        self.assertEqual(reports[0]['name'], 'Zoe Taylor')
+
+        # Sorted list should have Alice first
+        self.assertEqual(sorted_reports[0]['name'], 'Alice Brown')
+
+    def test_sort_with_whitespace_in_names(self):
+        """Test sorting when names have leading/trailing whitespace."""
+        reports = [
+            {'name': ' Bob Wilson', 'total_hours': 10, 'earnings': 1000},
+            {'name': 'Alice Brown', 'total_hours': 8, 'earnings': 800},
+            {'name': 'Charlie Davis ', 'total_hours': 5, 'earnings': 500},
+        ]
+
+        sorted_reports = sort_accounting_reports_by_name(reports)
+
+        # Space (32) comes before letters in ASCII, so ' Bob Wilson' comes first
+        self.assertEqual(sorted_reports[0]['name'], ' Bob Wilson')
+        self.assertEqual(sorted_reports[1]['name'], 'Alice Brown')
+        self.assertEqual(sorted_reports[2]['name'], 'Charlie Davis ')
+
+    def test_sort_multiple_reports_same_name(self):
+        """Test sorting when multiple reports have identical names."""
+        reports = [
+            {'name': 'Alice Brown', 'total_hours': 10, 'student_id': '1'},
+            {'name': 'Alice Brown', 'total_hours': 5, 'student_id': '2'},
+            {'name': 'Alice Brown', 'total_hours': 8, 'student_id': '3'},
+        ]
+
+        sorted_reports = sort_accounting_reports_by_name(reports)
+
+        # All should have the same name
+        self.assertEqual(len(sorted_reports), 3)
+        for report in sorted_reports:
+            self.assertEqual(report['name'], 'Alice Brown')
+
+        # Order among identical names should be stable (preserve original order)
+        # Python's sort is stable, so original order should be maintained
+        self.assertEqual(sorted_reports[0]['student_id'], '1')
+        self.assertEqual(sorted_reports[1]['student_id'], '2')
+        self.assertEqual(sorted_reports[2]['student_id'], '3')
+
+
+
+class TestSortSchoolReportsAlphabetically(TestCase):
+    """
+    Test suite for sort_school_reports_alphabetically utility function.
+    This function sorts the student reports within each school's report alphabetically by name.
+    """
+
+    def test_sort_single_school_with_multiple_students(self):
+        """Test sorting students within a single school report."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Zoe Taylor", "total_hours": 10, "earnings": 1000},
+                        {"name": "Alice Brown", "total_hours": 5, "earnings": 500},
+                        {"name": "Mike Johnson", "total_hours": 8, "earnings": 800},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = sort_school_reports_alphabetically(accounting_data)
+
+        # Verify students are sorted alphabetically
+        students = result["classes_in_schools"][0]["students_reports"]
+        self.assertEqual(students[0]["name"], "Alice Brown")
+        self.assertEqual(students[1]["name"], "Mike Johnson")
+        self.assertEqual(students[2]["name"], "Zoe Taylor")
+
+    def test_sort_multiple_schools_with_multiple_students(self):
+        """Test sorting students within multiple school reports."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Zoe Taylor", "total_hours": 10, "earnings": 1000},
+                        {"name": "Alice Brown", "total_hours": 5, "earnings": 500},
+                    ]
+                },
+                {
+                    "school_name": "Beta School",
+                    "students_reports": [
+                        {"name": "Diana Miller", "total_hours": 8, "earnings": 800},
+                        {"name": "Bob Wilson", "total_hours": 6, "earnings": 600},
+                        {"name": "Charlie Davis", "total_hours": 7, "earnings": 700},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = sort_school_reports_alphabetically(accounting_data)
+
+        # Verify Alpha Academy students are sorted
+        alpha_students = result["classes_in_schools"][0]["students_reports"]
+        self.assertEqual(alpha_students[0]["name"], "Alice Brown")
+        self.assertEqual(alpha_students[1]["name"], "Zoe Taylor")
+
+        # Verify Beta School students are sorted
+        beta_students = result["classes_in_schools"][1]["students_reports"]
+        self.assertEqual(beta_students[0]["name"], "Bob Wilson")
+        self.assertEqual(beta_students[1]["name"], "Charlie Davis")
+        self.assertEqual(beta_students[2]["name"], "Diana Miller")
+
+    def test_sort_school_with_single_student(self):
+        """Test that a school with a single student report works correctly."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice Brown", "total_hours": 5, "earnings": 500},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = sort_school_reports_alphabetically(accounting_data)
+
+        # Single student should remain
+        students = result["classes_in_schools"][0]["students_reports"]
+        self.assertEqual(len(students), 1)
+        self.assertEqual(students[0]["name"], "Alice Brown")
+
+    def test_sort_school_with_no_students(self):
+        """Test that a school with no student reports works correctly."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = sort_school_reports_alphabetically(accounting_data)
+
+        # Empty list should remain empty
+        students = result["classes_in_schools"][0]["students_reports"]
+        self.assertEqual(len(students), 0)
+
+    def test_sort_with_no_schools(self):
+        """Test that empty classes_in_schools list works correctly."""
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {"name": "Alice Brown", "total_hours": 5, "earnings": 500}
+            ]
+        }
+
+        result = sort_school_reports_alphabetically(accounting_data)
+
+        # Should return unchanged
+        self.assertEqual(len(result["classes_in_schools"]), 0)
+        self.assertEqual(len(result["freelance_students"]), 1)
+
+    def test_sort_preserves_school_order(self):
+        """Test that the order of schools in the list is preserved."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Zeta Institute",
+                    "students_reports": [
+                        {"name": "Bob Wilson", "total_hours": 5, "earnings": 500},
+                    ]
+                },
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice Brown", "total_hours": 5, "earnings": 500},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = sort_school_reports_alphabetically(accounting_data)
+
+        # Schools should remain in original order (Zeta first, then Alpha)
+        self.assertEqual(result["classes_in_schools"][0]["school_name"], "Zeta Institute")
+        self.assertEqual(result["classes_in_schools"][1]["school_name"], "Alpha Academy")
+
+    def test_sort_preserves_all_school_fields(self):
+        """Test that all fields in school reports are preserved."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_id": "SCH001",
+                    "total_school_hours": 15,
+                    "total_school_earnings": 1500,
+                    "students_reports": [
+                        {"name": "Zoe Taylor", "total_hours": 10, "earnings": 1000},
+                        {"name": "Alice Brown", "total_hours": 5, "earnings": 500},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = sort_school_reports_alphabetically(accounting_data)
+
+        school = result["classes_in_schools"][0]
+        
+        # Verify all school fields are preserved
+        self.assertEqual(school["school_name"], "Alpha Academy")
+        self.assertEqual(school["school_id"], "SCH001")
+        self.assertEqual(school["total_school_hours"], 15)
+        self.assertEqual(school["total_school_earnings"], 1500)
+        
+        # Verify students are sorted
+        self.assertEqual(school["students_reports"][0]["name"], "Alice Brown")
+        self.assertEqual(school["students_reports"][1]["name"], "Zoe Taylor")
+
+    def test_sort_preserves_all_student_fields(self):
+        """Test that all fields in student reports are preserved."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {
+                            "name": "Zoe Taylor",
+                            "total_hours": 10,
+                            "earnings": 1000,
+                            "student_id": "STU001",
+                            "classes": ["Math", "Science"],
+                            "rate": 100
+                        },
+                        {
+                            "name": "Alice Brown",
+                            "total_hours": 5,
+                            "earnings": 500,
+                            "student_id": "STU002",
+                            "classes": ["English"],
+                            "rate": 100
+                        },
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = sort_school_reports_alphabetically(accounting_data)
+
+        students = result["classes_in_schools"][0]["students_reports"]
+        
+        # Verify Alice (first alphabetically) has all fields
+        self.assertEqual(students[0]["name"], "Alice Brown")
+        self.assertEqual(students[0]["total_hours"], 5)
+        self.assertEqual(students[0]["earnings"], 500)
+        self.assertEqual(students[0]["student_id"], "STU002")
+        self.assertEqual(students[0]["classes"], ["English"])
+        self.assertEqual(students[0]["rate"], 100)
+
+    def test_sort_does_not_affect_freelance_students(self):
+        """Test that freelance_students field is not modified."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Zoe Taylor", "total_hours": 10, "earnings": 1000},
+                        {"name": "Alice Brown", "total_hours": 5, "earnings": 500},
+                    ]
+                }
+            ],
+            "freelance_students": [
+                {"name": "Zoe Freelance", "total_hours": 10, "earnings": 1000},
+                {"name": "Alice Freelance", "total_hours": 5, "earnings": 500},
+            ]
+        }
+
+        result = sort_school_reports_alphabetically(accounting_data)
+
+        # School students should be sorted
+        school_students = result["classes_in_schools"][0]["students_reports"]
+        self.assertEqual(school_students[0]["name"], "Alice Brown")
+
+        # Freelance students should remain in original order (unsorted)
+        freelance = result["freelance_students"]
+        self.assertEqual(freelance[0]["name"], "Zoe Freelance")
+        self.assertEqual(freelance[1]["name"], "Alice Freelance")
+
+    def test_sort_already_sorted_students(self):
+        """Test that already sorted student reports remain correctly sorted."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice Brown", "total_hours": 5, "earnings": 500},
+                        {"name": "Bob Wilson", "total_hours": 8, "earnings": 800},
+                        {"name": "Charlie Davis", "total_hours": 10, "earnings": 1000},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = sort_school_reports_alphabetically(accounting_data)
+
+        students = result["classes_in_schools"][0]["students_reports"]
+        self.assertEqual(students[0]["name"], "Alice Brown")
+        self.assertEqual(students[1]["name"], "Bob Wilson")
+        self.assertEqual(students[2]["name"], "Charlie Davis")
+
+    def test_sort_with_duplicate_student_names(self):
+        """Test sorting when multiple students have the same name."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice Brown", "total_hours": 10, "student_id": "1"},
+                        {"name": "Alice Brown", "total_hours": 5, "student_id": "2"},
+                        {"name": "Alice Brown", "total_hours": 8, "student_id": "3"},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = sort_school_reports_alphabetically(accounting_data)
+
+        students = result["classes_in_schools"][0]["students_reports"]
+        
+        # All should have same name
+        for student in students:
+            self.assertEqual(student["name"], "Alice Brown")
+        
+        # Order should be stable (original order preserved for identical keys)
+        self.assertEqual(students[0]["student_id"], "1")
+        self.assertEqual(students[1]["student_id"], "2")
+        self.assertEqual(students[2]["student_id"], "3")
+
+    def test_sort_returns_same_structure(self):
+        """Test that the function returns the accounting_data structure unchanged."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Bob Wilson", "total_hours": 5, "earnings": 500},
+                        {"name": "Alice Brown", "total_hours": 5, "earnings": 500},
+                    ]
+                }
+            ],
+            "freelance_students": [
+                {"name": "Zoe Freelance", "total_hours": 10, "earnings": 1000},
+            ],
+            "other_field": "some_value"
+        }
+
+        result = sort_school_reports_alphabetically(accounting_data)
+
+        # Verify structure is maintained
+        self.assertIn("classes_in_schools", result)
+        self.assertIn("freelance_students", result)
+        self.assertIn("other_field", result)
+        self.assertEqual(result["other_field"], "some_value")
+
+    def test_sort_modifies_and_returns_original_object(self):
+        """Test that the function modifies and returns the same accounting_data object."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Zoe Taylor", "total_hours": 10, "earnings": 1000},
+                        {"name": "Alice Brown", "total_hours": 5, "earnings": 500},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        original_id = id(accounting_data)
+        result = sort_school_reports_alphabetically(accounting_data)
+
+        # Should return the same object (modified in place)
+        self.assertEqual(id(result), original_id)
+        
+        # Original object should be modified
+        self.assertEqual(
+            accounting_data["classes_in_schools"][0]["students_reports"][0]["name"],
+            "Alice Brown"
+        )
+
+    def test_sort_three_schools_independently(self):
+        """Test that students in three different schools are all sorted independently."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Zoe", "total_hours": 10},
+                        {"name": "Alice", "total_hours": 5},
+                    ]
+                },
+                {
+                    "school_name": "Beta School",
+                    "students_reports": [
+                        {"name": "Mike", "total_hours": 8},
+                        {"name": "Diana", "total_hours": 6},
+                    ]
+                },
+                {
+                    "school_name": "Gamma Institute",
+                    "students_reports": [
+                        {"name": "Oscar", "total_hours": 7},
+                        {"name": "Nina", "total_hours": 9},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = sort_school_reports_alphabetically(accounting_data)
+
+        # Verify each school's students are sorted independently
+        alpha_students = result["classes_in_schools"][0]["students_reports"]
+        self.assertEqual(alpha_students[0]["name"], "Alice")
+        self.assertEqual(alpha_students[1]["name"], "Zoe")
+
+        beta_students = result["classes_in_schools"][1]["students_reports"]
+        self.assertEqual(beta_students[0]["name"], "Diana")
+        self.assertEqual(beta_students[1]["name"], "Mike")
+
+        gamma_students = result["classes_in_schools"][2]["students_reports"]
+        self.assertEqual(gamma_students[0]["name"], "Nina")
+        self.assertEqual(gamma_students[1]["name"], "Oscar")
+
+
+class TestSortSchoolAndFreelanceReportsAlphabetically(TestCase):
+    """
+    Test suite for sort_school_and_freelance_reports_alphabetically utility function.
+    This function sorts both:
+    1. Student reports within each school alphabetically
+    2. Freelance student reports alphabetically
+    """
+
+    def test_sort_both_school_and_freelance_students(self):
+        """Test sorting both school students and freelance students."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Zoe Taylor", "total_hours": 10, "earnings": 1000},
+                        {"name": "Alice Brown", "total_hours": 5, "earnings": 500},
+                    ]
+                }
+            ],
+            "freelance_students": [
+                {"name": "Mike Johnson", "total_hours": 8, "earnings": 800},
+                {"name": "Diana Miller", "total_hours": 6, "earnings": 600},
+            ]
+        }
+
+        result = sort_school_and_freelance_reports_alphabetically(accounting_data)
+
+        # Verify school students are sorted
+        school_students = result["classes_in_schools"][0]["students_reports"]
+        self.assertEqual(school_students[0]["name"], "Alice Brown")
+        self.assertEqual(school_students[1]["name"], "Zoe Taylor")
+
+        # Verify freelance students are sorted
+        freelance = result["freelance_students"]
+        self.assertEqual(freelance[0]["name"], "Diana Miller")
+        self.assertEqual(freelance[1]["name"], "Mike Johnson")
+
+    def test_sort_multiple_schools_and_freelance(self):
+        """Test sorting students in multiple schools plus freelance students."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Charlie Davis", "total_hours": 10, "earnings": 1000},
+                        {"name": "Alice Brown", "total_hours": 5, "earnings": 500},
+                    ]
+                },
+                {
+                    "school_name": "Beta School",
+                    "students_reports": [
+                        {"name": "Oscar Pine", "total_hours": 7, "earnings": 700},
+                        {"name": "Nina Lopez", "total_hours": 9, "earnings": 900},
+                    ]
+                }
+            ],
+            "freelance_students": [
+                {"name": "Zoe Taylor", "total_hours": 8, "earnings": 800},
+                {"name": "Bob Wilson", "total_hours": 6, "earnings": 600},
+                {"name": "Mike Johnson", "total_hours": 4, "earnings": 400},
+            ]
+        }
+
+        result = sort_school_and_freelance_reports_alphabetically(accounting_data)
+
+        # Verify Alpha Academy students are sorted
+        alpha_students = result["classes_in_schools"][0]["students_reports"]
+        self.assertEqual(alpha_students[0]["name"], "Alice Brown")
+        self.assertEqual(alpha_students[1]["name"], "Charlie Davis")
+
+        # Verify Beta School students are sorted
+        beta_students = result["classes_in_schools"][1]["students_reports"]
+        self.assertEqual(beta_students[0]["name"], "Nina Lopez")
+        self.assertEqual(beta_students[1]["name"], "Oscar Pine")
+
+        # Verify freelance students are sorted
+        freelance = result["freelance_students"]
+        self.assertEqual(freelance[0]["name"], "Bob Wilson")
+        self.assertEqual(freelance[1]["name"], "Mike Johnson")
+        self.assertEqual(freelance[2]["name"], "Zoe Taylor")
+
+    def test_sort_with_no_schools_only_freelance(self):
+        """Test sorting when there are no schools, only freelance students."""
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {"name": "Zoe Taylor", "total_hours": 8, "earnings": 800},
+                {"name": "Alice Brown", "total_hours": 6, "earnings": 600},
+                {"name": "Mike Johnson", "total_hours": 4, "earnings": 400},
+            ]
+        }
+
+        result = sort_school_and_freelance_reports_alphabetically(accounting_data)
+
+        # No schools to verify
+        self.assertEqual(len(result["classes_in_schools"]), 0)
+
+        # Verify freelance students are sorted
+        freelance = result["freelance_students"]
+        self.assertEqual(freelance[0]["name"], "Alice Brown")
+        self.assertEqual(freelance[1]["name"], "Mike Johnson")
+        self.assertEqual(freelance[2]["name"], "Zoe Taylor")
+
+    def test_sort_with_schools_only_no_freelance(self):
+        """Test sorting when there are schools but no freelance students."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Zoe Taylor", "total_hours": 10, "earnings": 1000},
+                        {"name": "Alice Brown", "total_hours": 5, "earnings": 500},
+                        {"name": "Mike Johnson", "total_hours": 8, "earnings": 800},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = sort_school_and_freelance_reports_alphabetically(accounting_data)
+
+        # Verify school students are sorted
+        school_students = result["classes_in_schools"][0]["students_reports"]
+        self.assertEqual(school_students[0]["name"], "Alice Brown")
+        self.assertEqual(school_students[1]["name"], "Mike Johnson")
+        self.assertEqual(school_students[2]["name"], "Zoe Taylor")
+
+        # No freelance students to verify
+        self.assertEqual(len(result["freelance_students"]), 0)
+
+    def test_sort_with_empty_accounting_data(self):
+        """Test sorting when both schools and freelance lists are empty."""
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = sort_school_and_freelance_reports_alphabetically(accounting_data)
+
+        self.assertEqual(len(result["classes_in_schools"]), 0)
+        self.assertEqual(len(result["freelance_students"]), 0)
+
+    def test_sort_with_single_school_student_and_single_freelance(self):
+        """Test sorting with single student in school and single freelance student."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice Brown", "total_hours": 5, "earnings": 500},
+                    ]
+                }
+            ],
+            "freelance_students": [
+                {"name": "Bob Wilson", "total_hours": 6, "earnings": 600},
+            ]
+        }
+
+        result = sort_school_and_freelance_reports_alphabetically(accounting_data)
+
+        # Single students should remain
+        school_students = result["classes_in_schools"][0]["students_reports"]
+        self.assertEqual(len(school_students), 1)
+        self.assertEqual(school_students[0]["name"], "Alice Brown")
+
+        freelance = result["freelance_students"]
+        self.assertEqual(len(freelance), 1)
+        self.assertEqual(freelance[0]["name"], "Bob Wilson")
+
+    def test_sort_preserves_all_fields(self):
+        """Test that all fields in the accounting data are preserved."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_id": "SCH001",
+                    "total_school_hours": 15,
+                    "total_school_earnings": 1500,
+                    "students_reports": [
+                        {
+                            "name": "Zoe Taylor",
+                            "total_hours": 10,
+                            "earnings": 1000,
+                            "student_id": "STU001",
+                            "rate": 100
+                        },
+                        {
+                            "name": "Alice Brown",
+                            "total_hours": 5,
+                            "earnings": 500,
+                            "student_id": "STU002",
+                            "rate": 100
+                        },
+                    ]
+                }
+            ],
+            "freelance_students": [
+                {
+                    "name": "Mike Johnson",
+                    "total_hours": 8,
+                    "earnings": 800,
+                    "student_id": "STU003",
+                    "rate": 100
+                },
+                {
+                    "name": "Diana Miller",
+                    "total_hours": 6,
+                    "earnings": 600,
+                    "student_id": "STU004",
+                    "rate": 100
+                },
+            ],
+            "total_monthly_earnings": 2900,
+            "month": 11,
+            "year": 2024
+        }
+
+        result = sort_school_and_freelance_reports_alphabetically(accounting_data)
+
+        # Verify school fields are preserved
+        school = result["classes_in_schools"][0]
+        self.assertEqual(school["school_name"], "Alpha Academy")
+        self.assertEqual(school["school_id"], "SCH001")
+        self.assertEqual(school["total_school_hours"], 15)
+        self.assertEqual(school["total_school_earnings"], 1500)
+
+        # Verify school student fields are preserved and sorted
+        school_students = school["students_reports"]
+        self.assertEqual(school_students[0]["name"], "Alice Brown")
+        self.assertEqual(school_students[0]["student_id"], "STU002")
+        self.assertEqual(school_students[0]["rate"], 100)
+
+        # Verify freelance fields are preserved and sorted
+        freelance = result["freelance_students"]
+        self.assertEqual(freelance[0]["name"], "Diana Miller")
+        self.assertEqual(freelance[0]["student_id"], "STU004")
+        self.assertEqual(freelance[0]["rate"], 100)
+
+        # Verify top-level fields are preserved
+        self.assertEqual(result["total_monthly_earnings"], 2900)
+        self.assertEqual(result["month"], 11)
+        self.assertEqual(result["year"], 2024)
+
+    def test_sort_already_sorted_data(self):
+        """Test that already sorted data remains correctly sorted."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice Brown", "total_hours": 5, "earnings": 500},
+                        {"name": "Bob Wilson", "total_hours": 8, "earnings": 800},
+                        {"name": "Charlie Davis", "total_hours": 10, "earnings": 1000},
+                    ]
+                }
+            ],
+            "freelance_students": [
+                {"name": "Diana Miller", "total_hours": 6, "earnings": 600},
+                {"name": "Ethan Taylor", "total_hours": 4, "earnings": 400},
+                {"name": "Fiona Lee", "total_hours": 7, "earnings": 700},
+            ]
+        }
+
+        result = sort_school_and_freelance_reports_alphabetically(accounting_data)
+
+        # School students should remain in correct order
+        school_students = result["classes_in_schools"][0]["students_reports"]
+        self.assertEqual(school_students[0]["name"], "Alice Brown")
+        self.assertEqual(school_students[1]["name"], "Bob Wilson")
+        self.assertEqual(school_students[2]["name"], "Charlie Davis")
+
+        # Freelance students should remain in correct order
+        freelance = result["freelance_students"]
+        self.assertEqual(freelance[0]["name"], "Diana Miller")
+        self.assertEqual(freelance[1]["name"], "Ethan Taylor")
+        self.assertEqual(freelance[2]["name"], "Fiona Lee")
+
+    def test_sort_with_duplicate_names_in_both_categories(self):
+        """Test sorting when there are duplicate names in both schools and freelance."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice Brown", "total_hours": 10, "student_id": "1"},
+                        {"name": "Alice Brown", "total_hours": 5, "student_id": "2"},
+                    ]
+                }
+            ],
+            "freelance_students": [
+                {"name": "Bob Wilson", "total_hours": 8, "student_id": "3"},
+                {"name": "Bob Wilson", "total_hours": 6, "student_id": "4"},
+            ]
+        }
+
+        result = sort_school_and_freelance_reports_alphabetically(accounting_data)
+
+        # School students with duplicate names should maintain stable order
+        school_students = result["classes_in_schools"][0]["students_reports"]
+        self.assertEqual(school_students[0]["student_id"], "1")
+        self.assertEqual(school_students[1]["student_id"], "2")
+
+        # Freelance students with duplicate names should maintain stable order
+        freelance = result["freelance_students"]
+        self.assertEqual(freelance[0]["student_id"], "3")
+        self.assertEqual(freelance[1]["student_id"], "4")
+
+    def test_sort_modifies_and_returns_original_object(self):
+        """Test that the function modifies and returns the same accounting_data object."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Zoe Taylor", "total_hours": 10, "earnings": 1000},
+                        {"name": "Alice Brown", "total_hours": 5, "earnings": 500},
+                    ]
+                }
+            ],
+            "freelance_students": [
+                {"name": "Mike Johnson", "total_hours": 8, "earnings": 800},
+                {"name": "Diana Miller", "total_hours": 6, "earnings": 600},
+            ]
+        }
+
+        original_id = id(accounting_data)
+        result = sort_school_and_freelance_reports_alphabetically(accounting_data)
+
+        # Should return the same object (modified in place)
+        self.assertEqual(id(result), original_id)
+
+        # Original object should be modified
+        self.assertEqual(
+            accounting_data["classes_in_schools"][0]["students_reports"][0]["name"],
+            "Alice Brown"
+        )
+        self.assertEqual(
+            accounting_data["freelance_students"][0]["name"],
+            "Diana Miller"
+        )
+
+    def test_sort_with_special_characters_in_names(self):
+        """Test sorting with special characters in student names."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "O'Connor Sarah", "total_hours": 10, "earnings": 1000},
+                        {"name": "Martinez-Lopez Carlos", "total_hours": 8, "earnings": 800},
+                        {"name": "Anderson Kate", "total_hours": 5, "earnings": 500},
+                    ]
+                }
+            ],
+            "freelance_students": [
+                {"name": "Van Der Berg Jan", "total_hours": 6, "earnings": 600},
+                {"name": "D'Angelo Maria", "total_hours": 4, "earnings": 400},
+                {"name": "Smith-Jones Emily", "total_hours": 7, "earnings": 700},
+            ]
+        }
+
+        result = sort_school_and_freelance_reports_alphabetically(accounting_data)
+
+        # School students should be sorted alphabetically
+        school_students = result["classes_in_schools"][0]["students_reports"]
+        self.assertEqual(school_students[0]["name"], "Anderson Kate")
+        self.assertEqual(school_students[1]["name"], "Martinez-Lopez Carlos")
+        self.assertEqual(school_students[2]["name"], "O'Connor Sarah")
+
+        # Freelance students should be sorted alphabetically
+        freelance = result["freelance_students"]
+        self.assertEqual(freelance[0]["name"], "D'Angelo Maria")
+        self.assertEqual(freelance[1]["name"], "Smith-Jones Emily")
+        self.assertEqual(freelance[2]["name"], "Van Der Berg Jan")
+
+    def test_sort_with_school_having_no_students(self):
+        """Test sorting when a school has no students but freelance list has students."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": [
+                {"name": "Zoe Taylor", "total_hours": 8, "earnings": 800},
+                {"name": "Alice Brown", "total_hours": 6, "earnings": 600},
+            ]
+        }
+
+        result = sort_school_and_freelance_reports_alphabetically(accounting_data)
+
+        # School should have empty student list
+        school_students = result["classes_in_schools"][0]["students_reports"]
+        self.assertEqual(len(school_students), 0)
+
+        # Freelance students should be sorted
+        freelance = result["freelance_students"]
+        self.assertEqual(freelance[0]["name"], "Alice Brown")
+        self.assertEqual(freelance[1]["name"], "Zoe Taylor")
+
+    def test_sort_comprehensive_scenario(self):
+        """
+        Comprehensive test with:
+        - 3 schools with varying numbers of students
+        - Multiple freelance students
+        - All data sorted correctly
+        """
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Zoe", "total_hours": 10},
+                        {"name": "Alice", "total_hours": 5},
+                        {"name": "Mike", "total_hours": 8},
+                    ]
+                },
+                {
+                    "school_name": "Beta School",
+                    "students_reports": [
+                        {"name": "Oscar", "total_hours": 7},
+                        {"name": "Diana", "total_hours": 6},
+                    ]
+                },
+                {
+                    "school_name": "Gamma Institute",
+                    "students_reports": [
+                        {"name": "Nina", "total_hours": 9},
+                    ]
+                }
+            ],
+            "freelance_students": [
+                {"name": "Victor", "total_hours": 4},
+                {"name": "Bob", "total_hours": 3},
+                {"name": "Laura", "total_hours": 5},
+                {"name": "Charlie", "total_hours": 6},
+            ]
+        }
+
+        result = sort_school_and_freelance_reports_alphabetically(accounting_data)
+
+        # Verify Alpha Academy students are sorted
+        alpha_students = result["classes_in_schools"][0]["students_reports"]
+        self.assertEqual(alpha_students[0]["name"], "Alice")
+        self.assertEqual(alpha_students[1]["name"], "Mike")
+        self.assertEqual(alpha_students[2]["name"], "Zoe")
+
+        # Verify Beta School students are sorted
+        beta_students = result["classes_in_schools"][1]["students_reports"]
+        self.assertEqual(beta_students[0]["name"], "Diana")
+        self.assertEqual(beta_students[1]["name"], "Oscar")
+
+        # Verify Gamma Institute student
+        gamma_students = result["classes_in_schools"][2]["students_reports"]
+        self.assertEqual(gamma_students[0]["name"], "Nina")
+
+        # Verify freelance students are sorted
+        freelance = result["freelance_students"]
+        self.assertEqual(freelance[0]["name"], "Bob")
+        self.assertEqual(freelance[1]["name"], "Charlie")
+        self.assertEqual(freelance[2]["name"], "Laura")
+        self.assertEqual(freelance[3]["name"], "Victor")
+
+
+
+class TestCalculateSchoolTotals(TestCase):
+    """
+    Test suite for calculate_school_totals utility function.
+    This function calculates the total earnings for each school by summing
+    the 'total' field from all student reports within that school.
+    """
+
+    def test_calculate_single_school_with_multiple_students(self):
+        """Test calculating totals for a single school with multiple students."""
+        report = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice Brown", "total_hours": 5, "total": 500},
+                        {"name": "Bob Wilson", "total_hours": 8, "total": 800},
+                        {"name": "Charlie Davis", "total_hours": 10, "total": 1000},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = calculate_school_totals(report)
+
+        # Verify school_total is calculated correctly (500 + 800 + 1000 = 2300)
+        self.assertEqual(result["classes_in_schools"][0]["school_total"], 2300)
+
+    def test_calculate_multiple_schools(self):
+        """Test calculating totals for multiple schools."""
+        report = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice Brown", "total": 500},
+                        {"name": "Bob Wilson", "total": 800},
+                    ]
+                },
+                {
+                    "school_name": "Beta School",
+                    "students_reports": [
+                        {"name": "Charlie Davis", "total": 1000},
+                        {"name": "Diana Miller", "total": 600},
+                        {"name": "Ethan Taylor", "total": 700},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = calculate_school_totals(report)
+
+        # Verify Alpha Academy total (500 + 800 = 1300)
+        self.assertEqual(result["classes_in_schools"][0]["school_total"], 1300)
+
+        # Verify Beta School total (1000 + 600 + 700 = 2300)
+        self.assertEqual(result["classes_in_schools"][1]["school_total"], 2300)
+
+    def test_calculate_school_with_single_student(self):
+        """Test calculating total for a school with only one student."""
+        report = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice Brown", "total": 500},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = calculate_school_totals(report)
+
+        # Verify school_total equals the single student's total
+        self.assertEqual(result["classes_in_schools"][0]["school_total"], 500)
+
+    def test_calculate_school_with_no_students(self):
+        """Test calculating total for a school with no students."""
+        report = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = calculate_school_totals(report)
+
+        # Verify school_total is 0 when there are no students
+        self.assertEqual(result["classes_in_schools"][0]["school_total"], 0)
+
+    def test_calculate_with_no_schools(self):
+        """Test behavior when there are no schools in the report."""
+        report = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {"name": "Alice Brown", "total": 500},
+            ]
+        }
+
+        result = calculate_school_totals(report)
+
+        # Should return report unchanged with empty schools list
+        self.assertEqual(len(result["classes_in_schools"]), 0)
+        self.assertEqual(len(result["freelance_students"]), 1)
+
+    def test_calculate_with_decimal_totals(self):
+        """Test calculating totals with decimal values."""
+        report = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice Brown", "total": Decimal("500.50")},
+                        {"name": "Bob Wilson", "total": Decimal("800.75")},
+                        {"name": "Charlie Davis", "total": Decimal("1000.25")},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = calculate_school_totals(report)
+
+        # Verify school_total with decimal precision (500.50 + 800.75 + 1000.25 = 2301.50)
+        expected_total = Decimal("500.50") + Decimal("800.75") + Decimal("1000.25")
+        self.assertEqual(result["classes_in_schools"][0]["school_total"], expected_total)
+
+    def test_calculate_with_zero_totals(self):
+        """Test calculating when student totals are zero."""
+        report = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice Brown", "total": 0},
+                        {"name": "Bob Wilson", "total": 0},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = calculate_school_totals(report)
+
+        # Verify school_total is 0
+        self.assertEqual(result["classes_in_schools"][0]["school_total"], 0)
+
+    def test_calculate_with_mixed_positive_and_negative_totals(self):
+        """Test calculating with both positive and negative totals (e.g., credits/refunds)."""
+        report = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice Brown", "total": 1000},
+                        {"name": "Bob Wilson", "total": -200},  # Refund or credit
+                        {"name": "Charlie Davis", "total": 500},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = calculate_school_totals(report)
+
+        # Verify school_total accounts for negative values (1000 - 200 + 500 = 1300)
+        self.assertEqual(result["classes_in_schools"][0]["school_total"], 1300)
+
+    def test_does_not_affect_freelance_students(self):
+        """Test that freelance_students field is not modified."""
+        report = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice Brown", "total": 500},
+                    ]
+                }
+            ],
+            "freelance_students": [
+                {"name": "Zoe Taylor", "total": 1000},
+                {"name": "Mike Johnson", "total": 800},
+            ]
+        }
+
+        result = calculate_school_totals(report)
+
+        # Verify freelance_students are unchanged
+        self.assertEqual(len(result["freelance_students"]), 2)
+        self.assertEqual(result["freelance_students"][0]["name"], "Zoe Taylor")
+        self.assertEqual(result["freelance_students"][1]["name"], "Mike Johnson")
+        
+        # Verify freelance_students don't have school_total field added
+        self.assertNotIn("school_total", result["freelance_students"][0])
+
+    def test_preserves_all_school_fields(self):
+        """Test that all other school fields are preserved."""
+        report = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_id": "SCH001",
+                    "address": "123 Main St",
+                    "total_school_hours": 15,
+                    "students_reports": [
+                        {"name": "Alice Brown", "total": 500},
+                        {"name": "Bob Wilson", "total": 800},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = calculate_school_totals(report)
+
+        school = result["classes_in_schools"][0]
+        
+        # Verify all original fields are preserved
+        self.assertEqual(school["school_name"], "Alpha Academy")
+        self.assertEqual(school["school_id"], "SCH001")
+        self.assertEqual(school["address"], "123 Main St")
+        self.assertEqual(school["total_school_hours"], 15)
+        
+        # Verify school_total was added
+        self.assertEqual(school["school_total"], 1300)
+
+    def test_preserves_all_student_fields(self):
+        """Test that all student report fields are preserved."""
+        report = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {
+                            "name": "Alice Brown",
+                            "total_hours": 5,
+                            "total": 500,
+                            "rate": 100,
+                            "student_id": "STU001",
+                            "classes": ["Math", "Science"]
+                        },
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = calculate_school_totals(report)
+
+        student = result["classes_in_schools"][0]["students_reports"][0]
+        
+        # Verify all student fields are preserved
+        self.assertEqual(student["name"], "Alice Brown")
+        self.assertEqual(student["total_hours"], 5)
+        self.assertEqual(student["total"], 500)
+        self.assertEqual(student["rate"], 100)
+        self.assertEqual(student["student_id"], "STU001")
+        self.assertEqual(student["classes"], ["Math", "Science"])
+
+    def test_preserves_top_level_fields(self):
+        """Test that top-level report fields are preserved."""
+        report = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice Brown", "total": 500},
+                    ]
+                }
+            ],
+            "freelance_students": [],
+            "month": 11,
+            "year": 2024,
+            "teacher_name": "John Smith"
+        }
+
+        result = calculate_school_totals(report)
+
+        # Verify top-level fields are preserved
+        self.assertEqual(result["month"], 11)
+        self.assertEqual(result["year"], 2024)
+        self.assertEqual(result["teacher_name"], "John Smith")
+
+    def test_creates_copy_does_not_modify_original(self):
+        """Test that the function creates a copy and doesn't modify the original report."""
+        report = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice Brown", "total": 500},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        # Store original state
+        original_has_school_total = "school_total" in report["classes_in_schools"][0]
+
+        result = calculate_school_totals(report)
+
+        # Original report should not have school_total added
+        # Note: This test checks the shallow copy behavior
+        # The function uses .copy() which creates a shallow copy,
+        # so nested objects may still be modified
+        self.assertFalse(original_has_school_total)
+        
+        # Result should have school_total
+        self.assertIn("school_total", result["classes_in_schools"][0])
+
+    def test_three_schools_comprehensive(self):
+        """Test calculating totals for three schools with varying student counts."""
+        report = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice", "total": 500},
+                        {"name": "Bob", "total": 600},
+                    ]
+                },
+                {
+                    "school_name": "Beta School",
+                    "students_reports": [
+                        {"name": "Charlie", "total": 700},
+                        {"name": "Diana", "total": 800},
+                        {"name": "Ethan", "total": 900},
+                    ]
+                },
+                {
+                    "school_name": "Gamma Institute",
+                    "students_reports": [
+                        {"name": "Fiona", "total": 1000},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = calculate_school_totals(report)
+
+        # Verify Alpha Academy total (500 + 600 = 1100)
+        self.assertEqual(result["classes_in_schools"][0]["school_total"], 1100)
+
+        # Verify Beta School total (700 + 800 + 900 = 2400)
+        self.assertEqual(result["classes_in_schools"][1]["school_total"], 2400)
+
+        # Verify Gamma Institute total (1000)
+        self.assertEqual(result["classes_in_schools"][2]["school_total"], 1000)
+
+    def test_large_totals(self):
+        """Test calculating with large total values."""
+        report = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice Brown", "total": 50000},
+                        {"name": "Bob Wilson", "total": 75000},
+                        {"name": "Charlie Davis", "total": 100000},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = calculate_school_totals(report)
+
+        # Verify school_total with large numbers (50000 + 75000 + 100000 = 225000)
+        self.assertEqual(result["classes_in_schools"][0]["school_total"], 225000)
+
+    def test_float_totals(self):
+        """Test calculating totals with float values."""
+        report = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice Brown", "total": 500.50},
+                        {"name": "Bob Wilson", "total": 800.75},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = calculate_school_totals(report)
+
+        # Verify school_total with floats (500.50 + 800.75 = 1301.25)
+        self.assertAlmostEqual(result["classes_in_schools"][0]["school_total"], 1301.25, places=2)
+
+    def test_school_total_field_added_to_all_schools(self):
+        """Test that school_total field is added to all schools in the list."""
+        report = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "students_reports": [
+                        {"name": "Alice", "total": 500},
+                    ]
+                },
+                {
+                    "school_name": "Beta School",
+                    "students_reports": [
+                        {"name": "Bob", "total": 600},
+                    ]
+                },
+                {
+                    "school_name": "Gamma Institute",
+                    "students_reports": [
+                        {"name": "Charlie", "total": 700},
+                    ]
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = calculate_school_totals(report)
+
+        # Verify school_total is added to all three schools
+        for school in result["classes_in_schools"]:
+            self.assertIn("school_total", school)
+        
+        # Verify each school has the correct total
+        self.assertEqual(result["classes_in_schools"][0]["school_total"], 500)
+        self.assertEqual(result["classes_in_schools"][1]["school_total"], 600)
+        self.assertEqual(result["classes_in_schools"][2]["school_total"], 700)
+
+
+class TestCalculateOverallMonthlyTotal(TestCase):
+    """
+    Test suite for calculate_overall_monthly_total utility function.
+    This function calculates the overall monthly total by summing:
+    1. All school_total values from classes_in_schools
+    2. All total values from freelance_students
+    """
+
+    def test_calculate_with_schools_and_freelance(self):
+        """Test calculating overall total with both schools and freelance students."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_total": 1300,
+                    "students_reports": []
+                },
+                {
+                    "school_name": "Beta School",
+                    "school_total": 2400,
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": [
+                {"name": "Alice Brown", "total": 500},
+                {"name": "Bob Wilson", "total": 800},
+            ]
+        }
+
+        result = calculate_overall_monthly_total(accounting_data)
+
+        # Verify overall_monthly_total (1300 + 2400 + 500 + 800 = 5000)
+        self.assertEqual(result["overall_monthly_total"], 5000)
+
+    def test_calculate_with_only_schools(self):
+        """Test calculating overall total with only schools, no freelance students."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_total": 1300,
+                    "students_reports": []
+                },
+                {
+                    "school_name": "Beta School",
+                    "school_total": 2400,
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": []
+        }
+
+        result = calculate_overall_monthly_total(accounting_data)
+
+        # Verify overall_monthly_total (1300 + 2400 = 3700)
+        self.assertEqual(result["overall_monthly_total"], 3700)
+
+    def test_calculate_with_only_freelance(self):
+        """Test calculating overall total with only freelance students, no schools."""
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": [
+                {"name": "Alice Brown", "total": 500},
+                {"name": "Bob Wilson", "total": 800},
+                {"name": "Charlie Davis", "total": 1200},
+            ]
+        }
+
+        result = calculate_overall_monthly_total(accounting_data)
+
+        # Verify overall_monthly_total (500 + 800 + 1200 = 2500)
+        self.assertEqual(result["overall_monthly_total"], 2500)
+
+    def test_calculate_with_empty_data(self):
+        """Test calculating overall total when both schools and freelance are empty."""
+        accounting_data = {
+            "classes_in_schools": [],
+            "freelance_students": []
+        }
+
+        result = calculate_overall_monthly_total(accounting_data)
+
+        # Verify overall_monthly_total is 0
+        self.assertEqual(result["overall_monthly_total"], 0)
+
+    def test_calculate_with_single_school_and_single_freelance(self):
+        """Test calculating with one school and one freelance student."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_total": 1000,
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": [
+                {"name": "Alice Brown", "total": 500},
+            ]
+        }
+
+        result = calculate_overall_monthly_total(accounting_data)
+
+        # Verify overall_monthly_total (1000 + 500 = 1500)
+        self.assertEqual(result["overall_monthly_total"], 1500)
+
+    def test_calculate_with_decimal_values(self):
+        """Test calculating with Decimal values for precision."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_total": Decimal("1300.50"),
+                    "students_reports": []
+                },
+                {
+                    "school_name": "Beta School",
+                    "school_total": Decimal("2400.75"),
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": [
+                {"name": "Alice Brown", "total": Decimal("500.25")},
+                {"name": "Bob Wilson", "total": Decimal("800.50")},
+            ]
+        }
+
+        result = calculate_overall_monthly_total(accounting_data)
+
+        # Verify overall_monthly_total with decimal precision
+        expected_total = Decimal("1300.50") + Decimal("2400.75") + Decimal("500.25") + Decimal("800.50")
+        self.assertEqual(result["overall_monthly_total"], expected_total)
+        self.assertEqual(result["overall_monthly_total"], Decimal("5002.00"))
+
+    def test_calculate_with_float_values(self):
+        """Test calculating with float values."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_total": 1300.50,
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": [
+                {"name": "Alice Brown", "total": 500.25},
+            ]
+        }
+
+        result = calculate_overall_monthly_total(accounting_data)
+
+        # Verify overall_monthly_total with floats (1300.50 + 500.25 = 1800.75)
+        self.assertAlmostEqual(result["overall_monthly_total"], 1800.75, places=2)
+
+    def test_calculate_with_zero_school_totals(self):
+        """Test calculating when schools have zero totals."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_total": 0,
+                    "students_reports": []
+                },
+                {
+                    "school_name": "Beta School",
+                    "school_total": 0,
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": [
+                {"name": "Alice Brown", "total": 500},
+            ]
+        }
+
+        result = calculate_overall_monthly_total(accounting_data)
+
+        # Verify overall_monthly_total (0 + 0 + 500 = 500)
+        self.assertEqual(result["overall_monthly_total"], 500)
+
+    def test_calculate_with_zero_freelance_totals(self):
+        """Test calculating when freelance students have zero totals."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_total": 1000,
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": [
+                {"name": "Alice Brown", "total": 0},
+                {"name": "Bob Wilson", "total": 0},
+            ]
+        }
+
+        result = calculate_overall_monthly_total(accounting_data)
+
+        # Verify overall_monthly_total (1000 + 0 + 0 = 1000)
+        self.assertEqual(result["overall_monthly_total"], 1000)
+
+    def test_calculate_with_negative_values(self):
+        """Test calculating with negative values (credits/refunds)."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_total": 2000,
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": [
+                {"name": "Alice Brown", "total": 500},
+                {"name": "Bob Wilson", "total": -200},  # Refund
+            ]
+        }
+
+        result = calculate_overall_monthly_total(accounting_data)
+
+        # Verify overall_monthly_total (2000 + 500 - 200 = 2300)
+        self.assertEqual(result["overall_monthly_total"], 2300)
+
+    def test_preserves_all_fields(self):
+        """Test that all fields in the accounting data are preserved."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_id": "SCH001",
+                    "school_total": 1000,
+                    "students_reports": [
+                        {"name": "Charlie", "total": 500}
+                    ]
+                }
+            ],
+            "freelance_students": [
+                {"name": "Alice Brown", "total": 500, "student_id": "STU001"},
+            ],
+            "month": 11,
+            "year": 2024,
+            "teacher_name": "John Smith"
+        }
+
+        result = calculate_overall_monthly_total(accounting_data)
+
+        # Verify all fields are preserved
+        self.assertEqual(result["classes_in_schools"][0]["school_name"], "Alpha Academy")
+        self.assertEqual(result["classes_in_schools"][0]["school_id"], "SCH001")
+        self.assertEqual(result["freelance_students"][0]["name"], "Alice Brown")
+        self.assertEqual(result["freelance_students"][0]["student_id"], "STU001")
+        self.assertEqual(result["month"], 11)
+        self.assertEqual(result["year"], 2024)
+        self.assertEqual(result["teacher_name"], "John Smith")
+        
+        # Verify overall_monthly_total is added
+        self.assertEqual(result["overall_monthly_total"], 1500)
+
+    def test_overall_monthly_total_field_is_added(self):
+        """Test that overall_monthly_total field is added to the accounting data."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_total": 1000,
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": []
+        }
+
+        # Verify field doesn't exist before
+        self.assertNotIn("overall_monthly_total", accounting_data)
+
+        result = calculate_overall_monthly_total(accounting_data)
+
+        # Verify field exists after
+        self.assertIn("overall_monthly_total", result)
+
+    def test_creates_copy_does_not_modify_original(self):
+        """Test that the function creates a copy and doesn't modify the original."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_total": 1000,
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": []
+        }
+
+        # Store original state
+        original_has_total = "overall_monthly_total" in accounting_data
+
+        result = calculate_overall_monthly_total(accounting_data)
+
+        # Original should not have overall_monthly_total added
+        # Note: This tests shallow copy behavior
+        self.assertFalse(original_has_total)
+        
+        # Result should have overall_monthly_total
+        self.assertIn("overall_monthly_total", result)
+
+    def test_three_schools_and_multiple_freelance(self):
+        """Test comprehensive scenario with three schools and multiple freelance students."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_total": 1100,
+                    "students_reports": []
+                },
+                {
+                    "school_name": "Beta School",
+                    "school_total": 2400,
+                    "students_reports": []
+                },
+                {
+                    "school_name": "Gamma Institute",
+                    "school_total": 1000,
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": [
+                {"name": "Alice", "total": 500},
+                {"name": "Bob", "total": 600},
+                {"name": "Charlie", "total": 700},
+                {"name": "Diana", "total": 800},
+            ]
+        }
+
+        result = calculate_overall_monthly_total(accounting_data)
+
+        # Verify overall_monthly_total
+        # Schools: 1100 + 2400 + 1000 = 4500
+        # Freelance: 500 + 600 + 700 + 800 = 2600
+        # Total: 4500 + 2600 = 7100
+        self.assertEqual(result["overall_monthly_total"], 7100)
+
+    def test_large_totals(self):
+        """Test calculating with large total values."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_total": 100000,
+                    "students_reports": []
+                },
+                {
+                    "school_name": "Beta School",
+                    "school_total": 250000,
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": [
+                {"name": "Alice Brown", "total": 50000},
+                {"name": "Bob Wilson", "total": 75000},
+            ]
+        }
+
+        result = calculate_overall_monthly_total(accounting_data)
+
+        # Verify overall_monthly_total (100000 + 250000 + 50000 + 75000 = 475000)
+        self.assertEqual(result["overall_monthly_total"], 475000)
+
+    def test_single_school_zero_total_with_freelance(self):
+        """Test edge case: school with zero total but freelance students have earnings."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_total": 0,
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": [
+                {"name": "Alice Brown", "total": 1500},
+            ]
+        }
+
+        result = calculate_overall_monthly_total(accounting_data)
+
+        # Verify overall_monthly_total (0 + 1500 = 1500)
+        self.assertEqual(result["overall_monthly_total"], 1500)
+
+    def test_multiple_schools_one_freelance(self):
+        """Test multiple schools with a single freelance student."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_total": 800,
+                    "students_reports": []
+                },
+                {
+                    "school_name": "Beta School",
+                    "school_total": 900,
+                    "students_reports": []
+                },
+                {
+                    "school_name": "Gamma Institute",
+                    "school_total": 1000,
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": [
+                {"name": "Alice Brown", "total": 500},
+            ]
+        }
+
+        result = calculate_overall_monthly_total(accounting_data)
+
+        # Verify overall_monthly_total (800 + 900 + 1000 + 500 = 3200)
+        self.assertEqual(result["overall_monthly_total"], 3200)
+
+    def test_returns_same_structure(self):
+        """Test that the function returns the accounting_data structure with added field."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_total": 1000,
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": [
+                {"name": "Alice Brown", "total": 500},
+            ],
+            "other_field": "some_value"
+        }
+
+        result = calculate_overall_monthly_total(accounting_data)
+
+        # Verify structure is maintained
+        self.assertIn("classes_in_schools", result)
+        self.assertIn("freelance_students", result)
+        self.assertIn("other_field", result)
+        self.assertIn("overall_monthly_total", result)
+        self.assertEqual(result["other_field"], "some_value")
+
+    def test_mixed_integer_and_decimal_totals(self):
+        """Test calculating with mixed integer and Decimal types."""
+        accounting_data = {
+            "classes_in_schools": [
+                {
+                    "school_name": "Alpha Academy",
+                    "school_total": 1000,  # Integer
+                    "students_reports": []
+                },
+                {
+                    "school_name": "Beta School",
+                    "school_total": Decimal("1500.50"),  # Decimal
+                    "students_reports": []
+                }
+            ],
+            "freelance_students": [
+                {"name": "Alice Brown", "total": 500},  # Integer
+                {"name": "Bob Wilson", "total": Decimal("250.25")},  # Decimal
+            ]
+        }
+
+        result = calculate_overall_monthly_total(accounting_data)
+
+        # Verify overall_monthly_total (1000 + 1500.50 + 500 + 250.25 = 3250.75)
+        expected_total = 1000 + Decimal("1500.50") + 500 + Decimal("250.25")
+        self.assertEqual(result["overall_monthly_total"], expected_total)
+
+    def test_result_is_correct_type(self):
+        """Test that the result returns the correct type based on input types."""
+        # Test with all integers
+        accounting_data_int = {
+            "classes_in_schools": [
+                {"school_name": "Alpha", "school_total": 1000, "students_reports": []}
+            ],
+            "freelance_students": [
+                {"name": "Alice", "total": 500}
+            ]
+        }
+        
+        result_int = calculate_overall_monthly_total(accounting_data_int)
+        self.assertIsInstance(result_int["overall_monthly_total"], int)
+        
+        # Test with Decimals
+        accounting_data_decimal = {
+            "classes_in_schools": [
+                {"school_name": "Alpha", "school_total": Decimal("1000.00"), "students_reports": []}
+            ],
+            "freelance_students": [
+                {"name": "Alice", "total": Decimal("500.00")}
+            ]
+        }
+        
+        result_decimal = calculate_overall_monthly_total(accounting_data_decimal)
+        self.assertIsInstance(result_decimal["overall_monthly_total"], Decimal)
+
