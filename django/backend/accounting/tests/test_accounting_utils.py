@@ -14,6 +14,8 @@ from accounting.utils import (
     calculate_overall_monthly_total,
     generate_estimated_earnings_report,
     generate_estimated_monthly_earnings_report_for_single_school,
+    generate_estimated_earnings_report_for_single_school_within_date_range,
+    get_scheduled_classes_at_school_during_date_range,
     get_estimated_number_of_worked_hours,
     get_scheduled_classes_during_month_period,
     get_scheduled_classes_at_school_during_month_period,
@@ -5998,6 +6000,604 @@ class TestGenerateAccountingReportsForClassesInSchools(TestCase):
             self.assertNotIn('overall_monthly_total', result)
 
 
+
+class TestGetScheduledClassesAtSchoolDuringDateRange(TestCase):
+    """
+    Test suite for get_scheduled_classes_at_school_during_date_range utility function.
+    This function retrieves scheduled classes for a teacher at a specific school during
+    a custom date range, ordered by school name.
+    """
+
+    def setUp(self):
+        """
+        Set up test data including:
+        - Teachers (primary teacher and another teacher for filtering tests)
+        - 2 Schools (Alpha Academy and Beta School)
+        - Students at each school
+        - Freelance students (should be excluded)
+        - Scheduled classes across multiple dates
+        """
+        # Create users and user profiles
+        self.teacher_user = User.objects.create_user(
+            username='teacher1',
+            password='testpass123'
+        )
+        self.teacher_profile = UserProfile.objects.create(
+            user=self.teacher_user,
+            contact_email='teacher1@example.com',
+            surname='Smith',
+            given_name='John'
+        )
+
+        self.other_teacher_user = User.objects.create_user(
+            username='teacher2',
+            password='testpass123'
+        )
+        self.other_teacher_profile = UserProfile.objects.create(
+            user=self.other_teacher_user,
+            contact_email='teacher2@example.com',
+            surname='Jones',
+            given_name='Mary'
+        )
+
+        # Create 2 schools
+        self.school_alpha = School.objects.create(
+            school_name='Alpha Academy',
+            address_line_1='123 Main St',
+            address_line_2='Suite 100',
+            contact_phone='5551234567',
+            scheduling_teacher=self.teacher_profile
+        )
+        self.school_beta = School.objects.create(
+            school_name='Beta School',
+            address_line_1='456 Oak Ave',
+            address_line_2='Building B',
+            contact_phone='5559876543',
+            scheduling_teacher=self.teacher_profile
+        )
+
+        # Create students at Alpha Academy
+        self.alpha_student_1 = StudentOrClass.objects.create(
+            student_or_class_name='Charlie Davis',
+            account_type='school',
+            school=self.school_alpha,
+            teacher=self.teacher_profile,
+            purchased_class_hours=None,
+            tuition_per_hour=900
+        )
+        self.alpha_student_2 = StudentOrClass.objects.create(
+            student_or_class_name='Emily Evans',
+            account_type='school',
+            school=self.school_alpha,
+            teacher=self.teacher_profile,
+            purchased_class_hours=None,
+            tuition_per_hour=900
+        )
+
+        # Create student at Beta School
+        self.beta_student = StudentOrClass.objects.create(
+            student_or_class_name='Diana Miller',
+            account_type='school',
+            school=self.school_beta,
+            teacher=self.teacher_profile,
+            purchased_class_hours=None,
+            tuition_per_hour=950
+        )
+
+        # Create freelance student (should be excluded)
+        self.freelance_student = StudentOrClass.objects.create(
+            student_or_class_name='Alice Brown',
+            account_type='freelance',
+            school=None,
+            teacher=self.teacher_profile,
+            purchased_class_hours=Decimal('10.00'),
+            tuition_per_hour=1000
+        )
+
+        # Create scheduled classes for Alpha Academy
+        # Within date range (Nov 5-15)
+        self.alpha_class_nov_5 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.alpha_student_1,
+            date=date(2024, 11, 5),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),
+            class_status='completed'
+        )
+        self.alpha_class_nov_10 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.alpha_student_1,
+            date=date(2024, 11, 10),
+            start_time=time(14, 0),
+            finish_time=time(15, 0),
+            class_status='completed'
+        )
+        self.alpha_class_nov_12 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.alpha_student_2,
+            date=date(2024, 11, 12),
+            start_time=time(13, 0),
+            finish_time=time(14, 0),
+            class_status='completed'
+        )
+
+        # Before date range (Nov 3)
+        self.alpha_class_nov_3 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.alpha_student_1,
+            date=date(2024, 11, 3),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),
+            class_status='completed'
+        )
+
+        # After date range (Nov 20)
+        self.alpha_class_nov_20 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.alpha_student_1,
+            date=date(2024, 11, 20),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),
+            class_status='completed'
+        )
+
+        # Create scheduled class for Beta School (should be excluded when querying Alpha)
+        self.beta_class_nov_10 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.beta_student,
+            date=date(2024, 11, 10),
+            start_time=time(9, 0),
+            finish_time=time(10, 0),
+            class_status='completed'
+        )
+
+        # Create freelance class (should be excluded)
+        self.freelance_class_nov_8 = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.freelance_student,
+            date=date(2024, 11, 8),
+            start_time=time(14, 0),
+            finish_time=time(15, 30),
+            class_status='completed'
+        )
+
+        # Create class at Alpha Academy for other teacher
+        self.alpha_other_teacher_nov_7 = ScheduledClass.objects.create(
+            teacher=self.other_teacher_profile,
+            student_or_class=self.alpha_student_1,
+            date=date(2024, 11, 7),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),
+            class_status='completed'
+        )
+
+    def test_get_classes_within_date_range(self):
+        """Test retrieving classes within a specific date range."""
+        start_date = date(2024, 11, 5)
+        finish_date = date(2024, 11, 15)
+
+        result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        # Should include 3 classes (Nov 5, 10, 12)
+        self.assertEqual(result.count(), 3)
+
+        # Verify specific classes are included
+        self.assertIn(self.alpha_class_nov_5, result)
+        self.assertIn(self.alpha_class_nov_10, result)
+        self.assertIn(self.alpha_class_nov_12, result)
+
+        # Verify classes outside range are excluded
+        self.assertNotIn(self.alpha_class_nov_3, result)  # Before range
+        self.assertNotIn(self.alpha_class_nov_20, result)  # After range
+
+    def test_start_date_is_inclusive(self):
+        """Test that the start date is inclusive (classes on start date are included)."""
+        start_date = date(2024, 11, 5)
+        finish_date = date(2024, 11, 15)
+
+        result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        # Should include class on Nov 5 (start date)
+        nov_5_classes = [cls for cls in result if cls.date == date(2024, 11, 5)]
+        self.assertEqual(len(nov_5_classes), 1)
+
+    def test_finish_date_is_exclusive(self):
+        """Test that the finish date is exclusive (classes on finish date are excluded)."""
+        start_date = date(2024, 11, 5)
+        finish_date = date(2024, 11, 15)
+
+        # Create class on finish date
+        class_on_finish = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.alpha_student_1,
+            date=date(2024, 11, 15),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),
+            class_status='completed'
+        )
+
+        result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        # Should NOT include class on Nov 15 (finish date)
+        self.assertNotIn(class_on_finish, result)
+
+    def test_single_day_range(self):
+        """Test querying a single day (start_date and finish_date differ by 1 day)."""
+        start_date = date(2024, 11, 10)
+        finish_date = date(2024, 11, 11)
+
+        result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        # Should include only Nov 10 class
+        self.assertEqual(result.count(), 1)
+        self.assertEqual(result.first().date, date(2024, 11, 10))
+
+    def test_excludes_other_schools(self):
+        """Test that classes from other schools are excluded."""
+        start_date = date(2024, 11, 5)
+        finish_date = date(2024, 11, 15)
+
+        result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        # Should not include Beta School class
+        self.assertNotIn(self.beta_class_nov_10, result)
+
+        # All results should be from Alpha Academy
+        for cls in result:
+            self.assertEqual(cls.student_or_class.school, self.school_alpha)
+
+    def test_excludes_freelance_students(self):
+        """Test that freelance classes are excluded."""
+        start_date = date(2024, 11, 5)
+        finish_date = date(2024, 11, 15)
+
+        result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        # Should not include freelance class
+        self.assertNotIn(self.freelance_class_nov_8, result)
+
+        # All results should have a school
+        for cls in result:
+            self.assertIsNotNone(cls.student_or_class.school)
+
+    def test_filters_by_teacher(self):
+        """Test that only classes for the specified teacher are returned."""
+        start_date = date(2024, 11, 5)
+        finish_date = date(2024, 11, 15)
+
+        result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        # Should not include other teacher's class
+        self.assertNotIn(self.alpha_other_teacher_nov_7, result)
+
+        # Test with other teacher
+        other_result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.other_teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        # Should only include other teacher's class
+        self.assertEqual(other_result.count(), 1)
+        self.assertEqual(other_result.first(), self.alpha_other_teacher_nov_7)
+
+    def test_empty_date_range(self):
+        """Test behavior when no classes exist within the date range."""
+        start_date = date(2024, 10, 1)
+        finish_date = date(2024, 10, 15)
+
+        result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        self.assertEqual(result.count(), 0)
+
+    def test_long_date_range(self):
+        """Test with a long date range spanning multiple months."""
+        start_date = date(2024, 11, 1)
+        finish_date = date(2024, 12, 31)
+
+        result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        # Should include all November classes
+        self.assertIn(self.alpha_class_nov_3, result)
+        self.assertIn(self.alpha_class_nov_5, result)
+        self.assertIn(self.alpha_class_nov_10, result)
+        self.assertIn(self.alpha_class_nov_12, result)
+        self.assertIn(self.alpha_class_nov_20, result)
+
+    def test_ordering_by_school_name(self):
+        """Test that results are ordered by school name."""
+        start_date = date(2024, 11, 5)
+        finish_date = date(2024, 11, 15)
+
+        result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        # All results should be from Alpha Academy (same school)
+        school_names = [cls.student_or_class.school.school_name for cls in result]
+        self.assertTrue(all(name == 'Alpha Academy' for name in school_names))
+
+    def test_multiple_students_at_same_school(self):
+        """Test retrieving classes for multiple students at the same school."""
+        start_date = date(2024, 11, 5)
+        finish_date = date(2024, 11, 15)
+
+        result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        # Get unique students
+        students = set(cls.student_or_class for cls in result)
+
+        # Should have classes for 2 students
+        self.assertIn(self.alpha_student_1, students)
+        self.assertIn(self.alpha_student_2, students)
+
+    def test_includes_all_class_statuses(self):
+        """Test that all class statuses are included in the result."""
+        start_date = date(2024, 11, 5)
+        finish_date = date(2024, 11, 25)
+
+        # Add classes with various statuses
+        ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.alpha_student_1,
+            date=date(2024, 11, 15),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),
+            class_status='scheduled'
+        )
+
+        ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.alpha_student_1,
+            date=date(2024, 11, 18),
+            start_time=time(14, 0),
+            finish_time=time(15, 0),
+            class_status='cancelled'
+        )
+
+        result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        statuses = set(cls.class_status for cls in result)
+
+        # Should include multiple statuses
+        self.assertIn('completed', statuses)
+        self.assertIn('scheduled', statuses)
+        self.assertIn('cancelled', statuses)
+
+    def test_cross_month_boundary(self):
+        """Test date range that crosses month boundary."""
+        # Create classes in November and December
+        dec_class = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.alpha_student_1,
+            date=date(2024, 12, 5),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),
+            class_status='completed'
+        )
+
+        start_date = date(2024, 11, 25)
+        finish_date = date(2024, 12, 10)
+
+        result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        # Should include classes from both November and December
+        dates = [cls.date for cls in result]
+        self.assertIn(date(2024, 12, 5), dates)
+
+    def test_cross_year_boundary(self):
+        """Test date range that crosses year boundary."""
+        # Create class in January 2025
+        jan_class = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.alpha_student_1,
+            date=date(2025, 1, 10),
+            start_time=time(10, 0),
+            finish_time=time(11, 0),
+            class_status='completed'
+        )
+
+        start_date = date(2024, 12, 20)
+        finish_date = date(2025, 1, 15)
+
+        result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        # Should include January 2025 class
+        self.assertIn(jan_class, result)
+
+    def test_returns_queryset(self):
+        """Test that the function returns a QuerySet."""
+        start_date = date(2024, 11, 5)
+        finish_date = date(2024, 11, 15)
+
+        result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        # Should be a QuerySet
+        self.assertTrue(hasattr(result, 'count'))
+        self.assertTrue(hasattr(result, 'filter'))
+        self.assertTrue(hasattr(result, 'order_by'))
+
+    def test_multiple_classes_same_day(self):
+        """Test retrieving multiple classes on the same day."""
+        # Add another class on Nov 10
+        same_day_class = ScheduledClass.objects.create(
+            teacher=self.teacher_profile,
+            student_or_class=self.alpha_student_2,
+            date=date(2024, 11, 10),
+            start_time=time(14, 0),
+            finish_time=time(15, 0),
+            class_status='completed'
+        )
+
+        start_date = date(2024, 11, 5)
+        finish_date = date(2024, 11, 15)
+
+        result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        # Should include both classes on Nov 10
+        nov_10_classes = [cls for cls in result if cls.date == date(2024, 11, 10)]
+        self.assertEqual(len(nov_10_classes), 2)
+        self.assertIn(self.alpha_class_nov_10, nov_10_classes)
+        self.assertIn(same_day_class, nov_10_classes)
+
+    def test_different_schools_same_date_range(self):
+        """Test that querying different schools with same date range returns different results."""
+        start_date = date(2024, 11, 5)
+        finish_date = date(2024, 11, 15)
+
+        alpha_result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        beta_result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_beta,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        # Results should be different
+        self.assertNotEqual(alpha_result.count(), beta_result.count())
+
+        # Alpha should only have Alpha classes
+        for cls in alpha_result:
+            self.assertEqual(cls.student_or_class.school, self.school_alpha)
+
+        # Beta should only have Beta classes
+        for cls in beta_result:
+            self.assertEqual(cls.student_or_class.school, self.school_beta)
+
+    def test_school_filter_is_strict(self):
+        """Test that school filtering is strict - only exact matches."""
+        start_date = date(2024, 11, 5)
+        finish_date = date(2024, 11, 15)
+
+        result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        # Every class should be from Alpha Academy
+        for cls in result:
+            self.assertEqual(cls.student_or_class.school.id, self.school_alpha.id)
+            self.assertEqual(cls.student_or_class.school.school_name, 'Alpha Academy')
+
+    def test_backward_date_range(self):
+        """Test behavior when finish_date is before start_date (invalid range)."""
+        start_date = date(2024, 11, 15)
+        finish_date = date(2024, 11, 5)  # Before start_date
+
+        result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        # Should return empty queryset
+        self.assertEqual(result.count(), 0)
+
+    def test_same_start_and_finish_date(self):
+        """Test when start_date equals finish_date (zero-length range)."""
+        start_date = date(2024, 11, 10)
+        finish_date = date(2024, 11, 10)
+
+        result = get_scheduled_classes_at_school_during_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+
+        # Since finish_date is exclusive, should return empty
+        self.assertEqual(result.count(), 0)
+
+
+
 # Integration tests of functions to generate accounting reports
 # using various utilities functions tested above
 
@@ -7163,3 +7763,5 @@ class TestGenerateEstimatedMonthlyEarningsReportForSingleSchool(TestCase):
         self.assertIn('school_name', report)
         self.assertIn('students_reports', report)
         self.assertIn('school_total', report)
+
+
