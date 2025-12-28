@@ -8537,3 +8537,21 @@ class TestGenerateEstimatedEarningsReportForSingleSchoolWithinDateRange(TestCase
         )
 
         # Second range: Nov 15-25 (includes 1 class - Nov 20)
+        report2 = generate_estimated_earnings_report_for_single_school_within_date_range(
+            teacher=self.teacher_profile,
+            school=self.school_alpha,
+            start_date=date(2024, 11, 15),
+            finish_date=date(2024, 11, 25)
+        )
+        
+        # should have different numbers of classes
+        self.assertNotEqual(
+            len(report1['students_reports']),
+            len(report2['students_reports'])
+        )
+
+        # Should have different totals
+        self.assertNotEqual(
+            report1['school_total'],
+            report2['school_total']
+        )
