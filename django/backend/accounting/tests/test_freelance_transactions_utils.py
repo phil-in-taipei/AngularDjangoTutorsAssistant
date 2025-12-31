@@ -1,12 +1,17 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from decimal import Decimal
+from django.utils.timezone import make_aware, get_current_timezone
+from datetime import datetime
 
 from accounting.models import (
     FreelanceTuitionTransactionRecord,
     PurchasedHoursModificationRecord
 )
-from accounting.utils import create_purchased_hours_modification_record_for_tuition_transaction
+from accounting.utils import (
+    create_purchased_hours_modification_record_for_tuition_transaction,
+    create_timestamps_for_beginning_and_end_of_month_and_year
+)
 from student_account.models import StudentOrClass
 from user_profiles.models import UserProfile
 
@@ -373,3 +378,317 @@ class CreatePurchasedHoursModificationRecordTestCase(TestCase):
             tuition_transaction=refund_transaction
         )
         self.assertEqual(refund_record.modification_type, 'tuition_refund_deduct')
+
+
+
+class CreateTimestampsForMonthAndYearTestCase(TestCase):
+    """
+    Test suite for the create_timestamps_for_beginning_and_end_of_month_and_year function.
+    """
+
+    def test_january_timestamps(self):
+        """Test timestamp generation for January (31 days)"""
+        print("Test timestamp generation for January")
+
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(1, 2024)
+
+        # Check start timestamp
+        expected_start = make_aware(datetime(2024, 1, 1, 0, 0, 0), get_current_timezone())
+        self.assertEqual(result['start'], expected_start)
+
+        # Check end timestamp
+        expected_end = make_aware(datetime(2024, 1, 31, 23, 59, 59), get_current_timezone())
+        self.assertEqual(result['end'], expected_end)
+
+    def test_february_non_leap_year_timestamps(self):
+        """Test timestamp generation for February in a non-leap year (28 days)"""
+        print("Test timestamp generation for February in a non-leap year")
+
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(2, 2023)
+
+        # Check start timestamp
+        expected_start = make_aware(datetime(2023, 2, 1, 0, 0, 0), get_current_timezone())
+        self.assertEqual(result['start'], expected_start)
+
+        # Check end timestamp
+        expected_end = make_aware(datetime(2023, 2, 28, 23, 59, 59), get_current_timezone())
+        self.assertEqual(result['end'], expected_end)
+
+    def test_february_leap_year_timestamps(self):
+        """Test timestamp generation for February in a leap year (29 days)"""
+        print("Test timestamp generation for February in a leap year")
+
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(2, 2024)
+
+        # Check start timestamp
+        expected_start = make_aware(datetime(2024, 2, 1, 0, 0, 0), get_current_timezone())
+        self.assertEqual(result['start'], expected_start)
+
+        # Check end timestamp
+        expected_end = make_aware(datetime(2024, 2, 29, 23, 59, 59), get_current_timezone())
+        self.assertEqual(result['end'], expected_end)
+
+    def test_march_timestamps(self):
+        """Test timestamp generation for March (31 days)"""
+        print("Test timestamp generation for March")
+
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(3, 2024)
+
+        expected_start = make_aware(datetime(2024, 3, 1, 0, 0, 0), get_current_timezone())
+        expected_end = make_aware(datetime(2024, 3, 31, 23, 59, 59), get_current_timezone())
+
+        self.assertEqual(result['start'], expected_start)
+        self.assertEqual(result['end'], expected_end)
+
+    def test_april_timestamps(self):
+        """Test timestamp generation for April (30 days)"""
+        print("Test timestamp generation for April")
+
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(4, 2024)
+
+        expected_start = make_aware(datetime(2024, 4, 1, 0, 0, 0), get_current_timezone())
+        expected_end = make_aware(datetime(2024, 4, 30, 23, 59, 59), get_current_timezone())
+
+        self.assertEqual(result['start'], expected_start)
+        self.assertEqual(result['end'], expected_end)
+
+    def test_may_timestamps(self):
+        """Test timestamp generation for May (31 days)"""
+        print("Test timestamp generation for May")
+
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(5, 2024)
+
+        expected_start = make_aware(datetime(2024, 5, 1, 0, 0, 0), get_current_timezone())
+        expected_end = make_aware(datetime(2024, 5, 31, 23, 59, 59), get_current_timezone())
+
+        self.assertEqual(result['start'], expected_start)
+        self.assertEqual(result['end'], expected_end)
+
+    def test_june_timestamps(self):
+        """Test timestamp generation for June (30 days)"""
+        print("Test timestamp generation for June")
+
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(6, 2024)
+
+        expected_start = make_aware(datetime(2024, 6, 1, 0, 0, 0), get_current_timezone())
+        expected_end = make_aware(datetime(2024, 6, 30, 23, 59, 59), get_current_timezone())
+
+        self.assertEqual(result['start'], expected_start)
+        self.assertEqual(result['end'], expected_end)
+
+    def test_july_timestamps(self):
+        """Test timestamp generation for July (31 days)"""
+        print("Test timestamp generation for July")
+
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(7, 2024)
+
+        expected_start = make_aware(datetime(2024, 7, 1, 0, 0, 0), get_current_timezone())
+        expected_end = make_aware(datetime(2024, 7, 31, 23, 59, 59), get_current_timezone())
+
+        self.assertEqual(result['start'], expected_start)
+        self.assertEqual(result['end'], expected_end)
+
+    def test_august_timestamps(self):
+        """Test timestamp generation for August (31 days)"""
+        print("Test timestamp generation for August")
+
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(8, 2024)
+
+        expected_start = make_aware(datetime(2024, 8, 1, 0, 0, 0), get_current_timezone())
+        expected_end = make_aware(datetime(2024, 8, 31, 23, 59, 59), get_current_timezone())
+
+        self.assertEqual(result['start'], expected_start)
+        self.assertEqual(result['end'], expected_end)
+
+    def test_september_timestamps(self):
+        """Test timestamp generation for September (30 days)"""
+        print("Test timestamp generation for September")
+
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(9, 2024)
+
+        expected_start = make_aware(datetime(2024, 9, 1, 0, 0, 0), get_current_timezone())
+        expected_end = make_aware(datetime(2024, 9, 30, 23, 59, 59), get_current_timezone())
+
+        self.assertEqual(result['start'], expected_start)
+        self.assertEqual(result['end'], expected_end)
+
+    def test_october_timestamps(self):
+        """Test timestamp generation for October (31 days)"""
+        print("Test timestamp generation for October")
+
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(10, 2024)
+
+        expected_start = make_aware(datetime(2024, 10, 1, 0, 0, 0), get_current_timezone())
+        expected_end = make_aware(datetime(2024, 10, 31, 23, 59, 59), get_current_timezone())
+
+        self.assertEqual(result['start'], expected_start)
+        self.assertEqual(result['end'], expected_end)
+
+    def test_november_timestamps(self):
+        """Test timestamp generation for November (30 days)"""
+        print("Test timestamp generation for November")
+
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(11, 2024)
+
+        expected_start = make_aware(datetime(2024, 11, 1, 0, 0, 0), get_current_timezone())
+        expected_end = make_aware(datetime(2024, 11, 30, 23, 59, 59), get_current_timezone())
+
+        self.assertEqual(result['start'], expected_start)
+        self.assertEqual(result['end'], expected_end)
+
+    def test_december_timestamps(self):
+        """Test timestamp generation for December (31 days) - special case"""
+        print("Test timestamp generation for December")
+
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(12, 2024)
+
+        # Check start timestamp
+        expected_start = make_aware(datetime(2024, 12, 1, 0, 0, 0), get_current_timezone())
+        self.assertEqual(result['start'], expected_start)
+
+        # Check end timestamp - December should end at 23:59:59 on Dec 31
+        expected_end = make_aware(datetime(2024, 12, 31, 23, 59, 59), get_current_timezone())
+        self.assertEqual(result['end'], expected_end)
+
+    def test_returns_dict_with_correct_keys(self):
+        """Test that the function returns a dictionary with 'start' and 'end' keys"""
+        print("Test that the function returns a dictionary with correct keys")
+
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(6, 2024)
+
+        self.assertIsInstance(result, dict)
+        self.assertIn('start', result)
+        self.assertIn('end', result)
+        self.assertEqual(len(result), 2)
+
+    def test_timestamps_are_timezone_aware(self):
+        """Test that returned timestamps are timezone-aware"""
+        print("Test that returned timestamps are timezone-aware")
+
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(6, 2024)
+
+        # Check that timestamps have timezone information
+        self.assertIsNotNone(result['start'].tzinfo)
+        self.assertIsNotNone(result['end'].tzinfo)
+
+    def test_start_timestamp_is_midnight(self):
+        """Test that start timestamp is at midnight (00:00:00)"""
+        print("Test that start timestamp is at midnight")
+
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(6, 2024)
+
+        self.assertEqual(result['start'].hour, 0)
+        self.assertEqual(result['start'].minute, 0)
+        self.assertEqual(result['start'].second, 0)
+
+    def test_end_timestamp_is_last_second_of_day(self):
+        """Test that end timestamp is at 23:59:59"""
+        print("Test that end timestamp is at 23:59:59")
+
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(6, 2024)
+
+        self.assertEqual(result['end'].hour, 23)
+        self.assertEqual(result['end'].minute, 59)
+        self.assertEqual(result['end'].second, 59)
+
+    def test_start_is_before_end(self):
+        """Test that start timestamp is always before end timestamp"""
+        print("Test that start timestamp is always before end timestamp")
+
+        # Test for multiple months
+        for month in range(1, 13):
+            result = create_timestamps_for_beginning_and_end_of_month_and_year(month, 2024)
+            self.assertLess(result['start'], result['end'])
+
+    def test_different_years(self):
+        """Test that the function works correctly for different years"""
+        print("Test that the function works correctly for different years")
+
+        # Test year 2023
+        result_2023 = create_timestamps_for_beginning_and_end_of_month_and_year(6, 2023)
+        expected_start_2023 = make_aware(datetime(2023, 6, 1, 0, 0, 0), get_current_timezone())
+        self.assertEqual(result_2023['start'], expected_start_2023)
+
+        # Test year 2025
+        result_2025 = create_timestamps_for_beginning_and_end_of_month_and_year(6, 2025)
+        expected_start_2025 = make_aware(datetime(2025, 6, 1, 0, 0, 0), get_current_timezone())
+        self.assertEqual(result_2025['start'], expected_start_2025)
+
+    def test_all_months_in_year(self):
+        """Test that all 12 months generate valid timestamps"""
+        print("Test that all 12 months generate valid timestamps")
+
+        for month in range(1, 13):
+            result = create_timestamps_for_beginning_and_end_of_month_and_year(month, 2024)
+
+            # Verify both timestamps exist and are timezone-aware
+            self.assertIsNotNone(result['start'])
+            self.assertIsNotNone(result['end'])
+            self.assertIsNotNone(result['start'].tzinfo)
+            self.assertIsNotNone(result['end'].tzinfo)
+
+            # Verify start is first day of month
+            self.assertEqual(result['start'].day, 1)
+
+            # Verify timestamps are in correct order
+            self.assertLess(result['start'], result['end'])
+
+    def test_thirty_day_months(self):
+        """Test that 30-day months (April, June, September, November) end on the 30th"""
+        print("Test that 30-day months end on the 30th")
+
+        thirty_day_months = [4, 6, 9, 11]
+
+        for month in thirty_day_months:
+            result = create_timestamps_for_beginning_and_end_of_month_and_year(month, 2024)
+            self.assertEqual(result['end'].day, 30)
+
+    def test_thirty_one_day_months(self):
+        """Test that 31-day months end on the 31st"""
+        print("Test that 31-day months end on the 31st")
+
+        thirty_one_day_months = [1, 3, 5, 7, 8, 10, 12]
+
+        for month in thirty_one_day_months:
+            result = create_timestamps_for_beginning_and_end_of_month_and_year(month, 2024)
+            self.assertEqual(result['end'].day, 31)
+
+    def test_span_covers_entire_month(self):
+        """Test that the time span covers the entire month"""
+        print("Test that the time span covers the entire month")
+
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(6, 2024)
+
+        # Calculate the duration
+        duration = result['end'] - result['start']
+
+        # For June (30 days), duration should be approximately 30 days
+        # 29 days, 23 hours, 59 minutes, 59 seconds
+        expected_seconds = (30 * 24 * 60 * 60) - 1  # 30 days minus 1 second
+        self.assertEqual(duration.total_seconds(), expected_seconds)
+
+    def test_february_2020_leap_year(self):
+        """Test February 2020 (leap year) ends on 29th"""
+        print("Test February 2020 (leap year) ends on 29th")
+
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(2, 2020)
+        self.assertEqual(result['end'].day, 29)
+
+    def test_february_2100_non_leap_year(self):
+        """Test February 2100 (not a leap year despite divisible by 4) ends on 28th"""
+        print("Test February 2100 (not a leap year) ends on 28th")
+
+        # 2100 is not a leap year (divisible by 100 but not by 400)
+        result = create_timestamps_for_beginning_and_end_of_month_and_year(2, 2100)
+        self.assertEqual(result['end'].day, 28)
+
+    def test_year_boundary_december_to_january(self):
+        """Test December doesn't incorrectly roll into January of next year"""
+        print("Test December boundary handling")
+
+        result_dec = create_timestamps_for_beginning_and_end_of_month_and_year(12, 2024)
+
+        # Verify December ends in December, not January
+        self.assertEqual(result_dec['end'].month, 12)
+        self.assertEqual(result_dec['end'].year, 2024)
+        self.assertEqual(result_dec['end'].day, 31)
