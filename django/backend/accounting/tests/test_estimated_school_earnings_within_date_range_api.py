@@ -387,7 +387,7 @@ class EstimatedSchoolEarningsWithinDateRangePrivateApiTests(TestCase):
 
         # Should return empty report structure
         self.assertEqual(res.data['school_name'], 'Alpha Academy')
-        self.assertEqual(len(res.data['student_reports']), 0)
+        self.assertEqual(len(res.data['students_reports']), 0)
         self.assertEqual(res.data['school_total'], 0.0)
 
     def test_school_with_no_classes_returns_empty_report(self):
@@ -408,7 +408,7 @@ class EstimatedSchoolEarningsWithinDateRangePrivateApiTests(TestCase):
 
         # Should return empty report with school name
         self.assertEqual(res.data['school_name'], 'Gamma Institute')
-        self.assertEqual(res.data['student_reports'], [])
+        self.assertEqual(res.data['students_reports'], [])
         self.assertEqual(res.data['school_total'], 0.0)
 
     def test_empty_report_has_float_zero(self):
@@ -766,7 +766,7 @@ class EstimatedSchoolEarningsWithinDateRangePrivateApiTests(TestCase):
         # Note: When start_date equals finish_date, the date range is typically empty
         # because the range is exclusive of the end date (start_date <= date < finish_date)
         # This test verifies the API handles this edge case gracefully
-        self.assertIsInstance(res.data['student_reports'], list)
+        self.assertIsInstance(res.data['students_reports'], list)
 
     def test_reverse_date_range_invalid(self):
         """Test with finish_date before start_date (invalid range)"""

@@ -400,7 +400,7 @@ class TestGenerateEstimatedEarningsReportForSingleSchoolWithinDateRange(TestCase
 
         # Should return empty report structure
         self.assertEqual(report['school_name'], 'Alpha Academy')
-        self.assertEqual(len(report['student_reports']), 0)
+        self.assertEqual(len(report['students_reports']), 0)
         self.assertEqual(report['school_total'], 0.0)
 
     def test_school_with_no_classes_returns_empty_report(self):
@@ -426,7 +426,7 @@ class TestGenerateEstimatedEarningsReportForSingleSchoolWithinDateRange(TestCase
 
         # Should return empty report with school name
         self.assertEqual(report['school_name'], 'Gamma Institute')
-        self.assertEqual(report['student_reports'], [])
+        self.assertEqual(report['students_reports'], [])
         self.assertEqual(report['school_total'], 0.0)
 
     def test_empty_report_has_float_zero(self):

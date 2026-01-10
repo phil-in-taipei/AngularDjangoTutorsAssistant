@@ -339,7 +339,7 @@ class EstimatedSchoolEarningsByMonthYearPrivateApiTests(TestCase):
 
         # Should return empty report structure
         self.assertEqual(res.data['school_name'], 'Alpha Academy')
-        self.assertEqual(len(res.data['student_reports']), 0)
+        self.assertEqual(len(res.data['students_reports']), 0)
         self.assertEqual(res.data['school_total'], 0.0)
 
     def test_school_with_no_classes_returns_empty_report(self):
@@ -360,7 +360,7 @@ class EstimatedSchoolEarningsByMonthYearPrivateApiTests(TestCase):
 
         # Should return empty report with school name
         self.assertEqual(res.data['school_name'], 'Gamma Institute')
-        self.assertEqual(res.data['student_reports'], [])
+        self.assertEqual(res.data['students_reports'], [])
         self.assertEqual(res.data['school_total'], 0.0)
 
     def test_empty_report_has_float_zero(self):

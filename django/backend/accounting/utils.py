@@ -515,7 +515,7 @@ def generate_estimated_earnings_report_for_single_school_within_date_range(
     else:
         return {
             "school_name": school.school_name,
-            "student_reports": [],
+            "students_reports": [],
             "school_total": float(0)
         }
 
@@ -542,7 +542,7 @@ def generate_estimated_monthly_earnings_report_for_single_school(
     else:
         return {
             "school_name": school.school_name,
-            "student_reports": [],
+            "students_reports": [],
             "school_total": float(0)
         }
 
