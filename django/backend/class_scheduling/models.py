@@ -5,7 +5,7 @@ from user_profiles.models import UserProfile
 
 CLASS_STATUS = (
     ('scheduled', 'Scheduled'),
-    ('cancellation_request', 'Cancellation_Request'),
+    #('cancellation_request', 'Cancellation_Request'),
     ('cancelled', 'Cancelled'),
     ('completed', 'Completed'),
     ('same_day_cancellation', 'Same_Day_Cancellation'),
