@@ -4,3 +4,8 @@ django/backend/backend/.env
 #virtualenv
 django/venv
 
+# Python bytecode
+*.pyc
+*.pyo
+__pycache__/
+

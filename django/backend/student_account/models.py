@@ -63,12 +63,16 @@ class StudentOrClass(models.Model):
 
     def __str__(self):
         if self.school:
-            return "School ({}): {}".format(
+            return "{}, {} ({}): {}".format(
+                self.teacher.surname,
+                self.teacher.given_name,
                 self.school.school_name,
                 str(self.student_or_class_name).title(),
             )
         else:
-            return "Freelance student: {}".format(
+            return "{}, {} (freelance student): {}".format(
+                self.teacher.surname,
+                self.teacher.given_name,
                 str(self.student_or_class_name).title()
             )
 

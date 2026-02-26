@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.conf import settings
 from django.contrib import admin
+from class_scheduling.staff_admin import staff_admin_site
 from django.urls import path, include, re_path
 from django.views.generic import TemplateView
 
@@ -46,5 +47,6 @@ urlpatterns = [
     path('api/schools/', include('school.urls')),
     path('api/scheduling/', include('class_scheduling.urls')),
     path('api/accounts/', include('student_account.urls')),
+    path('staff-admin/', staff_admin_site.urls),
     re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),
 ]
