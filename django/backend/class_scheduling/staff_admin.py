@@ -18,7 +18,6 @@ class StaffScheduledClassForm(forms.ModelForm):
         self.fields['student_or_class'].queryset = StudentOrClass.objects.filter(
             school__school_name="David's English Center"
         )
-        self.fields['teacher'].required = False
 
 
 class StaffScheduledClassAdmin(admin.ModelAdmin):
