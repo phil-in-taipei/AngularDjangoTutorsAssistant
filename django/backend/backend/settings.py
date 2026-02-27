@@ -53,10 +53,8 @@ INSTALLED_APPS = [
     'authapp',
 
     'accounting',
-    #'class_scheduling',
-    #'recurring_scheduling',
-    'class_scheduling.apps.ClassSchedulingConfig',
-    'recurring_scheduling.apps.RecurringSchedulingConfig',
+    'class_scheduling',
+    'recurring_scheduling',
     'school',
     'student_account',
     'user_profiles',

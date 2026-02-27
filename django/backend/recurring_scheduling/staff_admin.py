@@ -20,11 +20,8 @@ class StaffRecurringScheduledClassForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        #self.fields['student_or_class'].queryset = StudentOrClass.objects.filter(
-        #    school__school_name="David's English Center"
-        #)
         self.fields['student_or_class'].queryset = StudentOrClass.objects.filter(
-            school__school_name__icontains="David"
+            school__school_name="David's English Center"
         )
 
 
@@ -57,11 +54,8 @@ class StaffRecurringClassAppliedMonthlyForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        #self.fields['student_or_class'].queryset = StudentOrClass.objects.filter(
-        #    school__school_name="David's English Center"
-        #)
         self.fields['recurring_class'].queryset = RecurringScheduledClass.objects.filter(
-            student_or_class__school__school_name__icontains="David"
+            student_or_class__school__school_name="David's English Center"
         )
 
 
@@ -77,19 +71,10 @@ class StaffRecurringClassAppliedMonthlyAdmin(admin.ModelAdmin):
         'recurring_class__teacher__user__username'
     ]
 
-    #def get_queryset(self, request):
-    #    return super().get_queryset(request).filter(
-    #        recurring_class__student_or_class__school__school_name="David's English Center"
-    #    )
     def get_queryset(self, request):
-        import logging
-        logger = logging.getLogger(__name__)
-        qs = super().get_queryset(request).filter(
-            recurring_class__student_or_class__school__school_name__icontains="David"
+        return super().get_queryset(request).filter(
+            recurring_class__student_or_class__school__school_name="David's English Center"
         )
-        logger.warning(f"Filtered count: {qs.count()}")
-        return qs
-
 
     def get_teacher(self, obj):
         return obj.recurring_class.teacher
