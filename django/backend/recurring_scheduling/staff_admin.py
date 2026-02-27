@@ -50,7 +50,24 @@ class StaffRecurringScheduledClassAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
+class StaffRecurringClassAppliedMonthlyForm(forms.ModelForm):
+    class Meta:
+        model = RecurringClassAppliedMonthly
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        #self.fields['student_or_class'].queryset = StudentOrClass.objects.filter(
+        #    school__school_name="David's English Center"
+        #)
+        self.fields['recurring_class'].queryset = RecurringScheduledClass.objects.filter(
+            student_or_class__school__school_name__icontains="David"
+        )
+
+
 class StaffRecurringClassAppliedMonthlyAdmin(admin.ModelAdmin):
+    form = StaffRecurringClassAppliedMonthlyForm
+
     list_display = ('recurring_class', 'get_teacher', 'get_student_or_class',
                     'scheduling_month', 'scheduling_year',)
     list_filter = ('scheduling_month', 'scheduling_year',
