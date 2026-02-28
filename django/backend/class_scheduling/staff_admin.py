@@ -17,6 +17,10 @@ class StaffScheduledClassForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['student_or_class'].queryset = StudentOrClass.objects.filter(
             school__school_name="David's English Center"
+        ).order_by(
+            'teacher__surname',
+            'teacher__given_name',
+            'student_or_class_name'
         )
 
 

@@ -88,10 +88,9 @@ class RecurringScheduledClass(models.Model):
                               if day[0] == self.recurring_day_of_week][0]
         return "{} on {} from {} to {}".format(self.student_or_class,
                                                day_of_week_string,
-                                               self.recurring_start_time,
-                                               self.recurring_finish_time
+                                               str(self.recurring_start_time)[:-3],
+                                               str(self.recurring_finish_time)[:-3]
                                                )
-
 
 
 class RecurringClassAppliedMonthly(models.Model):

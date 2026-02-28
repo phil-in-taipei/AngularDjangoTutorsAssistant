@@ -145,7 +145,7 @@ class ScheduledClass(models.Model):
     def __str__(self):
         return "{} on {} at {}-{} with {}".format(
             str(self.teacher).title(), self.date,
-            self.start_time, self.finish_time,
+            str(self.start_time)[:-3], str(self.finish_time)[:-3],
             str(self.student_or_class).title()
         )
 
