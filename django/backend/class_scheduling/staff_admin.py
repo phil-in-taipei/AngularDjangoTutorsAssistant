@@ -1,4 +1,5 @@
 from staff_admin.sites import staff_admin_site
+from datetime import time
 from django import forms
 from django.contrib import admin, messages
 from rangefilter.filters import DateRangeFilter
@@ -6,6 +7,33 @@ from rangefilter.filters import DateRangeFilter
 from .models import ScheduledClass
 from .utils import class_is_double_booked
 from student_account.models import StudentOrClass
+
+
+class StartTimeRangeFilter(admin.SimpleListFilter):
+    title = 'start time'
+    parameter_name = 'start_time_range'
+
+    def lookups(self, request, model_admin):
+        # These are the "quick-select" options that will appear in the sidebar
+        return (
+            ('morning', 'Morning (Before 12:00)'),
+            ('afternoon', 'Afternoon (12:00 - 17:00)'),
+            ('evening', 'Evening (After 17:00)'),
+        )
+
+    def queryset(self, request, queryset):
+        """
+        Applies the filtering logic based on the selection.
+        """
+        if self.value() == 'morning':
+            return queryset.filter(start_time__lt=time(12, 0))
+        if self.value() == 'afternoon':
+            return queryset.filter(
+                start_time__gte=time(12, 0), start_time__lt=time(17, 0)
+            )
+        if self.value() == 'evening':
+            return queryset.filter(start_time__gte=time(17, 0))
+        return queryset
 
 
 class StaffScheduledClassForm(forms.ModelForm):
@@ -31,6 +59,7 @@ class StaffScheduledClassAdmin(admin.ModelAdmin):
                     'start_time', 'finish_time',)
     list_filter = (
         ('date', DateRangeFilter),
+        StartTimeRangeFilter,
     )
     search_fields = [
         'student_or_class__student_or_class_name', 'teacher__user__username'
