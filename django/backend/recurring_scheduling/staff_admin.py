@@ -1,5 +1,5 @@
 from staff_admin.sites import staff_admin_site
-
+from datetime import time
 from django import forms
 from django.contrib import admin
 from django.contrib import messages
@@ -11,6 +11,34 @@ from .utils import (
     recurring_class_applied_monthly_has_scheduling_conflict,
     book_classes_for_specified_month,
 )
+
+
+
+class StartTimeRangeFilter(admin.SimpleListFilter):
+    title = 'start time'
+    parameter_name = 'start_time_range'
+
+    def lookups(self, request, model_admin):
+        # These are the "quick-select" options that will appear in the sidebar
+        return (
+            ('morning', 'Morning (Before 12:00)'),
+            ('afternoon', 'Afternoon (12:00 - 17:00)'),
+            ('evening', 'Evening (After 17:00)'),
+        )
+
+    def queryset(self, request, queryset):
+        """
+        Applies the filtering logic based on the selection.
+        """
+        if self.value() == 'morning':
+            return queryset.filter(recurring_start_time__lt=time(12, 0))
+        if self.value() == 'afternoon':
+            return queryset.filter(
+                recurring_start_time__gte=time(12, 0), recurring_start_time__lt=time(17, 0)
+            )
+        if self.value() == 'evening':
+            return queryset.filter(recurring_start_time__gte=time(17, 0))
+        return queryset
 
 
 class StaffRecurringScheduledClassForm(forms.ModelForm):
@@ -35,7 +63,10 @@ class StaffRecurringScheduledClassAdmin(admin.ModelAdmin):
 
     list_display = ('teacher', 'student_or_class', 'day_of_week_string',
                     'recurring_start_time', 'recurring_finish_time',)
-    list_filter = ('recurring_day_of_week',)
+    list_filter = (
+            'recurring_day_of_week',
+            StartTimeRangeFilter,
+        )
     search_fields = [
         'student_or_class__student_or_class_name', 'teacher__user__username'
     ]
