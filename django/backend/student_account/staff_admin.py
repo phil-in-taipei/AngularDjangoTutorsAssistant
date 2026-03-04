@@ -27,15 +27,18 @@ class StaffStudentOrClassAdmin(admin.ModelAdmin):
     exclude = ('teacher', 'account_type', 'purchased_class_hours')  # hides the field from the form
 
     list_display = (
-        'teacher', 'student_or_class_name',
-        'account_type', 'school',
-        'purchased_class_hours',
+        'teacher', 'student_or_class_name', 'school',
     )
 
     search_fields = (
         'teacher__user__username', 'teacher__surname',
         'teacher__given_name','school__school_name'
     )
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(
+            school__school_name="David's English Center"
+        )
 
     def save_model(self, request, obj, form, change):
         if not change:
