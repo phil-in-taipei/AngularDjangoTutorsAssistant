@@ -5,13 +5,13 @@ from .models import StudentOrClass
 
 class StudentOrClassAdmin(admin.ModelAdmin):
     list_display = (
-        'student_or_class_name',
         'teacher', 'student_or_class_name',
         'account_type', 'school',
         'purchased_class_hours',
     )
 
     search_fields = (
+        'student_or_class_name',
         'teacher__user__username', 'teacher__surname',
         'teacher__given_name','school__school_name'
     )
