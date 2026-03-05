@@ -101,7 +101,7 @@ class StaffRecurringClassAppliedMonthlyForm(forms.ModelForm):
 
 class StaffRecurringClassAppliedMonthlyAdmin(admin.ModelAdmin):
     form = StaffRecurringClassAppliedMonthlyForm
-
+    autocomplete_fields = ['recurring_class']
     list_display = ('recurring_class', 'get_teacher', 'get_student_or_class',
                     'scheduling_month', 'scheduling_year',)
     list_filter = ('scheduling_month', 'scheduling_year',
