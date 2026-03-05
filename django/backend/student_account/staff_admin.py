@@ -31,6 +31,7 @@ class StaffStudentOrClassAdmin(admin.ModelAdmin):
     )
 
     search_fields = (
+        'student_or_class_name',
         'teacher__user__username', 'teacher__surname',
         'teacher__given_name','school__school_name'
     )

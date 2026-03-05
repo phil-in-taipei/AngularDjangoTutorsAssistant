@@ -60,7 +60,7 @@ class StaffRecurringScheduledClassForm(forms.ModelForm):
 class StaffRecurringScheduledClassAdmin(admin.ModelAdmin):
     form = StaffRecurringScheduledClassForm
     exclude = ('teacher',)  # hides the field from the form
-
+    autocomplete_fields = ['student_or_class']
     list_display = ('teacher', 'student_or_class', 'day_of_week_string',
                     'recurring_start_time', 'recurring_finish_time',)
     list_filter = (

@@ -54,6 +54,7 @@ class StaffScheduledClassForm(forms.ModelForm):
 
 class StaffScheduledClassAdmin(admin.ModelAdmin):
     form = StaffScheduledClassForm
+    autocomplete_fields = ['student_or_class']
     exclude = ('teacher',)  # hides the field from the form
     list_display = ('teacher', 'student_or_class', 'date',
                     'start_time', 'finish_time',)

@@ -5,6 +5,7 @@ from .models import StudentOrClass
 
 class StudentOrClassAdmin(admin.ModelAdmin):
     list_display = (
+        'student_or_class_name',
         'teacher', 'student_or_class_name',
         'account_type', 'school',
         'purchased_class_hours',
