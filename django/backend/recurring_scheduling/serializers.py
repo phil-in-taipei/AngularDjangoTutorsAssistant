@@ -26,8 +26,7 @@ class RecurringClassGoogleSheetsSerializer(serializers.ModelSerializer):
         model = RecurringScheduledClass
         day_of_week_string = serializers.ReadOnlyField()
         fields = (
-            'id', 'student_or_class',
-            'date', 'teacher',
+            'id', 'student_or_class', 'teacher',
             'recurring_start_time', 'recurring_finish_time',
             'recurring_day_of_week', 'day_of_week_string'
         )
