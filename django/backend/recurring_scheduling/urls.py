@@ -5,7 +5,8 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     RecurringClassAppliedMonthlyViewSet, 
     RecurringClassAppliedMonthlyListView,
-    RecurringClassesByTeacherListView, 
+    RecurringClassesByTeacherListView,
+    RecurringClassesByTeacherGoogleSheetsListView, 
     RecurringScheduledClassViewSet
 )
 
@@ -26,5 +27,10 @@ urlpatterns = [
     path(
         'schedule/by-teacher/', RecurringClassesByTeacherListView.as_view(),
          name='recurring-classes-by-teacher'
-        ),    
+        ),
+    path(
+        'schedule/by-teacher/google-sheets/',
+        RecurringClassesByTeacherGoogleSheetsListView.as_view(),
+        name='teachers-recurring-classes-google-sheets'
+    ),    
 ]

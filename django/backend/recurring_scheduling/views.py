@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import RecurringScheduledClass, RecurringClassAppliedMonthly
-from .serializers import RecurringClassSerializer, RecurringClassAppliedMonthlySerializer
+from .serializers import RecurringClassSerializer, RecurringClassAppliedMonthlySerializer, RecurringClassGoogleSheetsSerializer
 from .utils import (
     create_date_list,
     book_classes_for_specified_month,
@@ -165,6 +165,21 @@ class RecurringClassesByTeacherListView(generics.ListAPIView):
     )
     queryset = RecurringScheduledClass.objects.all()
     serializer_class = RecurringClassSerializer
+    lookup_field = 'id'
+    model = serializer_class.Meta.model
+    paginate_by = 100
+
+    def get_queryset(self):
+        queryset = self.model.objects.filter(teacher__user=self.request.user)
+        return queryset.order_by('recurring_day_of_week', 'recurring_start_time')
+    
+    
+class RecurringClassesByTeacherGoogleSheetsListView(generics.ListAPIView):
+    permission_classes = (
+        IsAuthenticated,
+    )
+    queryset = RecurringScheduledClass.objects.all()
+    serializer_class = RecurringClassGoogleSheetsSerializer
     lookup_field = 'id'
     model = serializer_class.Meta.model
     paginate_by = 100
