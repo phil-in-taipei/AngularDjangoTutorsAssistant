@@ -29,7 +29,7 @@ urlpatterns = [
          name='recurring-classes-by-teacher'
         ),
     path(
-        'schedule/by-teacher/google-sheets/',
+        'schedule/by-teacher/google-sheets/<str:username>/',
         RecurringClassesByTeacherGoogleSheetsListView.as_view(),
         name='teachers-recurring-classes-google-sheets'
     ),    
