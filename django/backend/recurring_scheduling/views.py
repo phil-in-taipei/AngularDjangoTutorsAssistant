@@ -187,5 +187,8 @@ class RecurringClassesByTeacherGoogleSheetsListView(generics.ListAPIView):
     def get_queryset(self):
         username = self.kwargs.get("username")
         #queryset = self.model.objects.filter(teacher__user=self.request.user)
-        queryset = self.model.objects.filter(teacher__user__username=username)
+        queryset = self.model.objects.filter(
+            teacher__user__username=username,
+            student_or_class__school__school_name="David's English Center"
+        )
         return queryset.order_by('recurring_day_of_week', 'recurring_start_time')
