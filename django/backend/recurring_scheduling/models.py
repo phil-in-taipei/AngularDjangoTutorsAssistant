@@ -53,6 +53,7 @@ MONTH_INTEGERS = (
     (DECEMBER, 'December'),
     )
 
+
 class RecurringScheduledClassManager(models.Manager):
     def teacher_already_booked_classes_on_day_of_week(
             self, query_day_of_week, teacher_id
@@ -92,6 +93,9 @@ class RecurringScheduledClass(models.Model):
                                                str(self.recurring_finish_time)[:-3]
                                                )
 
+    class Meta:
+        verbose_name_plural = 'Recurring Scheduled Classes'
+
 
 class RecurringClassAppliedMonthly(models.Model):
     scheduling_month = models.SmallIntegerField(choices=MONTH_INTEGERS)
@@ -101,6 +105,7 @@ class RecurringClassAppliedMonthly(models.Model):
     recurring_class = models.ForeignKey(RecurringScheduledClass, on_delete=models.CASCADE)
 
     class Meta:
+        verbose_name_plural = 'Recurring Classes Applied Monthly'
         ordering = ['-scheduling_year', '-scheduling_month',
                     'recurring_class__teacher__user__username',
                     'recurring_class__student_or_class__student_or_class_name']

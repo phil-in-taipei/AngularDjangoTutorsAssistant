@@ -64,19 +64,20 @@ class StudentOrClass(models.Model):
     def __str__(self):
         if self.school:
             return "{}, {} ({}): {}".format(
-                self.teacher.surname,
                 self.teacher.given_name,
+                self.teacher.surname[:2],
                 self.school.school_name,
                 str(self.student_or_class_name).title(),
             )
         else:
             return "{}, {} (freelance student): {}".format(
-                self.teacher.surname,
                 self.teacher.given_name,
+                self.teacher.surname[:2],
                 str(self.student_or_class_name).title()
             )
 
     class Meta:
+        verbose_name_plural = 'Students or Classes'
         unique_together = ('teacher', 'student_or_class_name')
         ordering = ('teacher__surname', 'student_or_class_name')
         constraints = [
