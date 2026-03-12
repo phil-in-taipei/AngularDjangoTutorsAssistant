@@ -89,14 +89,15 @@ class StaffRecurringClassAppliedMonthlyForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['recurring_class'].queryset = RecurringScheduledClass.objects.filter(
-            student_or_class__school__school_name="David's English Center"
-        ).order_by(
-            'teacher__surname',
-            'teacher__given_name',
-            'recurring_day_of_week',
-            'recurring_start_time'
-        )
+        if 'recurring_class' in self.fields:
+            self.fields['recurring_class'].queryset = RecurringScheduledClass.objects.filter(
+                student_or_class__school__school_name="David's English Center"
+            ).order_by(
+                'teacher__surname',
+                'teacher__given_name',
+                'recurring_day_of_week',
+                'recurring_start_time'
+            )
 
 
 class StaffRecurringClassAppliedMonthlyAdmin(admin.ModelAdmin):
