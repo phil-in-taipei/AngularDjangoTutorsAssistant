@@ -1,5 +1,5 @@
 from staff_admin.sites import staff_admin_site
-from datetime import time
+from datetime import time, timedelta, datetime
 from django import forms
 from django.contrib import admin, messages
 from rangefilter.filters import DateRangeFilter
@@ -7,6 +7,49 @@ from rangefilter.filters import DateRangeFilter
 from .models import ScheduledClass
 from .utils import class_is_double_booked
 from student_account.models import StudentOrClass
+
+
+DURATION_OPTIONS = [
+    ('0,30',  '30 mins'),
+    ('0,45',  '45 mins'),
+    ('1,0',   '1 hr'),
+    ('1,15',  '1 hr 15 mins'),
+    ('1,30',  '1 hr 30 mins'),
+    ('1,45',  '1 hr 45 mins'),
+    ('2,0',   '2 hrs'),
+    ('2,15',  '2 hrs 15 mins'),
+    ('2,30',  '2 hrs 30 mins'),
+    ('2,45',  '2 hrs 45 mins'),
+    ('3,0',   '3 hrs'),
+    ('3,15',  '3 hrs 15 mins'),
+    ('3,30',  '3 hrs 30 mins'),
+    ('3,45',  '3 hrs 45 mins'),
+    ('4,0',   '4 hrs'),
+    ('4,15',  '4 hrs 15 mins'),
+    ('4,30',  '4 hrs 30 mins'),
+    ('4,45',  '4 hrs 45 mins'),
+    ('5,0',   '5 hrs'),
+]
+
+
+def calculate_finish_time(start_time: time, duration_str: str) -> time:
+    """
+    Calculates the finish time from a start time and duration string.
+    Subtracts 1 minute from the total duration to avoid double-booking conflicts,
+    mirroring the logic used on the Angular front end.
+
+    Args:
+        start_time: A datetime.time object for the class start time.
+        duration_str: A string in the format "hours,minutes" e.g. "1,30".
+
+    Returns:
+        A datetime.time object for the finish time.
+    """
+    hours, minutes = map(int, duration_str.split(','))
+    total_minutes = (hours * 60) + minutes - 1  # subtract 1 to avoid overlap
+    start_dt = datetime.combine(datetime.today(), start_time)
+    finish_dt = start_dt + timedelta(minutes=total_minutes)
+    return finish_dt.time()
 
 
 class StartTimeRangeFilter(admin.SimpleListFilter):
@@ -37,9 +80,18 @@ class StartTimeRangeFilter(admin.SimpleListFilter):
 
 
 class StaffScheduledClassForm(forms.ModelForm):
+    duration = forms.ChoiceField(
+        choices=DURATION_OPTIONS,
+        required=True,
+        label='Duration',
+        help_text='The finish time will be calculated automatically.'
+    )
+
     class Meta:
         model = ScheduledClass
-        fields = '__all__'
+        fields = ('student_or_class', 'date', 'start_time', 'duration',
+                  'class_status', 'teacher_notes', 'class_content')
+        # finish_time is excluded — it will be set in clean()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -51,11 +103,21 @@ class StaffScheduledClassForm(forms.ModelForm):
             'student_or_class_name'
         )
 
+    def clean(self):
+        cleaned_data = super().clean()
+        start_time = cleaned_data.get('start_time')
+        duration = cleaned_data.get('duration')
+
+        if start_time and duration:
+            cleaned_data['finish_time'] = calculate_finish_time(start_time, duration)
+
+        return cleaned_data
+
 
 class StaffScheduledClassAdmin(admin.ModelAdmin):
     form = StaffScheduledClassForm
     autocomplete_fields = ['student_or_class']
-    exclude = ('teacher',)  # hides the field from the form
+    exclude = ('teacher', 'finish_time')  # hides the field from the form
     list_display = ('teacher', 'student_or_class', 'date',
                     'start_time', 'finish_time',)
     list_filter = (
@@ -85,6 +147,9 @@ class StaffScheduledClassAdmin(admin.ModelAdmin):
 
         if change:
             classes_booked_on_date = classes_booked_on_date.exclude(id=obj.id)
+
+        # finish_time already set on the form instance via clean()
+        obj.finish_time = form.cleaned_data['finish_time']
 
         if class_is_double_booked(
             classes_booked_on_date=classes_booked_on_date,
