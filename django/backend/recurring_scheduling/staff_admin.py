@@ -9,9 +9,9 @@ from .models import RecurringScheduledClass, RecurringClassAppliedMonthly
 from .utils import (
     create_date_list,
     recurring_class_applied_monthly_has_scheduling_conflict,
+    recurring_class_is_double_booked,
     book_classes_for_specified_month,
 )
-
 
 
 DURATION_OPTIONS = [
@@ -55,7 +55,6 @@ def calculate_finish_time(start_time: time, duration_str: str) -> time:
     start_dt = datetime.combine(datetime.today(), start_time)
     finish_dt = start_dt + timedelta(minutes=total_minutes)
     return finish_dt.time()
-
 
 
 class StartTimeRangeFilter(admin.SimpleListFilter):
@@ -110,7 +109,6 @@ class StaffRecurringScheduledClassForm(forms.ModelForm):
             'teacher__given_name',
             'student_or_class_name'
         )
-
     
     def clean(self):
         cleaned_data = super().clean()
@@ -145,8 +143,32 @@ class StaffRecurringScheduledClassAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         if not change:
             obj.teacher = obj.student_or_class.school.scheduling_teacher
-                # finish_time already set on the form instance via clean()
+
+        # finish_time already set on the form instance via clean()
         obj.recurring_finish_time = form.cleaned_data['recurring_finish_time']
+
+        recurring_classes_booked_on_day_of_week = (
+            RecurringScheduledClass.custom_query.teacher_already_booked_classes_on_day_of_week(
+                query_day_of_week=obj.recurring_day_of_week,
+                teacher_id=obj.teacher.id
+            )
+        )
+
+        if change:
+            recurring_classes_booked_on_day_of_week = recurring_classes_booked_on_day_of_week.exclude(id=obj.id)
+
+        if recurring_class_is_double_booked(
+                recurring_classes_booked_on_day_of_week=recurring_classes_booked_on_day_of_week,
+                recurring_start_time=obj.recurring_start_time,
+                recurring_finish_time=obj.recurring_finish_time
+        ):
+            self.message_user(
+                request,
+                "Scheduling conflict — the teacher is unavailable for this time frame.",
+                level=messages.ERROR
+            )
+            return
+
         super().save_model(request, obj, form, change)
 
 
