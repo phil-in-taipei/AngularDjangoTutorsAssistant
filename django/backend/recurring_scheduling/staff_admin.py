@@ -1,5 +1,5 @@
 from staff_admin.sites import staff_admin_site
-from datetime import time
+from datetime import time, timedelta, datetime
 from django import forms
 from django.contrib import admin
 from django.contrib import messages
@@ -11,6 +11,50 @@ from .utils import (
     recurring_class_applied_monthly_has_scheduling_conflict,
     book_classes_for_specified_month,
 )
+
+
+
+DURATION_OPTIONS = [
+    ('0,30',  '30 mins'),
+    ('0,45',  '45 mins'),
+    ('1,0',   '1 hr'),
+    ('1,15',  '1 hr 15 mins'),
+    ('1,30',  '1 hr 30 mins'),
+    ('1,45',  '1 hr 45 mins'),
+    ('2,0',   '2 hrs'),
+    ('2,15',  '2 hrs 15 mins'),
+    ('2,30',  '2 hrs 30 mins'),
+    ('2,45',  '2 hrs 45 mins'),
+    ('3,0',   '3 hrs'),
+    ('3,15',  '3 hrs 15 mins'),
+    ('3,30',  '3 hrs 30 mins'),
+    ('3,45',  '3 hrs 45 mins'),
+    ('4,0',   '4 hrs'),
+    ('4,15',  '4 hrs 15 mins'),
+    ('4,30',  '4 hrs 30 mins'),
+    ('4,45',  '4 hrs 45 mins'),
+    ('5,0',   '5 hrs'),
+]
+
+
+def calculate_finish_time(start_time: time, duration_str: str) -> time:
+    """
+    Calculates the finish time from a start time and duration string.
+    Subtracts 1 minute from the total duration to avoid double-booking conflicts,
+    mirroring the logic used on the Angular front end.
+
+    Args:
+        start_time: A datetime.time object for the class start time.
+        duration_str: A string in the format "hours,minutes" e.g. "1,30".
+
+    Returns:
+        A datetime.time object for the finish time.
+    """
+    hours, minutes = map(int, duration_str.split(','))
+    total_minutes = (hours * 60) + minutes - 1  # subtract 1 to avoid overlap
+    start_dt = datetime.combine(datetime.today(), start_time)
+    finish_dt = start_dt + timedelta(minutes=total_minutes)
+    return finish_dt.time()
 
 
 
@@ -42,9 +86,20 @@ class StartTimeRangeFilter(admin.SimpleListFilter):
 
 
 class StaffRecurringScheduledClassForm(forms.ModelForm):
+    duration = forms.ChoiceField(
+        choices=DURATION_OPTIONS,
+        required=True,
+        label='Duration',
+        help_text='The finish time will be calculated automatically.'
+    )
+
     class Meta:
         model = RecurringScheduledClass
-        fields = '__all__'
+        fields = (
+            'student_or_class', 'recurring_day_of_week', 
+            'recurring_start_time', 'duration',
+            )
+        # finish_time is excluded — it will be set in clean()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -56,10 +111,21 @@ class StaffRecurringScheduledClassForm(forms.ModelForm):
             'student_or_class_name'
         )
 
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        recurring_start_time = cleaned_data.get('recurring_start_time')
+        duration = cleaned_data.get('duration')
+
+        if recurring_start_time and duration:
+            cleaned_data['recurring_finish_time'] = calculate_finish_time(recurring_start_time, duration)
+
+        return cleaned_data
+
 
 class StaffRecurringScheduledClassAdmin(admin.ModelAdmin):
     form = StaffRecurringScheduledClassForm
-    exclude = ('teacher',)  # hides the field from the form
+    exclude = ('teacher', 'recurring_finish_time')  # hides the field from the form
     autocomplete_fields = ['student_or_class']
     list_display = ('teacher', 'student_or_class', 'day_of_week_string',
                     'recurring_start_time', 'recurring_finish_time',)
@@ -79,6 +145,8 @@ class StaffRecurringScheduledClassAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         if not change:
             obj.teacher = obj.student_or_class.school.scheduling_teacher
+                # finish_time already set on the form instance via clean()
+        obj.recurring_finish_time = form.cleaned_data['recurring_finish_time']
         super().save_model(request, obj, form, change)
 
 
