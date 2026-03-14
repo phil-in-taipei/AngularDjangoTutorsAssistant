@@ -27,6 +27,7 @@ import {
 export class LoginComponent implements OnInit, OnDestroy {
 
   isErrorLogin:boolean = false;
+  isLoading: boolean = false;  // loading spinner
   private errorLogin$: Subscription;
   errorMsg:string = 'There was an error logging in'
 
@@ -38,6 +39,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       .getLoginErrorListener()
       .subscribe(isErrorLogin => {
         this.isErrorLogin = isErrorLogin;
+        this.isLoading = false;  // Stop loading spinner on error
     });
   }
 
@@ -56,6 +58,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (form.invalid) {
       return;
     }
+    this.isLoading = true;  // Start loading spinner
     this.authService.login(form.value.username, form.value.password);
     form.reset();
   }
