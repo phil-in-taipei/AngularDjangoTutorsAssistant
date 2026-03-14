@@ -120,6 +120,7 @@ class StaffScheduledClassAdmin(admin.ModelAdmin):
     exclude = ('teacher', 'finish_time')  # hides the field from the form
     list_display = ('teacher', 'student_or_class', 'date',
                     'start_time', 'finish_time',)
+    ordering = ('-date', 'teacher__given_name', 'start_time')
     list_filter = (
         ('date', DateRangeFilter),
         StartTimeRangeFilter,
