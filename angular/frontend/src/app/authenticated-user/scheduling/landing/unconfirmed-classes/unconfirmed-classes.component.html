@@ -37,7 +37,7 @@
             </th>
             <th class="col bg-transparent">
               <p>
-                <a [routerLink]="['/authenticated-user/student-or-class', unconfirmedClass.student_or_class]">
+                <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', unconfirmedClass.student_or_class]">
                   <app-student-or-class-template-string 
                   [studentOrClassId]=unconfirmedClass.student_or_class class="bg-transparent"
                   >
