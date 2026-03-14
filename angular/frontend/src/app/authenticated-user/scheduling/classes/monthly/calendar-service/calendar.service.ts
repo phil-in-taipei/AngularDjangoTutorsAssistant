@@ -32,6 +32,11 @@ export class CalendarService {
           allDay : false,
           color: '#0098da',
         }
+        if (
+          scheduledClasses[i].teacher_notes.length > 0 && scheduledClasses[i].class_status === "scheduled"
+        ) {
+          schedulingObj.color = '#FFD700';
+        }
         let studentOrClass: StudentOrClassModel | undefined;
         this.store.select(selectStudentOrClassById(
           scheduledClasses[i].student_or_class)
