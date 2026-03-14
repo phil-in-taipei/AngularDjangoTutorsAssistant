@@ -127,6 +127,8 @@ class StaffRecurringScheduledClassAdmin(admin.ModelAdmin):
     autocomplete_fields = ['student_or_class']
     list_display = ('teacher', 'student_or_class', 'day_of_week_string',
                     'recurring_start_time', 'recurring_finish_time',)
+    ordering = ('teacher__given_name', 'recurring_day_of_week', 'recurring_start_time')
+
     list_filter = (
             'recurring_day_of_week',
             StartTimeRangeFilter,
