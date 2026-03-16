@@ -75,7 +75,9 @@ class RecurringScheduledClass(models.Model):
         on_delete=models.CASCADE)
 
     teacher = models.ForeignKey(
-        UserProfile, related_name='recurring_teacher', on_delete=models.CASCADE
+        UserProfile, related_name='recurring_teacher',
+        limit_choices_to={'account_type': 'teacher'},
+        on_delete=models.CASCADE
     )
 
     @property
