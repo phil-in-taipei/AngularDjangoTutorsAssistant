@@ -89,8 +89,10 @@ class StaffScheduledClassForm(forms.ModelForm):
 
     class Meta:
         model = ScheduledClass
-        fields = ('student_or_class', 'date', 'start_time', 'duration',
-                  'class_status', 'teacher_notes', 'class_content')
+        fields = (
+            'student_or_class', 'date', 'start_time', 'duration',
+            'class_status', 'teacher_notes', 'class_content', 'location'
+        )
         # finish_time is excluded — it will be set in clean()
 
     def __init__(self, *args, **kwargs):
@@ -119,14 +121,15 @@ class StaffScheduledClassAdmin(admin.ModelAdmin):
     autocomplete_fields = ['student_or_class']
     exclude = ('teacher', 'finish_time')  # hides the field from the form
     list_display = ('teacher', 'student_or_class', 'date',
-                    'start_time', 'finish_time',)
+                    'start_time', 'finish_time', 'location')
     ordering = ('-date', 'teacher__given_name', 'start_time')
     list_filter = (
         ('date', DateRangeFilter),
         StartTimeRangeFilter,
     )
     search_fields = [
-        'student_or_class__student_or_class_name', 'teacher__user__username'
+        'student_or_class__student_or_class_name', 
+        'teacher__user__username', 'location__space_name'
     ]
 
     def get_queryset(self, request):

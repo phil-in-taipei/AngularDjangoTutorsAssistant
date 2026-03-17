@@ -1,6 +1,7 @@
 from django.db import models
 from student_account.models import StudentOrClass
 from user_profiles.models import UserProfile
+from venues.models import VenueSpace
 
 
 CLASS_STATUS = (
@@ -136,6 +137,11 @@ class ScheduledClass(models.Model):
     date = models.DateField()
     start_time = models.TimeField()
     finish_time = models.TimeField()
+    location = models.ForeignKey(
+        VenueSpace, blank=True, null=True,
+        on_delete=models.SET_NULL,
+        related_name='scheduled_class_location'
+    )
     class_status = models.CharField(max_length=300,
                                     choices=CLASS_STATUS,
                                     default='scheduled')
