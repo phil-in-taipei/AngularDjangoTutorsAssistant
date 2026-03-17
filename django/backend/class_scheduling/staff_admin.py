@@ -90,8 +90,8 @@ class StaffScheduledClassForm(forms.ModelForm):
     class Meta:
         model = ScheduledClass
         fields = (
-            'student_or_class', 'date', 'start_time', 'duration',
-            'class_status', 'teacher_notes', 'class_content', 'location'
+            'student_or_class', 'date', 'start_time', 'duration', 'location',
+            'class_status', 'teacher_notes', 'class_content', 
         )
         # finish_time is excluded — it will be set in clean()
 
@@ -166,6 +166,26 @@ class StaffScheduledClassAdmin(admin.ModelAdmin):
                 level=messages.ERROR
             )
             return
+        
+        if obj.location:
+            classes_booked_on_date_in_location = (
+                ScheduledClass.custom_query.location_already_booked_classes_on_date(
+                    query_date=obj.date,
+                    location_id=obj.location
+                )
+            )
+            if class_is_double_booked(
+                classes_booked_on_date=classes_booked_on_date_in_location,
+                starting_time=obj.start_time,
+                finishing_time=obj.finish_time
+            ):
+                self.message_user(
+                    request,
+                    "Scheduling conflict — the room is unavailable for this time frame.",
+                    level=messages.ERROR
+                )
+                return
+
 
         super().save_model(request, obj, form, change)
 
