@@ -174,6 +174,8 @@ class StaffScheduledClassAdmin(admin.ModelAdmin):
                     location_id=obj.location
                 )
             )
+            if change:
+                classes_booked_on_date_in_location = classes_booked_on_date_in_location.exclude(id=obj.id)
             if class_is_double_booked(
                 classes_booked_on_date=classes_booked_on_date_in_location,
                 starting_time=obj.start_time,
