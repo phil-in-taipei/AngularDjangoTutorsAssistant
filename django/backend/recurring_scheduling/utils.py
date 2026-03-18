@@ -65,6 +65,23 @@ def recurring_class_applied_monthly_has_scheduling_conflict(
             return True
     return False
 
+
+def recurring_class_applied_monthly_has_double_booked_location(
+        list_of_dates_on_day_in_given_month,
+        recurring_class
+):
+    for date in list_of_dates_on_day_in_given_month:
+        #print(date)
+        if ScheduledClass.custom_query.location_already_booked_during_date_and_time(
+            query_date=date,
+            starting_time=recurring_class.recurring_start_time,
+            finishing_time=recurring_class.recurring_finish_time,
+            location_id=recurring_class.recurring_location
+        ):
+            return True
+    return False
+
+
 def recurring_class_is_double_booked(
         recurring_classes_booked_on_day_of_week, recurring_start_time, recurring_finish_time
 ):

@@ -9,6 +9,7 @@ from .models import RecurringScheduledClass, RecurringClassAppliedMonthly
 from .utils import (
     create_date_list,
     recurring_class_applied_monthly_has_scheduling_conflict,
+    recurring_class_applied_monthly_has_double_booked_location,
     recurring_class_is_double_booked,
     book_classes_for_specified_month,
 )
@@ -262,10 +263,22 @@ class StaffRecurringClassAppliedMonthlyAdmin(admin.ModelAdmin):
         ):
             self.message_user(
                 request,
-                "Scheduling conflict detected — recurring class was not applied.",
+                "Teacher scheduling conflict detected — recurring class was not applied.",
                 level=messages.ERROR
             )
             return
+
+        if obj.recurring_class.recurring_location:
+            if recurring_class_applied_monthly_has_double_booked_location(
+                list_of_dates_on_day_in_given_month=monthly_booking_date_list,
+                recurring_class=obj.recurring_class
+            ):
+                self.message_user(
+                    request,
+                    "Location scheduling conflict detected — recurring class was not applied.",
+                    level=messages.ERROR
+                )
+                return
 
         super().save_model(request, obj, form, change)
         book_classes_for_specified_month(
