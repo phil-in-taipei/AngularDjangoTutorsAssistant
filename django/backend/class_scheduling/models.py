@@ -113,6 +113,42 @@ class ScheduledClassManager(models.Manager):
 
         return len(classes_during_date_and_time) > 0
 
+    def location_already_booked_during_date_and_time(
+            self, query_date, starting_time, finishing_time, location_id
+    ):
+        if location_id is None:
+            return False
+
+        classes_booked_at_location_on_date = self.get_queryset().filter(
+            date=query_date,
+            location_id=location_id
+        )
+
+        class_starts_during_time_frame = [
+            scheduled_class for scheduled_class in classes_booked_at_location_on_date
+            if starting_time <= scheduled_class.start_time <= finishing_time
+        ]
+
+        class_finishes_during_time_frame = [
+            scheduled_class for scheduled_class in classes_booked_at_location_on_date
+            if starting_time <= scheduled_class.finish_time <= finishing_time
+        ]
+
+        time_frame_occurs_during_a_booked_class = [
+            scheduled_class for scheduled_class in classes_booked_at_location_on_date
+            if starting_time >= scheduled_class.start_time
+            and finishing_time <= scheduled_class.finish_time
+        ]
+
+        classes_during_date_and_time = [
+            scheduled_class for scheduled_class in classes_booked_at_location_on_date
+            if scheduled_class in class_starts_during_time_frame or
+            scheduled_class in class_finishes_during_time_frame or
+            scheduled_class in time_frame_occurs_during_a_booked_class
+        ]
+
+        return len(classes_during_date_and_time) > 0
+
     def teacher_already_booked_classes_on_date(
             self, query_date, teacher_id
     ):
