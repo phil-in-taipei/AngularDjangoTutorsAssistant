@@ -5,6 +5,7 @@ from django.db import models
 
 from student_account.models import StudentOrClass
 from user_profiles.models import UserProfile
+from venues.models import VenueSpace
 
 MONDAY = 0
 TUESDAY = 1
@@ -63,6 +64,14 @@ class RecurringScheduledClassManager(models.Manager):
             teacher_id=teacher_id
         )
 
+    def location_already_booked_for_classes_on_day_of_week(
+            self, query_day_of_week, location_id
+    ):
+        return self.get_queryset().filter(
+            recurring_day_of_week=query_day_of_week,
+            location_id=location_id
+        )
+
 
 class RecurringScheduledClass(models.Model):
     custom_query = RecurringScheduledClassManager()
@@ -78,6 +87,11 @@ class RecurringScheduledClass(models.Model):
         UserProfile, related_name='recurring_teacher',
         limit_choices_to={'account_type': 'teacher'},
         on_delete=models.CASCADE
+    )
+    recurring_location = models.ForeignKey(
+        VenueSpace, blank=True, null=True,
+        on_delete=models.SET_NULL,
+        related_name='recurring_class_location'
     )
 
     @property
