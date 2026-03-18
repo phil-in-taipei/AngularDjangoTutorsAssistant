@@ -65,11 +65,11 @@ class RecurringScheduledClassManager(models.Manager):
         )
 
     def location_already_booked_for_classes_on_day_of_week(
-            self, query_day_of_week, location_id
+            self, query_day_of_week, recurring_location_id
     ):
         return self.get_queryset().filter(
             recurring_day_of_week=query_day_of_week,
-            location_id=location_id
+            recurring_location_id=recurring_location_id
         )
 
 

@@ -96,7 +96,7 @@ class StaffRecurringScheduledClassForm(forms.ModelForm):
         model = RecurringScheduledClass
         fields = (
             'student_or_class', 'recurring_day_of_week', 
-            'recurring_start_time', 'duration',
+            'recurring_start_time', 'duration', 'recurring_location'
             )
         # finish_time is excluded — it will be set in clean()
 
@@ -126,7 +126,7 @@ class StaffRecurringScheduledClassAdmin(admin.ModelAdmin):
     exclude = ('teacher', 'recurring_finish_time')  # hides the field from the form
     autocomplete_fields = ['student_or_class']
     list_display = ('teacher', 'student_or_class', 'day_of_week_string',
-                    'recurring_start_time', 'recurring_finish_time',)
+                    'recurring_start_time', 'recurring_finish_time', 'recurring_location')
     ordering = ('teacher__given_name', 'recurring_day_of_week', 'recurring_start_time')
 
     list_filter = (
@@ -134,7 +134,8 @@ class StaffRecurringScheduledClassAdmin(admin.ModelAdmin):
             StartTimeRangeFilter,
         )
     search_fields = [
-        'student_or_class__student_or_class_name', 'teacher__user__username'
+        'student_or_class__student_or_class_name',
+        'teacher__user__username', 'recurring_location__space_name'
     ]
 
     def get_queryset(self, request):
@@ -170,6 +171,32 @@ class StaffRecurringScheduledClassAdmin(admin.ModelAdmin):
                 level=messages.ERROR
             )
             return
+
+        if obj.recurring_location:
+            recurring_classes_in_location_booked_on_day_of_week = (
+                RecurringScheduledClass.custom_query.location_already_booked_for_classes_on_day_of_week(
+                    query_day_of_week=obj.recurring_day_of_week,
+                    recurring_location_id=obj.recurring_location.id
+                )
+            )
+
+            if change:
+                recurring_classes_in_location_booked_on_day_of_week = (
+                    recurring_classes_in_location_booked_on_day_of_week
+                    .exclude(id=obj.id)
+                )
+
+            if recurring_class_is_double_booked(
+                    recurring_classes_booked_on_day_of_week=recurring_classes_in_location_booked_on_day_of_week,
+                    recurring_start_time=obj.recurring_start_time,
+                    recurring_finish_time=obj.recurring_finish_time
+            ):
+                self.message_user(
+                    request,
+                    "Scheduling conflict — the location is unavailable for this time frame.",
+                    level=messages.ERROR
+                )
+                return
 
         super().save_model(request, obj, form, change)
 
