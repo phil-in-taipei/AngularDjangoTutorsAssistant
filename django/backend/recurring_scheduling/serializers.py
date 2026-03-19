@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from .models import RecurringScheduledClass, RecurringClassAppliedMonthly
 from student_account.serializers import StudentOrClassGoogleCalendarSerializer
+from venues.serializers import VenueSpaceSerializer
 
 
 
@@ -11,8 +12,8 @@ class RecurringClassSerializer(serializers.ModelSerializer):
         day_of_week_string = serializers.ReadOnlyField()
 
         fields = (
-            'id', 'student_or_class', 'teacher',
-            'recurring_start_time', 'recurring_finish_time',
+            'id', 'student_or_class', 'teacher', 'recurring_start_time', 
+            'recurring_finish_time', 'recurring_location',
             'recurring_day_of_week', 'day_of_week_string'
         )
 
@@ -21,6 +22,7 @@ class RecurringClassGoogleSheetsSerializer(serializers.ModelSerializer):
     student_or_class = StudentOrClassGoogleCalendarSerializer(
         read_only=True
     )
+    recurring_location = VenueSpaceSerializer(read_only=True)
 
     class Meta:
         model = RecurringScheduledClass
@@ -28,7 +30,8 @@ class RecurringClassGoogleSheetsSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'student_or_class', 'teacher',
             'recurring_start_time', 'recurring_finish_time',
-            'recurring_day_of_week', 'day_of_week_string'
+            'recurring_day_of_week', 'day_of_week_string', 
+            'recurring_location'
         )
 
 
