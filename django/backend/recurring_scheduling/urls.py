@@ -7,6 +7,7 @@ from .views import (
     RecurringClassAppliedMonthlyListView,
     RecurringClassesByTeacherListView,
     RecurringClassesByTeacherGoogleSheetsListView, 
+    RecurringClassesForSchoolGoogleSheetsListView,
     RecurringScheduledClassViewSet
 )
 
@@ -32,5 +33,10 @@ urlpatterns = [
         'schedule/by-teacher/google-sheets/<str:username>/',
         RecurringClassesByTeacherGoogleSheetsListView.as_view(),
         name='teachers-recurring-classes-google-sheets'
-    ),    
+    ), 
+        path(
+        'schedule/by-school/google-sheets/',
+        RecurringClassesForSchoolGoogleSheetsListView.as_view(),
+        name='school-recurring-classes-google-sheets'
+    ),   
 ]

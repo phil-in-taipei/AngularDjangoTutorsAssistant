@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from .models import RecurringScheduledClass, RecurringClassAppliedMonthly
 from student_account.serializers import StudentOrClassGoogleCalendarSerializer
+from user_profiles.serializers import UserProfileCreateSerializer
 from venues.serializers import VenueSpaceGoogleSheetsSerializer
 
 
@@ -23,6 +24,7 @@ class RecurringClassGoogleSheetsSerializer(serializers.ModelSerializer):
         read_only=True
     )
     recurring_location = VenueSpaceGoogleSheetsSerializer(read_only=True)
+    teacher = UserProfileCreateSerializer(read_only=True)
 
     class Meta:
         model = RecurringScheduledClass
