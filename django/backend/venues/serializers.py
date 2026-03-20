@@ -9,8 +9,22 @@ class VenueSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class VenueGoogleSheetsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Venue
+        fields = (
+            'id', 'venue_name',
+        )
+
+
 class VenueSpaceSerializer(serializers.ModelSerializer):
-    venue = VenueSerializer(read_only=True)
+    class Meta:
+        model = VenueSpace
+        fields = "__all__"
+
+
+class VenueSpaceGoogleSheetsSerializer(serializers.ModelSerializer):
+    venue = VenueGoogleSheetsSerializer(read_only=True)
 
     class Meta:
         model = VenueSpace

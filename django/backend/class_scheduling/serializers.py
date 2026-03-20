@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from user_profiles.serializers import UserProfileSerializer
-from venues.serializers import VenueSpaceSerializer
+from venues.serializers import VenueSpaceGoogleSheetsSerializer
 from student_account.serializers import StudentOrClassGoogleCalendarSerializer
 from .models import ScheduledClass
 
@@ -19,7 +19,7 @@ class ScheduledClassSerializer(serializers.ModelSerializer):
 
 class ScheduledClassGoogleCalendarSerializer(serializers.ModelSerializer):
     teacher = UserProfileSerializer(read_only=True)
-    location = VenueSpaceSerializer(read_only=True)
+    location = VenueSpaceGoogleSheetsSerializer(read_only=True)
     student_or_class = StudentOrClassGoogleCalendarSerializer(
         read_only=True
     )
