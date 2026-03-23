@@ -46,6 +46,7 @@ urlpatterns = [
     path('api/recurring/', include('recurring_scheduling.urls')),    
     path('api/schools/', include('school.urls')),
     path('api/scheduling/', include('class_scheduling.urls')),
+    path('api/venues/', include('venues.urls')),
     path('api/accounts/', include('student_account.urls')),
     path('staff-admin/', staff_admin_site.urls),
     re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),
