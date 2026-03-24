@@ -126,14 +126,14 @@ class RecurringScheduledClassViewSet(viewsets.ModelViewSet):
         recurring_start_time = serializer.validated_data['recurring_start_time']
         recurring_finish_time = serializer.validated_data['recurring_finish_time']
         booked_teacher = serializer.validated_data['teacher']
-        recurring_classes_booked_on_day_of_week =  (
+        recurring_classes_booked_by_teacher_on_day_of_week =  (
             RecurringScheduledClass.custom_query.teacher_already_booked_classes_on_day_of_week(
                 query_day_of_week=recurring_day_of_week,
                 teacher_id=booked_teacher
             )
         )
         if recurring_class_is_double_booked(
-                recurring_classes_booked_on_day_of_week=recurring_classes_booked_on_day_of_week,
+                recurring_classes_booked_on_day_of_week=recurring_classes_booked_by_teacher_on_day_of_week,
                 recurring_start_time=recurring_start_time,
                 recurring_finish_time=recurring_finish_time
         ):
