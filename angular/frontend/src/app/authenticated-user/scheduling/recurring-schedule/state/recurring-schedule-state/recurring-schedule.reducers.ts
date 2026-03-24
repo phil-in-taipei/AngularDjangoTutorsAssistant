@@ -61,8 +61,8 @@ function compareRecurringClasses(
       case RecurringClassesActionTypes.RecurringClassCreationCancelled:
         console.log(action.payload);
         let creationErrorMessage: string = "Error submitting recurring class!";
-        if (action.payload.err.error.message) {
-          creationErrorMessage = action.payload.err.error.message;
+        if (action.payload.err.error.Error) {
+          creationErrorMessage = action.payload.err.error.Error;
         }
         return {
           ...state, successMessage: undefined,
