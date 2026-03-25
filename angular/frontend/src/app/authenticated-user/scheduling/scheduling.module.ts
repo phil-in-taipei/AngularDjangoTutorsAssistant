@@ -53,6 +53,8 @@ import {
 import { UnconfirmedClassesComponent } from './landing/unconfirmed-classes/unconfirmed-classes.component';
 import { UserEffects } from '../user/user-state/user.effects';
 import { userProfileReducer } from '../user/user-state/user.reducers';
+import { VenueSpacesEffects } from './venues/state/venues.effects';
+import { venueSpacesReducer } from './venues/state/venues.reducers';
 
 @NgModule({
   declarations: [
@@ -91,6 +93,8 @@ import { userProfileReducer } from '../user/user-state/user.reducers';
     EffectsModule.forFeature([StudentsOrClassesEffects]),
     StoreModule.forFeature('user', userProfileReducer),
     EffectsModule.forFeature([UserEffects]),
+    StoreModule.forFeature('venue-spaces', venueSpacesReducer),
+    EffectsModule.forFeature([VenueSpacesEffects]),
     SchedulingRoutingModule
   ]
 })

@@ -1,4 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+
+
+import { VenuesSpacesState } from '../venues/state/venues.reducers';
+import { VenueSpacesRequested } from '../venues/state/venues.actions';
 
 @Component({
   selector: 'app-scheduling',
@@ -7,8 +12,10 @@ import { Component } from '@angular/core';
 })
 export class SchedulingComponent {
 
+  constructor(private store: Store<VenuesSpacesState>) { }
+
   ngOnInit(): void {
-    //console.log('scheduling component initialized')
+    this.store.dispatch(new VenueSpacesRequested());
   }
 
 }

@@ -71,7 +71,7 @@ export function venueSpacesReducer(
             return adapter.upsertMany(action.payload.venueSpaces, {...state,
                 errorMessage: reducerErrorMessage,
                 fetchingVenueSpacesInProgress: false,
-                schoolsLoaded: true,
+                venueSpacesLoaded: true,
                 successMessage: reducerSuccessMessage
             });   
 

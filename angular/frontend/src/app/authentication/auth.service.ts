@@ -31,6 +31,7 @@ import {
 import { 
   UserProfileCleared 
 } from '../authenticated-user/user/user-state/user.actions';
+import { VenueSpacesCleared } from '../authenticated-user/scheduling/venues/state/venues.actions';
 
 
 @Injectable({
@@ -154,6 +155,7 @@ export class AuthService { // testing out alternative version with subsription f
     this.store.dispatch(new SchoolsCleared());
     this.store.dispatch(new StudentsOrClassesCleared());
     this.store.dispatch(new UserProfileCleared());
+    this.store.dispatch(new VenueSpacesCleared());
   }
 
   // public for testing purposes
