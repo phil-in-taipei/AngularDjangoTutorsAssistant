@@ -20,6 +20,10 @@ import {
 import { 
   StudentOrClassConfirmationModificationResponse 
 } from 'src/app/models/student-or-class.model';
+import { selectAllVenueSpaces } from '../../../venues/state/venues.selectors';
+import { VenuesSpacesState } from '../../../venues/state/venues.reducers';
+import { VenueSpaceModel } from 'src/app/models/venues.model';
+
 
 @Component({
   selector: 'app-single-class-info',
@@ -39,10 +43,11 @@ export class SingleClassInfoComponent implements OnInit{
   rescheduleFormVisible: boolean = false;
   scheduledClass$: Observable<ScheduledClassModel | undefined>;
   studentOrClassModificationResponse$: Observable<StudentOrClassConfirmationModificationResponse | undefined>;
-
+  venueSpaces$: Observable<VenueSpaceModel[] | undefined>
   constructor(
     private route: ActivatedRoute, 
-    private store: Store<ScheduledClassesState>
+    private store: Store<ScheduledClassesState>,
+    private venuesStore: Store<VenuesSpacesState>
   ) { }
 
   ngOnInit(): void {
@@ -60,6 +65,9 @@ export class SingleClassInfoComponent implements OnInit{
     this.studentOrClassModificationResponse$ = this.store.pipe(
       select(updatedPurchasedHours)
     );
+    this.venueSpaces$ = this.venuesStore.pipe(select(
+      selectAllVenueSpaces
+    ));
   }
 
   closeFormHander($event: boolean) {

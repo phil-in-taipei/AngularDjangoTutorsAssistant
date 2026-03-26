@@ -1,1 +1,27 @@
-<p>edit-class-location-form works!</p>
+<div>
+  <form (submit)="onSubmitEditedLocation(editClassLocationForm)" #editClassLocationForm="ngForm">
+      <div>
+        <label>Locations</label>
+          <select
+          class="form-control"
+          name="location"
+          ngModel
+          #location="ngModel"
+          >
+          <option [value]="null">No Location</option>
+          <option *ngFor="let venueSpace of venueSpaces"
+              [value]=venueSpace.id
+          >{{ venueSpace.space_name }},
+           {{ venueSpace.venue.venue_name }}
+          </option>
+          </select>
+        </div>
+        <br />
+      <div>
+      <button class="btn btn-outline-secondary" type="submit">
+        Submit
+      </button>
+    </div>
+  </form>
+  <br />
+</div>

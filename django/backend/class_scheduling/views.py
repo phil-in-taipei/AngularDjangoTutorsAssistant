@@ -157,7 +157,8 @@ class ScheduledClassViewSet(viewsets.ModelViewSet):
         booked_teacher = serializer.validated_data['teacher']
         obj_id = instance.id
         # change later to on serializer
-        location = instance.location
+        #location = instance.location
+        location = serializer.validated_data['location']
         #print("*************This is the location data************")
         #print(location)
 
@@ -176,7 +177,7 @@ class ScheduledClassViewSet(viewsets.ModelViewSet):
                 {"Error": "The teacher is unavailable for this time frame!"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        if instance.location:
+        if location:
             classes_booked_on_date_in_location = (
                 ScheduledClass.custom_query.location_already_booked_classes_on_date(
                     query_date=date,

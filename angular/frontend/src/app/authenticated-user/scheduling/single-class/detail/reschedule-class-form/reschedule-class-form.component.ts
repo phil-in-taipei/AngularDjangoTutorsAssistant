@@ -61,6 +61,7 @@ export class RescheduleClassFormComponent implements OnInit{
       date: `${form.value.date.year}-${form.value.date.month}-${form.value.date.day}`,
       start_time: startTimeStr,
       finish_time: finishTimeStr,
+      location: this.scheduledClass.location
     }
     this.store.dispatch(new RescheduleClassSubmitted(
       { id: this.scheduledClass.id, scheduledClass: submissionForm }

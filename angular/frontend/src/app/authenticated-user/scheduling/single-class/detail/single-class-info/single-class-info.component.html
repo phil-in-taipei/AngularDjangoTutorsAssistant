@@ -232,7 +232,7 @@
         </app-reschedule-class-form>
         <hr class="thin-br"/>
       </div>
-
+    <div *ngIf="venueSpaces$ | async as venueSpaces">
       <div>
         <div class="text-center container">
           <div class="d-grid gap-2">
@@ -253,11 +253,14 @@
       >
         <app-edit-class-location-form 
           [scheduledClass]=scheduledClass
+          [venueSpaces]=venueSpaces
           (closeFormEvent)="closeFormHander($event)"
         >
         </app-edit-class-location-form>
         <hr class="thin-br"/>
       </div>
+    </div>
+
 </div>
 <ng-template #calendar_link>
     <hr class="thin-br"/>

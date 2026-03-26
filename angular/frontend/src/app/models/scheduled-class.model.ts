@@ -27,6 +27,7 @@ export interface RescheduleClassModel {
     finish_time: string;
     student_or_class: number;
     teacher: number;
+    location: number | null;
 }
 
 export interface ScheduledClassBatchDeletionDataModel {
@@ -41,6 +42,7 @@ export interface ScheduledClassModel {
     finish_time: string;
     student_or_class: number;
     teacher: number;
+    location: number | null;
     class_status: string;
     teacher_notes: string;
     class_content: string;

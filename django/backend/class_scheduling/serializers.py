@@ -4,9 +4,15 @@ from user_profiles.serializers import UserProfileSerializer
 from venues.serializers import VenueSpaceGoogleSheetsSerializer
 from student_account.serializers import StudentOrClassGoogleCalendarSerializer
 from .models import ScheduledClass
+from venues.models import VenueSpace
 
 
 class ScheduledClassSerializer(serializers.ModelSerializer):
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=VenueSpace.objects.all(),
+        allow_null=True,
+        required=False
+    )
     class Meta:
         model = ScheduledClass
         fields = (
