@@ -32,6 +32,8 @@ export class SingleClassInfoComponent implements OnInit{
   classSubmitErrMsg$: Observable<string | undefined>;
   classSubmitSuccess$: Observable<string | undefined>;
   editStatusFormVisible: boolean = false;
+  editLocationFormVisible: boolean = false;
+
   idFromRouteData:number;
   readonly monthsAndIntegers = monthsAndIntegers;
   rescheduleFormVisible: boolean = false;
@@ -61,6 +63,7 @@ export class SingleClassInfoComponent implements OnInit{
   }
 
   closeFormHander($event: boolean) {
+    this.editLocationFormVisible = $event;
     this.editStatusFormVisible = $event;
     this.rescheduleFormVisible = $event;
   };
@@ -75,6 +78,17 @@ export class SingleClassInfoComponent implements OnInit{
     } else {
       this.rescheduleFormVisible = true;
       this.editStatusFormVisible = false;
+      this.editLocationFormVisible = false;
+    }
+  }
+
+  toggleEditLocationForm() {
+    if (this.editLocationFormVisible) {
+      this.editLocationFormVisible = false;
+    } else {
+      this.editLocationFormVisible = true;
+      this.editStatusFormVisible = false;
+      this.rescheduleFormVisible = false;
     }
   }
 
@@ -83,6 +97,7 @@ export class SingleClassInfoComponent implements OnInit{
       this.editStatusFormVisible = false;
     } else {
       this.editStatusFormVisible = true;
+      this.editLocationFormVisible = false;
       this.rescheduleFormVisible = false;
     }
   }

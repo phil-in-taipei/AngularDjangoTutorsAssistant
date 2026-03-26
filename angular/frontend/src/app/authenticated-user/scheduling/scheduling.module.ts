@@ -17,7 +17,12 @@ import { CalendarScheduleComponent } from './classes/monthly/calendar-schedule/c
 import { 
   ClassesOnCurrentDateComponent 
 } from './landing/classes-on-current-date/classes-on-current-date.component';
-import { EditClassStatusFormComponent } from './single-class/detail/edit-class-status-form/edit-class-status-form.component';
+import { 
+  EditClassLocationFormComponent 
+} from './single-class/detail/edit-class-location-form/edit-class-location-form.component';
+import { 
+  EditClassStatusFormComponent 
+} from './single-class/detail/edit-class-status-form/edit-class-status-form.component';
 import { 
   EditClassStatusResponseComponent 
 } from './single-class/detail/edit-class-status-response/edit-class-status-response.component';
@@ -62,6 +67,7 @@ import { venueSpacesReducer } from './venues/state/venues.reducers';
     CalendarScheduleComponent,
     ClassesOnCurrentDateComponent,
     DailyListComponent,
+    EditClassLocationFormComponent,
     EditClassStatusFormComponent,
     EditClassStatusResponseComponent,
     LandingPageComponent,

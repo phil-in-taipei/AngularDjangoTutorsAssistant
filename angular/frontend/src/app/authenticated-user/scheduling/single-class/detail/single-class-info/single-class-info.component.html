@@ -232,6 +232,32 @@
         </app-reschedule-class-form>
         <hr class="thin-br"/>
       </div>
+
+      <div>
+        <div class="text-center container">
+          <div class="d-grid gap-2">
+            <button class="btn btn-sm btn-outline-secondary" type="button"
+              (click)="toggleEditLocationForm()">
+              {{ editLocationFormVisible ? "Never Mind, I'll edit the location next time"
+              : "Click Here to edit the location" }}
+            </button>
+          </div>
+        </div>
+        <hr class="thin-br"/>
+      </div>
+      
+      <div [hidden]="!editLocationFormVisible"
+        [style.opacity]="!editLocationFormVisible ? '0' : '1'"
+        [style.visibility]="!editLocationFormVisible ? 'hidden' : 'visible'"
+        class="m-3 p-2"
+      >
+        <app-edit-class-location-form 
+          [scheduledClass]=scheduledClass
+          (closeFormEvent)="closeFormHander($event)"
+        >
+        </app-edit-class-location-form>
+        <hr class="thin-br"/>
+      </div>
 </div>
 <ng-template #calendar_link>
     <hr class="thin-br"/>
