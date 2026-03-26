@@ -6,6 +6,7 @@ export interface CreateScheduledClassModel {
     finish_time: string;
     student_or_class: number;
     teacher: number;
+    location: number | null;
 }
 
 export interface ModifyClassStatusModel {

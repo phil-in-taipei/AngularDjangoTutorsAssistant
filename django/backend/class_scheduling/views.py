@@ -115,14 +115,16 @@ class ScheduledClassViewSet(viewsets.ModelViewSet):
         start_time = serializer.validated_data['start_time']
         finish_time = serializer.validated_data['finish_time']
         booked_teacher = serializer.validated_data['teacher']
-        classes_booked_on_date = (
+        location = serializer.validated_data['location']
+
+        classes_booked_on_date_by_teacher = (
             ScheduledClass.custom_query.teacher_already_booked_classes_on_date(
                 query_date=date,
                 teacher_id=booked_teacher
             )
         )
         if class_is_double_booked(
-                classes_booked_on_date=classes_booked_on_date,
+                classes_booked_on_date=classes_booked_on_date_by_teacher,
                 starting_time=start_time,
                 finishing_time=finish_time
         ):
@@ -130,12 +132,30 @@ class ScheduledClassViewSet(viewsets.ModelViewSet):
                 {"Error": "The teacher is unavailable for this time frame!"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        else:
-            new_class = serializer.save()
-            daily_classes_list = list(classes_booked_on_date)
-            insort(daily_classes_list, new_class, key=lambda x: x.start_time)
-            serialized_data = ScheduledClassSerializer(daily_classes_list, many=True).data
-            return Response(serialized_data, status=status.HTTP_201_CREATED)
+        
+        if location:
+            classes_booked_on_date_in_location = (
+                ScheduledClass.custom_query.location_already_booked_classes_on_date(
+                    query_date=date,
+                    location_id=location.id
+                )
+            )
+            #print(classes_booked_on_date_in_location)
+            if class_is_double_booked(
+                classes_booked_on_date=classes_booked_on_date_in_location,
+                starting_time=start_time,
+                finishing_time=finish_time
+            ):
+                return Response(
+                    {"Error": "The location is unavailable for this time frame!"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        
+        new_class = serializer.save()
+        daily_classes_list = list(classes_booked_on_date_by_teacher)
+        insort(daily_classes_list, new_class, key=lambda x: x.start_time)
+        serialized_data = ScheduledClassSerializer(daily_classes_list, many=True).data
+        return Response(serialized_data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

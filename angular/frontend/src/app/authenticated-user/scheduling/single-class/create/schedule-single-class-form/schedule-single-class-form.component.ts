@@ -15,6 +15,7 @@ import {
 } from '../../../classes-state/scheduled-classes.reducers';
 import { StudentOrClassModel } from 'src/app/models/student-or-class.model';
 import { UserProfileModel } from 'src/app/models/user-profile.model';
+import { VenueSpaceModel } from 'src/app/models/venues.model';
 
 @Component({
   selector: 'app-schedule-single-class-form',
@@ -26,6 +27,7 @@ export class ScheduleSingleClassFormComponent implements OnInit{
 
   @Input() studentsOrClasses: StudentOrClassModel[];
   @Input() userProfile: UserProfileModel;
+  @Input() venueSpaces: VenueSpaceModel[];
   dateModel: Date;
   classDurationOptions: DurationOptionsInterface[];
 
@@ -57,6 +59,8 @@ export class ScheduleSingleClassFormComponent implements OnInit{
       date: `${form.value.date.year}-${form.value.date.month}-${form.value.date.day}`,
       start_time: startTimeStr,
       finish_time: finishTimeStr,
+      location: form.value.location,
+
     }
     this.store.dispatch(new ScheduleSingleClassSubmitted(
         { scheduledClass: submissionForm }
