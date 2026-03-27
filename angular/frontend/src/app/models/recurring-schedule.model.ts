@@ -27,6 +27,7 @@ export interface RecurringClassCreateModel {
     recurring_day_of_week: number;
     student_or_class: number;
     teacher: number;
+    recurring_location: number | null;
 }
 
 export interface RecurringClassModel {
@@ -37,4 +38,5 @@ export interface RecurringClassModel {
     student_or_class: number;
     teacher: number;
     day_of_week_string: string;
+    recurring_location: number | null;
 }

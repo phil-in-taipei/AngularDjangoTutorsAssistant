@@ -76,8 +76,8 @@ function compareRecurringClasses(
         console.log("******ERROR***********")
         console.log(action.payload.err);
         let recurringClassesErrorMessage: string = "Error fetching recurring classes!";
-        if (action.payload.err.error.message) {
-          recurringClassesErrorMessage = action.payload.err.error.message;
+        if (action.payload.err.error.Error) {
+          recurringClassesErrorMessage = action.payload.err.error.Error;
         }
         return {
           ...state, successMessage: undefined,

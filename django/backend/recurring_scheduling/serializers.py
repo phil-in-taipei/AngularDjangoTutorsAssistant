@@ -4,10 +4,16 @@ from .models import RecurringScheduledClass, RecurringClassAppliedMonthly
 from student_account.serializers import StudentOrClassGoogleCalendarSerializer
 from user_profiles.serializers import UserProfileCreateSerializer
 from venues.serializers import VenueSpaceGoogleSheetsSerializer
+from venues.models import VenueSpace
 
 
 
 class RecurringClassSerializer(serializers.ModelSerializer):
+    recurring_location = serializers.PrimaryKeyRelatedField(
+        queryset=VenueSpace.objects.all(),
+        allow_null=True,
+        required=False
+    )
     class Meta:
         model = RecurringScheduledClass
         day_of_week_string = serializers.ReadOnlyField()

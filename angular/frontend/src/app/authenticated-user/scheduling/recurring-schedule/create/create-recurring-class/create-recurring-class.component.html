@@ -21,12 +21,15 @@
 </div>
 <div *ngIf="studentsOrClasses$ | async as studentsOrClasses">
   <div *ngIf="userProfile$ | async as userProfile" class="container">
-    <hr class="thin-br"/>
-    <app-create-recurring-class-form
-      [studentsOrClasses]=studentsOrClasses
-      [userProfile]=userProfile
-    >
-    </app-create-recurring-class-form>
-    <hr class="thin-br"/>
+    <div *ngIf="venueSpaces$ | async as venueSpaces">
+      <hr class="thin-br"/>
+      <app-create-recurring-class-form
+        [studentsOrClasses]=studentsOrClasses
+        [userProfile]=userProfile
+        [venueSpaces]=venueSpaces
+      >
+      </app-create-recurring-class-form>
+      <hr class="thin-br"/>
+    </div>
   </div>
 </div>

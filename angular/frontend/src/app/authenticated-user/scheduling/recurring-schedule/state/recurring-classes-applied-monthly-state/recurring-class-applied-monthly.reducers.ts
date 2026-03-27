@@ -75,8 +75,8 @@ export function recurringClassAppliedMonthlysReducer(
         case RecurringClassAppliedMonthlyActionTypes.RecurringClassAppliedMonthlyCreationCancelled:
             console.log(action.payload);
             let creationErrorMessage: string = "Error submitting recurring class applied monthly!";
-            if (action.payload.err.error.message) {
-              creationErrorMessage = action.payload.err.error.message;
+            if (action.payload.err.error.Error) {
+              creationErrorMessage = action.payload.err.error.Error;
             }
             return {
               ...state,

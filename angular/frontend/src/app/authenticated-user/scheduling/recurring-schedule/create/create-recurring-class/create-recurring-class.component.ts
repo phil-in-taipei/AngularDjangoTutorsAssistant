@@ -25,7 +25,11 @@ import {
 import { UserProfileModel } from 'src/app/models/user-profile.model';
 import { 
   UserProfileState
- } from 'src/app/authenticated-user/user/user-state/user.reducers';
+} from 'src/app/authenticated-user/user/user-state/user.reducers';
+import { selectAllVenueSpaces } from '../../../venues/state/venues.selectors';
+import { VenuesSpacesState } from '../../../venues/state/venues.reducers';
+import { VenueSpaceModel } from 'src/app/models/venues.model';
+
 
 @Component({
   selector: 'app-create-recurring-class',
@@ -39,11 +43,13 @@ export class CreateRecurringClassComponent implements OnInit {
   successMessage$: Observable<string | undefined> = of(undefined);
   studentsOrClasses$: Observable<StudentOrClassModel[]>;
   userProfile$: Observable<UserProfileModel | undefined>;
+  venueSpaces$: Observable<VenueSpaceModel[] | undefined>
 
   constructor(
     private recurringClassesStore: Store<RecurringClassesState>,
     private studentsOrClassesStore: Store<StudentsOrClassesState>,
-    private userStore: Store<UserProfileState>
+    private userStore: Store<UserProfileState>,
+    private venuesStore: Store<VenuesSpacesState>
   ) {}
 
   ngOnInit(): void {
@@ -62,6 +68,9 @@ export class CreateRecurringClassComponent implements OnInit {
     this.userProfile$ = this.userStore.pipe(
       select(selectUserProfile)
     );
+    this.venueSpaces$ = this.venuesStore.pipe(select(
+      selectAllVenueSpaces
+    ));
   }  
 
   onClearStatusMsgs() {

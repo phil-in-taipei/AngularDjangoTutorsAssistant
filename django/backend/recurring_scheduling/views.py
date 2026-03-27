@@ -8,6 +8,7 @@ from .utils import (
     create_date_list,
     book_classes_for_specified_month,
     get_classes_for_deletion_for_specified_month,
+    recurring_class_applied_monthly_has_double_booked_location,
     recurring_class_applied_monthly_has_scheduling_conflict,
     recurring_class_is_double_booked
 )
@@ -39,18 +40,28 @@ class RecurringClassAppliedMonthlyViewSet(viewsets.ModelViewSet):
             recurring_class=recurring_class
         ):
             return Response(
-                    { "Error": "Scheduling conflict" },
+                    { "Error": "Teacher scheduling conflict" },
                     status=status.HTTP_400_BAD_REQUEST
                 )
-        else:
-            serializer.save()
-            # pass function to book classes in the dates for the pay period
-            book_classes_for_specified_month(
-                date_list=monthly_booking_date_list,
+        
+        if recurring_class.recurring_location:
+            if recurring_class_applied_monthly_has_double_booked_location(
+                list_of_dates_on_day_in_given_month=monthly_booking_date_list,
                 recurring_class=recurring_class
-            )
-            # trigger api call on front end to get newly booked classes
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            ):
+                return Response(
+                    { "Error": "Location cheduling conflict" },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+        serializer.save()
+        # pass function to book classes in the dates for the pay period
+        book_classes_for_specified_month(
+            date_list=monthly_booking_date_list,
+            recurring_class=recurring_class
+        )
+        # trigger api call on front end to get newly booked classes
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
         #finds the corresponding booked classes to the monthly recurring being deleted
@@ -126,6 +137,8 @@ class RecurringScheduledClassViewSet(viewsets.ModelViewSet):
         recurring_start_time = serializer.validated_data['recurring_start_time']
         recurring_finish_time = serializer.validated_data['recurring_finish_time']
         booked_teacher = serializer.validated_data['teacher']
+        recurring_location = serializer.validated_data['recurring_location']
+
         recurring_classes_booked_by_teacher_on_day_of_week =  (
             RecurringScheduledClass.custom_query.teacher_already_booked_classes_on_day_of_week(
                 query_day_of_week=recurring_day_of_week,
@@ -141,9 +154,26 @@ class RecurringScheduledClassViewSet(viewsets.ModelViewSet):
                 {"Error": "The teacher is unavailable for this time frame!"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        else:
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        if recurring_location:
+            recurring_classes_in_location_booked_on_day_of_week = (
+                RecurringScheduledClass.custom_query.location_already_booked_for_classes_on_day_of_week(
+                    query_day_of_week=recurring_day_of_week,
+                    recurring_location_id=recurring_location.id
+                )
+            )
+            if recurring_class_is_double_booked(
+                recurring_classes_booked_on_day_of_week=recurring_classes_in_location_booked_on_day_of_week,
+                recurring_start_time=recurring_start_time,
+                recurring_finish_time=recurring_finish_time
+            ):
+                return Response(
+                {"Error": "The location is unavailable for this time frame!"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

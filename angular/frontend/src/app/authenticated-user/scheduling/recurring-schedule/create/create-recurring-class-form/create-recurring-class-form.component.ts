@@ -17,6 +17,8 @@ import {
 } from '../../state/recurring-schedule-state/recurring-schedule.reducers';
 import { StudentOrClassModel } from 'src/app/models/student-or-class.model';
 import { UserProfileModel } from 'src/app/models/user-profile.model';
+import { VenueSpaceModel } from 'src/app/models/venues.model';
+
 
 @Component({
   selector: 'app-create-recurring-class-form',
@@ -28,6 +30,7 @@ export class CreateRecurringClassFormComponent implements OnInit {
 
   @Input() studentsOrClasses: StudentOrClassModel[];
   @Input() userProfile: UserProfileModel;
+  @Input() venueSpaces: VenueSpaceModel[];
   classDurationOptions: DurationOptionsInterface[];
 
   constructor(
@@ -60,6 +63,7 @@ export class CreateRecurringClassFormComponent implements OnInit {
         recurring_day_of_week: +form.value.day_of_week,
         recurring_finish_time: finishTimeStr,
         recurring_start_time: startTimeStr,
+        recurring_location: form.value.recurring_location,
     }
     this.store.dispatch(new RecurringClassCreateSubmitted(
         { recurringClass: submissionForm }

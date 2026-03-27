@@ -116,7 +116,7 @@ export function scheduledClassesReducer(
     
             case ScheduledClassesActionTypes.DailyClassesRequestCancelled:
                 let dailyScheduleErrorMessage: string = "Error fetching daily classes!";
-                if (action.payload.err.error.message) {
+                if (action.payload.err.error.Error) {
                     dailyScheduleErrorMessage = action.payload.err.error.Error;
                 }
                 return {
@@ -193,8 +193,8 @@ export function scheduledClassesReducer(
             case ScheduledClassesActionTypes.ScheduleSingleClassCancelled:
                 console.log(action.payload);
                 let userErrorMessage: string = "Error scheduling class!";
-                if (action.payload.err.error.message) {
-                    userErrorMessage = action.payload.err.error.message;
+                if (action.payload.err.error.Error) {
+                    userErrorMessage = action.payload.err.error.Error;
                 }
                 return {
                     ...state,  successMessage: undefined,
