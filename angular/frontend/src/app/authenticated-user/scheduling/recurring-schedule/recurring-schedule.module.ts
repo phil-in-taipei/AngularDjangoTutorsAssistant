@@ -49,6 +49,10 @@ import { StudentsOrClassesEffects } from '../../student-or-class/state/student-o
 import { studentsOrClassesReducer } from '../../student-or-class/state/student-or-class.reducers';
 import { UserEffects } from '../../user/user-state/user.effects';
 import { userProfileReducer } from '../../user/user-state/user.reducers';
+import { 
+  VenueSpaceTemplateStrComponent 
+} from './venue-space-template-str/venue-space-template-str.component';
+
 
 @NgModule({
   declarations: [
@@ -62,7 +66,8 @@ import { userProfileReducer } from '../../user/user-state/user.reducers';
     RecurringClassesComponent,
     RecurringScheduleComponent,
     SelectMonthAndYearComponent,
-    StudentOrClassTemplateStringComponent
+    StudentOrClassTemplateStringComponent,
+    VenueSpaceTemplateStrComponent
   ],
   imports: [
     CommonModule,

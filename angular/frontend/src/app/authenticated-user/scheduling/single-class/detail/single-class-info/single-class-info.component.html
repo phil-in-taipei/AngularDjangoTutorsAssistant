@@ -103,14 +103,18 @@
                         </p>
                       </td>
                       <td
-                        *ngIf="scheduledClass.class_status==='cancellation_request'"
-                          class="errMsg text-capitalize text-center bg-transparent col">
+                        *ngIf="scheduledClass.location"
+                          class="text-capitalize text-center bg-transparent col">
                           <p>
                             {{ scheduledClass.class_status.split('_').join(' ') }}
+                            <app-venue-space-template-string 
+                              [venueSpaceId]=scheduledClass.location class="bg-transparent"
+                            >
+                            </app-venue-space-template-string>
                           </p>
                       </td>
                       <td class="text-capitalize text-center bg-transparent col"
-                        *ngIf="scheduledClass.class_status!=='cancellation_request'">
+                        *ngIf="!scheduledClass.location">
                         <p>
                           {{ scheduledClass.class_status.split('_').join(' ') }}
                         </p>

@@ -10,7 +10,19 @@
         </p>
     </th>
     <th class="col">
-        <p>
+        <p *ngIf="recurringClass.recurring_location">
+          <a [routerLink]="['/authenticated-user/student-or-class', recurringClass.student_or_class]">
+            <app-student-or-class-templ-string 
+              [studentOrClassId]=recurringClass.student_or_class class="bg-transparent"
+            >
+            </app-student-or-class-templ-string>
+            <app-venue-space-template-str 
+              [venueSpaceId]=recurringClass.recurring_location class="bg-transparent"
+            >
+            </app-venue-space-template-str>
+          </a>
+        </p>
+        <p *ngIf="!recurringClass.recurring_location">
           <a [routerLink]="['/authenticated-user/student-or-class', recurringClass.student_or_class]">
             <app-student-or-class-templ-string 
               [studentOrClassId]=recurringClass.student_or_class class="bg-transparent"

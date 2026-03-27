@@ -58,6 +58,9 @@ import {
 import { UnconfirmedClassesComponent } from './landing/unconfirmed-classes/unconfirmed-classes.component';
 import { UserEffects } from '../user/user-state/user.effects';
 import { userProfileReducer } from '../user/user-state/user.reducers';
+import { 
+  VenueSpaceTemplateStringComponent 
+} from './venues/venue-space-template-string/venue-space-template-string.component';
 import { VenueSpacesEffects } from './venues/state/venues.effects';
 import { venueSpacesReducer } from './venues/state/venues.reducers';
 
@@ -84,7 +87,8 @@ import { venueSpacesReducer } from './venues/state/venues.reducers';
     SchedulingComponent,
     StudentOrClassTemplateStringComponent,
     TimeInHoursComponent,
-    UnconfirmedClassesComponent
+    UnconfirmedClassesComponent,
+    VenueSpaceTemplateStringComponent
   ],
   imports: [
     CommonModule,
