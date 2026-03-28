@@ -12,16 +12,18 @@
     </ng-container>
     <div *ngIf="usrProfile$ | async as profile" class="container">
         <div *ngIf="userProfileSubmitErrMsg$ | async as errMsg">
+          <br />
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-              <h4 class="text-danger">{{ errMsg }}</h4>
+              <h4 class="text-center">{{ errMsg }}</h4>
               <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
               data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
           </div>
           
           <div *ngIf="userProfileSubmitSuccessMsg$ | async as successMsg">
+            <br />
             <div class="alert alert-secondary alert-dismissible fade show" role="alert">
-              <h6>{{ successMsg }}</h6>
+              <h4 class="text-center">{{ successMsg }}</h4>
               <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
               data-bs-dismiss="alert" aria-label="Close"></button>
             </div>

@@ -1,7 +1,7 @@
 <br />
 <div *ngIf="errMsg$ | async as errMsg" class="p-1 m-1">
   <div class="alert alert-warning alert-dismissible fade show" role="alert">
-    <h3>{{ errMsg }}</h3>
+    <h5 class="text-center">{{ errMsg }}</h5>
     <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
     data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
@@ -11,7 +11,7 @@
 <div *ngIf="successMsg$ | async as successMsg" class="p-1 m-1">
   <hr class="thin-br"/>
   <div class="alert alert-secondary alert-dismissible fade show" role="alert">
-    <h6>{{ successMsg }}</h6>
+    <h5 class="text-center">{{ successMsg }}</h5>
     <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
     data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
