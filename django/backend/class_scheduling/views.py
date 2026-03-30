@@ -268,7 +268,36 @@ class ScheduledClassGoogleCalendarViewSet(generics.ListAPIView):
                 teacher__user=self.request.user
         )
         return queryset.order_by('date', 'start_time')
+    
 
+
+
+class ScheduledClassByTeacherGoogleCalendarViewSet(generics.ListAPIView):
+    permission_classes = (
+        IsAuthenticated,
+    )
+    queryset = ScheduledClass.objects.all()
+    serializer_class = ScheduledClassGoogleCalendarSerializer
+    lookup_field = 'id'
+    model = serializer_class.Meta.model
+
+    def get_queryset(self):
+        month = self.kwargs.get("month")
+        year = self.kwargs.get("year")
+        username = self.kwargs.get("teacher")
+        start_date = datetime.date(int(year), int(month), 1)
+        if int(month) == 12:
+            finish_date = datetime.date(int(year) + 1, 1, 1)
+        else:
+            finish_date = datetime.date(int(year), int(month) + 1, 1)
+
+        queryset = self.model.objects.filter(
+                date__gte=start_date,
+                date__lt=finish_date,
+                teacher__user__username=username
+        )
+        print(queryset)
+        return queryset.order_by('date', 'start_time')
 
 
 
