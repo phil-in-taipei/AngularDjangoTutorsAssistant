@@ -96,11 +96,10 @@
               ngModel
               #location="ngModel"
               >
-              <option [value]="null">No Location</option>
               <option *ngFor="let venueSpace of venueSpaces"
                   [value]=venueSpace.id
               >{{ venueSpace.space_name }},
-              {{ venueSpace.venue.venue_name }}
+              {{ venueSpace.venue.venue_name }}: {{ venueSpace.number_of_seats }} seats
               </option>
               </select>
           </div>

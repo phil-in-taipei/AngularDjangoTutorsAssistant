@@ -54,13 +54,12 @@ export class ScheduleSingleClassFormComponent implements OnInit{
     dt.setMinutes(form.value.minute);
     let finishTimeStr = getFinishTime(dt, durationArr);
     let submissionForm: CreateScheduledClassModel = {
-      student_or_class: form.value.student_or_class,
+      student_or_class: +form.value.student_or_class,
       teacher: this.userProfile.id,
       date: `${form.value.date.year}-${form.value.date.month}-${form.value.date.day}`,
       start_time: startTimeStr,
       finish_time: finishTimeStr,
-      location: form.value.location,
-
+      location: form.value.location ? +form.value.location : null,
     }
     this.store.dispatch(new ScheduleSingleClassSubmitted(
         { scheduledClass: submissionForm }

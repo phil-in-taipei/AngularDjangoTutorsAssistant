@@ -54,7 +54,7 @@ export class EditClassLocationFormComponent {
       finish_time: this.scheduledClass.finish_time.toString(),
       student_or_class: this.scheduledClass.student_or_class,
       teacher: this.scheduledClass.teacher,
-      location: form.value.location,
+      location: form.value.location ? +form.value.location : null,
     }
     console.log(submissionForm);
     this.store.dispatch(new RescheduleClassSubmitted(

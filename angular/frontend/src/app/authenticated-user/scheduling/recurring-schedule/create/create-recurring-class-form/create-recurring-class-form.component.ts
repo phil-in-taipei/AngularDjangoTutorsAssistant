@@ -63,7 +63,7 @@ export class CreateRecurringClassFormComponent implements OnInit {
         recurring_day_of_week: +form.value.day_of_week,
         recurring_finish_time: finishTimeStr,
         recurring_start_time: startTimeStr,
-        recurring_location: form.value.recurring_location,
+        recurring_location: form.value.recurring_location ? +form.value.recurring_location : null,
     }
     this.store.dispatch(new RecurringClassCreateSubmitted(
         { recurringClass: submissionForm }
