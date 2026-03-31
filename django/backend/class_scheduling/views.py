@@ -62,6 +62,11 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
         scheduled_class.class_status = class_status
         scheduled_class.teacher_notes = teacher_notes
         scheduled_class.class_content = class_content
+
+        CANCELLATION_STATUSES = {'cancelled', 'same_day_cancellation'}
+        if class_status in CANCELLATION_STATUSES and scheduled_class.location is not None:
+            scheduled_class.location = None
+
         scheduled_class.save()
         student_or_class = scheduled_class.student_or_class
         
