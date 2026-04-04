@@ -1,6 +1,6 @@
 import datetime
 from bisect import insort
-
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status, viewsets
 from rest_framework.permissions import IsAuthenticated
@@ -373,5 +373,28 @@ class UnconfirmedStatusClassesViewSet(generics.ListAPIView):
         queryset = self.model.objects.filter(
             teacher__user=self.request.user,
             date__in=dates_with_scheduled_classes
+        )
+        return queryset.order_by('date', 'start_time')
+    
+
+class ScheduledClassByStudentOrClassIDCodeFromDateViewSet(generics.ListAPIView):
+    permission_classes = (
+        IsAuthenticated,
+    )
+    queryset = ScheduledClass.objects.all()
+    serializer_class = ScheduledClassSerializer
+    lookup_field = 'id'
+    model = serializer_class.Meta.model
+
+    def get_queryset(self):
+        date_str = self.kwargs.get("date")
+        account_id = self.kwargs.get("account_id")
+        date_list = date_str.split('-')
+        date = datetime.date(int(date_list[0]), int(date_list[1]), int(date_list[2]))
+        queryset = self.model.objects.filter(
+            date__gt=date,
+            student_or_class__account_id=account_id,
+        ).filter(
+            Q(class_status='completed') | Q(class_status='same_day_cancellation')
         )
         return queryset.order_by('date', 'start_time')

@@ -5,6 +5,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     ScheduledClassStatusConfirmationViewSet,
     ScheduledClassBatchDeletionView,
+    ScheduledClassByStudentOrClassIDCodeFromDateViewSet,
     ScheduledClassViewSet,
     ScheduledClassByTeacherByDateViewSet,
     ScheduledClassByTeacherByMonthViewSet,
@@ -59,5 +60,10 @@ urlpatterns = [
         'classes/unconfirmed-status/',
         UnconfirmedStatusClassesViewSet.as_view(),
         name='classes-unconfirmed'
+    ),
+    path(
+        'classes/confirmed-since-date/by-account-id/<str:date>/<str:account_id>/',
+        ScheduledClassByStudentOrClassIDCodeFromDateViewSet.as_view(),
+        name='class-scheduling-by-teacher-by-date'
     ),
 ]
