@@ -52,6 +52,23 @@ def calculate_finish_time(start_time: time, duration_str: str) -> time:
     return finish_dt.time()
 
 
+def get_duration_from_times(start_time: time, finish_time: time) -> str | None:
+    """
+    Reverse-calculates the duration string from start and finish times,
+    accounting for the -1 minute adjustment used in calculate_finish_time.
+    Returns a DURATION_OPTIONS key string like '1,30', or None if no match.
+    """
+    start_dt = datetime.combine(datetime.today(), start_time)
+    finish_dt = datetime.combine(datetime.today(), finish_time)
+    actual_minutes = int((finish_dt - start_dt).total_seconds() / 60) + 1  # re-add the 1 min
+
+    hours, minutes = divmod(actual_minutes, 60)
+    candidate = f"{hours},{minutes}"
+
+    valid_keys = {opt[0] for opt in DURATION_OPTIONS}
+    return candidate if candidate in valid_keys else None
+
+
 class StartTimeRangeFilter(admin.SimpleListFilter):
     title = 'start time'
     parameter_name = 'start_time_range'
@@ -104,6 +121,14 @@ class StaffScheduledClassForm(forms.ModelForm):
             'teacher__given_name',
             'student_or_class_name'
         )
+
+        # When editing an existing instance, pre-select the correct duration
+        instance = kwargs.get('instance')
+        if instance and instance.pk and instance.start_time and instance.finish_time:
+            matched_duration = get_duration_from_times(instance.start_time, instance.finish_time)
+            if matched_duration:
+                self.fields['duration'].initial = matched_duration
+
 
     def clean(self):
         cleaned_data = super().clean()
