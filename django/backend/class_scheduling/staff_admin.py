@@ -4,7 +4,7 @@ from django import forms
 from django.contrib import admin, messages
 from rangefilter.filters import DateRangeFilter
 
-from .models import ScheduledClass
+from .models import ScheduledClass, CLASS_STATUS
 from .utils import class_is_double_booked
 from student_account.models import StudentOrClass
 
@@ -67,6 +67,19 @@ def get_duration_from_times(start_time: time, finish_time: time) -> str | None:
 
     valid_keys = {opt[0] for opt in DURATION_OPTIONS}
     return candidate if candidate in valid_keys else None
+
+
+class ClassStatusFilter(admin.SimpleListFilter):
+    title = 'class status'
+    parameter_name = 'class_status'
+
+    def lookups(self, request, model_admin):
+        return CLASS_STATUS
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(class_status=self.value())
+        return queryset
 
 
 class StartTimeRangeFilter(admin.SimpleListFilter):
@@ -151,6 +164,7 @@ class StaffScheduledClassAdmin(admin.ModelAdmin):
     list_filter = (
         ('date', DateRangeFilter),
         StartTimeRangeFilter,
+        ClassStatusFilter,
     )
     search_fields = [
         'student_or_class__student_or_class_name', 
