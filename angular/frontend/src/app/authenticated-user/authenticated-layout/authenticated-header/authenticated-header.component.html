@@ -19,7 +19,8 @@
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <li>
             <a class="nav-link small-and-med-scr" 
-              routerLink="/authenticated-user/scheduling/landing" 
+              routerLink="/authenticated-user/scheduling/landing"
+              (click)="closeNavbar()" 
               routerLinkActive
             >Home
             </a>
@@ -36,12 +37,16 @@
               aria-labelledby="navbarDropdown">
               <li>
                 <a class="dropdown-item bg-dark link-style"
-                  [routerLink]="['create-school']">Create New
+                  [routerLink]="['create-school']"
+                  (click)="closeNavbar()" 
+                >Create New
                 </a>
               </li>
               <li>
                 <a class="dropdown-item bg-dark link-style"
-                  [routerLink]="['users-schools']">View List
+                  [routerLink]="['users-schools']"
+                  (click)="closeNavbar()" 
+                >View List
                 </a>
               </li>
             </ul>
@@ -58,12 +63,16 @@
               aria-labelledby="navbarDropdown">
               <li>
                 <a class="dropdown-item bg-dark link-style"
-                  [routerLink]="['create-student-or-class']">Create New
+                  [routerLink]="['create-student-or-class']"
+                  (click)="closeNavbar()" 
+                >Create New
                 </a>
               </li>
               <li>
                 <a class="dropdown-item bg-dark link-style"
-                  [routerLink]="['users-students-or-classes']">View List
+                  [routerLink]="['users-students-or-classes']"
+                  (click)="closeNavbar()" 
+                >View List
                 </a>
               </li>
             </ul>
@@ -84,11 +93,13 @@
                 <ul class="dropdown-menu bg-dark">
                   <li>
                     <a class="dropdown-item bg-dark text-white"
-                       [routerLink]="['create-school']">Create School</a>
+                       [routerLink]="['create-school']"
+                    >Create School</a>
                   </li>
                   <li>
                     <a class="dropdown-item bg-dark text-white"
-                       [routerLink]="['users-schools']">View Schools</a>
+                       [routerLink]="['users-schools']"
+                    >View Schools</a>
                   </li>
                 </ul>
               </li>
@@ -101,11 +112,13 @@
                 <ul class="dropdown-menu bg-dark">
                   <li>
                     <a class="dropdown-item bg-dark text-white"
-                       [routerLink]="['create-student-or-class']">Create Class</a>
+                       [routerLink]="['create-student-or-class']" 
+                    >Create Class</a>
                   </li>
                   <li>
                     <a class="dropdown-item bg-dark text-white"
-                       [routerLink]="['users-students-or-classes']">View Classes</a>
+                       [routerLink]="['users-students-or-classes']"
+                    >View Classes</a>
                   </li>
                 </ul>
               </li>
@@ -123,42 +136,54 @@
               aria-labelledby="navbarDropdown">
               <li>
                 <a class="dropdown-item bg-dark link-style" 
-                  routerLink="/authenticated-user/scheduling/accounting/select-month-year-and-school" routerLinkActive 
+                  routerLink="/authenticated-user/scheduling/accounting/select-month-year-and-school" 
+                  routerLinkActive
+                  (click)="closeNavbar()" 
                 >
                   Monthly Earnings
                 </a>
               </li>
               <li>
                 <a class="dropdown-item bg-dark link-style" 
-                  routerLink="/authenticated-user/scheduling/accounting/select-date-range-and-school" routerLinkActive 
+                  routerLink="/authenticated-user/scheduling/accounting/select-date-range-and-school" 
+                  routerLinkActive
+                  (click)="closeNavbar()" 
                 >
                   Earnings in Date Range
                 </a>
               </li>
               <li>
                 <a class="dropdown-item bg-dark link-style" 
-                  routerLink="/authenticated-user/scheduling/accounting/select-month-year-and-freelance-account" routerLinkActive 
+                  routerLink="/authenticated-user/scheduling/accounting/select-month-year-and-freelance-account" 
+                  routerLinkActive
+                  (click)="closeNavbar()" 
                 >
                   Freelance Account Activity
                 </a>
               </li>
               <li>
                 <a class="dropdown-item bg-dark link-style" 
-                  routerLink="/authenticated-user/scheduling/accounting/select-month-and-year-for-freelance-payments-refunds-records" routerLinkActive 
+                  routerLink="/authenticated-user/scheduling/accounting/select-month-and-year-for-freelance-payments-refunds-records" 
+                  routerLinkActive
+                  (click)="closeNavbar()" 
                 >
                   Freelance Transactions Records
                 </a>
               </li>
               <li>
                 <a class="dropdown-item bg-dark link-style" 
-                  routerLink="/authenticated-user/scheduling/accounting/make-purchase" routerLinkActive 
+                  routerLink="/authenticated-user/scheduling/accounting/make-purchase" 
+                  routerLinkActive
+                  (click)="closeNavbar()" 
                 >
                   Freelance Hours Purchase
                 </a>
               </li>
               <li>
                 <a class="dropdown-item bg-dark link-style" 
-                  routerLink="/authenticated-user/scheduling/accounting/make-refund" routerLinkActive 
+                  routerLink="/authenticated-user/scheduling/accounting/make-refund" 
+                  routerLinkActive
+                  (click)="closeNavbar()" 
                 >
                   Freelance Hours Refund
                 </a>
@@ -181,15 +206,17 @@
                 <ul class="dropdown-menu bg-dark">
                   <li>
                     <a class="dropdown-item bg-dark link-style" 
-                      routerLink="/authenticated-user/scheduling/accounting/select-month-year-and-school" routerLinkActive 
-                      >
+                      routerLink="/authenticated-user/scheduling/accounting/select-month-year-and-school" 
+                      routerLinkActive
+                    >
                       Monthly Report
                     </a>
                   </li>
                   <li>
                     <a class="dropdown-item bg-dark link-style" 
-                      routerLink="/authenticated-user/scheduling/accounting/select-date-range-and-school" routerLinkActive 
-                      >
+                      routerLink="/authenticated-user/scheduling/accounting/select-date-range-and-school" 
+                      routerLinkActive
+                    >
                       Report in Date Range
                     </a>
                   </li>
@@ -205,29 +232,33 @@
                 <ul class="dropdown-menu bg-dark">
                   <li>
                     <a class="dropdown-item bg-dark link-style" 
-                      routerLink="/authenticated-user/scheduling/accounting/select-month-year-and-freelance-account" routerLinkActive 
-                      >
+                      routerLink="/authenticated-user/scheduling/accounting/select-month-year-and-freelance-account" 
+                      routerLinkActive
+                    >
                       Account Activity
                     </a>
                   </li>
                   <li>
                     <a class="dropdown-item bg-dark link-style" 
-                      routerLink="/authenticated-user/scheduling/accounting/select-month-and-year-for-freelance-payments-refunds-records" routerLinkActive 
-                      >
+                      routerLink="/authenticated-user/scheduling/accounting/select-month-and-year-for-freelance-payments-refunds-records" 
+                      routerLinkActive
+                    >
                       Transactions Records
                     </a>
                   </li>
                   <li>
                     <a class="dropdown-item bg-dark link-style" 
-                      routerLink="/authenticated-user/scheduling/accounting/make-purchase" routerLinkActive 
-                      >
+                      routerLink="/authenticated-user/scheduling/accounting/make-purchase" 
+                      routerLinkActive
+                    >
                       Purchase Hours
                     </a>
                   </li>
                   <li>
                     <a class="dropdown-item bg-dark link-style" 
-                      routerLink="/authenticated-user/scheduling/accounting/make-refund" routerLinkActive 
-                      >
+                      routerLink="/authenticated-user/scheduling/accounting/make-refund" 
+                      routerLinkActive
+                    >
                       Refund Hours
                     </a>
                   </li>
@@ -236,7 +267,7 @@
             </ul>
           </li>
 
-          <li class="nav-item dropdown">
+          <li class="nav-item dropdown hidden-small-and-medium">
             <a class="nav-link dropdown-toggle mydropnav"
               href="#" id="navbarDropdown" role="button" 
               data-bs-toggle="dropdown" aria-expanded="false"
@@ -247,40 +278,107 @@
               aria-labelledby="navbarDropdown">
               <li>
                 <a class="dropdown-item bg-dark link-style" 
-                  routerLink="/authenticated-user/scheduling/calendar" routerLinkActive >
+                  routerLink="/authenticated-user/scheduling/calendar" 
+                  routerLinkActive 
+                >
                   Calendar
                 </a>
               </li>
               <li>
                 <a class="dropdown-item bg-dark link-style" 
-                  routerLink="/authenticated-user/scheduling/schedule-single-class" routerLinkActive 
-                  >Single Class
+                  routerLink="/authenticated-user/scheduling/schedule-single-class" 
+                  routerLinkActive
+                >Single Class
                 </a>
               </li>
               <li>
                 <a class="dropdown-item bg-dark link-style" 
-                  routerLink="/authenticated-user/scheduling/recurring-schedule/create" routerLinkActive 
-                  >Recurring Class
+                  routerLink="/authenticated-user/scheduling/recurring-schedule/create" 
+                  routerLinkActive 
+                >Recurring Class
                 </a>
               </li>
               <li>
                 <a class="dropdown-item bg-dark link-style" 
-                  routerLink="/authenticated-user/scheduling/recurring-schedule/list" routerLinkActive 
-                  >Recurring List
+                  routerLink="/authenticated-user/scheduling/recurring-schedule/list" 
+                  routerLinkActive
+                >Recurring List
                 </a>
               </li>
               <li>
                 <a class="dropdown-item bg-dark link-style" 
-                  routerLink="/authenticated-user/scheduling/recurring-schedule/select-month-year" routerLinkActive 
-                  >Monthly Booking
+                  routerLink="/authenticated-user/scheduling/recurring-schedule/select-month-year" 
+                  routerLinkActive 
+                >Monthly Booking
                 </a>
               </li>
             </ul>
           </li> 
 
-          <li><a class="nav-link" 
-            [routerLink]="['user-profile']">Profile</a>
-          </li>         
+          <li class="nav-item dropdown small-and-med-scr">
+            <a class="nav-link dropdown-toggle mydropnav"
+              href="#" id="navbarDropdown" role="button" 
+              data-bs-toggle="dropdown" aria-expanded="false"
+            >
+              Scheduling
+            </a>
+            <ul class="dropdown-menu mydropnav bg-dark" 
+              aria-labelledby="navbarDropdown">
+              <li>
+                <a class="dropdown-item bg-dark link-style" 
+                  routerLink="/authenticated-user/scheduling/calendar" 
+                  routerLinkActive 
+                  (click)="closeNavbar()" 
+                >
+                  Calendar
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item bg-dark link-style" 
+                  routerLink="/authenticated-user/scheduling/schedule-single-class" 
+                  routerLinkActive
+                  (click)="closeNavbar()"  
+                >Single Class
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item bg-dark link-style" 
+                  routerLink="/authenticated-user/scheduling/recurring-schedule/create" 
+                  routerLinkActive 
+                  (click)="closeNavbar()" 
+                >Recurring Class
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item bg-dark link-style" 
+                  routerLink="/authenticated-user/scheduling/recurring-schedule/list" 
+                  routerLinkActive
+                  (click)="closeNavbar()"  
+                >Recurring List
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item bg-dark link-style" 
+                  routerLink="/authenticated-user/scheduling/recurring-schedule/select-month-year" 
+                  routerLinkActive 
+                  (click)="closeNavbar()" 
+                >Monthly Booking
+                </a>
+              </li>
+            </ul>
+          </li> 
+
+          <li class="hidden-small-and-medium">
+            <a class="nav-link" 
+                [routerLink]="['user-profile']"
+              >Profile</a>
+          </li>
+          <li class="small-and-med-scr">
+            <a class="nav-link" 
+                [routerLink]="['user-profile']"
+                (click)="closeNavbar()" 
+              >Profile</a>
+          </li>           
           <li>
             <a class="nav-link" href="#" (click)="onLogout()">Logout</a>
           </li>
