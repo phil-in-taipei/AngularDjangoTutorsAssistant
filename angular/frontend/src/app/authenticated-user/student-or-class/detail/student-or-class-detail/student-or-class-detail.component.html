@@ -88,7 +88,7 @@
                         </button>
                     </div>
                     <hr />
-                    <div [hidden]="!formVisible">
+                    <div *ngIf="formVisible">
                         <app-student-or-class-edit-form [studentOrClass]=studentOrClass
                         (closeEvent)="closeFormHander($event)">
                         </app-student-or-class-edit-form>

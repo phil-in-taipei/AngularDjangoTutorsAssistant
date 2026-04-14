@@ -5,15 +5,14 @@
     <div>
         <label>Student Or Class Name</label>
         <input
-        class="form-control"
-        type="text"
-        minlength="2"
-        rows="4"
-        name="student_or_class_name"
-        ngModel
-        required
-        placeholder="{{ studentOrClass.student_or_class_name }}"
-        #student_or_class_name="ngModel"
+            class="form-control"
+            type="text"
+            minlength="2"
+            name="student_or_class_name"
+            required
+            [ngModel]="editModel.student_or_class_name"
+            (ngModelChange)="onNameChange($event)"
+            #student_or_class_name="ngModel"
         >
         <div *ngIf="student_or_class_name.touched && student_or_class_name.invalid">
             Please enter the student or class name.
@@ -23,15 +22,14 @@
     <div>
         <label>Comments</label>
         <input
-        class="form-control"
-        type="text"
-        minlength="2"
-        rows="4"
-        name="comments"
-        ngModel
-        required
-        placeholder="{{ studentOrClass.comments }}"
-        #comments="ngModel"
+            class="form-control"
+            type="text"
+            minlength="2"
+            name="comments"
+            required
+            [ngModel]="editModel.comments"
+            (ngModelChange)="onCommentsChange($event)"
+            #comments="ngModel"
         >
         <div *ngIf="comments.touched && comments.invalid">
             Please enter comments.
@@ -41,16 +39,15 @@
     <div>
         <label>Hourly Tuition</label>
         <input
-        class="form-control"
-        type="number"
-        min="500"
-        max="2000"
-        rows="4"
-        name="tuition_per_hour"
-        ngModel
-        required
-        placeholder="NT${{ studentOrClass.tuition_per_hour }}"
-        #tuition_per_hour="ngModel"
+            class="form-control"
+            type="number"
+            min="500"
+            max="2000"
+            name="tuition_per_hour"
+            required
+            [ngModel]="editModel.tuition_per_hour"
+            (ngModelChange)="onTuitionChange($event)"
+            #tuition_per_hour="ngModel"
         >
         <div *ngIf="tuition_per_hour.touched && tuition_per_hour.invalid">
             Please enter the hourly tuition rate.

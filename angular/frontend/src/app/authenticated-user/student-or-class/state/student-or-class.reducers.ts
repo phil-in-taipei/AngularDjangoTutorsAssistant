@@ -165,7 +165,11 @@ export function studentsOrClassesReducer(
         case StudentOrClassActionTypes.StudentOrClassEditUpdated:
             reducerErrorMessage = undefined;
             reducerSuccessMessage = 'Student Or Class information edited!';
-            return adapter.updateOne(action.payload.studentOrClass,
+            return adapter.updateOne(
+                {
+                    id: Number(action.payload.studentOrClass.id), // cast to number
+                    changes: { ...action.payload.studentOrClass.changes }
+                },
                 {
                     ...state,
                     errorMessage: reducerErrorMessage,

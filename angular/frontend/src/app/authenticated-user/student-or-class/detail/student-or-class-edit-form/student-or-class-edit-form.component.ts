@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Store} from '@ngrx/store';
 
@@ -16,13 +16,44 @@ import {
   templateUrl: './student-or-class-edit-form.component.html',
   styleUrl: './student-or-class-edit-form.component.css'
 })
-export class StudentOrClassEditFormComponent {
+export class StudentOrClassEditFormComponent implements OnInit {
 
   @Input() studentOrClass: StudentOrClassModel;
   @Output() closeEvent = new EventEmitter<boolean>();
 
+  // Local copy used for two-way binding
+  editModel: StudentOrClassEditModel = {
+    student_or_class_name: '',
+    comments: '',
+    tuition_per_hour: 0
+  };
   constructor(private store: Store<StudentsOrClassesState>) { }
 
+  ngOnInit() {
+    this.initEditModel();
+  }
+
+  // ngOnChanges no longer needed — component is recreated on each toggle
+  private initEditModel() {
+    if (!this.studentOrClass) return;
+    this.editModel = structuredClone({
+      student_or_class_name: this.studentOrClass.student_or_class_name,
+      comments: this.studentOrClass.comments,
+      tuition_per_hour: this.studentOrClass.tuition_per_hour
+    });
+  }
+
+  onNameChange(value: string) {
+    this.editModel = { ...this.editModel, student_or_class_name: value };
+  }
+
+  onCommentsChange(value: string) {
+    this.editModel = { ...this.editModel, comments: value };
+  }
+
+  onTuitionChange(value: number) {
+    this.editModel = { ...this.editModel, tuition_per_hour: value };
+  }
 
   onSubmitEditedStudentOrClass(form: NgForm) {
     console.log(form.value)
@@ -35,13 +66,8 @@ export class StudentOrClassEditFormComponent {
       form.reset();
       return;
     }
-    let editedStudentOrClassData: StudentOrClassEditModel = {
-      student_or_class_name: form.value.student_or_class_name,
-      comments: form.value.comments,
-      tuition_per_hour: form.value.tuition_per_hour
-    }
     this.store.dispatch(new StudentOrClassEditSubmitted(
-      {  id: this.studentOrClass.id, studentOrClass: editedStudentOrClassData }
+      {  id: this.studentOrClass.id, studentOrClass: this.editModel }
     ));
     form.resetForm();
     this.closeEvent.emit(false);
