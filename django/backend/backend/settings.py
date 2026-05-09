@@ -54,6 +54,8 @@ INSTALLED_APPS = [
 
     'accounting',
     'class_scheduling',
+    'client_school',
+    'client_school_accounting',
     'recurring_scheduling',
     'school',
     'student_account',

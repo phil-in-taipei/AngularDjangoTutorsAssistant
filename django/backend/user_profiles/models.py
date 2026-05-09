@@ -3,6 +3,7 @@ from django.conf import settings
 
 
 ACCOUNT_TYPE = (
+    ('client_school_owner', 'Client_School_Owner'),
     ('teacher', 'Teacher'),
     ('venue_owner', 'Venue_Owner'),
 )
