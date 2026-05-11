@@ -1,7 +1,10 @@
 from django.db import models
 from django.core.validators import MaxLengthValidator
+from django.core.exceptions import ValidationError
+from django.db.models import CheckConstraint, Q
 
 from client_school.models import ClientSchool
+from student_account.models import StudentOrClass
 
 STUDENT_LEVEL = (
     ('beginner', 'Beginner'),
@@ -9,6 +12,13 @@ STUDENT_LEVEL = (
     ('intermediate', 'Intermediate'),
     ('upper-intermediate', 'Upper-intermediate'),
     ('advanced', 'Advanced'),
+)
+
+CLASS_ENROLLMENT_TYPES = (
+    ('one_to_one_tutoring', 'One-to-one Tutoring'),
+    ('two_to_one_tutoring', 'Two-to-one Tutoring'),
+    ('online_tutoring', 'Online Tutoring'),
+    ('group_class', 'Group Class'),
 )
 
 class StudentAccountBillingManager(models.Manager):
@@ -58,4 +68,152 @@ class AccountingClientSchoolStudentAccount(models.Model):
     class Meta:
         verbose_name_plural = 'Client School Student Accounts'
         unique_together = ('client_school', 'client_student_name')
-        ordering = ('client_student_name', 'client_student_name')
+        ordering = ('client_school__school_name', 'client_student_name' )
+
+
+
+class ClientSchoolClassEnrollmentHandler(models.Model):
+    student_or_class = models.ForeignKey(
+        StudentOrClass, on_delete=models.SET_NULL,
+        related_name='teachers_student_or_class_record',
+        blank=True, null=True
+    )
+    class_enrollment_type = models.CharField(
+        max_length=200, choices=CLASS_ENROLLMENT_TYPES,
+        default='one_to_one_tutoring'
+    )
+    client_school_one_to_one_account = models.ForeignKey(
+        AccountingClientSchoolStudentAccount,
+        on_delete=models.CASCADE,
+        related_name='one_to_one_tutoring_enrollment',
+        blank=True, null=True
+    )
+    client_school_two_to_one_accounts = models.ManyToManyField(
+        AccountingClientSchoolStudentAccount,
+        related_name='two_to_one_tutoring_enrollments',
+        blank=True,
+    )
+    client_school_online_account = models.ForeignKey(
+        AccountingClientSchoolStudentAccount,
+        on_delete=models.CASCADE,
+        related_name='online_enrollment',
+        blank=True, null=True
+    )
+    client_group_accounts = models.ManyToManyField(
+        AccountingClientSchoolStudentAccount,
+        related_name='group_class_enrollments',
+        blank=True,
+    )
+
+    def __str__(self):
+        return "{}, {}".format(
+            self.student_or_class,
+            self.class_enrollment_type
+        )
+
+    def clean(self):
+        if self.class_enrollment_type == 'one_to_one_tutoring':
+            if self.client_school_one_to_one_account is None:
+                raise ValidationError(
+                    'One-to-one tutoring requires a client_school_one_to_one_account.'
+                )
+            if self.client_school_online_account is not None:
+                raise ValidationError(
+                    'One-to-one tutoring cannot have an online account.'
+                )
+
+        elif self.class_enrollment_type == 'two_to_one_tutoring':
+            if self.client_school_one_to_one_account is not None:
+                raise ValidationError(
+                    'Two-to-one tutoring cannot have a one-to-one account.'
+                )
+            if self.client_school_online_account is not None:
+                raise ValidationError(
+                    'Two-to-one tutoring cannot have an online account.'
+                )
+
+        elif self.class_enrollment_type == 'online_tutoring':
+            if self.client_school_online_account is None:
+                raise ValidationError(
+                    'Online tutoring requires a client_school_online_account.'
+                )
+            if self.client_school_one_to_one_account is not None:
+                raise ValidationError(
+                    'Online tutoring cannot have a one-to-one account.'
+                )
+
+        elif self.class_enrollment_type == 'group_class':
+            if self.client_school_one_to_one_account is not None:
+                raise ValidationError(
+                    'Group class cannot have a one-to-one account.'
+                )
+            if self.client_school_online_account is not None:
+                raise ValidationError(
+                    'Group class cannot have an online account.'
+                )
+
+        if self.pk:
+            if self.class_enrollment_type == 'two_to_one_tutoring':
+                count = self.client_school_two_to_one_accounts.count()
+                if count > 2:
+                    raise ValidationError(
+                        'Two-to-one tutoring cannot have more than 2 student accounts.'
+                    )
+                if self.client_group_accounts.exists():
+                    raise ValidationError(
+                        'Two-to-one tutoring cannot have group class accounts.'
+                    )
+
+            elif self.class_enrollment_type == 'group_class':
+                if self.client_school_two_to_one_accounts.exists():
+                    raise ValidationError(
+                        'Group class cannot have two-to-one tutoring accounts.'
+                    )
+
+            elif self.class_enrollment_type in ('one_to_one_tutoring', 'online_tutoring'):
+                if self.client_school_two_to_one_accounts.exists():
+                    raise ValidationError(
+                        '{} cannot have two-to-one tutoring accounts.'.format(
+                            self.get_class_enrollment_type_display()
+                        )
+                    )
+                if self.client_group_accounts.exists():
+                    raise ValidationError(
+                        '{} cannot have group class accounts.'.format(
+                            self.get_class_enrollment_type_display()
+                        )
+                    )
+
+    class Meta:
+        verbose_name_plural = 'Client School Class Enrollment Handlers'
+        ordering = ('student_or_class__teacher__surname', 'class_enrollment_type')
+        constraints = [
+            CheckConstraint(
+                check=(
+                    (
+                        Q(class_enrollment_type='one_to_one_tutoring')
+                        & Q(client_school_one_to_one_account__isnull=False)
+                        & Q(client_school_online_account__isnull=True)
+                    )
+                    |
+                    (
+                        Q(class_enrollment_type='two_to_one_tutoring')
+                        & Q(client_school_one_to_one_account__isnull=True)
+                        & Q(client_school_online_account__isnull=True)
+                    )
+                    |
+                    (
+                        Q(class_enrollment_type='online_tutoring')
+                        & Q(client_school_online_account__isnull=False)
+                        & Q(client_school_one_to_one_account__isnull=True)
+                    )
+                    |
+                    (
+                        Q(class_enrollment_type='group_class')
+                        & Q(client_school_one_to_one_account__isnull=True)
+                        & Q(client_school_online_account__isnull=True)
+                    )
+                ),
+                name='enrollment_type_fk_consistency_check'
+            )
+        ]
