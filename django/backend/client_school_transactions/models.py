@@ -1,8 +1,10 @@
 from django.db import models
+from django.db.models import CheckConstraint, Q
 from decimal import Decimal
 from django.core.validators import MaxLengthValidator
 from client_school_accounting.models import (
     AccountingClientSchoolStudentAccount,
+    CLASS_ENROLLMENT_TYPES,
     ClientSchoolClassEnrollmentHandler,
 )
 from .validation import validate_tuition_transaction_amount
@@ -12,6 +14,13 @@ from accounting.validation import validate_number_of_hours_purchased
 TRANSACTION_TYPE = (
     ('payment', 'Payment'),
     ('refund', 'Refund'),
+)
+
+ACCOUNT_BALANCE_ALTERATION_TYPE = (
+    ('tuition_payment_add', 'Tuition Payment'),
+    ('tuition_refund_deduct', 'Tuition Refund'),
+    ('class_status_modification_add', "Class Status Modification: Hours Added"),
+    ('class_status_modification_deduct', "Class Status Modification: Hours Deducted"),
 )
 
 GROUP_CLASS_EXPIRATION_PERIODS = (
@@ -295,3 +304,154 @@ class ClientSchoolCompanyClassesTuitionTransactionRecord(models.Model):
         verbose_name_plural = 'Company Classes Tuition Transaction Records'
         ordering = ('-time_stamp',)
 
+
+
+class ClientSchoolPurchasedHoursModificationRecord(models.Model):
+    student_account = models.ForeignKey(
+        AccountingClientSchoolStudentAccount, on_delete=models.CASCADE,
+        related_name='purchased_hours_modifications'
+    )
+    bridge = models.ForeignKey(
+        ClientSchoolClassEnrollmentHandler, on_delete=models.CASCADE,
+        related_name='purchased_hours_modifications',
+        blank=True, null=True
+    )
+    class_type = models.CharField(
+        max_length=200, choices=CLASS_ENROLLMENT_TYPES
+    )
+    modification_type = models.CharField(
+        max_length=200, choices=ACCOUNT_BALANCE_ALTERATION_TYPE,
+        default='class_status_modification_deduct'
+    )
+    tutoring_transaction = models.OneToOneField(
+        ClientSchoolTutoringTuitionTransactionRecord, on_delete=models.CASCADE,
+        related_name='purchased_hours_modification',
+        blank=True, null=True
+    )
+    two_to_one_transaction = models.OneToOneField(
+        ClientSchool2to1TutoringTuitionTransactionRecord, on_delete=models.CASCADE,
+        related_name='purchased_hours_modification',
+        blank=True, null=True
+    )
+    online_transaction = models.OneToOneField(
+        ClientSchoolOnlineTuitionTransactionRecord, on_delete=models.CASCADE,
+        related_name='purchased_hours_modification',
+        blank=True, null=True
+    )
+    group_transaction = models.OneToOneField(
+        ClientSchoolGroupClassesTuitionTransactionRecord, on_delete=models.CASCADE,
+        related_name='purchased_hours_modification',
+        blank=True, null=True
+    )
+    company_transaction = models.OneToOneField(
+        ClientSchoolCompanyClassesTuitionTransactionRecord, on_delete=models.CASCADE,
+        related_name='purchased_hours_modification',
+        blank=True, null=True
+    )
+    previous_hours = models.DecimalField(max_digits=5, decimal_places=2)
+    updated_hours = models.DecimalField(max_digits=5, decimal_places=2)
+    time_stamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        formatted_time = self.time_stamp.strftime("%Y-%m-%d %H:%M")
+        if self.tutoring_transaction:
+            return "Tutoring Modification: {} at {}".format(
+                self.student_account.client_student_name, formatted_time
+            )
+        elif self.two_to_one_transaction:
+            return "2-to-1 Tutoring Modification: {} at {}".format(
+                self.student_account.client_student_name, formatted_time
+            )
+        elif self.online_transaction:
+            return "Online Modification: {} at {}".format(
+                self.student_account.client_student_name, formatted_time
+            )
+        elif self.group_transaction:
+            return "Group Class Modification: {} at {}".format(
+                self.student_account.client_student_name, formatted_time
+            )
+        elif self.company_transaction:
+            return "Company Class Modification: {} at {}".format(
+                self.student_account.client_student_name, formatted_time
+            )
+        else:
+            return "Class Status Modification ({}): {} at {}".format(
+                self.get_class_type_display(),
+                self.student_account.client_student_name,
+                formatted_time
+            )
+
+    class Meta:
+        verbose_name_plural = 'Client School Purchased Hours Modification Records'
+        ordering = ('-time_stamp',)
+        constraints = [
+            CheckConstraint(
+                check=(
+                    (
+                        Q(class_type='one_to_one_tutoring')
+                        & Q(tutoring_transaction__isnull=False)
+                        & Q(two_to_one_transaction__isnull=True)
+                        & Q(online_transaction__isnull=True)
+                        & Q(group_transaction__isnull=True)
+                        & Q(company_transaction__isnull=True)
+                    )
+                    |
+                    (
+                        Q(class_type='two_to_one_tutoring')
+                        & Q(two_to_one_transaction__isnull=False)
+                        & Q(tutoring_transaction__isnull=True)
+                        & Q(online_transaction__isnull=True)
+                        & Q(group_transaction__isnull=True)
+                        & Q(company_transaction__isnull=True)
+                    )
+                    |
+                    (
+                        Q(class_type='online_tutoring')
+                        & Q(online_transaction__isnull=False)
+                        & Q(tutoring_transaction__isnull=True)
+                        & Q(two_to_one_transaction__isnull=True)
+                        & Q(group_transaction__isnull=True)
+                        & Q(company_transaction__isnull=True)
+                    )
+                    |
+                    (
+                        Q(class_type='group_class')
+                        & Q(group_transaction__isnull=False)
+                        & Q(tutoring_transaction__isnull=True)
+                        & Q(two_to_one_transaction__isnull=True)
+                        & Q(online_transaction__isnull=True)
+                        & Q(company_transaction__isnull=True)
+                    )
+                    |
+                    (
+                        Q(class_type='company_class')
+                        & Q(company_transaction__isnull=False)
+                        & Q(tutoring_transaction__isnull=True)
+                        & Q(two_to_one_transaction__isnull=True)
+                        & Q(online_transaction__isnull=True)
+                        & Q(group_transaction__isnull=True)
+                    )
+                    |
+                    (
+                        Q(modification_type='class_status_modification_add')
+                        & Q(tutoring_transaction__isnull=True)
+                        & Q(two_to_one_transaction__isnull=True)
+                        & Q(online_transaction__isnull=True)
+                        & Q(group_transaction__isnull=True)
+                        & Q(company_transaction__isnull=True)
+                        & Q(bridge__isnull=False)
+                    )
+                    |
+                    (
+                        Q(modification_type='class_status_modification_deduct')
+                        & Q(tutoring_transaction__isnull=True)
+                        & Q(two_to_one_transaction__isnull=True)
+                        & Q(online_transaction__isnull=True)
+                        & Q(group_transaction__isnull=True)
+                        & Q(company_transaction__isnull=True)
+                        & Q(bridge__isnull=False)
+                    )
+                ),
+                name='client_school_modification_type_consistency_check'
+            )
+        ]
