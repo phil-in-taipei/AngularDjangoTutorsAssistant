@@ -142,7 +142,7 @@ class ClientSchool2to1TutoringTuitionTransactionRecord(models.Model):
         self.primary_student_account.save()
 
     class Meta:
-        verbose_name_plural = '2-to-1 Tutoring Tuition Transaction Records'
+        verbose_name_plural = 'Two-to-one Tutoring Tuition Transaction Records'
         ordering = ('-time_stamp',)
 
 
