@@ -7,6 +7,7 @@ from client_school_accounting.models import (
     CLASS_ENROLLMENT_TYPES,
     ClientSchoolClassEnrollmentHandler,
 )
+from client_school_accounting.utils import calculate_expiration_date
 from .validation import validate_tuition_transaction_amount
 from accounting.validation import validate_number_of_hours_purchased
 
@@ -80,6 +81,9 @@ class ClientSchoolTutoringTuitionTransactionRecord(models.Model):
             self.student_account.purchased_tutoring_hours = Decimal('0')
         if self.transaction_type == 'payment':
             self.student_account.purchased_tutoring_hours += hours_as_decimal
+            self.student_account.tutoring_hours_expiration_date = calculate_expiration_date(
+                self.expiration_period
+            )
         else:
             self.student_account.purchased_tutoring_hours -= hours_as_decimal
         self.student_account.save()
@@ -137,6 +141,9 @@ class ClientSchool2to1TutoringTuitionTransactionRecord(models.Model):
             self.primary_student_account.purchased_tutoring_hours = Decimal('0')
         if self.transaction_type == 'payment':
             self.primary_student_account.purchased_tutoring_hours += hours_as_decimal
+            self.primary_student_account.tutoring_hours_expiration_date = calculate_expiration_date(
+                self.expiration_period
+            )
         else:
             self.primary_student_account.purchased_tutoring_hours -= hours_as_decimal
         self.primary_student_account.save()
@@ -190,6 +197,9 @@ class ClientSchoolOnlineTuitionTransactionRecord(models.Model):
             self.student_account.purchased_online_hours = Decimal('0')
         if self.transaction_type == 'payment':
             self.student_account.purchased_online_hours += hours_as_decimal
+            self.student_account.online_hours_expiration_date = calculate_expiration_date(
+                self.expiration_period
+            )
         else:
             self.student_account.purchased_online_hours -= hours_as_decimal
         self.student_account.save()
@@ -243,6 +253,9 @@ class ClientSchoolGroupClassesTuitionTransactionRecord(models.Model):
             self.student_account.purchased_group_class_hours = Decimal('0')
         if self.transaction_type == 'payment':
             self.student_account.purchased_group_class_hours += hours_as_decimal
+            self.student_account.group_hours_expiration_date = calculate_expiration_date(
+                self.expiration_period
+            )
         else:
             self.student_account.purchased_group_class_hours -= hours_as_decimal
         self.student_account.save()
@@ -296,6 +309,9 @@ class ClientSchoolCompanyClassesTuitionTransactionRecord(models.Model):
             self.student_account.purchased_company_hours = Decimal('0')
         if self.transaction_type == 'payment':
             self.student_account.purchased_company_hours += hours_as_decimal
+            self.student_account.company_hours_expiration_date = calculate_expiration_date(
+                self.expiration_period
+            )
         else:
             self.student_account.purchased_company_hours -= hours_as_decimal
         self.student_account.save()
