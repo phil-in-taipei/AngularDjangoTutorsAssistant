@@ -149,7 +149,7 @@ class AccountingClientSchoolStudentAccount(models.Model):
 
 
 class ClientSchoolClassEnrollmentHandler(models.Model):
-    student_or_class = models.ForeignKey(
+    student_or_class = models.OneToOneField(
         StudentOrClass, on_delete=models.SET_NULL,
         related_name='teachers_student_or_class_record',
         blank=True, null=True
