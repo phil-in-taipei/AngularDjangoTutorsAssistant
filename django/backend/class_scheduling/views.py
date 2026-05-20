@@ -11,13 +11,14 @@ from .models import ScheduledClass
 from .pagination import SmallSetPagination
 from .serializers import ScheduledClassSerializer, ScheduledClassGoogleCalendarSerializer
 from .utils import (
-    adjust_number_of_hours_purchased,
+    #adjust_number_of_hours_purchased,
     class_is_double_booked,
     determine_transaction_type,
-    determine_duration_of_class_time,
+    #determine_duration_of_class_time,
     is_freelance_account,
+    handle_freelance_student_purchased_hours_modification,
     number_of_hours_purchased_should_be_updated,
-    create_purchased_hours_modification_record
+    #create_purchased_hours_modification_record
 )
 
 
@@ -75,32 +76,11 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
           "student_or_class_update": None
         }
         if is_freelance_account(scheduled_class.student_or_class) and number_of_hours_purchased_should_be_updated(transaction_type):
-            #print("******Account must be adjusted*******")
-            duration = determine_duration_of_class_time(
-                scheduled_class.start_time, scheduled_class.finish_time
+            response['student_or_class_update'] = handle_freelance_student_purchased_hours_modification(
+                scheduled_class=scheduled_class, 
+                student_or_class=student_or_class, 
+                transaction_type=transaction_type
             )
-            previous_number_of_purchased_hours = student_or_class.purchased_class_hours
-            
-            new_number_of_purchased_hours = adjust_number_of_hours_purchased(
-                    transaction_type, duration, student_or_class.purchased_class_hours
-            )
-            
-            student_or_class.purchased_class_hours = new_number_of_purchased_hours
-            student_or_class.save()
-            
-            create_purchased_hours_modification_record(
-                student_or_class=student_or_class,
-                transaction_type=transaction_type,
-                scheduled_class=scheduled_class,
-                previous_number_of_purchased_hours=previous_number_of_purchased_hours,
-                new_number_of_purchased_hours=new_number_of_purchased_hours
-            )
-            response['student_or_class_update'] = {
-                "id": student_or_class.id,
-                "changes": {
-                    "purchased_class_hours": float(student_or_class.purchased_class_hours)
-                }
-            }
 
         return Response(
             response,

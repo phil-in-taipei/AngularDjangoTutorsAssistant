@@ -2,6 +2,11 @@ from datetime import datetime, timedelta
 import decimal
 
 from accounting.models import PurchasedHoursModificationRecord
+from client_school_accounting.models import (
+    AccountingClientSchoolStudentAccount,
+    ClientSchoolClassEnrollmentHandler,
+)
+from client_school_transactions.models import ClientSchoolPurchasedHoursModificationRecord
 
 
 def determine_transaction_type(previous_class_status, updated_class_status):
@@ -150,3 +155,219 @@ def create_purchased_hours_modification_record(
         previous_purchased_class_hours=previous_number_of_purchased_hours,
         updated_purchased_class_hours=new_number_of_purchased_hours
     )
+
+
+def handle_freelance_student_purchased_hours_modification(
+        scheduled_class, student_or_class, transaction_type
+    ):
+        #print("******Account must be adjusted*******")
+        duration = determine_duration_of_class_time(
+            scheduled_class.start_time, scheduled_class.finish_time
+        )
+        previous_number_of_purchased_hours = student_or_class.purchased_class_hours
+            
+        new_number_of_purchased_hours = adjust_number_of_hours_purchased(
+            transaction_type, duration, student_or_class.purchased_class_hours
+        )
+            
+        student_or_class.purchased_class_hours = new_number_of_purchased_hours
+        student_or_class.save()
+            
+        create_purchased_hours_modification_record(
+            student_or_class=student_or_class,
+            transaction_type=transaction_type,
+            scheduled_class=scheduled_class,
+            previous_number_of_purchased_hours=previous_number_of_purchased_hours,
+            new_number_of_purchased_hours=new_number_of_purchased_hours
+        )
+        return {
+            "id": student_or_class.id,
+            "changes": {
+                "purchased_class_hours": float(student_or_class.purchased_class_hours)
+            }
+        }
+
+
+def get_client_school_enrollment_handler(student_or_class):
+    try:
+        return student_or_class.teachers_student_or_class_record
+    except ClientSchoolClassEnrollmentHandler.DoesNotExist:
+        return None
+
+
+def is_client_school_account(student_or_class):
+    return (
+        hasattr(student_or_class, 'teachers_student_or_class_record')
+        and student_or_class.teachers_student_or_class_record is not None
+    )
+
+
+
+def create_client_school_purchased_hours_modification_record(
+    student_account, enrollment_handler, class_type,
+    transaction_type, previous_hours, updated_hours
+):
+    if transaction_type == 'deduct':
+        modification_type = 'class_status_modification_deduct'
+    else:
+        modification_type = 'class_status_modification_add'
+    ClientSchoolPurchasedHoursModificationRecord.objects.create(
+        student_account=student_account,
+        bridge=enrollment_handler,
+        class_type=class_type,
+        modification_type=modification_type,
+        previous_hours=previous_hours,
+        updated_hours=updated_hours,
+    )
+
+def handle_one_to_one_tutoring_hours_modification(
+    enrollment_handler, transaction_type, duration
+):
+    student_account = enrollment_handler.client_school_one_to_one_account
+    if student_account is None:
+        return None
+    previous_hours = student_account.purchased_tutoring_hours
+    if previous_hours is None:
+        return None
+    duration_as_decimal = decimal.Decimal(str(duration))
+    if transaction_type == 'deduct':
+        updated_hours = previous_hours - duration_as_decimal
+    else:
+        updated_hours = previous_hours + duration_as_decimal
+    student_account.purchased_tutoring_hours = updated_hours
+    student_account.save()
+    create_client_school_purchased_hours_modification_record(
+        student_account=student_account,
+        enrollment_handler=enrollment_handler,
+        class_type='one_to_one_tutoring',
+        transaction_type=transaction_type,
+        previous_hours=previous_hours,
+        updated_hours=updated_hours,
+    )
+    return f"Client school tutoring hours {transaction_type}ed"
+
+
+def handle_two_to_one_tutoring_hours_modification(
+    enrollment_handler, transaction_type, duration
+):
+    student_accounts = enrollment_handler.client_school_two_to_one_accounts.all()
+    if not student_accounts.exists():
+        return None
+
+    duration_as_decimal = decimal.Decimal(str(duration))
+    updated_accounts = []
+
+    for student_account in student_accounts:
+        previous_hours = student_account.purchased_tutoring_hours
+        if previous_hours is None:
+            continue
+        if transaction_type == 'deduct':
+            updated_hours = previous_hours - duration_as_decimal
+        else:
+            updated_hours = previous_hours + duration_as_decimal
+        student_account.purchased_tutoring_hours = updated_hours
+        student_account.save()
+        create_client_school_purchased_hours_modification_record(
+            student_account=student_account,
+            enrollment_handler=enrollment_handler,
+            class_type='two_to_one_tutoring',
+            transaction_type=transaction_type,
+            previous_hours=previous_hours,
+            updated_hours=updated_hours,
+        )
+        updated_accounts.append(student_account.client_student_name)
+
+    if not updated_accounts:
+        return None
+
+    return f"Client school two-to-one tutoring hours {transaction_type}ed"
+
+
+def handle_online_tutoring_hours_modification(
+    enrollment_handler, transaction_type, duration
+):
+    student_account = enrollment_handler.client_school_online_account
+    if student_account is None:
+        return None
+    previous_hours = student_account.purchased_online_hours
+    if previous_hours is None:
+        return None
+    duration_as_decimal = decimal.Decimal(str(duration))
+    if transaction_type == 'deduct':
+        updated_hours = previous_hours - duration_as_decimal
+    else:
+        updated_hours = previous_hours + duration_as_decimal
+    student_account.purchased_online_hours = updated_hours
+    student_account.save()
+    create_client_school_purchased_hours_modification_record(
+        student_account=student_account,
+        enrollment_handler=enrollment_handler,
+        class_type='online_tutoring',
+        transaction_type=transaction_type,
+        previous_hours=previous_hours,
+        updated_hours=updated_hours,
+    )
+    return f"Client school online tutoring hours {transaction_type}ed"
+
+
+def handle_company_class_hours_modification(
+    enrollment_handler, transaction_type, duration
+):
+    student_account = enrollment_handler.client_school_company_account
+    if student_account is None:
+        return None
+    previous_hours = student_account.purchased_company_hours
+    if previous_hours is None:
+        return None
+    duration_as_decimal = decimal.Decimal(str(duration))
+    if transaction_type == 'deduct':
+        updated_hours = previous_hours - duration_as_decimal
+    else:
+        updated_hours = previous_hours + duration_as_decimal
+    student_account.purchased_company_hours = updated_hours
+    student_account.save()
+    create_client_school_purchased_hours_modification_record(
+        student_account=student_account,
+        enrollment_handler=enrollment_handler,
+        class_type='company_class',
+        transaction_type=transaction_type,
+        previous_hours=previous_hours,
+        updated_hours=updated_hours,
+    )
+    return f"Client company class tutoring hours {transaction_type}ed"
+
+
+def handle_client_school_purchased_hours_modification(
+    scheduled_class, student_or_class, transaction_type
+):
+    enrollment_handler = get_client_school_enrollment_handler(student_or_class)
+    if enrollment_handler is None:
+        return None
+
+    duration = determine_duration_of_class_time(
+        scheduled_class.start_time, scheduled_class.finish_time
+    )
+    class_enrollment_type = enrollment_handler.class_enrollment_type
+
+    if class_enrollment_type == 'one_to_one_tutoring':
+        return handle_one_to_one_tutoring_hours_modification(
+            enrollment_handler, transaction_type, duration
+        )
+    elif class_enrollment_type == 'two_to_one_tutoring':
+        return handle_two_to_one_tutoring_hours_modification(
+            enrollment_handler, transaction_type, duration
+        )
+    elif class_enrollment_type == 'online_tutoring':
+        return handle_online_tutoring_hours_modification(
+            enrollment_handler, transaction_type, duration
+        )
+    elif class_enrollment_type == 'company_class':
+        return handle_company_class_hours_modification(
+            enrollment_handler, transaction_type, duration
+        )
+    elif class_enrollment_type == 'group_class':
+        # Group class logic to be implemented
+        pass
+
+    return None
+
