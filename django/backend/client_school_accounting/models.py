@@ -226,17 +226,18 @@ class ClientSchoolClassEnrollmentHandler(models.Model):
         related_name='company_enrollment',
         blank=True, null=True
     )
-    client_group_class = models.ManyToManyField(
+    client_group_class = models.ForeignKey(
         AccountingClientSchoolGroupClass,
+        on_delete=models.CASCADE,
         related_name='group_class_account_enrollment',
-        blank=True,
+        blank=True, null=True
     )
 
     def __str__(self):
         return "{}, {}".format(
             self.student_or_class,
             self.class_enrollment_type
-        )
+            )
     
     def clean(self):
         if self.class_enrollment_type == 'one_to_one_tutoring':
@@ -252,6 +253,10 @@ class ClientSchoolClassEnrollmentHandler(models.Model):
                 raise ValidationError(
                     'One-to-one tutoring cannot have a company account.'
                 )
+            if self.client_group_class is not None:
+                raise ValidationError(
+                    'One-to-one tutoring cannot have a group class account.'
+                )
 
         elif self.class_enrollment_type == 'two_to_one_tutoring':
             if self.client_school_one_to_one_account is not None:
@@ -265,6 +270,10 @@ class ClientSchoolClassEnrollmentHandler(models.Model):
             if self.client_school_company_account is not None:
                 raise ValidationError(
                     'Two-to-one tutoring cannot have a company account.'
+                )
+            if self.client_group_class is not None:
+                raise ValidationError(
+                    'Two-to-one tutoring cannot have a group class account.'
                 )
 
         elif self.class_enrollment_type == 'online_tutoring':
@@ -280,6 +289,10 @@ class ClientSchoolClassEnrollmentHandler(models.Model):
                 raise ValidationError(
                     'Online tutoring cannot have a company account.'
                 )
+            if self.client_group_class is not None:
+                raise ValidationError(
+                    'Online tutoring cannot have a group class account.'
+                )
 
         elif self.class_enrollment_type == 'group_class':
             if self.client_school_one_to_one_account is not None:
@@ -293,6 +306,10 @@ class ClientSchoolClassEnrollmentHandler(models.Model):
             if self.client_school_company_account is not None:
                 raise ValidationError(
                     'Group class cannot have a company account.'
+                )
+            if self.client_group_class is None:
+                raise ValidationError(
+                    'Group class requires a group class account.'
                 )
 
         elif self.class_enrollment_type == 'company_class':
@@ -308,6 +325,10 @@ class ClientSchoolClassEnrollmentHandler(models.Model):
                 raise ValidationError(
                     'Company class cannot have an online account.'
                 )
+            if self.client_group_class is not None:
+                raise ValidationError(
+                    'Company class cannot have a group class account.'
+                )
 
         if self.pk:
             if self.class_enrollment_type == 'two_to_one_tutoring':
@@ -316,29 +337,12 @@ class ClientSchoolClassEnrollmentHandler(models.Model):
                     raise ValidationError(
                         'Two-to-one tutoring cannot have more than 2 student accounts.'
                     )
-                if self.client_group_class.exists():
-                    raise ValidationError(
-                        'Two-to-one tutoring cannot have group class accounts.'
-                    )
-
-            elif self.class_enrollment_type == 'group_class':
-                if self.client_school_two_to_one_accounts.exists():
-                    raise ValidationError(
-                        'Group class cannot have two-to-one tutoring accounts.'
-                    )
-
             elif self.class_enrollment_type in (
-                'one_to_one_tutoring', 'online_tutoring', 'company_class'
+                'one_to_one_tutoring', 'online_tutoring', 'company_class', 'group_class'
             ):
                 if self.client_school_two_to_one_accounts.exists():
                     raise ValidationError(
                         '{} cannot have two-to-one tutoring accounts.'.format(
-                            self.get_class_enrollment_type_display()
-                        )
-                    )
-                if self.client_group_class.exists():
-                    raise ValidationError(
-                        '{} cannot have group class accounts.'.format(
                             self.get_class_enrollment_type_display()
                         )
                     )

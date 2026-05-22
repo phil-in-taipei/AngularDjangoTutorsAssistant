@@ -73,7 +73,8 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
         
         response = {
           "scheduled_class": ScheduledClassSerializer(scheduled_class).data,
-          "student_or_class_update": None
+          "student_or_class_update": None,
+          "client_school_accounting_update_message": None
         }
         if is_freelance_account(scheduled_class.student_or_class) and number_of_hours_purchased_should_be_updated(transaction_type):
             response['student_or_class_update'] = handle_freelance_student_purchased_hours_modification(
