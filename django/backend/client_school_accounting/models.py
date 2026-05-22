@@ -147,6 +147,51 @@ class AccountingClientSchoolStudentAccount(models.Model):
         ]
 
 
+class AccountingClientSchoolGroupClass(models.Model):
+    group_class_name = models.CharField(max_length=200)
+    client_school = models.ForeignKey(
+        ClientSchool, on_delete=models.CASCADE,
+        related_name='group_class_client_school',
+    )
+    student_level = models.CharField(
+        max_length=200, choices=STUDENT_LEVEL, default='intermediate'
+    )
+    comments = models.TextField(
+        editable=True, validators=[MaxLengthValidator(500)],
+        default='', blank=True
+    )
+    client_group_class_accounts = models.ManyToManyField(
+        AccountingClientSchoolStudentAccount,
+        related_name='group_class_accounts',
+        blank=True,
+    )
+
+    def __str__(self):
+        return "{}, {}".format(
+            self.group_class_name,
+            self.client_school.school_name
+        )
+
+    def clean(self):
+        if self.pk:
+            invalid_accounts = self.client_group_class_accounts.filter(
+                purchased_group_class_hours__isnull=True
+            )
+            if invalid_accounts.exists():
+                invalid_names = ', '.join(
+                    account.client_student_name for account in invalid_accounts
+                )
+                raise ValidationError(
+                    f'The following students do not have group class hours purchased: {invalid_names}. '
+                    f'Please set their purchased group class hours to zero or more before enrolling them.'
+                )
+    
+    class Meta:
+        verbose_name_plural = 'Client School Group Classes'
+        ordering = ('client_school__school_name', 'group_class_name')
+        unique_together = ('client_school', 'group_class_name')
+
+
 
 class ClientSchoolClassEnrollmentHandler(models.Model):
     student_or_class = models.OneToOneField(
@@ -181,9 +226,9 @@ class ClientSchoolClassEnrollmentHandler(models.Model):
         related_name='company_enrollment',
         blank=True, null=True
     )
-    client_group_accounts = models.ManyToManyField(
-        AccountingClientSchoolStudentAccount,
-        related_name='group_class_enrollments',
+    client_group_class = models.ManyToManyField(
+        AccountingClientSchoolGroupClass,
+        related_name='group_class_account_enrollment',
         blank=True,
     )
 
@@ -192,7 +237,7 @@ class ClientSchoolClassEnrollmentHandler(models.Model):
             self.student_or_class,
             self.class_enrollment_type
         )
-
+    
     def clean(self):
         if self.class_enrollment_type == 'one_to_one_tutoring':
             if self.client_school_one_to_one_account is None:
@@ -271,7 +316,7 @@ class ClientSchoolClassEnrollmentHandler(models.Model):
                     raise ValidationError(
                         'Two-to-one tutoring cannot have more than 2 student accounts.'
                     )
-                if self.client_group_accounts.exists():
+                if self.client_group_class.exists():
                     raise ValidationError(
                         'Two-to-one tutoring cannot have group class accounts.'
                     )
@@ -291,13 +336,13 @@ class ClientSchoolClassEnrollmentHandler(models.Model):
                             self.get_class_enrollment_type_display()
                         )
                     )
-                if self.client_group_accounts.exists():
+                if self.client_group_class.exists():
                     raise ValidationError(
                         '{} cannot have group class accounts.'.format(
                             self.get_class_enrollment_type_display()
                         )
                     )
-
+                
     class Meta:
         verbose_name_plural = 'Client School Class Enrollment Handlers'
         ordering = ('student_or_class__teacher__surname', 'class_enrollment_type')
