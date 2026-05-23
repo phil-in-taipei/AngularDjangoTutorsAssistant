@@ -7,6 +7,7 @@ from client_school_accounting.models import (
     ClientSchoolClassEnrollmentHandler,
 )
 from client_school_transactions.models import ClientSchoolPurchasedHoursModificationRecord
+from client_school_group_attendance.utils import handle_creation_of_group_class_enrollment_records
 
 
 def determine_transaction_type(previous_class_status, updated_class_status):
@@ -366,8 +367,14 @@ def handle_client_school_purchased_hours_modification(
             enrollment_handler, transaction_type, duration
         )
     elif class_enrollment_type == 'group_class':
-        # Group class logic to be implemented
-        pass
+        if transaction_type == 'deduct':
+            return handle_creation_of_group_class_enrollment_records(
+                scheduled_class=scheduled_class,
+                enrollment_handler=enrollment_handler,
+                duration=duration,
+            )
+        else:
+            return f"Group class status changed — no attendance records created"
 
     return None
 
