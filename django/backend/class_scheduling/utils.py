@@ -3,7 +3,6 @@ import decimal
 
 from accounting.models import PurchasedHoursModificationRecord
 from client_school_accounting.models import (
-    AccountingClientSchoolStudentAccount,
     ClientSchoolClassEnrollmentHandler,
 )
 from client_school_transactions.models import ClientSchoolPurchasedHoursModificationRecord
