@@ -8,7 +8,7 @@ from .models import (
     ClientSchoolClassEnrollmentHandler,
 )
 
-DAVIDS_ENGLISH = "David's English"
+DAVIDS_ENGLISH = "David's English Center"
 
 
 class AccountingClientSchoolStudentAccountAdmin(admin.ModelAdmin):

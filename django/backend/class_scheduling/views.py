@@ -11,14 +11,13 @@ from .models import ScheduledClass
 from .pagination import SmallSetPagination
 from .serializers import ScheduledClassSerializer, ScheduledClassGoogleCalendarSerializer
 from .utils import (
-    #adjust_number_of_hours_purchased,
     class_is_double_booked,
     determine_transaction_type,
-    #determine_duration_of_class_time,
+    is_client_school_account,
     is_freelance_account,
+    handle_client_school_purchased_hours_modification,
     handle_freelance_student_purchased_hours_modification,
     number_of_hours_purchased_should_be_updated,
-    #create_purchased_hours_modification_record
 )
 
 
@@ -78,6 +77,13 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
         }
         if is_freelance_account(scheduled_class.student_or_class) and number_of_hours_purchased_should_be_updated(transaction_type):
             response['student_or_class_update'] = handle_freelance_student_purchased_hours_modification(
+                scheduled_class=scheduled_class, 
+                student_or_class=student_or_class, 
+                transaction_type=transaction_type
+            )
+
+        if is_client_school_account(scheduled_class.student_or_class) and number_of_hours_purchased_should_be_updated(transaction_type):
+            response['client_school_accounting_update_message'] = handle_client_school_purchased_hours_modification(
                 scheduled_class=scheduled_class, 
                 student_or_class=student_or_class, 
                 transaction_type=transaction_type

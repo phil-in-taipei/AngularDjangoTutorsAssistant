@@ -1,4 +1,5 @@
 from django import forms
+from decimal import Decimal
 from django.contrib import admin
 from django.contrib import messages
 from rangefilter.filters import DateRangeFilter
@@ -119,7 +120,7 @@ class ClientSchoolTutoringTuitionTransactionAdmin(admin.ModelAdmin):
         )
 
     def save_model(self, request, obj, form, change):
-        previous_hours = obj.student_account.purchased_tutoring_hours
+        previous_hours = obj.student_account.purchased_tutoring_hours or Decimal('0')
         super().save_model(request, obj, form, change)
         create_modification_record_for_tutoring_transaction(
             previous_hours_purchased=previous_hours,
@@ -147,7 +148,7 @@ class ClientSchool2to1TutoringTuitionTransactionAdmin(admin.ModelAdmin):
         )
 
     def save_model(self, request, obj, form, change):
-        previous_hours = obj.primary_student_account.purchased_tutoring_hours
+        previous_hours = obj.primary_student_account.purchased_tutoring_hours or Decimal('0')
         super().save_model(request, obj, form, change)
         create_modification_record_for_two_to_one_transaction(
             previous_hours_purchased=previous_hours,
@@ -174,7 +175,7 @@ class ClientSchoolOnlineTuitionTransactionAdmin(admin.ModelAdmin):
     )
 
     def save_model(self, request, obj, form, change):
-        previous_hours = obj.student_account.purchased_online_hours
+        previous_hours = obj.student_account.purchased_online_hours or Decimal('0')
         super().save_model(request, obj, form, change)
         create_modification_record_for_online_transaction(
             previous_hours_purchased=previous_hours,
@@ -201,7 +202,7 @@ class ClientSchoolGroupClassesTuitionTransactionAdmin(admin.ModelAdmin):
     )
 
     def save_model(self, request, obj, form, change):
-        previous_hours = obj.student_account.purchased_group_class_hours
+        previous_hours = obj.student_account.purchased_group_class_hours or Decimal('0')
         super().save_model(request, obj, form, change)
         create_modification_record_for_group_transaction(
             previous_hours_purchased=previous_hours,
@@ -228,7 +229,7 @@ class ClientSchoolCompanyClassesTuitionTransactionAdmin(admin.ModelAdmin):
     )
 
     def save_model(self, request, obj, form, change):
-        previous_hours = obj.student_account.purchased_company_hours
+        previous_hours = obj.student_account.purchased_company_hours or Decimal('0')
         super().save_model(request, obj, form, change)
         create_modification_record_for_company_transaction(
             previous_hours_purchased=previous_hours,
