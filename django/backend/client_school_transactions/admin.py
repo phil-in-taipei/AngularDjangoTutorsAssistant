@@ -6,12 +6,12 @@ from rangefilter.filters import DateRangeFilter
 from client_school_accounting.models import AccountingClientSchoolStudentAccount
 
 from client_school_transactions.models import (
-    ClientSchoolTutoringTuitionTransactionRecord, 
-    ClientSchool2to1TutoringTuitionTransactionRecord,
-    ClientSchoolOnlineTuitionTransactionRecord,
-    ClientSchoolGroupClassesTuitionTransactionRecord,
-    ClientSchoolCompanyClassesTuitionTransactionRecord,
-    ClientSchoolPurchasedHoursModificationRecord
+    CSTutoringTuitionRecord, 
+    CST2To1TutoringTuitionRecord,
+    CSOnlineTuitionRecord,
+    CSGroupClassTuitionRecord,
+    CSCompanyClassTuitionRecord,
+    CSPurchasedHoursModification
 )
 
 from client_school_transactions.utils import (
@@ -36,7 +36,7 @@ def davids_english_student_accounts():
 
 class ClientSchoolTutoringTuitionTransactionForm(forms.ModelForm):
     class Meta:
-        model = ClientSchoolTutoringTuitionTransactionRecord
+        model = CSTutoringTuitionRecord
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
@@ -46,7 +46,7 @@ class ClientSchoolTutoringTuitionTransactionForm(forms.ModelForm):
 
 class ClientSchool2to1TutoringTuitionTransactionForm(forms.ModelForm):
     class Meta:
-        model = ClientSchool2to1TutoringTuitionTransactionRecord
+        model = CST2To1TutoringTuitionRecord
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
@@ -68,7 +68,7 @@ class ClientSchool2to1TutoringTuitionTransactionForm(forms.ModelForm):
 
 class ClientSchoolOnlineTuitionTransactionForm(forms.ModelForm):
     class Meta:
-        model = ClientSchoolOnlineTuitionTransactionRecord
+        model = CSOnlineTuitionRecord
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
@@ -78,7 +78,7 @@ class ClientSchoolOnlineTuitionTransactionForm(forms.ModelForm):
 
 class ClientSchoolGroupClassesTuitionTransactionForm(forms.ModelForm):
     class Meta:
-        model = ClientSchoolGroupClassesTuitionTransactionRecord
+        model = CSGroupClassTuitionRecord
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
@@ -88,7 +88,7 @@ class ClientSchoolGroupClassesTuitionTransactionForm(forms.ModelForm):
 
 class ClientSchoolCompanyClassesTuitionTransactionForm(forms.ModelForm):
     class Meta:
-        model = ClientSchoolCompanyClassesTuitionTransactionRecord
+        model = CSCompanyClassTuitionRecord
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
@@ -283,26 +283,26 @@ class ClientSchoolPurchasedHoursModificationRecordAdmin(admin.ModelAdmin):
 # ── Registration ───────────────────────────────────────────────────────────────
 
 admin.site.register(
-    ClientSchoolTutoringTuitionTransactionRecord,
+    CSTutoringTuitionRecord,
     ClientSchoolTutoringTuitionTransactionAdmin
 )
 admin.site.register(
-    ClientSchool2to1TutoringTuitionTransactionRecord,
+    CST2To1TutoringTuitionRecord,
     ClientSchool2to1TutoringTuitionTransactionAdmin
 )
 admin.site.register(
-    ClientSchoolOnlineTuitionTransactionRecord,
+    CSOnlineTuitionRecord,
     ClientSchoolOnlineTuitionTransactionAdmin
 )
 admin.site.register(
-    ClientSchoolGroupClassesTuitionTransactionRecord,
+    CSGroupClassTuitionRecord,
     ClientSchoolGroupClassesTuitionTransactionAdmin
 )
 admin.site.register(
-    ClientSchoolCompanyClassesTuitionTransactionRecord,
+    CSCompanyClassTuitionRecord,
     ClientSchoolCompanyClassesTuitionTransactionAdmin
 )
 admin.site.register(
-    ClientSchoolPurchasedHoursModificationRecord,
+    CSPurchasedHoursModification,
     ClientSchoolPurchasedHoursModificationRecordAdmin
 )

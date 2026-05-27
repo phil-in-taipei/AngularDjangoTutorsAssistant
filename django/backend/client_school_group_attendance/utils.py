@@ -4,7 +4,7 @@ from client_school_group_attendance.models import (
     GroupClassMeetingRecord,
     GroupClassStudentAttendanceRecord,
 )
-from client_school_transactions.models import ClientSchoolPurchasedHoursModificationRecord
+from client_school_transactions.models import CSPurchasedHoursModification
 
 
 
@@ -49,7 +49,7 @@ def create_group_class_purchased_hours_modification_record(
     enrollment_handler = meeting_record.group_class.group_class_account_enrollment.filter(
         student_or_class__isnull=False
     ).first()
-    ClientSchoolPurchasedHoursModificationRecord.objects.create(
+    CSPurchasedHoursModification.objects.create(
         student_account=student_account,
         bridge=enrollment_handler,
         class_type='group_class',

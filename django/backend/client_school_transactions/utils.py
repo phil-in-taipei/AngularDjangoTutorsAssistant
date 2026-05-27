@@ -1,5 +1,5 @@
 from .models import (
-    ClientSchoolPurchasedHoursModificationRecord,
+    CSPurchasedHoursModification,
 )
 from client_school_accounting.models import AccountingClientSchoolStudentAccount
 
@@ -14,7 +14,7 @@ def create_modification_record_for_tutoring_transaction(
     student_account = AccountingClientSchoolStudentAccount.objects.get(
         id=tutoring_transaction.student_account.id
     )
-    ClientSchoolPurchasedHoursModificationRecord.objects.create(
+    CSPurchasedHoursModification.objects.create(
         student_account=student_account,
         tutoring_transaction=tutoring_transaction,
         class_type='one_to_one_tutoring',
@@ -34,7 +34,7 @@ def create_modification_record_for_two_to_one_transaction(
     student_account = AccountingClientSchoolStudentAccount.objects.get(
         id=two_to_one_transaction.primary_student_account.id
     )
-    ClientSchoolPurchasedHoursModificationRecord.objects.create(
+    CSPurchasedHoursModification.objects.create(
         student_account=student_account,
         two_to_one_transaction=two_to_one_transaction,
         class_type='two_to_one_tutoring',
@@ -54,7 +54,7 @@ def create_modification_record_for_online_transaction(
     student_account = AccountingClientSchoolStudentAccount.objects.get(
         id=online_transaction.student_account.id
     )
-    ClientSchoolPurchasedHoursModificationRecord.objects.create(
+    CSPurchasedHoursModification.objects.create(
         student_account=student_account,
         online_transaction=online_transaction,
         class_type='online_tutoring',
@@ -74,7 +74,7 @@ def create_modification_record_for_group_transaction(
     student_account = AccountingClientSchoolStudentAccount.objects.get(
         id=group_transaction.student_account.id
     )
-    ClientSchoolPurchasedHoursModificationRecord.objects.create(
+    CSPurchasedHoursModification.objects.create(
         student_account=student_account,
         group_transaction=group_transaction,
         class_type='group_class',
@@ -94,7 +94,7 @@ def create_modification_record_for_company_transaction(
     student_account = AccountingClientSchoolStudentAccount.objects.get(
         id=company_transaction.student_account.id
     )
-    ClientSchoolPurchasedHoursModificationRecord.objects.create(
+    CSPurchasedHoursModification.objects.create(
         student_account=student_account,
         company_transaction=company_transaction,
         class_type='company_class',

@@ -5,7 +5,7 @@ from accounting.models import PurchasedHoursModificationRecord
 from client_school_accounting.models import (
     ClientSchoolClassEnrollmentHandler,
 )
-from client_school_transactions.models import ClientSchoolPurchasedHoursModificationRecord
+from client_school_transactions.models import CSPurchasedHoursModification
 from client_school_group_attendance.utils import handle_creation_of_group_class_enrollment_records
 
 
@@ -211,7 +211,7 @@ def create_client_school_purchased_hours_modification_record(
         modification_type = 'class_status_modification_deduct'
     else:
         modification_type = 'class_status_modification_add'
-    ClientSchoolPurchasedHoursModificationRecord.objects.create(
+    CSPurchasedHoursModification.objects.create(
         student_account=student_account,
         bridge=enrollment_handler,
         class_type=class_type,

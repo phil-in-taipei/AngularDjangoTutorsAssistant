@@ -38,7 +38,7 @@ TUTORING_EXPIRATION_PERIODS = (
 
 
 
-class ClientSchoolTutoringTuitionTransactionRecord(models.Model):
+class CSTutoringTuitionRecord(models.Model):
     student_account = models.ForeignKey(
         AccountingClientSchoolStudentAccount, on_delete=models.CASCADE,
         related_name='tutoring_tuition_transactions',
@@ -93,7 +93,7 @@ class ClientSchoolTutoringTuitionTransactionRecord(models.Model):
         ordering = ('-time_stamp',)
 
 
-class ClientSchool2to1TutoringTuitionTransactionRecord(models.Model):
+class CST2To1TutoringTuitionRecord(models.Model):
     primary_student_account = models.ForeignKey(
         AccountingClientSchoolStudentAccount, on_delete=models.CASCADE,
         related_name='two_to_one_tutoring_tuition_transactions',
@@ -154,7 +154,7 @@ class ClientSchool2to1TutoringTuitionTransactionRecord(models.Model):
 
 
 
-class ClientSchoolOnlineTuitionTransactionRecord(models.Model):
+class CSOnlineTuitionRecord(models.Model):
     student_account = models.ForeignKey(
         AccountingClientSchoolStudentAccount, on_delete=models.CASCADE,
         related_name='online_tuition_transactions',
@@ -210,7 +210,7 @@ class ClientSchoolOnlineTuitionTransactionRecord(models.Model):
 
 
 
-class ClientSchoolGroupClassesTuitionTransactionRecord(models.Model):
+class CSGroupClassTuitionRecord(models.Model):
     student_account = models.ForeignKey(
         AccountingClientSchoolStudentAccount, on_delete=models.CASCADE,
         related_name='group_class_tuition_transactions',
@@ -266,7 +266,7 @@ class ClientSchoolGroupClassesTuitionTransactionRecord(models.Model):
 
 
 
-class ClientSchoolCompanyClassesTuitionTransactionRecord(models.Model):
+class CSCompanyClassTuitionRecord(models.Model):
     student_account = models.ForeignKey(
         AccountingClientSchoolStudentAccount, on_delete=models.CASCADE,
         related_name='company_class_tuition_transactions',
@@ -322,7 +322,7 @@ class ClientSchoolCompanyClassesTuitionTransactionRecord(models.Model):
 
 
 
-class ClientSchoolPurchasedHoursModificationRecord(models.Model):
+class CSPurchasedHoursModification(models.Model):
     student_account = models.ForeignKey(
         AccountingClientSchoolStudentAccount, on_delete=models.CASCADE,
         related_name='purchased_hours_modifications'
@@ -340,27 +340,27 @@ class ClientSchoolPurchasedHoursModificationRecord(models.Model):
         default='class_status_modification_deduct'
     )
     tutoring_transaction = models.OneToOneField(
-        ClientSchoolTutoringTuitionTransactionRecord, on_delete=models.CASCADE,
+        CSTutoringTuitionRecord, on_delete=models.CASCADE,
         related_name='purchased_hours_modification',
         blank=True, null=True
     )
     two_to_one_transaction = models.OneToOneField(
-        ClientSchool2to1TutoringTuitionTransactionRecord, on_delete=models.CASCADE,
+        CST2To1TutoringTuitionRecord, on_delete=models.CASCADE,
         related_name='purchased_hours_modification',
         blank=True, null=True
     )
     online_transaction = models.OneToOneField(
-        ClientSchoolOnlineTuitionTransactionRecord, on_delete=models.CASCADE,
+        CSOnlineTuitionRecord, on_delete=models.CASCADE,
         related_name='purchased_hours_modification',
         blank=True, null=True
     )
     group_transaction = models.OneToOneField(
-        ClientSchoolGroupClassesTuitionTransactionRecord, on_delete=models.CASCADE,
+        CSGroupClassTuitionRecord, on_delete=models.CASCADE,
         related_name='purchased_hours_modification',
         blank=True, null=True
     )
     company_transaction = models.OneToOneField(
-        ClientSchoolCompanyClassesTuitionTransactionRecord, on_delete=models.CASCADE,
+        CSCompanyClassTuitionRecord, on_delete=models.CASCADE,
         related_name='purchased_hours_modification',
         blank=True, null=True
     )
