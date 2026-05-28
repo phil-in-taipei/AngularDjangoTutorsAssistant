@@ -14,15 +14,22 @@ import {
 } from './single-class/detail/single-class-info/single-class-info.component';
 
 const routes: Routes = [{ path: '', component: SchedulingComponent, children: [
-  { path: 'accounting', loadChildren: () => import('./accounting/accounting.module').then(m => m.AccountingModule) },
+  { path: 'accounting', loadChildren: () => import('./accounting/accounting.module')
+    .then(m => m.AccountingModule) 
+  },
   { path: 'attendance/:student_or_class_id', component: AttendanceRecordComponent },
   { path: 'calendar', component: MonthlyViewComponent },
+  { path: 'client-schools', loadChildren: () => import('./client-schools/client-schools.module')
+    .then(m => m.ClientSchoolsModule) 
+  },
   { path: 'landing', component: LandingPageComponent },
   { path: 'schedule-daily/:date', component: DailyListComponent },
   { path: 'schedule-single-class', component: ScheduleSingleClassComponent },
   { path: 'single-class/:id', component: SingleClassInfoComponent },
 ] },
-  { path: 'recurring-schedule', loadChildren: () => import('./recurring-schedule/recurring-schedule.module').then(m => m.RecurringScheduleModule) }];
+  { path: 'recurring-schedule', loadChildren: () => import('./recurring-schedule/recurring-schedule.module')
+    .then(m => m.RecurringScheduleModule) }
+  ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
