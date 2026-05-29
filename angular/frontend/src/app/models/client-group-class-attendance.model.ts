@@ -21,3 +21,9 @@ export interface GroupClassMeetingRecordModel {
 export interface GroupClassAttendanceSubmitModel {
   attendance_records: GroupClassStudentAttendanceRecordModel[];
 }
+
+export interface GroupClassAttendanceBulkUpdateResponseModel {
+  updated_records: GroupClassStudentAttendanceRecordModel[];
+  hours_modification_messages: string[];
+  errors?: { id: number; errors: any }[];
+}
