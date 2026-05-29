@@ -1,0 +1,80 @@
+<div *ngIf="fetchingRecordInProgress">
+  <div class="text-center">
+    <br />
+    <div class="spinner-border text-secondary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <br />
+  </div>
+</div>
+
+<div *ngIf="errorMessage" class="container">
+  <br />
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <h5 class="text-center">{{ errorMessage }}</h5>
+    <button type="button" class="btn-close" (click)="onClearErrorMessage()"
+      data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+</div>
+
+<div *ngIf="successMessage" class="container">
+  <br />
+  <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+    <h5 class="text-center">{{ successMessage }}</h5>
+    <button type="button" class="btn-close" (click)="onClearSuccessMessage()"
+      data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+</div>
+
+<div *ngIf="groupClassMeetingRecord" class="container">
+  <hr class="thin-br" />
+  <h1 class="text-center">{{ groupClassMeetingRecord.group_class_name }}</h1>
+  <hr class="thin-br" />
+  <table style="width:100%">
+    <tr>
+      <th><h4>Teacher</h4></th>
+      <td><h4>{{ groupClassMeetingRecord.teacher_name }}</h4></td>
+    </tr>
+    <tr>
+      <th><h4>Date</h4></th>
+      <td><h4>{{ groupClassMeetingRecord.class_date }}</h4></td>
+    </tr>
+    <tr>
+      <th><h4>Duration</h4></th>
+      <td><h4>{{ groupClassMeetingRecord.class_duration }} hrs</h4></td>
+    </tr>
+  </table>
+  <hr />
+  <h4>Student Attendance</h4>
+  <table style="width:100%">
+    <thead>
+      <tr>
+        <th><h5>Student</h5></th>
+        <th><h5>Status</h5></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let record of groupClassMeetingRecord.student_attendance_records">
+        <td>{{ record.student_name }}</td>
+        <td>{{ record.attendance_status }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <hr />
+  <div class="d-grid gap-2">
+    <button class="btn btn-sm btn-outline-secondary"
+      type="button" (click)="toggleForm()">
+      {{ formVisible ? "Cancel" : "Edit Attendance" }}
+    </button>
+  </div>
+  <hr />
+  <div *ngIf="formVisible">
+    <app-group-class-attendance-edit-form
+      [meetingRecord]="groupClassMeetingRecord"
+      (closeEvent)="closeFormHandler($event)"
+      (submitSuccessEvent)="onSubmitSuccess($event)"
+      (submitErrorEvent)="onSubmitError($event)">
+    </app-group-class-attendance-edit-form>
+  </div>
+  <br />
+</div>

@@ -25,7 +25,7 @@ export class GroupClassAttendanceService {
 
   fetchGroupClassMeetingRecordModelByClassID(scheduled_class_id: number) {
     let token = this.authService.getAuthToken();
-    return this.http.get<GroupClassMeetingRecordModel[]>(
+    return this.http.get<GroupClassMeetingRecordModel>(
       `${environment.apiUrl}/api/client-school-group-attendance/group-class-meeting-record/${scheduled_class_id}/`,
         {
           headers: new HttpHeaders({ 'Authorization': `Token ${token}` })

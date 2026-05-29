@@ -1,0 +1,36 @@
+<form (submit)="onSubmit(attendanceEditForm)" #attendanceEditForm="ngForm">
+  <div *ngFor="let record of editRecords; let i = index">
+    <hr class="thin-br" />
+    <h5>{{ record.student_name }}</h5>
+    <div class="d-flex gap-3 flex-wrap">
+      <div *ngFor="let status of attendanceStatuses" class="form-check">
+        <input
+          class="form-check-input"
+          type="radio"
+          [name]="'attendance_status_' + record.id"
+          [id]="'status_' + record.id + '_' + status"
+          [value]="status"
+          [checked]="getStatusValue(record) === status"
+          (change)="onStatusChange(i, status)"
+        />
+        <label class="form-check-label" [for]="'status_' + record.id + '_' + status">
+          {{ status }}
+        </label>
+      </div>
+    </div>
+  </div>
+  <hr />
+  <div *ngIf="submittingInProgress; else submitButton">
+    <div class="text-center">
+      <div class="spinner-border text-secondary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  </div>
+  <ng-template #submitButton>
+    <div class="d-grid gap-2">
+      <button class="btn btn-dark" type="submit">Submit</button>
+    </div>
+  </ng-template>
+  <br />
+</form>
