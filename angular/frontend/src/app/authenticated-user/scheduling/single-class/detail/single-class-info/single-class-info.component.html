@@ -17,259 +17,254 @@
                     >
                     </app-student-or-class-template-string>
                 </a>
-            </h3>
-        </div>
-        <div *ngIf="classSubmitSuccess$ | async as classSuccessMsg" class="p-1 m-1">
-          <hr class="thin-br"/>
-          <div class="alert alert-secondary alert-dismissible fade show" role="alert">
-            <h5 class="text-center">{{ classSuccessMsg }}</h5>
-            <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
-            data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        </div>
-        <div *ngIf="classSubmitErrMsg$ | async as classErrMsg" class="p-1 m-1">
-          <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <h5 class="text-center">{{ classErrMsg }}</h5>
-            <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
-            data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-          <hr class="thin-br"/>
-        </div>        
-        
-        <div *ngIf="studentOrClassModificationResponse$ | async as updatedPurchasedHours" class="p-1 m-1">
-          <app-edit-class-status-response
-            [studentOrClassModificationResponse]=updatedPurchasedHours>
-          </app-edit-class-status-response>
-        </div>
+              </h3>
+            </div>
+            <div *ngIf="classSubmitSuccess$ | async as classSuccessMsg" class="p-1 m-1">
+              <hr class="thin-br"/>
+              <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+                <h5 class="text-center">{{ classSuccessMsg }}</h5>
+                <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+                data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            </div>
+            <div *ngIf="classSubmitErrMsg$ | async as classErrMsg" class="p-1 m-1">
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <h5 class="text-center">{{ classErrMsg }}</h5>
+                <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+                data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+              <hr class="thin-br"/>
+            </div>        
+            
+            <div *ngIf="studentOrClassModificationResponse$ | async as updatedPurchasedHours" class="p-1 m-1">
+              <app-edit-class-status-response
+                [studentOrClassModificationResponse]=updatedPurchasedHours>
+              </app-edit-class-status-response>
+            </div>
 
-         <div class="container hidden-small" [hidden]="rescheduleFormVisible || editStatusFormVisible">
+            <div class="container hidden-small" [hidden]="rescheduleFormVisible || editStatusFormVisible">
+                <hr class="thin-br"/>
+                <div class="container class-info-display">
+                    <table class="table bg-transparent">
+                        <thead class="bg-transparent">
+                            <tr class="bg-transparent row">
+                              <th class="text-center bg-transparent col"><h4>Date</h4></th>
+                              <th class="text-center bg-transparent col"><h4>Time</h4></th>
+                              <th class="text-center bg-transparent col"><h4>Duration</h4></th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-transparent">
+                            <tr class="bg-transparent row">
+                              <td class="text-center bg-transparent col">
+                                <p>
+                                  {{ 
+                                    (scheduledClass.date.split('-') || []).length === 3 ? 
+                                    monthsAndIntegers[(+scheduledClass.date.split('-')[1]) - 1][0] + ' ' + 
+                                    (+scheduledClass.date.split('-')[2]) + ', ' + 
+                                    scheduledClass.date.split('-')[0] : 
+                                    scheduledClass.date 
+                                  }}
+                                </p>
+                              </td>
+                              <td class="text-center bg-transparent col">
+                                <p>
+                                  {{ scheduledClass.start_time.slice(0, -3) }} -
+                                  {{ scheduledClass.finish_time.slice(0, -3) }}
+                                </p>
+                              </td>
+                              <td class="text-center bg-transparent col">
+                                <p>
+                                  <app-time-in-hours
+                                    [startTime]=scheduledClass.start_time
+                                    [finishTime]=scheduledClass.finish_time
+                                  ></app-time-in-hours> hour(s)
+                                </p>
+                              </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="table bg-transparent class-records-table">
+                        <thead class="bg-transparent">
+                            <tr class="bg-transparent row">
+                              <th class="text-center bg-transparent col"><h4>Contents</h4></th>
+                              <th class="text-center bg-transparent col"><h4>Status</h4></th>
+                              <th class="text-center bg-transparent col"><h4>Notes</h4></th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-transparent">
+                            <tr class="bg-transparent row">
+                              <td class="text-center bg-transparent col">
+                                <p>{{ scheduledClass.class_content }}</p>
+                              </td>
+                              <td *ngIf="scheduledClass.location"
+                                class="text-capitalize text-center bg-transparent col">
+                                <p>
+                                  {{ scheduledClass.class_status.split('_').join(' ') }}
+                                  <app-venue-space-template-string 
+                                    [venueSpaceId]=scheduledClass.location class="bg-transparent"
+                                  >
+                                  </app-venue-space-template-string>
+                                </p>
+                              </td>
+                              <td class="text-capitalize text-center bg-transparent col"
+                                *ngIf="!scheduledClass.location">
+                                <p>{{ scheduledClass.class_status.split('_').join(' ') }}</p>
+                              </td>
+                              <td class="text-center bg-transparent col">
+                                <p>{{ scheduledClass.teacher_notes }}</p>
+                              </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <hr class="thin-br"/>
+            <div class="container small-scr" [hidden]="rescheduleFormVisible || editStatusFormVisible">
+              <table class="profile-table" style="width:100%">
+                  <tr>
+                      <th><h4>Date</h4></th>
+                      <td><h4>
+                        {{ 
+                          (scheduledClass.date.split('-') || []).length === 3 ? 
+                          monthsAndIntegers[(+scheduledClass.date.split('-')[1]) - 1][0] + ' ' + 
+                          (+scheduledClass.date.split('-')[2]) + ', ' + 
+                          scheduledClass.date.split('-')[0] : 
+                          scheduledClass.date 
+                        }}
+                      </h4></td>
+                  </tr>
+                  <tr>
+                      <th><h4>Time</h4></th>
+                      <td>
+                        <h4>{{ scheduledClass.start_time.slice(0, -3) }} - {{ scheduledClass.finish_time.slice(0, -3) }} / 
+                          <app-time-in-hours
+                          [startTime]=scheduledClass.start_time
+                          [finishTime]=scheduledClass.finish_time
+                        ></app-time-in-hours> hour(s)
+                        </h4>
+                      </td>
+                  </tr>
+                  <tr>
+                    <th><h4>Status</h4></th>
+                    <td>
+                      <h4 *ngIf="scheduledClass.location" class="text-capitalize">
+                        {{ scheduledClass.class_status.split('_').join(' ') }}
+                        <app-venue-space-template-string 
+                          [venueSpaceId]=scheduledClass.location class="bg-transparent"
+                        >
+                        </app-venue-space-template-string>
+                      </h4>
+                      <h4 class="text-capitalize" *ngIf="!scheduledClass.location">
+                        {{ scheduledClass.class_status.split('_').join(' ') }}
+                      </h4>
+                    </td>
+                  </tr>
+                  <tr *ngIf="scheduledClass.class_content">
+                    <th><h4>Content</h4></th>
+                    <td><h4>{{ scheduledClass.class_content }}</h4></td>
+                  </tr>
+                  <tr *ngIf="scheduledClass.teacher_notes">
+                    <th><h4>Notes</h4></th>
+                    <td><h4>{{ scheduledClass.teacher_notes }}</h4></td>
+                  </tr>
+              </table>
+            </div>
             <hr class="thin-br"/>
 
-            <div class="container class-info-display">
-            <table class="table bg-transparent">
-                <thead class="bg-transparent">
-                    <tr class="bg-transparent row">
-                      <th class="text-center bg-transparent col"><h4>Date</h4></th>
-                      <th class="text-center bg-transparent col"><h4>Time</h4></th>
-                      <th class="text-center bg-transparent col"><h4>Duration</h4></th>
+            <ng-container *ngIf="scheduledClass.class_status === 'completed' && scheduledClass.group_class_meeting_record !== null && scheduledClass.group_class_meeting_record !== undefined; else standard_buttons">
+              <div class="text-center container">
+                <div class="d-grid gap-2">
+                  <button class="btn btn-sm btn-outline-secondary" type="button"
+                    [routerLink]="['/authenticated-user/scheduling/client-schools/group-class-attendance', scheduledClass.group_class_meeting_record]">
+                    Click here to confirm attendance
+                  </button>
+                </div>
+              </div>
+              <hr class="thin-br"/>
+            </ng-container>
 
-                    </tr>
-                </thead>
-                  <tbody class="bg-transparent">
-                    <tr class="bg-transparent row">
-                      <td class="text-center bg-transparent col">
-                        <p>
-                          {{ 
-                            (scheduledClass.date.split('-') || []).length === 3 ? 
-                            monthsAndIntegers[(+scheduledClass.date.split('-')[1]) - 1][0] + ' ' + 
-                            (+scheduledClass.date.split('-')[2]) + ', ' + 
-                            scheduledClass.date.split('-')[0] : 
-                            scheduledClass.date 
-                          }}
-                        </p>
-
-                      </td>
-                      <td class="text-center bg-transparent col">
-                        <p>
-                          {{ scheduledClass.start_time.slice(0, -3) }} -
-                          {{scheduledClass.finish_time.slice(0, -3) }}
-                        </p>
-                      </td>
-                      <td class="text-center bg-transparent col">
-                        <p>
-                          <app-time-in-hours
-                            [startTime]=scheduledClass.start_time
-                            [finishTime]=scheduledClass.finish_time
-                          ></app-time-in-hours> hour(s)
-                        </p>
-                      </td>
-                    </tr>
-                  </tbody>
-            </table>
-
-            <table class="table bg-transparent class-records-table">
-                <thead class="bg-transparent">
-                    <tr class="bg-transparent row">
-                      <th class="text-center bg-transparent col"><h4>Contents</h4></th>
-                      <th class="text-center bg-transparent col"><h4>Status</h4></th>
-                      <th class="text-center bg-transparent col"><h4>Notes</h4></th>
-                    </tr>
-                </thead>
-                  <tbody class="bg-transparent">
-                    <tr class="bg-transparent row">
-                      <td class="text-center bg-transparent col">
-                        <p>
-                          {{ scheduledClass.class_content }}
-                        </p>
-                      </td>
-                      <td
-                        *ngIf="scheduledClass.location"
-                          class="text-capitalize text-center bg-transparent col">
-                          <p>
-                            {{ scheduledClass.class_status.split('_').join(' ') }}
-                            <app-venue-space-template-string 
-                              [venueSpaceId]=scheduledClass.location class="bg-transparent"
-                            >
-                            </app-venue-space-template-string>
-                          </p>
-                      </td>
-                      <td class="text-capitalize text-center bg-transparent col"
-                        *ngIf="!scheduledClass.location">
-                        <p>
-                          {{ scheduledClass.class_status.split('_').join(' ') }}
-                        </p>
-                      </td>
-                      <td class="text-center bg-transparent col">
-                        <p>
-                          {{ scheduledClass.teacher_notes }}
-                        </p>
-                      </td>
-                    </tr>
-                  </tbody>
-            </table>
-            </div>
-        </div>
-
-
-        <hr class="thin-br"/>
-        <div class="container small-scr" [hidden]="rescheduleFormVisible || editStatusFormVisible">
-          <table class="profile-table" style="width:100%">
-              <tr>
-                  <th><h4>Date</h4></th>
-                  <td><h4>
-                    {{ 
-                      (scheduledClass.date.split('-') || []).length === 3 ? 
-                      monthsAndIntegers[(+scheduledClass.date.split('-')[1]) - 1][0] + ' ' + 
-                      (+scheduledClass.date.split('-')[2]) + ', ' + 
-                      scheduledClass.date.split('-')[0] : 
-                      scheduledClass.date 
-                    }}
-                  </h4></td>
-              </tr>
-              <tr>
-                  <th><h4>Time</h4></th>
-                  <td>
-                    <h4>{{ scheduledClass.start_time.slice(0, -3) }} - {{scheduledClass.finish_time.slice(0, -3) }} / 
-                      <app-time-in-hours
-                      [startTime]=scheduledClass.start_time
-                      [finishTime]=scheduledClass.finish_time
-                    ></app-time-in-hours> hour(s)
-                    </h4>
-                  </td>
-              </tr>
-              <tr>
-                <th><h4>Status</h4></th>
-                <td>
-                  <h4
-                  *ngIf="scheduledClass.location"
-                  class="text-capitalize">
-                    {{ scheduledClass.class_status.split('_').join(' ') }}
-                    <app-venue-space-template-string 
-                      [venueSpaceId]=scheduledClass.location class="bg-transparent"
+            <ng-template #standard_buttons>
+              <div class="container text-center">
+                <div class="d-grid gap-2">
+                  <button class="btn btn-sm btn-outline-secondary" type="button"
+                    (click)="toggleEditStatusForm()">
+                    {{ editStatusFormVisible ? "Never Mind, I'll submit one next time for "
+                    : "Click Here to edit the class status " }}
+                  </button>
+                </div>
+              </div>
+              <hr class="thin-br"/>
+              <div [hidden]="!editStatusFormVisible"
+                [style.opacity]="!editStatusFormVisible ? '0' : '1'"
+                [style.visibility]="!editStatusFormVisible ? 'hidden' : 'visible'"
+                class="m-3 p-2"
+              >
+                <app-edit-class-status-form
+                  [scheduledClass]=scheduledClass
+                  (closeFormEvent)="closeFormHander($event)"
+                >
+                </app-edit-class-status-form>
+                <hr class="thin-br"/>
+              </div>
+              <div>
+                <div class="text-center container">
+                  <div class="d-grid gap-2">
+                    <button class="btn btn-sm btn-outline-secondary" type="button"
+                      (click)="toggleRescheduleForm()">
+                      {{ rescheduleFormVisible ? "Never Mind, I'll reschedule next time for "
+                      : "Click Here to reschedule the class " }}
+                    </button>
+                  </div>
+                </div>
+                <hr class="thin-br"/>
+              </div>
+              <div [hidden]="!rescheduleFormVisible"
+                [style.opacity]="!rescheduleFormVisible ? '0' : '1'"
+                [style.visibility]="!rescheduleFormVisible ? 'hidden' : 'visible'"
+                class="m-3 p-2"
+              >
+                <app-reschedule-class-form
+                  [scheduledClass]=scheduledClass
+                  (closeFormEvent)="closeFormHander($event)"
+                >
+                </app-reschedule-class-form>
+                <hr class="thin-br"/>
+              </div>
+              <div *ngIf="venueSpaces$ | async as venueSpaces">
+                <div>
+                  <div class="text-center container">
+                    <div class="d-grid gap-2">
+                      <button class="btn btn-sm btn-outline-secondary" type="button"
+                        (click)="toggleEditLocationForm()">
+                        {{ editLocationFormVisible ? "Never Mind, I'll edit the location next time"
+                        : "Click Here to edit the location" }}
+                      </button>
+                    </div>
+                  </div>
+                  <hr class="thin-br"/>
+                </div>
+                <div [hidden]="!editLocationFormVisible"
+                  [style.opacity]="!editLocationFormVisible ? '0' : '1'"
+                  [style.visibility]="!editLocationFormVisible ? 'hidden' : 'visible'"
+                  class="m-3 p-2"
+                >
+                  <app-edit-class-location-form
+                    [scheduledClass]=scheduledClass
+                    [venueSpaces]=venueSpaces
+                    (closeFormEvent)="closeFormHander($event)"
                   >
-                   </app-venue-space-template-string>
-                  </h4>
-                  <h4 class="text-capitalize"
-                  *ngIf="!scheduledClass.location">
-                  {{ scheduledClass.class_status.split('_').join(' ') }}
-                  </h4>
-                </td>
-              </tr>
-              <tr *ngIf="scheduledClass.class_content">
-                <th><h4>Content</h4></th>
-                <td><h4>
-                    {{ scheduledClass.class_content }}
-                </h4></td>
-              </tr>
-              <tr *ngIf="scheduledClass.teacher_notes">
-                <th><h4>Notes</h4></th>
-                <td><h4>
-                    {{ scheduledClass.teacher_notes }}
-                </h4></td>
-              </tr>
-          </table>
-        </div>
-        <hr class="thin-br"/>
-        </div>
+                  </app-edit-class-location-form>
+                  <hr class="thin-br"/>
+                </div>
+              </div>
+            </ng-template>
 
-        <div class="container text-center">
-          <div class=" d-grid gap-2">
-            <button class="btn btn-sm btn-outline-secondary" type="button"
-              (click)="toggleEditStatusForm()">
-              {{ editStatusFormVisible ? "Never Mind, I'll submit one next time for "
-              : "Click Here to edit the class status " }}
-            </button>
-          </div>
         </div>
-        <hr class="thin-br"/>
-        <div [hidden]="!editStatusFormVisible"
-          [style.opacity]="!editStatusFormVisible ? '0' : '1'"
-          [style.visibility]="!editStatusFormVisible ? 'hidden' : 'visible'"
-          class="m-3 p-2"
-        >
-          <app-edit-class-status-form 
-            [scheduledClass]=scheduledClass
-            (closeFormEvent)="closeFormHander($event)"
-          >
-          </app-edit-class-status-form>
-          <hr class="thin-br"/>
-        </div>
-      </div>
-      <div>
-        <div class="text-center container">
-          <div class="d-grid gap-2">
-            <button class="btn btn-sm btn-outline-secondary" type="button"
-              (click)="toggleRescheduleForm()">
-              {{ rescheduleFormVisible ? "Never Mind, I'll reschedule next time for "
-              : "Click Here to reschedule the class " }}
-            </button>
-          </div>
-        </div>
-        <hr class="thin-br"/>
-      </div>
-      
-      <div [hidden]="!rescheduleFormVisible"
-        [style.opacity]="!rescheduleFormVisible ? '0' : '1'"
-        [style.visibility]="!rescheduleFormVisible ? 'hidden' : 'visible'"
-        class="m-3 p-2"
-      >
-        <app-reschedule-class-form 
-          [scheduledClass]=scheduledClass
-          (closeFormEvent)="closeFormHander($event)"
-        >
-        </app-reschedule-class-form>
-        <hr class="thin-br"/>
-      </div>
-    <div *ngIf="venueSpaces$ | async as venueSpaces">
-      <div>
-        <div class="text-center container">
-          <div class="d-grid gap-2">
-            <button class="btn btn-sm btn-outline-secondary" type="button"
-              (click)="toggleEditLocationForm()">
-              {{ editLocationFormVisible ? "Never Mind, I'll edit the location next time"
-              : "Click Here to edit the location" }}
-            </button>
-          </div>
-        </div>
-        <hr class="thin-br"/>
-      </div>
-      
-      <div [hidden]="!editLocationFormVisible"
-        [style.opacity]="!editLocationFormVisible ? '0' : '1'"
-        [style.visibility]="!editLocationFormVisible ? 'hidden' : 'visible'"
-        class="m-3 p-2"
-      >
-        <app-edit-class-location-form 
-          [scheduledClass]=scheduledClass
-          [venueSpaces]=venueSpaces
-          (closeFormEvent)="closeFormHander($event)"
-        >
-        </app-edit-class-location-form>
-        <hr class="thin-br"/>
-      </div>
     </div>
-
 </div>
+
 <ng-template #calendar_link>
     <hr class="thin-br"/>
     <div class="text-center">
@@ -279,4 +274,4 @@
       </button>
     </div>
     <hr class="thin-br"/>
-  </ng-template>
+</ng-template>
