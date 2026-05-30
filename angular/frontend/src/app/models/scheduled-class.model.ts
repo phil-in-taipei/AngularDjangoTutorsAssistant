@@ -47,6 +47,7 @@ export interface ScheduledClassModel {
     class_status: string;
     teacher_notes: string;
     class_content: string;
+    group_class_meeting_record: number | null;
 }
 
 export interface StudentOrClassAttendanceRecordResponse {

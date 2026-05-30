@@ -8,11 +8,13 @@ from venues.models import VenueSpace
 
 
 class ScheduledClassSerializer(serializers.ModelSerializer):
+    group_class_meeting_record = serializers.PrimaryKeyRelatedField(read_only=True)
     location = serializers.PrimaryKeyRelatedField(
         queryset=VenueSpace.objects.all(),
         allow_null=True,
         required=False
     )
+
     class Meta:
         model = ScheduledClass
         fields = (
@@ -20,7 +22,8 @@ class ScheduledClassSerializer(serializers.ModelSerializer):
             'date', 'teacher',
             'start_time', 'finish_time', 
             'location', 'class_status', 
-            'teacher_notes', 'class_content'
+            'teacher_notes', 'class_content',
+            'group_class_meeting_record'
         )
 
 class ScheduledClassGoogleCalendarSerializer(serializers.ModelSerializer):
