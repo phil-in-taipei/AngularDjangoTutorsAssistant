@@ -82,12 +82,17 @@ class ScheduledClassStatusConfirmationViewSet(APIView):
                 transaction_type=transaction_type
             )
 
-        if is_client_school_account(scheduled_class.student_or_class) and number_of_hours_purchased_should_be_updated(transaction_type):
-            response['client_school_accounting_update_message'] = handle_client_school_purchased_hours_modification(
-                scheduled_class=scheduled_class, 
-                student_or_class=student_or_class, 
-                transaction_type=transaction_type
+        if is_client_school_account(student_or_class) and number_of_hours_purchased_should_be_updated(transaction_type):
+            client_school_response = handle_client_school_purchased_hours_modification(
+                scheduled_class=scheduled_class,
+                student_or_class=student_or_class,
+                transaction_type=transaction_type,
             )
+            if client_school_response:
+                response['client_school_accounting_update_message'] = client_school_response['message']
+                if client_school_response['meeting_record_id'] is not None:
+                    response['scheduled_class']['group_class_meeting_record'] = client_school_response[
+                        'meeting_record_id']
 
         return Response(
             response,

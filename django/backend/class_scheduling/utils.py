@@ -350,21 +350,33 @@ def handle_client_school_purchased_hours_modification(
     class_enrollment_type = enrollment_handler.class_enrollment_type
 
     if class_enrollment_type == 'one_to_one_tutoring':
-        return handle_one_to_one_tutoring_hours_modification(
-            enrollment_handler, transaction_type, duration
-        )
+        return {
+            'message': handle_one_to_one_tutoring_hours_modification(
+                enrollment_handler, transaction_type, duration
+            ),
+            'meeting_record_id': None,
+        }
     elif class_enrollment_type == 'two_to_one_tutoring':
-        return handle_two_to_one_tutoring_hours_modification(
-            enrollment_handler, transaction_type, duration
-        )
+        return {
+            'message': handle_two_to_one_tutoring_hours_modification(
+                enrollment_handler, transaction_type, duration
+            ),
+            'meeting_record_id': None,
+        }
     elif class_enrollment_type == 'online_tutoring':
-        return handle_online_tutoring_hours_modification(
-            enrollment_handler, transaction_type, duration
-        )
+        return {
+            'message': handle_online_tutoring_hours_modification(
+                enrollment_handler, transaction_type, duration
+            ),
+            'meeting_record_id': None,
+        }
     elif class_enrollment_type == 'company_class':
-        return handle_company_class_hours_modification(
-            enrollment_handler, transaction_type, duration
-        )
+        return {
+            'message': handle_company_class_hours_modification(
+                enrollment_handler, transaction_type, duration
+            ),
+            'meeting_record_id': None,
+        }
     elif class_enrollment_type == 'group_class':
         if transaction_type == 'deduct':
             return handle_creation_of_group_class_enrollment_records(
@@ -373,7 +385,9 @@ def handle_client_school_purchased_hours_modification(
                 duration=duration,
             )
         else:
-            return f"Group class status changed — no attendance records created"
+            return {
+                'message': 'Group class status changed — no attendance records created',
+                'meeting_record_id': None,
+            }
 
     return None
-

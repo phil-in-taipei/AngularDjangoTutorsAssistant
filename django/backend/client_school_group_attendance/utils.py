@@ -7,13 +7,24 @@ from client_school_group_attendance.models import (
 from client_school_transactions.models import CSPurchasedHoursModification
 
 
-
 def handle_creation_of_group_class_enrollment_records(
     scheduled_class, enrollment_handler, duration
 ):
     group_class = enrollment_handler.client_group_class
     if group_class is None:
         return None
+
+    # Check if a meeting record already exists for this scheduled class
+    if GroupClassMeetingRecord.objects.filter(
+        scheduled_class=scheduled_class
+    ).exists():
+        existing_record = GroupClassMeetingRecord.objects.get(
+            scheduled_class=scheduled_class
+        )
+        return {
+            'message': f"Group class meeting record already exists for {group_class.group_class_name}",
+            'meeting_record_id': existing_record.id,
+        }
 
     teacher = scheduled_class.teacher
     teacher_name = f"{teacher.given_name} {teacher.surname}"
@@ -34,7 +45,10 @@ def handle_creation_of_group_class_enrollment_records(
             attendance_status='scheduled',
         )
 
-    return f"Group class meeting record created for {group_class.group_class_name} with {enrolled_students.count()} students"
+    return {
+        'message': f"Group class meeting record created for {group_class.group_class_name} with {enrolled_students.count()} students",
+        'meeting_record_id': meeting_record.id,
+    }
 
 
 def create_group_class_purchased_hours_modification_record(
