@@ -70,9 +70,14 @@ class GroupClassMeetingRecordSerializer(serializers.ModelSerializer):
 
 
 class GroupClassStudentAttendanceRecordUpdateSerializer(serializers.ModelSerializer):
+    student_name = serializers.CharField(
+        source='student_account.client_student_name',
+        read_only=True
+    )
+
     class Meta:
         model = GroupClassStudentAttendanceRecord
-        fields = ('id', 'attendance_status')
+        fields = ('id', 'student_name',  'attendance_status', 'time_stamp')
 
     def validate_attendance_status(self, value):
         valid_choices = [choice[0] for choice in ATTENDANCE_CONFIRMATION_CHOICES]
