@@ -1,21 +1,27 @@
 <form (submit)="onSubmit(attendanceEditForm)" #attendanceEditForm="ngForm">
   <div *ngFor="let record of editRecords; let i = index">
-    <hr class="thin-br" />
-    <h5>{{ record.student_name }}</h5>
-    <div class="d-flex gap-3 flex-wrap">
-      <div *ngFor="let status of attendanceStatuses" class="form-check">
-        <input
-          class="form-check-input"
-          type="radio"
-          [name]="'attendance_status_' + record.id"
-          [id]="'status_' + record.id + '_' + status"
-          [value]="status"
-          [checked]="getStatusValue(record) === status"
-          (change)="onStatusChange(i, status)"
-        />
-        <label class="form-check-label" [for]="'status_' + record.id + '_' + status">
-          {{ status }}
-        </label>
+    <div class="card mb-3 bg-transparent">
+      <div class="card-body" bg-transparent>
+        <h5 class="card-title mb-3">{{ record.student_name }}</h5>
+        <div class="btn-group w-100" role="group">
+          <ng-container *ngFor="let status of attendanceStatuses">
+            <input
+              type="radio"
+              class="btn-check"
+              [name]="'attendance_status_' + record.id"
+              [id]="'status_' + record.id + '_' + status"
+              [value]="status"
+              [checked]="getStatusValue(record) === status"
+              (change)="onStatusChange(i, status)"
+              autocomplete="off"
+            />
+            <label
+              class="btn btn-outline-secondary text-capitalize"
+              [for]="'status_' + record.id + '_' + status">
+              {{ status.split('_').join(' ') }}
+            </label>
+          </ng-container>
+        </div>
       </div>
     </div>
   </div>
