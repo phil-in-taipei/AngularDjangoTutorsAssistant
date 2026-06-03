@@ -30,36 +30,56 @@
   <hr class="thin-br" />
   <h1 class="text-center">{{ groupClassMeetingRecord.group_class_name }}</h1>
   <hr class="thin-br" />
-  <table style="width:100%">
-    <tr>
-      <th><h4>Teacher</h4></th>
-      <td><h4>{{ groupClassMeetingRecord.teacher_name }}</h4></td>
-    </tr>
-    <tr>
-      <th><h4>Date</h4></th>
-      <td><h4>{{ groupClassMeetingRecord.class_date }}</h4></td>
-    </tr>
-    <tr>
-      <th><h4>Duration</h4></th>
-      <td><h4>{{ groupClassMeetingRecord.class_duration }} hrs</h4></td>
-    </tr>
-  </table>
+
+  <div class="card mb-3 bg-transparent table-responsive">
+    <div class="card-body bg-transparent">
+      <table class="table bg-transparent" style="width:100%">
+        <tr class="bg-transparent text-center">
+          <th class="bg-transparent"><h4 class="bg-transparent">Teacher</h4></th>
+          <td class="bg-transparent"><h4 class="bg-transparent">{{ groupClassMeetingRecord.teacher_name }}</h4></td>
+        </tr>
+        <tr class="bg-transparent text-center">
+          <th class="bg-transparent"><h4 class="bg-transparent">Date</h4></th>
+          <td class="bg-transparent"><h4 class="bg-transparent">{{ groupClassMeetingRecord.class_date }}</h4></td>
+        </tr>
+        <tr class="bg-transparent text-center">
+          <th class="bg-transparent"><h4 class="bg-transparent">Duration</h4></th>
+          <td class="bg-transparent">
+            <h4 class="bg-transparent">
+              {{ groupClassMeetingRecord.class_duration }} hrs
+            </h4>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
   <hr />
-  <h4>Student Attendance</h4>
-  <table style="width:100%">
-    <thead>
-      <tr>
-        <th><h5>Student</h5></th>
-        <th><h5>Status</h5></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let record of groupClassMeetingRecord.student_attendance_records">
-        <td>{{ record.student_name }}</td>
-        <td>{{ record.attendance_status }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <h4 class="text-center">Student Attendance</h4>
+  <hr />
+  <div class="card bg-transparent mb-3 table-responsive">
+    <div class="card-body bg-transparent">
+      <table class="table bg-transparent" style="width:100%">
+        <thead>
+          <tr class="bg-transparent text-center">
+            <th class="bg-transparent"><h5 class="bg-transparent">Student</h5></th>
+            <th class="bg-transparent"><h5 class="bg-transparent">Status</h5></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of groupClassMeetingRecord.student_attendance_records" class="bg-transparent text-center">
+            <td class="bg-transparent"><h5>{{ record.student_name }}</h5></td>
+            <td class="text-capitalize bg-transparent">
+              <h5>
+              {{ record.attendance_status === 'scheduled' ? 'Pending' : record.attendance_status.split('_').join(' ') }}
+              </h5>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <hr />
   <div class="d-grid gap-2">
     <button class="btn btn-sm btn-outline-secondary"
@@ -78,3 +98,4 @@
   </div>
   <br />
 </div>
+

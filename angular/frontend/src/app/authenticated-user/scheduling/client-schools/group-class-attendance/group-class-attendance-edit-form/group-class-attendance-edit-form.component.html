@@ -1,9 +1,34 @@
+<div class="container">
+
 <form (submit)="onSubmit(attendanceEditForm)" #attendanceEditForm="ngForm">
   <div *ngFor="let record of editRecords; let i = index">
     <div class="card mb-3 bg-transparent">
-      <div class="card-body" bg-transparent>
-        <h5 class="card-title mb-3">{{ record.student_name }}</h5>
-        <div class="btn-group w-100" role="group">
+      <div class="card-body bg-transparent">
+        <h5 class="card-title mb-3 text-center">{{ record.student_name }}</h5>
+
+        <!-- Vertical layout for small screens -->
+        <div class="btn-group-vertical w-100 d-flex d-sm-none" role="group">
+          <ng-container *ngFor="let status of attendanceStatuses">
+            <input
+              type="radio"
+              class="btn-check"
+              [name]="'sm_attendance_status_' + record.id"
+              [id]="'sm_status_' + record.id + '_' + status"
+              [value]="status"
+              [checked]="getStatusValue(record) === status"
+              (change)="onStatusChange(i, status)"
+              autocomplete="off"
+            />
+            <label
+              class="btn btn-outline-secondary text-capitalize"
+              [for]="'sm_status_' + record.id + '_' + status">
+              {{ status.split('_').join(' ') }}
+            </label>
+          </ng-container>
+        </div>
+
+        <!-- Horizontal layout for larger screens -->
+        <div class="btn-group w-100 d-none d-sm-flex" role="group">
           <ng-container *ngFor="let status of attendanceStatuses">
             <input
               type="radio"
@@ -22,6 +47,7 @@
             </label>
           </ng-container>
         </div>
+
       </div>
     </div>
   </div>
@@ -40,3 +66,6 @@
   </ng-template>
   <br />
 </form>
+
+
+</div>
