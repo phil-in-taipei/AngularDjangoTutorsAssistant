@@ -78,4 +78,30 @@ export class GroupClassAttendanceDetailComponent implements OnInit {
     this.errorMessage = $event;
   }
 
+  get attendanceByStatus(): { label: string, names: string }[] {
+    if (!this.groupClassMeetingRecord) return [];
+
+    const statusLabels: { [key: string]: string } = {
+      'scheduled': 'Pending',
+      'completed': 'Completed',
+      'cancelled': 'Cancelled',
+      'same_day_cancellation': 'Same Day Cancellation'
+    };
+
+    const groups: { [key: string]: string[] } = {};
+
+    for (const record of this.groupClassMeetingRecord.student_attendance_records) {
+      const status = record.attendance_status;
+      if (!groups[status]) {
+        groups[status] = [];
+      }
+      groups[status].push(record.student_name);
+    }
+
+    return Object.keys(groups).map(status => ({
+      label: statusLabels[status] || status,
+      names: groups[status].join(', ')
+    }));
+  }
+
 }

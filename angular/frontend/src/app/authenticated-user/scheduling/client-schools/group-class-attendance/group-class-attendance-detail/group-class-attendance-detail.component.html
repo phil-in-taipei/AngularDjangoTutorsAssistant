@@ -27,75 +27,42 @@
 </div>
 
 <div *ngIf="groupClassMeetingRecord" class="container">
-  <hr class="thin-br" />
-  <h1 class="text-center">{{ groupClassMeetingRecord.group_class_name }}</h1>
-  <hr class="thin-br" />
-
-  <div class="card mb-3 bg-transparent table-responsive">
-    <div class="card-body bg-transparent">
-      <table class="table bg-transparent" style="width:100%">
-        <tr class="bg-transparent text-center">
-          <th class="bg-transparent"><h4 class="bg-transparent">Teacher</h4></th>
-          <td class="bg-transparent"><h4 class="bg-transparent">{{ groupClassMeetingRecord.teacher_name }}</h4></td>
-        </tr>
-        <tr class="bg-transparent text-center">
-          <th class="bg-transparent"><h4 class="bg-transparent">Date</h4></th>
-          <td class="bg-transparent"><h4 class="bg-transparent">{{ groupClassMeetingRecord.class_date }}</h4></td>
-        </tr>
-        <tr class="bg-transparent text-center">
-          <th class="bg-transparent"><h4 class="bg-transparent">Duration</h4></th>
-          <td class="bg-transparent">
-            <h4 class="bg-transparent">
-              {{ groupClassMeetingRecord.class_duration }} hrs
-            </h4>
-          </td>
-        </tr>
-      </table>
+    <br />
+    <div class="class-info-display p-3">
+    <h2 class="text-center">Student Attendance</h2>
+    <hr class="thin-white" />
+    <h4 class="bg-transparent text-center">
+      {{ groupClassMeetingRecord.group_class_name }}: {{ groupClassMeetingRecord.class_date }} ({{ groupClassMeetingRecord.class_duration }} hrs)
+    </h4> 
+    <hr class="thin-white"/>
+    <div class="card bg-transparent mb-1" [hidden]="formVisible">
+      <div class="card-body bg-transparent">
+        <div *ngFor="let group of attendanceByStatus">
+          <h4 class="text-center"><span style="color: #758d97">
+            {{ group.label }}:</span> {{ group.names }}
+          </h4>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <hr />
-  <h4 class="text-center">Student Attendance</h4>
-  <hr />
-  <div class="card bg-transparent mb-3 table-responsive">
-    <div class="card-body bg-transparent">
-      <table class="table bg-transparent" style="width:100%">
-        <thead>
-          <tr class="bg-transparent text-center">
-            <th class="bg-transparent"><h5 class="bg-transparent">Student</h5></th>
-            <th class="bg-transparent"><h5 class="bg-transparent">Status</h5></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let record of groupClassMeetingRecord.student_attendance_records" class="bg-transparent text-center">
-            <td class="bg-transparent"><h5>{{ record.student_name }}</h5></td>
-            <td class="text-capitalize bg-transparent">
-              <h5>
-              {{ record.attendance_status === 'scheduled' ? 'Pending' : record.attendance_status.split('_').join(' ') }}
-              </h5>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <hr class="thin-white"/>
+    <div class="d-grid gap-2">
+      <button class="btn btn-sm btn-outline-secondary"
+        type="button" (click)="toggleForm()">
+        {{ formVisible ? "Cancel" : "Edit Attendance" }}
+      </button>
     </div>
+    <hr class="thin-white"/>
+    <div *ngIf="formVisible">
+      <app-group-class-attendance-edit-form
+        [meetingRecord]="groupClassMeetingRecord"
+        (closeEvent)="closeFormHandler($event)"
+        (submitSuccessEvent)="onSubmitSuccess($event)"
+        (submitErrorEvent)="onSubmitError($event)">
+      </app-group-class-attendance-edit-form>
+    </div>
+    <br />
   </div>
-
-  <hr />
-  <div class="d-grid gap-2">
-    <button class="btn btn-sm btn-outline-secondary"
-      type="button" (click)="toggleForm()">
-      {{ formVisible ? "Cancel" : "Edit Attendance" }}
-    </button>
-  </div>
-  <hr />
-  <div *ngIf="formVisible">
-    <app-group-class-attendance-edit-form
-      [meetingRecord]="groupClassMeetingRecord"
-      (closeEvent)="closeFormHandler($event)"
-      (submitSuccessEvent)="onSubmitSuccess($event)"
-      (submitErrorEvent)="onSubmitError($event)">
-    </app-group-class-attendance-edit-form>
-  </div>
-  <br />
+  <br class="thin-white"/>
 </div>
 

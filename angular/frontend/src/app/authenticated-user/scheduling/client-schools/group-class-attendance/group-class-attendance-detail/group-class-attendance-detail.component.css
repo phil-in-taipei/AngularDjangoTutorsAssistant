@@ -1,3 +1,21 @@
 h4, h5 {
   color: #758d97;
 }
+
+.class-info-display {
+    border: 1px solid #758d97;
+    border-radius: 3%;
+}
+
+hr.thin-white {
+  border: 1px solid #758d97;
+  opacity: 1;
+}
+
+.class-info-table td,
+.class-info-table th,
+.class-info-table thead tr,
+.class-info-table tbody tr {
+  border-color: #758d97;
+  color: #758d97;
+}
