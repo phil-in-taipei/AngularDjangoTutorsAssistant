@@ -85,6 +85,11 @@ class StaffClientSchoolClassEnrollmentHandlerAdmin(admin.ModelAdmin):
         'client_school_company_account',
         'client_group_class',
     )
+    autocomplete_fields = [
+        'student_or_class', 'client_school_one_to_one_account',
+        'client_school_online_account', 'client_school_company_account',
+        'client_group_class',
+    ]
     search_fields = (
         'student_or_class__student_or_class_name',
         'student_or_class__teacher__surname',
