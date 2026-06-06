@@ -10,14 +10,14 @@ def random_string_generator(
 
 
 def validate_tuition_rate(value):
-    if 500 < value <= 2000:
+    if 400 < value <= 2000:
         return value
     else:
         raise ValidationError("That rate is invalid!")
 
 
 def validate_number_of_hours_purchased(value):
-    if value <= 100:
+    if value <= 120:
         return value
     else:
-        raise ValidationError("100 is the maximum amount for purchase!")
+        raise ValidationError("120 is the maximum amount for purchase!")
