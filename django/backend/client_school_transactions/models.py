@@ -37,13 +37,12 @@ TUTORING_EXPIRATION_PERIODS = (
 )
 
 
-
 class CSTutoringTuitionRecord(models.Model):
     student_account = models.ForeignKey(
         AccountingClientSchoolStudentAccount, on_delete=models.CASCADE,
         related_name='tutoring_tuition_transactions',
     )
-    transaction_amount = models.PositiveSmallIntegerField(
+    transaction_amount = models.PositiveIntegerField(
         validators=[validate_tuition_transaction_amount], default=33000
     )
     transaction_type = models.CharField(
@@ -102,7 +101,7 @@ class CST2To1TutoringTuitionRecord(models.Model):
         AccountingClientSchoolStudentAccount, on_delete=models.CASCADE,
         related_name='two_to_one_shared_tutoring_tuition_transactions',
     )
-    transaction_amount = models.PositiveSmallIntegerField(
+    transaction_amount = models.PositiveIntegerField(
         validators=[validate_tuition_transaction_amount], default=16500
     )
     transaction_type = models.CharField(
@@ -153,13 +152,12 @@ class CST2To1TutoringTuitionRecord(models.Model):
         ordering = ('-time_stamp',)
 
 
-
 class CSOnlineTuitionRecord(models.Model):
     student_account = models.ForeignKey(
         AccountingClientSchoolStudentAccount, on_delete=models.CASCADE,
         related_name='online_tuition_transactions',
     )
-    transaction_amount = models.PositiveSmallIntegerField(
+    transaction_amount = models.PositiveIntegerField(
         validators=[validate_tuition_transaction_amount],
     )
     transaction_type = models.CharField(
@@ -209,13 +207,12 @@ class CSOnlineTuitionRecord(models.Model):
         ordering = ('-time_stamp',)
 
 
-
 class CSGroupClassTuitionRecord(models.Model):
     student_account = models.ForeignKey(
         AccountingClientSchoolStudentAccount, on_delete=models.CASCADE,
         related_name='group_class_tuition_transactions',
     )
-    transaction_amount = models.PositiveSmallIntegerField(
+    transaction_amount = models.PositiveIntegerField(
         validators=[validate_tuition_transaction_amount], default=33000
     )
     transaction_type = models.CharField(
@@ -265,13 +262,12 @@ class CSGroupClassTuitionRecord(models.Model):
         ordering = ('-time_stamp',)
 
 
-
 class CSCompanyClassTuitionRecord(models.Model):
     student_account = models.ForeignKey(
         AccountingClientSchoolStudentAccount, on_delete=models.CASCADE,
         related_name='company_class_tuition_transactions',
     )
-    transaction_amount = models.PositiveSmallIntegerField(
+    transaction_amount = models.PositiveIntegerField(
         validators=[validate_tuition_transaction_amount], default=33000
     )
     transaction_type = models.CharField(
@@ -319,7 +315,6 @@ class CSCompanyClassTuitionRecord(models.Model):
     class Meta:
         verbose_name_plural = 'Company Classes Tuition Transaction Records'
         ordering = ('-time_stamp',)
-
 
 
 class CSPurchasedHoursModification(models.Model):
