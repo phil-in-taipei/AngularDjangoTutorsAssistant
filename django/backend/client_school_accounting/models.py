@@ -192,7 +192,6 @@ class AccountingClientSchoolGroupClass(models.Model):
         unique_together = ('client_school', 'group_class_name')
 
 
-
 class ClientSchoolClassEnrollmentHandler(models.Model):
     student_or_class = models.OneToOneField(
         StudentOrClass, on_delete=models.SET_NULL,
@@ -245,6 +244,11 @@ class ClientSchoolClassEnrollmentHandler(models.Model):
                 raise ValidationError(
                     'One-to-one tutoring requires a client_school_one_to_one_account.'
                 )
+            if self.client_school_one_to_one_account.purchased_tutoring_hours is None:
+                raise ValidationError(
+                    'The linked student account does not have tutoring hours set up. '
+                    'Please set purchased_tutoring_hours to zero or more before linking.'
+                )
             if self.client_school_online_account is not None:
                 raise ValidationError(
                     'One-to-one tutoring cannot have an online account.'
@@ -280,6 +284,10 @@ class ClientSchoolClassEnrollmentHandler(models.Model):
             if self.client_school_online_account is None:
                 raise ValidationError(
                     'Online tutoring requires a client_school_online_account.'
+                )
+            if self.client_school_online_account.purchased_online_hours is None:
+                raise ValidationError(
+                    'The linked student account does not have online hours set up.'
                 )
             if self.client_school_one_to_one_account is not None:
                 raise ValidationError(
@@ -317,6 +325,10 @@ class ClientSchoolClassEnrollmentHandler(models.Model):
                 raise ValidationError(
                     'Company class requires a client_school_company_account.'
                 )
+            if self.client_school_company_account.purchased_company_hours is None:
+                raise ValidationError(
+                    'The linked student account does not have company hours set up.'
+                )
             if self.client_school_one_to_one_account is not None:
                 raise ValidationError(
                     'Company class cannot have a one-to-one account.'
@@ -337,8 +349,18 @@ class ClientSchoolClassEnrollmentHandler(models.Model):
                     raise ValidationError(
                         'Two-to-one tutoring cannot have more than 2 student accounts.'
                     )
+                invalid_accounts = self.client_school_two_to_one_accounts.filter(
+                    purchased_tutoring_hours__isnull=True
+                )
+                if invalid_accounts.exists():
+                    invalid_names = ', '.join(
+                        account.client_student_name for account in invalid_accounts
+                    )
+                    raise ValidationError(
+                        f'The following linked accounts do not have tutoring hours set up: {invalid_names}.'
+                    )
             elif self.class_enrollment_type in (
-                'one_to_one_tutoring', 'online_tutoring', 'company_class', 'group_class'
+                    'one_to_one_tutoring', 'online_tutoring', 'company_class', 'group_class'
             ):
                 if self.client_school_two_to_one_accounts.exists():
                     raise ValidationError(
