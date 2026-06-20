@@ -1,0 +1,207 @@
+function myFunction() {
+  // 1. Get the purchase date baseline from J2 (Row 2, Column 10)
+  const purchaseDate = getPurchaseDate();
+  Logger.log(`Original Purchase Date Baseline: ${purchaseDate}`);
+  
+  if (!purchaseDate) {
+    Logger.log("Error: Purchase date in J2 is empty or invalid. Aborting sync.");
+    return;
+  }
+
+  // 2. Start iterating across columns
+  // Column A = 1, Column D = 4, Column G = 7, etc. (Increments of 3)
+  let startCol = 1; 
+  //const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  
+  while (true) {
+    // The ID code is in Row 5, of the SECOND column in the pair (Column B=2, E=5, H=8, etc.)
+    const idColumn = startCol + 1;
+    const account_id = sheet.getRange(5, idColumn).getValue();
+    
+    // If the ID cell is blank, we've reached the end of the teachers for this sheet
+    if (!account_id) {
+      Logger.log(`No Teacher/Account ID found at Row 5, Column ${idColumn}. Stopping synchronization loop.`);
+      break;
+    }
+    
+    Logger.log(`--------------------------------------------------`);
+    Logger.log(`Processing Teacher/Account ID: ${account_id} in Columns ${startCol}-${idColumn}`);
+    
+    // 3. Find the last date recorded or fall back to the purchase date
+    const dateAndRow = getAttendanceDetailsForColumn(startCol, purchaseDate);
+    Logger.log(`Target query date: ${dateAndRow.queryDate}`);
+    Logger.log(`Append starts after Row: ${dateAndRow.lastRow}`);
+    
+    // 4. Fetch from API and update the specific columns
+    fetchAccountClassesAndSync(dateAndRow.queryDate, account_id, dateAndRow.lastRow, startCol);
+    
+    // Move to the next block (3 columns over: A -> D -> G)
+    startCol += 3;
+  }
+}
+
+/**
+ * Retrieves the base purchase date located in cell J2 (Row 2, Column 10).
+ * @return {string|null} The formatted date string (YYYY-MM-DD) or null.
+ */
+function getPurchaseDate() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const rawDate = sheet.getRange(2, 10).getValue(); // J2
+  
+  if (rawDate instanceof Date) {
+    return Utilities.formatDate(rawDate, Session.getScriptTimeZone(), "yyyy-MM-dd");
+  } else if (rawDate) {
+    return convertToIsoFormat(rawDate.toString());
+  }
+  return null;
+}
+
+/**
+ * Finds the last date and row number in a given date column starting from Row 7.
+ * Fallbacks to the purchase date if the column contains no data.
+ * @param {number} colIndex The column index containing dates (e.g., 1 for A, 4 for D).
+ * @param {string} purchaseDate The fallback date if no records exist.
+ * @return {Object} Contains queryDate (string) and lastRow (integer).
+ */
+function getAttendanceDetailsForColumn(colIndex, purchaseDate) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const startRow = 7;
+  const lastRowInSheet = sheet.getLastRow();
+  
+  // If sheet doesn't even extend to row 7, it's definitively empty
+  if (lastRowInSheet < startRow) {
+    return { queryDate: purchaseDate, lastRow: startRow - 1 };
+  }
+  
+  // Fetch data down from row 7 in our specific date column
+  const range = sheet.getRange(startRow, colIndex, lastRowInSheet - startRow + 1, 1);
+  const values = range.getValues();
+  
+  let finalDate = "";
+  let lastRow = startRow - 1; // Default to row 6 if nothing is found (so row++ becomes 7)
+  
+  // Iterate backwards from the bottom of the data range
+  for (let i = values.length - 1; i >= 0; i--) {
+    if (values[i][0] !== "" && values[i][0] !== null) {
+      const cellValue = values[i][0];
+      finalDate = (cellValue instanceof Date)
+        ? Utilities.formatDate(cellValue, Session.getScriptTimeZone(), "yyyy-MM-dd")
+        : convertToIsoFormat(cellValue.toString());
+      lastRow = startRow + i;
+      break;
+    }
+  }
+  
+  // If finalDate is still empty, it means no records were in this column block yet
+  return {
+    queryDate: finalDate ? finalDate : purchaseDate,
+    lastRow: lastRow
+  };
+}
+
+/**
+ * Fetches data from the endpoint and initiates the sheet writing step.
+ */
+function fetchAccountClassesAndSync(finalDate, account_id, lastRow, startCol) {
+  const authData = getTokenFromTutorsAssistant();
+  if (!authData || !authData.access) {
+    Logger.log("Error: Could not retrieve authentication token. Aborting sync.");
+    return;
+  }
+  
+  const url = `https://tutorsassistant.pythonanywhere.com/api/scheduling/classes/confirmed-since-date/by-account-id/${finalDate}/${account_id}/`;
+  const options = {
+    method: 'get',
+    headers: { 'Authorization': 'Token ' + authData.access, 'Content-Type': 'application/json' }
+  };
+  
+  try {
+    const response = UrlFetchApp.fetch(url, options);
+    if (response.getResponseCode() === 200) {
+      const jsonData = JSON.parse(response.getContentText());
+      Logger.log(`Success! Received ${jsonData.length} classes from server for Account ID ${account_id}.`);
+      
+      if (jsonData.length > 0) {
+        handleAccountUpdateForColumn(jsonData, lastRow, startCol);
+      }
+    }
+  } catch (e) {
+    Logger.log(`Error during API call for Account ID ${account_id}: ${e.message}`);
+  }
+}
+
+/**
+ * Processes new class data and appends formatted rows to specific targeted columns.
+ * @param {Array<Object>} jsonData The list of class objects.
+ * @param {number} lastRow The current last row index for this column pair.
+ * @param {number} startCol The left-most column index of the pair (e.g., 1 for A, 4 for D).
+ */
+function handleAccountUpdateForColumn(jsonData, lastRow, startCol) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  let currentRow = lastRow;
+  
+  jsonData.forEach(classObj => {
+    const formattedDate = convertToSlashFormat(classObj.date);
+    const duration = calculateClassDuration(classObj.start_time, classObj.finish_time);
+    
+    currentRow++;
+    
+    // Dynamic Column Assignment based on startCol
+    const dateCell = sheet.getRange(currentRow, startCol);      // e.g., Column A or D
+    const durationCell = sheet.getRange(currentRow, startCol + 1);  // e.g., Column B or E
+    
+    // Write values
+    dateCell.setValue(formattedDate);
+    durationCell.setValue(duration);
+    
+    // Apply styling highlighting to tracking entries
+    const rangeToStyle = sheet.getRange(currentRow, startCol, 1, 2); 
+    rangeToStyle.setFontColor("#ff0000") // Red
+                .setBackground("#ffff00") // Yellow
+                .setFontWeight("bold");
+  });
+}
+
+// ==========================================
+// UTILITY / REUSE FUNCTIONS FROM YOUR SCRIPT
+// ==========================================
+
+function getTokenFromTutorsAssistant() {
+  const url = "https://tutorsassistant.pythonanywhere.com/auth/jwt/create";
+  const data = {"username": "*********", "password": "*********"}; // Swap back in your actual password
+  const payload = JSON.stringify(data);
+  const options = { method: 'post', contentType: 'application/json', payload: payload };
+  
+  try {
+    const response = UrlFetchApp.fetch(url, options);
+    if (response.getResponseCode() === 200) {
+      return JSON.parse(response.getContentText());
+    }
+    return null;
+  } catch (e) {
+    Logger.log(`Error during API call: ${e.message}`);
+    return null;
+  }
+}
+
+function convertToSlashFormat(dateStr) {
+  const date = new Date(dateStr.replace(/-/g, '/'));
+  return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+}
+
+function convertToIsoFormat(dateStr) {
+  const date = new Date(dateStr);
+  return Utilities.formatDate(date, Session.getScriptTimeZone(), "yyyy-MM-dd");
+}
+
+function calculateClassDuration(startStr, finishStr) {
+  const getMinutes = (timeStr) => {
+    const [hours, minutes, seconds] = timeStr.split(':').map(Number);
+    return (hours * 60) + minutes + (seconds / 60);
+  };
+  const startMinutes = getMinutes(startStr);
+  const finishMinutes = getMinutes(finishStr);
+  const adjustedFinishMinutes = finishMinutes + 1;
+  return parseFloat(((adjustedFinishMinutes - startMinutes) / 60).toFixed(2));
+}
