@@ -23,6 +23,14 @@ class GroupClassStudentAttendanceRecordSerializer(serializers.ModelSerializer):
         source='student_account.client_student_name',
         read_only=True
     )
+    class_date = serializers.CharField(
+        source='group_class_meeting_record.class_date',
+        read_only=True
+    )
+    class_duration = serializers.CharField(
+        source='group_class_meeting_record.class_duration',
+        read_only=True
+    )
 
     class Meta:
         model = GroupClassStudentAttendanceRecord
@@ -30,10 +38,15 @@ class GroupClassStudentAttendanceRecordSerializer(serializers.ModelSerializer):
             'id',
             'student_account',
             'student_name',
+            'class_date',
+            'class_duration',
             'attendance_status',
             'time_stamp',
         )
-        read_only_fields = ('student_account', 'student_name', 'time_stamp')
+        read_only_fields = (
+            'student_account', 'student_name', 'time_stamp',
+            'class_date', 'class_duration'
+        )
 
 
 class GroupClassMeetingRecordSerializer(serializers.ModelSerializer):

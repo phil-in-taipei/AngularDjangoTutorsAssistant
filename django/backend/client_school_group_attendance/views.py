@@ -1,5 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.db.models import Q
+from rest_framework import generics
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
@@ -11,6 +13,7 @@ from client_school_group_attendance.models import (
 from client_school_group_attendance.serializers import (
     GroupClassMeetingRecordSerializer,
     GroupClassStudentAttendanceRecordUpdateSerializer,
+    GroupClassStudentAttendanceRecordSerializer,
 )
 from client_school_group_attendance.utils import (
     handle_group_class_attendance_hours_modification,
@@ -89,3 +92,36 @@ class GroupClassStudentAttendanceBulkUpdateView(APIView):
             status=status.HTTP_200_OK
         )
 
+
+class GroupClassAttendanceByStudentAndClassNameFromDateViewSet(generics.ListAPIView):
+    permission_classes = (
+        IsAuthenticated,
+    )
+    queryset = GroupClassStudentAttendanceRecord.objects.all()
+    serializer_class = GroupClassStudentAttendanceRecordSerializer
+    lookup_field = 'id'
+    model = serializer_class.Meta.model
+
+    def get_queryset(self):
+        date_str = self.kwargs.get("date")
+        group_class_name = self.kwargs.get("group_class_name")
+        client_student_name = self.kwargs.get("client_student_name")
+
+        date_list = date_str.split('-')
+        date = datetime.date(int(date_list[0]), int(date_list[1]), int(date_list[2]))
+
+        queryset = self.model.objects.filter(
+            group_class_meeting_record__class_date__gt=date,
+            group_class_meeting_record__group_class__group_class_name=group_class_name,
+            student_account__client_student_name=client_student_name,
+        ).filter(
+            Q(attendance_status='completed') | Q(attendance_status='same_day_cancellation')
+        )
+
+        return queryset.select_related(
+            'group_class_meeting_record',
+            'group_class_meeting_record__group_class',
+            'student_account',
+        ).order_by(
+            'group_class_meeting_record__class_date',
+        )
