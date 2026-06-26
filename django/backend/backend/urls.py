@@ -44,6 +44,7 @@ urlpatterns = [
     path('api/accounting/', include('accounting.urls')),
     path('api/client-school-accounting/', include('client_school_accounting.urls')),
     path('api/client-school-group-attendance/', include('client_school_group_attendance.urls')),
+    path('api/client-school-transactions/', include('client_school_transactions.urls')),
     path('api/profiles/', include('user_profiles.urls')),
     path('api/recurring/', include('recurring_scheduling.urls')),    
     path('api/schools/', include('school.urls')),
