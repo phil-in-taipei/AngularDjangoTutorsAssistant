@@ -6,6 +6,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 
+from accounting.utils import create_timestamps_for_beginning_and_end_of_month_and_year
 from client_school_accounting.models import (
     AccountingClientSchoolStudentAccount,
     ClientSchoolClassEnrollmentHandler,
@@ -46,17 +47,15 @@ class StudentMonthlyReportView(APIView):
             client_student_name=client_student_name,
         )
 
-        print("This is the client student name")
-        print(client_student_name)
-
-        print('this is the account:')
-        print(student_account)
+        query_timestamps = create_timestamps_for_beginning_and_end_of_month_and_year(
+            month=month,
+            year=year
+        )
 
         # --- Account activity: all hours modifications for this month ---
         modifications = CSPurchasedHoursModification.objects.filter(
             student_account=student_account,
-            time_stamp__year=year,
-            time_stamp__month=month,
+            time_stamp__range=(query_timestamps['start'], query_timestamps['end']),
         ).select_related(
             'bridge',
             'tutoring_transaction',
@@ -65,9 +64,6 @@ class StudentMonthlyReportView(APIView):
             'group_transaction',
             'company_transaction',
         ).order_by('time_stamp')
-        
-        print("These are the modifications:")
-        print(modifications)
 
         # --- Group class attendance for this month ---
         group_attendance = GroupClassStudentAttendanceRecord.objects.filter(
