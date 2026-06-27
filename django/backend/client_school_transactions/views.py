@@ -113,6 +113,18 @@ class StudentMonthlyReportView(APIView):
             if val is not None:
                 balances[label] = float(val)
 
+        # --- Current expirations snapshot ---
+        expirations = {}
+        for field, label in [
+            ('tutoring_hours_expiration_date', 'tutoring'),
+            ('group_hours_expiration_date', 'group_class'),
+            ('online_hours_expiration_date', 'online'),
+            ('company_hours_expiration_date', 'company'),
+        ]:
+            val = getattr(student_account, field)
+            if val is not None:
+                expirations[label] = str(val)
+
         # --- Serialize and return ---
         return Response({
             'student_name': student_account.client_student_name,
@@ -121,6 +133,7 @@ class StudentMonthlyReportView(APIView):
                 'month': month,
             },
             'current_balances': balances,
+            'expiration_dates': expirations,
             'account_activity': CSPurchasedHoursModificationSerializer(
                 modifications, many=True
             ).data,
