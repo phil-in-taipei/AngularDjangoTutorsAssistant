@@ -9,7 +9,7 @@ export class FormatHoursPipe implements PipeTransform {
     if (!messages || !messages.length) return '';
 
     return messages
-      .map((msg, i) => i === 0 ? msg.trim() : msg.replace('Group class hours deducted for ', '').trim())
+      .map((msg, i) => i === 0 ? msg.trim() : msg.replace('Group class hours ', '').trim())
       .join(', ');
   }
 }

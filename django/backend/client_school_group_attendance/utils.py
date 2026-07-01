@@ -111,7 +111,7 @@ def handle_group_class_attendance_hours_modification(
     )
 
     return (
-        f"Group class hours {transaction_type}ed for "
+        f"Group class hours {transaction_type} for "
         f"{student_account.client_student_name}: "
         f"{previous_hours} → {updated_hours}"
     )
