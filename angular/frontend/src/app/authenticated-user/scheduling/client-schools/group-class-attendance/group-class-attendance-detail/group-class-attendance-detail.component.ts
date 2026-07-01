@@ -18,6 +18,7 @@ export class GroupClassAttendanceDetailComponent implements OnInit {
   fetchingRecordInProgress: boolean = true;
   formVisible: boolean = false;
   groupClassMeetingRecord: GroupClassMeetingRecordModel | undefined = undefined;
+  hoursModificationsMessages: string[] | undefined;
   scheduledClassIdFromRoute: number;
   successMessage: string | undefined = undefined;
   submittingInProgress: boolean = false;
@@ -61,6 +62,7 @@ export class GroupClassAttendanceDetailComponent implements OnInit {
 
   onClearSuccessMessage() {
     this.successMessage = undefined;
+    this.hoursModificationsMessages = undefined;
   }
 
   onSubmitSuccess($event: GroupClassAttendanceBulkUpdateResponseModel) {
@@ -71,6 +73,7 @@ export class GroupClassAttendanceDetailComponent implements OnInit {
       };
     }
     this.successMessage = 'Attendance records updated successfully.';
+    this.hoursModificationsMessages = $event.hours_modification_messages;
     this.formVisible = false;
   }
 

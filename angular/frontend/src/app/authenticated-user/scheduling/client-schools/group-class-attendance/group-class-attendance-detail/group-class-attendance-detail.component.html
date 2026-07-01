@@ -26,6 +26,15 @@
   </div>
 </div>
 
+<div *ngIf="hoursModificationsMessages" class="container">
+  <br />
+  <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+    <h5 class="text-center">{{ hoursModificationsMessages | formatHours }}</h5>
+    <button type="button" class="btn-close" (click)="onClearSuccessMessage()"
+      data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+</div>
+
 <div *ngIf="groupClassMeetingRecord" class="container">
     <br />
     <div class="class-info-display p-3">
