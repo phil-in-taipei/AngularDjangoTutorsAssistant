@@ -202,7 +202,6 @@ def is_client_school_account(student_or_class):
     )
 
 
-
 def create_client_school_purchased_hours_modification_record(
     student_account, enrollment_handler, class_type,
     transaction_type, previous_hours, updated_hours
@@ -219,6 +218,15 @@ def create_client_school_purchased_hours_modification_record(
         previous_hours=previous_hours,
         updated_hours=updated_hours,
     )
+
+
+def format_transaction_type(transaction_type):
+    if '-' in transaction_type:
+        parts = transaction_type.split('-')
+        return f"{parts[0]}ed-{parts[1]}"
+    else:
+        return f"{transaction_type}ed"
+
 
 def handle_one_to_one_tutoring_hours_modification(
     enrollment_handler, transaction_type, duration
@@ -244,7 +252,7 @@ def handle_one_to_one_tutoring_hours_modification(
         previous_hours=previous_hours,
         updated_hours=updated_hours,
     )
-    return f"Client school tutoring hours {transaction_type}ed"
+    return f"Client school tutoring hours {format_transaction_type(transaction_type)}"
 
 
 def handle_two_to_one_tutoring_hours_modification(
@@ -280,7 +288,7 @@ def handle_two_to_one_tutoring_hours_modification(
     if not updated_accounts:
         return None
 
-    return f"Client school two-to-one tutoring hours {transaction_type}ed"
+    return f"Client school two-to-one tutoring hours {format_transaction_type(transaction_type)}"
 
 
 def handle_online_tutoring_hours_modification(
@@ -307,7 +315,7 @@ def handle_online_tutoring_hours_modification(
         previous_hours=previous_hours,
         updated_hours=updated_hours,
     )
-    return f"Client school online tutoring hours {transaction_type}ed"
+    return f"Client school online tutoring hours {format_transaction_type(transaction_type)}"
 
 
 def handle_company_class_hours_modification(
@@ -334,7 +342,7 @@ def handle_company_class_hours_modification(
         previous_hours=previous_hours,
         updated_hours=updated_hours,
     )
-    return f"Client company class tutoring hours {transaction_type}ed"
+    return f"Client company class tutoring hours {format_transaction_type(transaction_type)}"
 
 
 def handle_client_school_purchased_hours_modification(
