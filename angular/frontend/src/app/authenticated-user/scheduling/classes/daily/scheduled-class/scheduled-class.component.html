@@ -8,9 +8,14 @@
           </a>
         </p>
         <ng-template #not_cancelled_red>
-          <p>
+          <p *ngIf="scheduledClass.class_status==='scheduled'">
             <a [routerLink]="['/authenticated-user/scheduling/single-class', scheduledClass.id]">
               {{ scheduledClass.start_time.slice(0, -3) }}-{{ scheduledClass.finish_time.slice(0, -3) }}
+            </a>
+          </p>
+          <p *ngIf="scheduledClass.class_status==='completed'">
+            <a [routerLink]="['/authenticated-user/scheduling/single-class', scheduledClass.id]">
+              {{ scheduledClass.start_time.slice(0, -3) }}-{{ scheduledClass.finish_time.slice(0, -3)  }} <span class="checkmark">✓</span>
             </a>
           </p>
         </ng-template>

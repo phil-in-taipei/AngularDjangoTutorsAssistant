@@ -7,6 +7,14 @@ body, html {
   flex-direction: column;
 }
 
+.checkmark {
+  color: green;
+  font-weight: bold;
+  font-size: 24px;
+  height: 24px;
+  width: 24px;
+}
+
 .color-frame {
     background-color: black;
     border: #0098da solid 1px !important;
