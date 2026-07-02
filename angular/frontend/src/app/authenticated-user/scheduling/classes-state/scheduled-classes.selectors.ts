@@ -63,6 +63,11 @@ export const landingPageScheduleLoaded = createSelector(
     scheduledClassesState => scheduledClassesState.landingPageScheduledClassesLoaded
 );
 
+export const clientSchoolAccountingUpdateMessage = createSelector(
+    selectScheduledClassesState,
+    scheduledClassesState => scheduledClassesState.clientSchoolAccountingUpdateMessage
+);
+
 export const scheduledClassesErrorMsg = createSelector(
     selectScheduledClassesState,
     scheduledClassesState => scheduledClassesState.errorMessage

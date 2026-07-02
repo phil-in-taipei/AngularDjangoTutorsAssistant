@@ -19,6 +19,7 @@ export interface ModifyClassStatusModel {
 export interface ModifyClassStatusResponse {
     scheduled_class: ScheduledClassModel;
     student_or_class_update: StudentOrClassConfirmationModificationResponse | undefined;
+    client_school_accounting_update_message: string | undefined;
 }
 
 export interface RescheduleClassModel {

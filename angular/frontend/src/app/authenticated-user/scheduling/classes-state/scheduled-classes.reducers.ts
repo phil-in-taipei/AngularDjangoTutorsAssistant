@@ -41,6 +41,7 @@ export function compareByDateAndTime(
 }
 
 export interface ScheduledClassesState extends EntityState<ScheduledClassModel> {
+    clientSchoolAccountingUpdateMessage: string | undefined;
     dateRange: [string, string] | undefined;
     deletionModeActivated: boolean;
     fetchingClassesInProgress: boolean;
@@ -60,6 +61,7 @@ export const adapter: EntityAdapter<ScheduledClassModel> =
 
 export const initialScheduledClassesState: ScheduledClassesState = 
     adapter.getInitialState({
+        clientSchoolAccountingUpdateMessage: undefined,
         dateRange: undefined,
         deletionModeActivated: false,
         errorMessage: undefined,
@@ -96,6 +98,7 @@ export function scheduledClassesReducer(
                     {
                         ...state, errorMessage: undefined,
                         successMessage: 'You have successfully edited the class status!',
+                        clientSchoolAccountingUpdateMessage: action.payload.scheduledClassUpdateResponse.client_school_accounting_update_message,
                         updatedPurchasedHours: action.payload.scheduledClassUpdateResponse.student_or_class_update
                     }
                 ); 
@@ -264,8 +267,8 @@ export function scheduledClassesReducer(
      
             case ScheduledClassesActionTypes.ScheduledClassesMessagesCleared:
                 return {
-                    ...state,  successMessage: undefined,
-                    errorMessage: undefined
+                    ...state,  successMessage: undefined, errorMessage: undefined, 
+                    clientSchoolAccountingUpdateMessage: undefined
             }
 
             case ScheduledClassesActionTypes.UpdatedPurchasedHoursCleared:

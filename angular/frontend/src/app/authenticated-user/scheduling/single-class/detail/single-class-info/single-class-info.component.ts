@@ -12,6 +12,7 @@ import {
   ScheduledClassesMessagesCleared 
 } from '../../../classes-state/scheduled-classes.actions';
 import { 
+  clientSchoolAccountingUpdateMessage,
   scheduledClassesErrorMsg, 
   scheduledClassesSuccessMsg, 
   selectScheduledClassById,
@@ -35,6 +36,7 @@ export class SingleClassInfoComponent implements OnInit{
 
   classSubmitErrMsg$: Observable<string | undefined>;
   classSubmitSuccess$: Observable<string | undefined>;
+  clientSchoolAccountingUpdateMessage$: Observable<string | undefined>;
   editStatusFormVisible: boolean = false;
   editLocationFormVisible: boolean = false;
 
@@ -56,6 +58,9 @@ export class SingleClassInfoComponent implements OnInit{
     this.scheduledClass$ = this.store.pipe(select(
       selectScheduledClassById(this.idFromRouteData)
     ));
+    this.clientSchoolAccountingUpdateMessage$ = this.store.pipe(
+      select(clientSchoolAccountingUpdateMessage)
+    );
     this.classSubmitErrMsg$ = this.store.pipe(
       select(scheduledClassesErrorMsg)
     );
