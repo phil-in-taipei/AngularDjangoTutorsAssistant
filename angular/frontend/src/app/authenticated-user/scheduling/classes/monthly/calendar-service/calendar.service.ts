@@ -45,6 +45,10 @@ export class CalendarService {
         })
         if (studentOrClass) {
           schedulingObj.title = studentOrClass.template_str;
+          if (scheduledClasses[i].class_status === 'completed') {
+            schedulingObj.title = `\u2713 ${studentOrClass.template_str}`
+            schedulingObj.color = '#4CAF50';
+          }
           if (studentOrClass.purchased_class_hours) {
             if (studentOrClass.purchased_class_hours <= 3) {
               schedulingObj.color = '#dc3545';
