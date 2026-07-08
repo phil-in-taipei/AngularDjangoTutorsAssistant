@@ -49,9 +49,16 @@ export class CalendarService {
             schedulingObj.title = `\u2713 ${studentOrClass.template_str}`
             schedulingObj.color = '#4CAF50';
           }
+          if (
+            scheduledClasses[i].class_status === 'cancelled' ||
+            scheduledClasses[i].class_status === 'same_day_cancellation'
+          ) {
+            schedulingObj.title = `${studentOrClass.template_str}`;
+            schedulingObj.color = '#dc3545';
+          }
           if (studentOrClass.purchased_class_hours) {
             if (studentOrClass.purchased_class_hours <= 3) {
-              schedulingObj.color = '#dc3545';
+              schedulingObj.color = '#FF9800';
             }
           }
         }

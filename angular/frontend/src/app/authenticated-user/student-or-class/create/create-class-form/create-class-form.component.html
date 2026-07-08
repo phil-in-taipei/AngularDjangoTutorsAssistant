@@ -2,14 +2,14 @@
 <div *ngIf="schools$ | async as schools" class="container">
   <form (submit)="onSubmitClass(submitClassForm)" #submitClassForm="ngForm">
     <div>
-        <label>Name of Class</label>
+        <label>Name of School Class</label>
         <textarea
         class="form-control"
         name="student_or_class_name"
         type="text"
         required
         text
-        minlength="5"
+        minlength="3"
         rows="1"
         ngModel
         placeholder="Name of Class"
