@@ -49,8 +49,8 @@ class StaffGroupClassMeetingRecordAdmin(admin.ModelAdmin):
 
 class StaffGroupClassStudentAttendanceRecordAdmin(admin.ModelAdmin):
     readonly_fields = (
-        'group_class_meeting_record',
-        'student_account',
+        #'group_class_meeting_record',
+        #'student_account',
         'time_stamp',
     )
     list_display = (
@@ -74,7 +74,7 @@ class StaffGroupClassStudentAttendanceRecordAdmin(admin.ModelAdmin):
     )
 
     def has_add_permission(self, request):
-        return False
+        return True
 
     def has_delete_permission(self, request, obj=None):
         return False
