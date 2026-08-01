@@ -7,6 +7,10 @@ body, html {
   flex-direction: column;
 }
 
+:root {
+  --bs-primary: #0098da; /* Purple */
+}
+
 .checkmark {
   color: green;
   font-weight: bold;

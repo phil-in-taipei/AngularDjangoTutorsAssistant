@@ -186,7 +186,7 @@
             <ng-container *ngIf="scheduledClass.class_status === 'completed' && scheduledClass.group_class_meeting_record !== null && scheduledClass.group_class_meeting_record !== undefined; else standard_buttons">
               <div class="text-center container">
                 <div class="d-grid gap-2">
-                  <button class="btn btn-sm btn-outline-secondary" type="button"
+                  <button class="btn btn-sm btn-outline-danger" type="button"
                     [routerLink]="['/authenticated-user/scheduling/client-schools/group-class-attendance', scheduledClass.id]">
                     Click here to confirm attendance
                   </button>
@@ -198,9 +198,9 @@
             <ng-template #standard_buttons>
               <div class="container text-center">
                 <div class="d-grid gap-2">
-                  <button class="btn btn-sm btn-outline-secondary" type="button"
+                  <button class="btn btn-sm btn-outline-danger" type="button"
                     (click)="toggleEditStatusForm()">
-                    {{ editStatusFormVisible ? "Never Mind, I'll submit one next time for "
+                    {{ editStatusFormVisible ? "Never Mind, I'll edit the status later "
                     : "Click Here to edit the class status " }}
                   </button>
                 </div>
@@ -221,7 +221,7 @@
               <div>
                 <div class="text-center container">
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary" type="button"
+                    <button class="btn btn-sm btn-outline-primary" type="button"
                       (click)="toggleRescheduleForm()">
                       {{ rescheduleFormVisible ? "Never Mind, I'll reschedule next time for "
                       : "Click Here to reschedule the class " }}
