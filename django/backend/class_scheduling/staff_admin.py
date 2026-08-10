@@ -127,13 +127,14 @@ class StaffScheduledClassForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['student_or_class'].queryset = StudentOrClass.objects.filter(
-            school__school_name="David's English Center"
-        ).order_by(
-            'teacher__surname',
-            'teacher__given_name',
-            'student_or_class_name'
-        )
+        if 'student_or_class' in self.fields:
+            self.fields['student_or_class'].queryset = StudentOrClass.objects.filter(
+                school__school_name="David's English Center"
+            ).order_by(
+                'teacher__surname',
+                'teacher__given_name',
+                'student_or_class_name'
+            )
 
         # When editing an existing instance, pre-select the correct duration
         instance = kwargs.get('instance')
@@ -170,6 +171,11 @@ class StaffScheduledClassAdmin(admin.ModelAdmin):
         'student_or_class__student_or_class_name', 
         'teacher__user__username', 'location__space_name'
     ]
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:  # editing an existing scheduled class
+            return ('student_or_class',)
+        return ()  # creating a new one — still selectable
 
     def get_queryset(self, request):
         return super().get_queryset(request).filter(
