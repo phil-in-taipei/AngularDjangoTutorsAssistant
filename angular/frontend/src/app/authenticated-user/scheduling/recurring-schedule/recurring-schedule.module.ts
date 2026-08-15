@@ -44,6 +44,7 @@ import { scheduledClassesReducer } from '../classes-state/scheduled-classes.redu
 import { 
   SelectMonthAndYearComponent 
 } from './applied-monthly/select-month-and-year/select-month-and-year.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { StudentOrClassTemplateStringComponent } from './student-or-class-template-string/student-or-class-template-string.component';   
 import { StudentsOrClassesEffects } from '../../student-or-class/state/student-or-class.effects';
 import { studentsOrClassesReducer } from '../../student-or-class/state/student-or-class.reducers';
@@ -74,6 +75,7 @@ import {
     FormsModule,
     NgbModule,
     RecurringScheduleRoutingModule,
+    SharedModule,
     StoreModule.forFeature('recurringClassesAppliedMonthly', recurringClassAppliedMonthlysReducer),
     EffectsModule.forFeature([RecurringClassAppliedMonthlysEffects]),
     StoreModule.forFeature('recurringClasses', recurringClassesReducer),

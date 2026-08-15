@@ -46,6 +46,7 @@ import { SchoolTemplateStringComponent } from './school-template-string/school-t
 import { SchoolsEffects } from '../schools/state/school.effects';
 import { schoolsReducer } from '../schools/state/school.reducers';
 import { SelectMonthlyComponent } from './classes/monthly/select-monthly/select-monthly.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { SingleClassInfoComponent } from './single-class/detail/single-class-info/single-class-info.component';
 import { 
   StudentOrClassTemplateStringComponent 
@@ -95,6 +96,7 @@ import { venueSpacesReducer } from './venues/state/venues.reducers';
     FullCalendarModule,
     FormsModule,
     NgbModule,
+    SharedModule,
     StoreModule.forFeature('scheduledClasses', scheduledClassesReducer),
     EffectsModule.forFeature([ScheduledClassesEffects]),
     StoreModule.forFeature('schools', schoolsReducer),

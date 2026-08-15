@@ -79,7 +79,7 @@
                               <td class="text-center bg-transparent col">
                                 <p>
                                   {{ scheduledClass.start_time.slice(0, -3) }} -
-                                  {{ scheduledClass.finish_time.slice(0, -3) }}
+                                  {{ scheduledClass.finish_time|addMinute }}
                                 </p>
                               </td>
                               <td class="text-center bg-transparent col">
@@ -148,7 +148,7 @@
                   <tr>
                       <th><h4>Time</h4></th>
                       <td>
-                        <h4>{{ scheduledClass.start_time.slice(0, -3) }} - {{ scheduledClass.finish_time.slice(0, -3) }} / 
+                        <h4>{{ scheduledClass.start_time.slice(0, -3) }} - {{ scheduledClass.finish_time|addMinute }} / 
                           <app-time-in-hours
                           [startTime]=scheduledClass.start_time
                           [finishTime]=scheduledClass.finish_time
