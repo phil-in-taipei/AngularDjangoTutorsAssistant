@@ -5,7 +5,7 @@ import {
 
 
 import { 
-    getFirstDateofMonthStr, getLastDateOfMonthStr 
+    getFirstDateofMonthStr, getFirstDateofNextMonthStr
 } from 'src/app/shared-utils/date-time.util';
 import { 
     ScheduledClassesActions, ScheduledClassesActionTypes 
@@ -150,7 +150,8 @@ export function scheduledClassesReducer(
                 let month:number = +action.payload.month;
                 let year:number = +action.payload.year;
                 let firstDate = getFirstDateofMonthStr(month, year);
-                let lastDate = getLastDateOfMonthStr(month, year);
+                // range of calendar is below first day of following month
+                let lastDate = getFirstDateofNextMonthStr(month, year);
                 return {
                     ...state,  dateRange: [firstDate, lastDate],
                     fetchingClassesInProgress: true
