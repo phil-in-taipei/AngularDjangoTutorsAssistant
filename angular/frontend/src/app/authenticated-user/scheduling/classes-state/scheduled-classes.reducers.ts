@@ -79,6 +79,11 @@ export function scheduledClassesReducer(
     ): ScheduledClassesState {
         switch(action.type) {
 
+            case ScheduledClassesActionTypes.ClientSchoolAccountingUpdateMessageCleared:
+                return {
+                    ...state, clientSchoolAccountingUpdateMessage: undefined
+            }
+
             case ScheduledClassesActionTypes.ClassStatusUpdateCancelled:
                 let statusEditErrMessage: string = "Error! Class Status Update Failed!";
                 if (action.payload.err.error.Error) {

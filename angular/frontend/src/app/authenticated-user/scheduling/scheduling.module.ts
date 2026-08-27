@@ -18,6 +18,9 @@ import {
   ClassesOnCurrentDateComponent 
 } from './landing/classes-on-current-date/classes-on-current-date.component';
 import { 
+  ClientSchoolAccountingMsgComponent 
+} from './single-class/detail/client-school-accounting-msg/client-school-accounting-msg.component';
+import { 
   EditClassLocationFormComponent 
 } from './single-class/detail/edit-class-location-form/edit-class-location-form.component';
 import { 
@@ -70,6 +73,7 @@ import { venueSpacesReducer } from './venues/state/venues.reducers';
     AttendanceRecordComponent,
     CalendarScheduleComponent,
     ClassesOnCurrentDateComponent,
+    ClientSchoolAccountingMsgComponent,
     DailyListComponent,
     EditClassLocationFormComponent,
     EditClassStatusFormComponent,

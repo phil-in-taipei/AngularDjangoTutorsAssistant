@@ -8,6 +8,7 @@ import {
 } from "src/app/models/scheduled-class.model";
 
 export enum ScheduledClassesActionTypes {
+    ClientSchoolAccountingUpdateMessageCleared = '[Scheduled Class Edit Status, Client School Accounting Update Message Pages] Client School Accounting Update Message Cleared',
     ClassStatusUpdateCancelled= '[Edit Class Status Form Page] Update Class Status Cancelled',
     ClassStatusUpdateSaved = '[Scheduled Class Detail Page] Single Class Status Updated',    
     ClassStatusUpdateSubmitted = '[Edit Class Status Form Page] Updated Class Status Submitted',
@@ -40,6 +41,10 @@ export enum ScheduledClassesActionTypes {
     UnconfirmedScheduledClassesLoaded = '[User Landing Page] Unconfirmed Past Scheduled Classes Loaded',
     UnconfirmedScheduledClassesRequestCancelled = '[User Landing Page] Unconfirmed Past Scheduled Classes Request Cancelled',    
     UnconfirmedScheduledClassesRequested = '[User Landing Page] Unconfirmed Past Scheduled Classes Requested',
+}
+
+export class ClientSchoolAccountingUpdateMessageCleared implements Action {
+    readonly type = ScheduledClassesActionTypes.ClientSchoolAccountingUpdateMessageCleared;
 }
 
 export class ClassStatusUpdateCancelled implements Action {
@@ -243,14 +248,15 @@ export class UnconfirmedScheduledClassesRequested implements Action {
     readonly type = ScheduledClassesActionTypes.UnconfirmedScheduledClassesRequested;
 }
 
-export type ScheduledClassesActions = ClassStatusUpdateCancelled |
-    ClassStatusUpdateSaved | ClassStatusUpdateSubmitted |
-    DailyClassesLoaded | DailyClassesRequestCancelled | 
-    DailyClassesRequested | LandingPageScheduleLoaded | 
-    LandingPageScheduleRequestCancelled | LandingPageScheduleRequested | 
-    MonthlyClassesRequested | MonthlyClassesRequestCancelled |
-    MonthlyClassesLoaded | RescheduleClassCancelled | 
-    RescheduleClassSubmitted | RescheduledClassUpdatedWithDailyBatchAdded | 
+export type ScheduledClassesActions = ClientSchoolAccountingUpdateMessageCleared | 
+    ClassStatusUpdateCancelled | ClassStatusUpdateSaved | 
+    ClassStatusUpdateSubmitted | DailyClassesLoaded | 
+    DailyClassesRequestCancelled | DailyClassesRequested | 
+    LandingPageScheduleLoaded | LandingPageScheduleRequestCancelled | 
+    LandingPageScheduleRequested | MonthlyClassesRequested | 
+    MonthlyClassesRequestCancelled | MonthlyClassesLoaded | 
+    RescheduleClassCancelled | RescheduleClassSubmitted | 
+    RescheduledClassUpdatedWithDailyBatchAdded | 
     ScheduleSingleClassSubmitted | ScheduleSingleClassCancelled | 
     ScheduledSingleClassWithDailyBatchAdded | ScheduledClassesCleared | 
     ScheduledClassDeletionCancelled | ScheduledClassesBatchDeletionCancelled |
