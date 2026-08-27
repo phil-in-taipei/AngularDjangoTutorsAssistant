@@ -55,7 +55,11 @@ export class CalendarScheduleComponent implements OnInit {
   }
 
   onDateClick(arg: DateClickArg) {
-    this.router.navigate(['/', 'authenticated-user', 'scheduling', 'schedule-daily', arg.dateStr]);
+    // this handles both a click on the date and on the date/time
+    // if the string is a datetime, it extracts the beginning date value
+    // it always redirects the route to the date
+    const dateVal = arg.dateStr.split('T')[0];
+    this.router.navigate(['/', 'authenticated-user', 'scheduling', 'schedule-daily', dateVal]);
   }
 
 }
