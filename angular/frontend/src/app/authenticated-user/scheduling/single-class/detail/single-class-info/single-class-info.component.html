@@ -29,9 +29,9 @@
             </div>
 
             <div *ngIf="clientSchoolAccountingUpdateMessage$ | async as clientSchoolAccountingUpdateMessage" class="p-1 m-1">
-              <hr class="thin-br"/>
               <app-client-school-accounting-msg
-                [clientSchoolAccountingUpdateMsg]=clientSchoolAccountingUpdateMessage>
+                [clientSchoolAccountingUpdateMsg]=clientSchoolAccountingUpdateMessage
+              >
               </app-client-school-accounting-msg>
             </div>
 
