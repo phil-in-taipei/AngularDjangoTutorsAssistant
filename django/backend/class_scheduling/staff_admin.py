@@ -4,7 +4,7 @@ from django import forms
 from django.contrib import admin, messages
 from rangefilter.filters import DateRangeFilter
 
-from .models import ScheduledClass, CLASS_STATUS
+from .models import ScheduledClass, CLASS_STATUS, CANCELLED_STATUSES
 from .utils import class_is_double_booked
 from student_account.models import StudentOrClass
 
@@ -191,6 +191,8 @@ class StaffScheduledClassAdmin(admin.ModelAdmin):
             ScheduledClass.custom_query.teacher_already_booked_classes_on_date(
                 query_date=obj.date,
                 teacher_id=obj.teacher
+            ).exclude(
+                class_status__in=CANCELLED_STATUSES
             )
         )
 
@@ -217,6 +219,8 @@ class StaffScheduledClassAdmin(admin.ModelAdmin):
                 ScheduledClass.custom_query.location_already_booked_classes_on_date(
                     query_date=obj.date,
                     location_id=obj.location
+                ).exclude(
+                    class_status__in=CANCELLED_STATUSES
                 )
             )
             if change:
@@ -232,7 +236,6 @@ class StaffScheduledClassAdmin(admin.ModelAdmin):
                     level=messages.ERROR
                 )
                 return
-
 
         super().save_model(request, obj, form, change)
 

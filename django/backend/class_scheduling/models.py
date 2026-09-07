@@ -12,6 +12,8 @@ CLASS_STATUS = (
     ('same_day_cancellation', 'Same_Day_Cancellation'),
 )
 
+CANCELLED_STATUSES = ('cancelled', 'same_day_cancellation')
+
 
 class ScheduledClassManager(models.Manager):
 
@@ -54,6 +56,7 @@ class ScheduledClassManager(models.Manager):
             date=query_date,
             student_or_class_id=student_or_class_id
         )
+        #.exclude(class_status__in=CANCELLED_STATUSES)
 
         class_starts_during_time_frame = [
             scheduled_class for scheduled_class in class_booked_on_date
@@ -86,7 +89,7 @@ class ScheduledClassManager(models.Manager):
         class_booked_on_date = self.get_queryset().filter(
             date=query_date,
             teacher_id=teacher_id
-        )
+        ).exclude(class_status__in=CANCELLED_STATUSES)
 
         class_starts_during_time_frame = [
             scheduled_class for scheduled_class in class_booked_on_date
@@ -122,7 +125,7 @@ class ScheduledClassManager(models.Manager):
         classes_booked_at_location_on_date = self.get_queryset().filter(
             date=query_date,
             location_id=location_id
-        )
+        ).exclude(class_status__in=CANCELLED_STATUSES)
 
         class_starts_during_time_frame = [
             scheduled_class for scheduled_class in classes_booked_at_location_on_date

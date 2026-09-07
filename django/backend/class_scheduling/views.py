@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import ScheduledClass
+from .models import ScheduledClass, CANCELLED_STATUSES
 from .pagination import SmallSetPagination
 from .serializers import ScheduledClassSerializer, ScheduledClassGoogleCalendarSerializer
 from .utils import (
@@ -114,14 +114,17 @@ class ScheduledClassViewSet(viewsets.ModelViewSet):
         booked_teacher = serializer.validated_data['teacher']
         location = serializer.validated_data['location']
 
-        classes_booked_on_date_by_teacher = (
+        classes_booked_on_date_by_teacher = list(
             ScheduledClass.custom_query.teacher_already_booked_classes_on_date(
                 query_date=date,
                 teacher_id=booked_teacher
             )
         )
         if class_is_double_booked(
-                classes_booked_on_date=classes_booked_on_date_by_teacher,
+                classes_booked_on_date=[
+                    c for c in classes_booked_on_date_by_teacher
+                    if c.class_status not in CANCELLED_STATUSES
+                ],
                 starting_time=start_time,
                 finishing_time=finish_time
         ):
@@ -131,7 +134,7 @@ class ScheduledClassViewSet(viewsets.ModelViewSet):
             )
         
         if location:
-            classes_booked_on_date_in_location = (
+            classes_booked_on_date_in_location = list(
                 ScheduledClass.custom_query.location_already_booked_classes_on_date(
                     query_date=date,
                     location_id=location.id
@@ -139,7 +142,10 @@ class ScheduledClassViewSet(viewsets.ModelViewSet):
             )
             #print(classes_booked_on_date_in_location)
             if class_is_double_booked(
-                classes_booked_on_date=classes_booked_on_date_in_location,
+                classes_booked_on_date=[
+                    c for c in classes_booked_on_date_in_location
+                    if c.class_status not in CANCELLED_STATUSES
+                ],
                 starting_time=start_time,
                 finishing_time=finish_time
             ):
@@ -179,14 +185,17 @@ class ScheduledClassViewSet(viewsets.ModelViewSet):
         #print("*************This is the location data************")
         #print(location)
 
-        classes_booked_by_teacher_on_date = (
+        classes_booked_by_teacher_on_date = list(
             ScheduledClass.custom_query.teacher_already_booked_classes_on_date(
                 query_date=date,
                 teacher_id=booked_teacher
             ).exclude(id=obj_id)
         )
         if class_is_double_booked(
-                classes_booked_on_date=classes_booked_by_teacher_on_date,
+                classes_booked_on_date=[
+                    c for c in classes_booked_by_teacher_on_date
+                    if c.class_status not in CANCELLED_STATUSES
+                ],
                 starting_time=start_time,
                 finishing_time=finish_time
         ):
@@ -195,7 +204,7 @@ class ScheduledClassViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         if location:
-            classes_booked_on_date_in_location = (
+            classes_booked_on_date_in_location = list(
                 ScheduledClass.custom_query.location_already_booked_classes_on_date(
                     query_date=date,
                     location_id=location.id
@@ -203,7 +212,10 @@ class ScheduledClassViewSet(viewsets.ModelViewSet):
             )
             #print(classes_booked_on_date_in_location)
             if class_is_double_booked(
-                classes_booked_on_date=classes_booked_on_date_in_location,
+                classes_booked_on_date=[
+                    c for c in classes_booked_on_date_in_location
+                    if c.class_status not in CANCELLED_STATUSES
+                ],
                 starting_time=start_time,
                 finishing_time=finish_time
             ):
