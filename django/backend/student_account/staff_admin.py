@@ -17,8 +17,8 @@ class StaffStudentOrClassForm(forms.ModelForm):
             self.fields['school'].queryset = School.objects.filter(
                 school_name="David's English Center"
             ).order_by(
-                'scheduling_teacher__surname',
                 'scheduling_teacher__given_name',
+                'scheduling_teacher__surname',
             )
             self.fields['school'].label = 'Teacher / School'
 
