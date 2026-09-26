@@ -42,7 +42,7 @@ export function compareByDateAndTime(
 
 export interface ScheduledClassesState extends EntityState<ScheduledClassModel> {
     clientSchoolAccountingUpdateMessage: string | undefined;
-    dateRange: [string, string] | undefined;
+    dateRange: [string, string] | undefined | null;
     deletionModeActivated: boolean;
     fetchingClassesInProgress: boolean;
     errorMessage: string | undefined,

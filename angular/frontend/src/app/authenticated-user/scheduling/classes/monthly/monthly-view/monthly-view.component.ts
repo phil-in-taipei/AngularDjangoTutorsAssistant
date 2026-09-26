@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, of } from "rxjs";
+import { Observable, of, take } from "rxjs";
 import {select, Store } from '@ngrx/store';
 
 import { ScheduledClassesState } from '../../../classes-state/scheduled-classes.reducers';
@@ -18,7 +18,7 @@ export class MonthlyViewComponent implements OnInit {
 
   scheduledClasses$: Observable<ScheduledClassModel[] | undefined> = of(undefined);
   classesLoaded$: Observable<boolean> = of(false);
-  monthlyDateRange$: Observable<[string, string] | undefined> = of(undefined);
+  monthlyDateRange$: Observable<[string, string] | undefined | null> = of(undefined);
   showMonthlySelectForm: Boolean = true;
 
   constructor(
@@ -30,8 +30,13 @@ export class MonthlyViewComponent implements OnInit {
       select(selectAllScheduledClasses)
     );
     this.monthlyDateRange$ = this.scheduledClassesStore.pipe(
-      select(selectMonthlyDateRange)
+     select(selectMonthlyDateRange)
     );
+    this.monthlyDateRange$.pipe(take(1)).subscribe(range => {
+      if (range) {
+        this.showMonthlySelectForm = false;
+      }
+    });
     this.classesLoaded$ = this.scheduledClassesStore.pipe(
       select(fetchingClassesInProgress)
     );

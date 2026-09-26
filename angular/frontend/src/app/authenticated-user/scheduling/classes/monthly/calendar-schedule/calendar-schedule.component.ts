@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CalendarOptions } from '@fullcalendar/core';
 import { DateClickArg } from '@fullcalendar/interaction';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -15,7 +15,7 @@ import { ScheduledClassModel } from 'src/app/models/scheduled-class.model';
   templateUrl: './calendar-schedule.component.html',
   styleUrl: './calendar-schedule.component.css'
 })
-export class CalendarScheduleComponent implements OnInit {
+export class CalendarScheduleComponent implements OnChanges { //OnInit
 
   calendarOptions: CalendarOptions;
 
@@ -27,7 +27,7 @@ export class CalendarScheduleComponent implements OnInit {
     private calendarService: CalendarService,
     private router: Router,
   ) { }
-
+  /*
   ngOnInit(): void {
     this.Events = this.calendarService.formatCalendarEvents(this.scheduledClasses);
     this.calendarOptions = {
@@ -52,6 +52,26 @@ export class CalendarScheduleComponent implements OnInit {
       },
       events: this.Events,
     };
+  }
+  */
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['scheduledClasses'] || changes['monthlyDateRange']) {
+      this.Events = this.calendarService.formatCalendarEvents(this.scheduledClasses);
+      this.calendarOptions = {
+        plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,listWeek',
+        },
+        eventTextColor: 'black',
+        initialView: 'dayGridMonth',
+        dateClick: (arg) => this.onDateClick(arg),
+        validRange: { start: this.monthlyDateRange[0], end: this.monthlyDateRange[1] },
+        events: this.Events,
+      };
+    }
   }
 
   onDateClick(arg: DateClickArg) {

@@ -63,7 +63,7 @@ export class RecurringClassesAppliedMonthlyComponent implements OnInit {
     this.deletionModeForRecurringClassesAppliedMonthlyActivated$ = this.rCAMStore.pipe(
       select(deletionModeForRecurringClassesAppliedMonthlyActivated)
     );
-    this.scheduledClassesStore.dispatch(new ScheduledClassesCleared());
+    //this.scheduledClassesStore.dispatch(new ScheduledClassesCleared());
     this.rCAMStore.dispatch(new RecurringClassAppliedMonthlysCleared());
     this.monthFromRouteData = +this.route.snapshot.params['month'];
     this.yearFromRouteData = +this.route.snapshot.params['year'];

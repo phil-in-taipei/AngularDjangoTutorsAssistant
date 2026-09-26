@@ -7,7 +7,7 @@
           class="form-control"
           name="month"
           class="form-control"
-          ngModel
+          [ngModel]="defaultMonth"
           required
           #month="ngModel"
           >
@@ -23,7 +23,7 @@
           class="form-control"
           name="year"
           class="form-control"
-          ngModel
+          [ngModel]="defaultYear"
           required
           #year="ngModel"
           >
