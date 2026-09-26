@@ -37,8 +37,12 @@ export class ApplyRecurringClassMonthlyFormComponent implements OnInit {
   recurringClasses$: Observable<RecurringClassModel[] | undefined> = of(undefined);
   @Input() month:number;
   @Input() year:number;
+  @Input() currentMonthFirstDateString:string;
+  @Input() monthlyDateRangeInCalendar: [string, string];
   errorMsg$: Observable<string | undefined>;
   successMsg$: Observable<string | undefined>;
+
+  calendarStateNeedsUpdate:boolean = false;
 
 
   constructor( 
@@ -60,6 +64,10 @@ export class ApplyRecurringClassMonthlyFormComponent implements OnInit {
     this.recurringClasses$ = this.recurringClassesStore.pipe(
       select(selectAllRecurringClasses)
     );
+    if (this.currentMonthFirstDateString === this.monthlyDateRangeInCalendar[0]) {
+        console.log('Equal');
+        this.calendarStateNeedsUpdate = true;
+    }
   }
 
   onClearStatusMsgs() {

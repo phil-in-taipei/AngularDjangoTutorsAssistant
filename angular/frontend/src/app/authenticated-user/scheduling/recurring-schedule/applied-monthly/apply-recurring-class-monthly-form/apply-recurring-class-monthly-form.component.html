@@ -12,6 +12,19 @@
     <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
     data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
+
+  <div *ngIf=calendarStateNeedsUpdate>
+    <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+        <app-trigger-calendar-update 
+            class="bg-transparent"
+              [month]=month
+              [year]=year
+            >
+        </app-trigger-calendar-update>
+      <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+      data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>  
 </div>
 
 <h5 class="text-center">Apply a Recurring Class</h5>

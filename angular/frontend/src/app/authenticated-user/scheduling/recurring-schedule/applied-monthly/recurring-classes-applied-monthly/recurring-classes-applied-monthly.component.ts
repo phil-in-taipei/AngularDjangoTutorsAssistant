@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { first, Observable, of, take} from 'rxjs';
 import { ActivatedRoute } from "@angular/router";
 import { select, Store } from '@ngrx/store';
 
+import { getFirstDateofMonthStr } from 'src/app/shared-utils/date-time.util';
 import { 
   monthsAndIntegers 
 } from 'src/app/shared-utils/date-time.util';
@@ -23,7 +24,7 @@ import {
   ScheduledClassesCleared, ScheduledClassesMessagesCleared 
 } from '../../../classes-state/scheduled-classes.actions';
 import { 
-  scheduledClassesSuccessMsg, scheduledClassesErrorMsg 
+  scheduledClassesSuccessMsg, scheduledClassesErrorMsg, selectMonthlyDateRange
 } from '../../../classes-state/scheduled-classes.selectors';
 import { 
   deletionModeForRecurringClassesAppliedMonthlyActivated,
@@ -45,6 +46,8 @@ export class RecurringClassesAppliedMonthlyComponent implements OnInit {
   rCAMs$: Observable<RecurringClassAppliedMonthlyModel[] | undefined> = of(undefined);
   rCAMsLoaded$: Observable<boolean> = of(false);
   monthFromRouteData:number;
+  currentMonthFirstDateString:string;
+  monthlyDateRangeInCalendar: [string, string] = ["", ""];
   yearFromRouteData:number;
   batchDeletionData$: Observable<ScheduledClassBatchDeletionDataModel | undefined> = of(undefined);
   batchDeletionErrMsg$: Observable<string | undefined> = of(undefined);
@@ -64,9 +67,19 @@ export class RecurringClassesAppliedMonthlyComponent implements OnInit {
       select(deletionModeForRecurringClassesAppliedMonthlyActivated)
     );
     //this.scheduledClassesStore.dispatch(new ScheduledClassesCleared());
+    this.scheduledClassesStore.pipe(
+      select(selectMonthlyDateRange)
+    ).pipe(take(1)).subscribe(range => {
+      if (range) {
+        this.monthlyDateRangeInCalendar = range;
+      }
+    });
     this.rCAMStore.dispatch(new RecurringClassAppliedMonthlysCleared());
     this.monthFromRouteData = +this.route.snapshot.params['month'];
     this.yearFromRouteData = +this.route.snapshot.params['year'];
+    this.currentMonthFirstDateString = getFirstDateofMonthStr(
+      this.monthFromRouteData, this.yearFromRouteData
+    );
     this.rCAMStore.dispatch(new RecurringClassAppliedMonthlysRequested({
       month: this.monthFromRouteData,
       year: this.yearFromRouteData

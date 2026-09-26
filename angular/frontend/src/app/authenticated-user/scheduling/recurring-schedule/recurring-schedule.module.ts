@@ -48,6 +48,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { StudentOrClassTemplateStringComponent } from './student-or-class-template-string/student-or-class-template-string.component';   
 import { StudentsOrClassesEffects } from '../../student-or-class/state/student-or-class.effects';
 import { studentsOrClassesReducer } from '../../student-or-class/state/student-or-class.reducers';
+import { TriggerCalendarUpdateComponent } from './applied-monthly/trigger-calendar-update/trigger-calendar-update.component';
 import { UserEffects } from '../../user/user-state/user.effects';
 import { userProfileReducer } from '../../user/user-state/user.reducers';
 import { 
@@ -68,6 +69,7 @@ import {
     RecurringScheduleComponent,
     SelectMonthAndYearComponent,
     StudentOrClassTemplateStringComponent,
+    TriggerCalendarUpdateComponent,
     VenueSpaceTemplateStrComponent
   ],
   imports: [
