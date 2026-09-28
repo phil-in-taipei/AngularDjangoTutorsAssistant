@@ -33,6 +33,7 @@ function compareRecurringClassesAppliedMonthly(
 export interface RecurringClassAppliedMonthlysState 
     extends EntityState<RecurringClassAppliedMonthlyModel> {
       deletionModeActivated: boolean;
+      batchSchedulingMonthAndYear: [number, number] | undefined | null;
       errorMessage: string | undefined,
       recurringClassAppliedMonthlysLoaded: boolean,
       successMessage: string | undefined,
@@ -47,6 +48,8 @@ createEntityAdapter<RecurringClassAppliedMonthlyModel>(
     
 export const initialRecurringClassAppliedMonthlysState: 
     RecurringClassAppliedMonthlysState = adapter.getInitialState({
+
+    batchSchedulingMonthAndYear: undefined,
 
     deletionModeActivated: false,
 
@@ -143,6 +146,13 @@ export function recurringClassAppliedMonthlysReducer(
                 recurringClassAppliedMonthlysLoaded: true
               }
             );
+
+        case RecurringClassAppliedMonthlyActionTypes.RecurringClassAppliedMonthlysRequested:
+            let month:number = +action.payload.month;
+            let year:number = +action.payload.year; 
+            return {
+              ...state,  batchSchedulingMonthAndYear: [month, year],
+            }
        
         case RecurringClassAppliedMonthlyActionTypes.RecurringClassesAppliedMonthlyMessagesCleared:
             return {

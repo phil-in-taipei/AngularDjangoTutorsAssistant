@@ -15,6 +15,11 @@ export const selectAllRecurringClassAppliedMonthlys = createSelector(
   fromRecurringClassesAppliedMonthly.selectAll
 );
 
+export const selectBatchSchedulingMonthAndYear = createSelector(
+    selectRecurringClassesAppliedMonthlyState,
+    state => state.batchSchedulingMonthAndYear
+  );
+
 export const selectRecurringClassAppliedMonthlyById = (id: number) => createSelector(
   selectRecurringClassesAppliedMonthlyState,
   state => state.entities[id]

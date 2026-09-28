@@ -16,12 +16,12 @@ const routes: Routes = [
   { path: '', component: RecurringScheduleComponent, 
     children: [
       { path: 'create', component: CreateRecurringClassComponent },
-      { 
-        path: 'applied-monthly/:month/:year', 
-        component: RecurringClassesAppliedMonthlyComponent 
-      },
+      //{ 
+      //  path: 'applied-monthly/:month/:year', 
+      //  component: RecurringClassesAppliedMonthlyComponent 
+      //},
       { path: 'list', component: RecurringClassesComponent },
-      { path: 'select-month-year', component: SelectMonthAndYearComponent },
+      { path: 'select-month-year', component: RecurringClassesAppliedMonthlyComponent }, //
     ] 
   }
 ];

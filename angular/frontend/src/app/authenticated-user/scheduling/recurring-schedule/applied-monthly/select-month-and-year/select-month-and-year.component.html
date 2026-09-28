@@ -1,15 +1,14 @@
 <div class="m-3 p-2">
     <div class="container">
         <h2 class="text-center">Select Month and Year for Applied Recurring Classes</h2>
-        <form (submit)="onMonthAndYearNav(selectMonthAndYearForm)"
+        <form (submit)="onMonthAndYearSelect(selectMonthAndYearForm)"
           #selectMonthAndYearForm="ngForm">
           <div>
             <label>Month</label>
               <select
-              class="form-control"
               name="month"
               class="form-control"
-              ngModel
+              [ngModel]="defaultMonth"
               required
               #month="ngModel"
               >
@@ -22,10 +21,9 @@
           <div>
             <label>Year</label>
               <select
-              class="form-control"
               name="year"
               class="form-control"
-              ngModel
+              [ngModel]="defaultYear"
               required
               #year="ngModel"
               >

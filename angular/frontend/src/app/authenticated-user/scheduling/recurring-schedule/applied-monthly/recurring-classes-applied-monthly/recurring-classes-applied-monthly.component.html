@@ -1,129 +1,152 @@
 <br />
-<div class="text-center">
-    <button class="btn btn-sm btn-outline-secondary text"
-    [routerLink]="['/authenticated-user/scheduling/recurring-schedule/select-month-year']">
-        Select Another Month
-    </button>
-  </div>
-  <hr class="thin-br"/>
-  <h3 class="text-center">
-    Batch Booking for {{ monthsAndIntegers[monthFromRouteData - 1][0] }} {{ yearFromRouteData }}
-  </h3>
-  <hr class="thin-br"/>
-  <div *ngIf="rCAMs$ | async as recurringClasses" class="container">
-    <div class="text-center">
-      <button class="btn btn-sm btn-outline-secondary" type="button"
-        (click)="toggleApplySchedulerSubmitForm()">
-        {{ showApplyRecurringClassSubmitForm ? "Never Mind, I'll submit one next time for "
-        : "Click Here to apply a Recurring Class to " }} {{ monthsAndIntegers[monthFromRouteData - 1][0] }}
-      </button>
-      <br />
-    </div>
-    <div [hidden]="!showApplyRecurringClassSubmitForm"
-    [style.opacity]="!showApplyRecurringClassSubmitForm ? '0' : '1'"
-    [style.visibility]="!showApplyRecurringClassSubmitForm ? 'hidden' : 'visible'">
+
+<div *ngIf="showMonthlySelectForm" class="container content">
+    <div>
+      <div>
+          <app-select-month-and-year
+            [batchSchedulingMonthAndYear]="batchSchedulingMonthAndYear$ | async"
+            (closeMonthlySelectFormEvent)="closeMonthlySelectFormHander($event)">
+          </app-select-month-and-year>
+      </div>
       <hr class="thin-br"/>
-      <app-apply-recurring-class-monthly-form
-        [currentMonthFirstDateString]=currentMonthFirstDateString
-        [monthlyDateRangeInCalendar]=monthlyDateRangeInCalendar
-        [month]=monthFromRouteData
-        [year]=yearFromRouteData>
-      </app-apply-recurring-class-monthly-form>
     </div>
+</div>
+
+<div *ngIf="!showMonthlySelectForm">
+
+  <div class="text-center">
+      <button class="btn btn-sm btn-outline-secondary text"
+         (click)="toggleMonthlySelectForm()"
+      >
+          Select Another Month
+      </button>
+  </div>
+  <div *ngIf="batchSchedulingMonthAndYear$ | async as batchSchedulingMonthAndYear">
+
     <hr class="thin-br"/>
-</div>
-
-<div *ngIf="batchDeletionErrMsg$ | async as classErrMsg" class="container">
-  <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <h4 class="text-center">{{ classErrMsg }}</h4>
-    <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
-    data-bs-dismiss="alert" aria-label="Close"></button>
+    <h3 class="text-center">
+      Batch Booking for {{ monthsAndIntegers[batchSchedulingMonthAndYear[0] - 1][0] }} {{ batchSchedulingMonthAndYear[1] }}
+    </h3>
+    <hr class="thin-br"/>
+    <div *ngIf="rCAMs$ | async as recurringClasses" class="container">
+      <div class="text-center">
+        <button class="btn btn-sm btn-outline-secondary" type="button"
+          (click)="toggleApplySchedulerSubmitForm()">
+          {{ showApplyRecurringClassSubmitForm ? "Never Mind, I'll submit one next time for "
+          : "Click Here to apply a Recurring Class to " }} {{ monthsAndIntegers[batchSchedulingMonthAndYear[0] - 1][0] }}
+        </button>
+        <br />
+      </div>
+      <div [hidden]="!showApplyRecurringClassSubmitForm"
+      [style.opacity]="!showApplyRecurringClassSubmitForm ? '0' : '1'"
+      [style.visibility]="!showApplyRecurringClassSubmitForm ? 'hidden' : 'visible'">
+        <hr class="thin-br"/>
+        <app-apply-recurring-class-monthly-form
+          [monthlyDateRangeInCalendar]=monthlyDateRangeInCalendar
+          [month]="batchSchedulingMonthAndYear[0]"
+          [year]="batchSchedulingMonthAndYear[1]"
+        >
+        </app-apply-recurring-class-monthly-form>
+      </div>
+      <hr class="thin-br"/>
+    </div>
   </div>
-</div>
 
-<div *ngIf="batchDeletionSuccessMsg$ | async as classSuccessMsg" class="container">
-  <div class="alert alert-primary alert-dismissible fade show" role="alert">
-    <h6 class="text-center">{{ classSuccessMsg }}</h6>
-    <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
-    data-bs-dismiss="alert" aria-label="Close"></button>
+  <div *ngIf="batchDeletionErrMsg$ | async as classErrMsg" class="container">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <h4 class="text-center">{{ classErrMsg }}</h4>
+      <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+      data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
   </div>
-</div>
 
-<div *ngIf="batchDeletionData$ | async as batchDeletionData" class="container content">
-    <app-recurring-class-deletion-response 
-      [scheduledClassesOptionalDeletionData]=batchDeletionData>
-    </app-recurring-class-deletion-response>
-</div>
+  <div *ngIf="batchDeletionSuccessMsg$ | async as classSuccessMsg" class="container">
+    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+      <h6 class="text-center">{{ classSuccessMsg }}</h6>
+      <button type="button" class="btn-close" (click)="onClearStatusMsgs()"
+      data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
 
-<ng-container *ngIf="{value: rCAMsLoaded$ | async} as context">
-  <div *ngIf="!context.value">
-    <div class="text-center">
-      <div class="spinner-border text-secondary" role="status">
-        <span class="visually-hidden">Loading...</span>
+  <div *ngIf="batchDeletionData$ | async as batchDeletionData" class="container content">
+      <app-recurring-class-deletion-response 
+        [scheduledClassesOptionalDeletionData]=batchDeletionData>
+      </app-recurring-class-deletion-response>
+  </div>
+
+  <ng-container *ngIf="{value: rCAMsLoaded$ | async} as context">
+    <div *ngIf="!context.value">
+      <div class="text-center">
+        <div class="spinner-border text-secondary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <br />
       </div>
       <br />
     </div>
-    <br />
-  </div>
-</ng-container>
+  </ng-container>
 
-<div *ngIf="rCAMs$ | async as recurringClassesAppliedMonthly" class="container content">
-  <div class="large-scr-tbl">
-        <ng-container *ngIf="{ value: deletionModeForRecurringClassesAppliedMonthlyActivated$ | async } as context">
-      <div *ngIf="context.value" class="text-center">
-          <p class="text-center text-danger small-scr">
-            (Turn Horizontal to Delete)
-          </p>
-            <button class="btn btn-outline-danger" 
-            (click)="onDeactivateRecurringClassAppliedMonthlyDeletionMode()" type="button">
-              Deactivate Deletion Mode
+  <div *ngIf="rCAMs$ | async as recurringClassesAppliedMonthly" class="container content">
+    <div class="large-scr-tbl">
+          <ng-container *ngIf="{ value: deletionModeForRecurringClassesAppliedMonthlyActivated$ | async } as context">
+        <div *ngIf="context.value" class="text-center">
+            <p class="text-center text-danger small-scr">
+              (Turn Horizontal to Delete)
+            </p>
+              <button class="btn btn-outline-danger" 
+              (click)="onDeactivateRecurringClassAppliedMonthlyDeletionMode()" type="button">
+                Deactivate Deletion Mode
+              </button>
+            <br />
+        </div>
+      </ng-container>
+      <ng-container 
+        *ngIf="{ value: deletionModeForRecurringClassesAppliedMonthlyActivated$ | async } as context"
+      >
+      <div *ngIf="!context.value" class="text-center">
+            <button class="btn btn-outline-danger middle" 
+            (click)="onActivateRecurringClassAppliedMonthlyDeletionMode()" type="button">
+              Activate Deletion Mode
             </button>
-          <br />
+        <br />
       </div>
-    </ng-container>
-    <ng-container 
-      *ngIf="{ value: deletionModeForRecurringClassesAppliedMonthlyActivated$ | async } as context"
-    >
-    <div *ngIf="!context.value" class="text-center">
-          <button class="btn btn-outline-danger middle" 
-          (click)="onActivateRecurringClassAppliedMonthlyDeletionMode()" type="button">
-            Activate Deletion Mode
-          </button>
-      <br />
-    </div>
-    </ng-container>
-    
-    <div class="container">
-      <table class="table bg-transparent">
-          <thead class="table bg-transparent">
-            <tr class="row">
-              <th class="col"><p>Time</p></th>
-              <th class="col"><p>Student</p></th>
-                              <ng-container
-                  *ngIf="{ value: deletionModeForRecurringClassesAppliedMonthlyActivated$ | async } as context"
-                >
-                  <th *ngIf="context.value" class="col bg-transparent hidden-small"
+      </ng-container>
+      
+      <div class="container">
+        <table class="table bg-transparent">
+            <thead class="table bg-transparent">
+              <tr class="row">
+                <th class="col"><p>Time</p></th>
+                <th class="col"><p>Student</p></th>
+                                <ng-container
+                    *ngIf="{ value: deletionModeForRecurringClassesAppliedMonthlyActivated$ | async } as context"
                   >
-                    <p>
-                      Remove
-                    </p>
-                  </th>
-                </ng-container>
-            </tr>
-          </thead>
-          <tbody class="bg-transparent">
-          <div class="bg-transparent"
-            *ngFor="let recurringClassAppliedMonthly of recurringClassesAppliedMonthly" 
-          >
-            <app-recurring-class-applied-monthly 
-              class="bg-transparent"
-              [recurringClassAppliedMonthly]=recurringClassAppliedMonthly>
-            </app-recurring-class-applied-monthly>
-          </div>
-          </tbody>
-        </table>
+                    <th *ngIf="context.value" class="col bg-transparent hidden-small"
+                    >
+                      <p>
+                        Remove
+                      </p>
+                    </th>
+                  </ng-container>
+              </tr>
+            </thead>
+            <tbody class="bg-transparent">
+            <div class="bg-transparent"
+              *ngFor="let recurringClassAppliedMonthly of recurringClassesAppliedMonthly; trackBy: trackByFn" 
+            >
+              <app-recurring-class-applied-monthly 
+                class="bg-transparent"
+                [recurringClassAppliedMonthly]="recurringClassAppliedMonthly">
+              </app-recurring-class-applied-monthly>
+            </div>
+            </tbody>
+          </table>
+      </div>
     </div>
   </div>
+
 </div>
+
+
 
   

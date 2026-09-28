@@ -1,8 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { select, Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 
+import { getFirstDateofMonthStr } from 'src/app/shared-utils/date-time.util';
 import { 
   RecurringClassAppliedMonthlyCreateModel, 
   RecurringClassModel
@@ -31,25 +32,21 @@ import {
   templateUrl: './apply-recurring-class-monthly-form.component.html',
   styleUrl: './apply-recurring-class-monthly-form.component.css'
 })
-export class ApplyRecurringClassMonthlyFormComponent implements OnInit {
+export class ApplyRecurringClassMonthlyFormComponent implements OnInit, OnChanges {
 
 
   recurringClasses$: Observable<RecurringClassModel[] | undefined> = of(undefined);
   @Input() month:number;
   @Input() year:number;
-  @Input() currentMonthFirstDateString:string;
   @Input() monthlyDateRangeInCalendar: [string, string];
+  calendarStateNeedsUpdate = false;
   errorMsg$: Observable<string | undefined>;
   successMsg$: Observable<string | undefined>;
-
-  calendarStateNeedsUpdate:boolean = false;
-
 
   constructor( 
     private rCAMStore: Store<RecurringClassAppliedMonthlysState>,
     private recurringClassesStore: Store<RecurringClassesState>
   ) {}
-
 
   ngOnInit(): void {
     this.rCAMStore.dispatch(
@@ -64,10 +61,11 @@ export class ApplyRecurringClassMonthlyFormComponent implements OnInit {
     this.recurringClasses$ = this.recurringClassesStore.pipe(
       select(selectAllRecurringClasses)
     );
-    if (this.currentMonthFirstDateString === this.monthlyDateRangeInCalendar[0]) {
-        console.log('Equal');
-        this.calendarStateNeedsUpdate = true;
-    }
+  }
+
+  ngOnChanges(): void {
+    this.calendarStateNeedsUpdate =
+      getFirstDateofMonthStr(this.month, this.year) === this.monthlyDateRangeInCalendar?.[0];
   }
 
   onClearStatusMsgs() {
@@ -83,13 +81,13 @@ export class ApplyRecurringClassMonthlyFormComponent implements OnInit {
         }
       }} ));
       form.reset();
+      return;
     }
     let submissionForm: RecurringClassAppliedMonthlyCreateModel = {
         scheduling_month: this.month,
         scheduling_year: this.year,
         recurring_class: form.value.recurring_class,
     }
-    console.log(submissionForm);
     this.rCAMStore.dispatch(new RecurringClassAppliedMonthlyCreateSubmitted(
       { recurringClassAppliedMonthly: submissionForm }
     ));

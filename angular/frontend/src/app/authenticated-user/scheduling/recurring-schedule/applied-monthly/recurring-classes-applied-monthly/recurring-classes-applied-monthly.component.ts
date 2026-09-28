@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { first, Observable, of, take} from 'rxjs';
-import { ActivatedRoute } from "@angular/router";
+import { Observable, of, take} from 'rxjs';
 import { select, Store } from '@ngrx/store';
 
-import { getFirstDateofMonthStr } from 'src/app/shared-utils/date-time.util';
 import { 
   monthsAndIntegers 
 } from 'src/app/shared-utils/date-time.util';
@@ -11,8 +9,6 @@ import { RecurringClassAppliedMonthlyModel } from 'src/app/models/recurring-sche
 import { 
   RecurringClassAppliedMonthlyDeletionModeActivated,
   RecurringClassAppliedMonthlyDeletionModeDeactivated,
-  RecurringClassAppliedMonthlysCleared,
-  RecurringClassAppliedMonthlysRequested, 
   RecurringClassesAppliedMonthlyMessagesCleared 
 } from '../../state/recurring-classes-applied-monthly-state/recurring-class-applied-monthly.actions';
 import { 
@@ -21,7 +17,7 @@ import {
 import { ScheduledClassBatchDeletionDataModel } from 'src/app/models/scheduled-class.model';
 import { ScheduledClassesState } from '../../../classes-state/scheduled-classes.reducers';
 import { 
-  ScheduledClassesCleared, ScheduledClassesMessagesCleared 
+  ScheduledClassesMessagesCleared
 } from '../../../classes-state/scheduled-classes.actions';
 import { 
   scheduledClassesSuccessMsg, scheduledClassesErrorMsg, selectMonthlyDateRange
@@ -29,7 +25,8 @@ import {
 import { 
   deletionModeForRecurringClassesAppliedMonthlyActivated,
   optionalScheduledClassBatchDeletionData,
-  selectAllRecurringClassAppliedMonthlys, 
+  selectAllRecurringClassAppliedMonthlys,
+  selectBatchSchedulingMonthAndYear,
   selectRecurringClassAppliedMonthlysLoaded 
 } from '../../state/recurring-classes-applied-monthly-state/recurring-class-applied-monthly.selectors';
 
@@ -45,19 +42,17 @@ export class RecurringClassesAppliedMonthlyComponent implements OnInit {
   deletionModeForRecurringClassesAppliedMonthlyActivated$: Observable<boolean> = of(false);
   rCAMs$: Observable<RecurringClassAppliedMonthlyModel[] | undefined> = of(undefined);
   rCAMsLoaded$: Observable<boolean> = of(false);
-  monthFromRouteData:number;
-  currentMonthFirstDateString:string;
   monthlyDateRangeInCalendar: [string, string] = ["", ""];
-  yearFromRouteData:number;
   batchDeletionData$: Observable<ScheduledClassBatchDeletionDataModel | undefined> = of(undefined);
   batchDeletionErrMsg$: Observable<string | undefined> = of(undefined);
   batchDeletionSuccessMsg$: Observable<string | undefined> = of(undefined);
+  batchSchedulingMonthAndYear$: Observable<[number, number] | undefined | null> = of(undefined);
   monthsAndIntegers: [string, number][] = monthsAndIntegers;
   showApplyRecurringClassSubmitForm:boolean = false;
+  showMonthlySelectForm: Boolean = true;
 
 
   constructor(
-    private route: ActivatedRoute,
     private rCAMStore: Store<RecurringClassAppliedMonthlysState>,
     private scheduledClassesStore: Store<ScheduledClassesState>
   ) { }
@@ -66,7 +61,9 @@ export class RecurringClassesAppliedMonthlyComponent implements OnInit {
     this.deletionModeForRecurringClassesAppliedMonthlyActivated$ = this.rCAMStore.pipe(
       select(deletionModeForRecurringClassesAppliedMonthlyActivated)
     );
-    //this.scheduledClassesStore.dispatch(new ScheduledClassesCleared());
+    this.batchSchedulingMonthAndYear$ = this.rCAMStore.pipe(
+     select(selectBatchSchedulingMonthAndYear)
+    );
     this.scheduledClassesStore.pipe(
       select(selectMonthlyDateRange)
     ).pipe(take(1)).subscribe(range => {
@@ -74,16 +71,12 @@ export class RecurringClassesAppliedMonthlyComponent implements OnInit {
         this.monthlyDateRangeInCalendar = range;
       }
     });
-    this.rCAMStore.dispatch(new RecurringClassAppliedMonthlysCleared());
-    this.monthFromRouteData = +this.route.snapshot.params['month'];
-    this.yearFromRouteData = +this.route.snapshot.params['year'];
-    this.currentMonthFirstDateString = getFirstDateofMonthStr(
-      this.monthFromRouteData, this.yearFromRouteData
-    );
-    this.rCAMStore.dispatch(new RecurringClassAppliedMonthlysRequested({
-      month: this.monthFromRouteData,
-      year: this.yearFromRouteData
-    }));
+
+    this.batchSchedulingMonthAndYear$.pipe(take(1)).subscribe(range => {
+      if (range) {
+        this.showMonthlySelectForm = false;
+      }
+    });
     this.rCAMs$ = this.rCAMStore.pipe(
       select(selectAllRecurringClassAppliedMonthlys)
     );
@@ -123,6 +116,18 @@ export class RecurringClassesAppliedMonthlyComponent implements OnInit {
       this.showApplyRecurringClassSubmitForm = false;
     } else {
       this.showApplyRecurringClassSubmitForm = true;
+    }
+  }
+
+  closeMonthlySelectFormHander($event: boolean) {
+    this.showMonthlySelectForm = $event;
+  }
+
+  toggleMonthlySelectForm() {
+    if (this.showMonthlySelectForm) {
+      this.showMonthlySelectForm = false;
+    } else {
+      this.showMonthlySelectForm = true;
     }
   }
 
