@@ -9,7 +9,9 @@ import {
   ScheduledClassesState 
 } from '../../../classes-state/scheduled-classes.reducers';
 import { 
-  ScheduledClassesMessagesCleared 
+  ScheduledClassesMessagesCleared, 
+  ClientSchoolAccountingUpdateMessageCleared,
+  UpdatedPurchasedHoursCleared 
 } from '../../../classes-state/scheduled-classes.actions';
 import { 
   clientSchoolAccountingUpdateMessage,
@@ -54,6 +56,9 @@ export class SingleClassInfoComponent implements OnInit{
 
   ngOnInit(): void {
     this.store.dispatch(new ScheduledClassesMessagesCleared());
+    this.store.dispatch(new ClientSchoolAccountingUpdateMessageCleared());
+    this.store.dispatch(new UpdatedPurchasedHoursCleared());
+
     this.idFromRouteData = +this.route.snapshot.params['id'];
     this.scheduledClass$ = this.store.pipe(select(
       selectScheduledClassById(this.idFromRouteData)
