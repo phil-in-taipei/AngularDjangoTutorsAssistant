@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { NgForm } from '@angular/forms';
+import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 
 import { DurationOptionsInterface } from 'src/app/models/time-related.model';
 import { 
@@ -32,6 +33,7 @@ export class CreateRecurringClassFormComponent implements OnInit {
   @Input() userProfile: UserProfileModel;
   @Input() venueSpaces: VenueSpaceModel[];
   classDurationOptions: DurationOptionsInterface[];
+  startTime: NgbTimeStruct = { hour: 13, minute: 0, second: 0 };
 
   constructor(
     private store: Store<RecurringClassesState>
@@ -51,25 +53,27 @@ export class CreateRecurringClassFormComponent implements OnInit {
       form.reset();
       return;
     }
-    let startTimeStr = getFormattedTime(form.value.hour, form.value.minute);
-    let durationArr = form.value.duration.split(',')
-    let dt = new Date();
-    dt.setHours(form.value.hour);
-    dt.setMinutes(form.value.minute);
-    let finishTimeStr = getFinishTime(dt, durationArr);
-    let submissionForm: RecurringClassCreateModel = {
-        teacher: this.userProfile.id,
-        student_or_class: form.value.student_or_class,
-        recurring_day_of_week: +form.value.day_of_week,
-        recurring_finish_time: finishTimeStr,
-        recurring_start_time: startTimeStr,
-        recurring_location: form.value.recurring_location ? +form.value.recurring_location : null,
-    }
+    const { hour, minute } = form.value.startTime;
+    const startTimeStr = getFormattedTime(hour, minute);
+    const durationArr = form.value.duration.split(',');
+
+    const dt = new Date();
+    dt.setHours(hour, minute, 0, 0);
+    const finishTimeStr = getFinishTime(dt, durationArr);
+
+    const submissionForm: RecurringClassCreateModel = {
+      teacher: this.userProfile.id,
+      student_or_class: form.value.student_or_class,
+      recurring_day_of_week: +form.value.day_of_week,
+      recurring_finish_time: finishTimeStr,
+      recurring_start_time: startTimeStr,
+      recurring_location: form.value.recurring_location ? +form.value.recurring_location : null,
+    };
+
     this.store.dispatch(new RecurringClassCreateSubmitted(
-        { recurringClass: submissionForm }
-      )
-    );
-    form.resetForm()
+      { recurringClass: submissionForm }
+    ));
+    form.resetForm({ startTime: { hour: 13, minute: 0, second: 0 } });
   }
 
 }

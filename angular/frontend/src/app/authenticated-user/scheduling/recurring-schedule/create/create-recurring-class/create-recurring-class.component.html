@@ -1,5 +1,5 @@
 <br />
-<h3>Schedule a Recurring Class</h3>
+<h2>Schedule a Recurring Class</h2>
 <div *ngIf="errorMessage$ | async as classErrMsg">
   <div class="container">
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -22,7 +22,6 @@
 <div *ngIf="studentsOrClasses$ | async as studentsOrClasses">
   <div *ngIf="userProfile$ | async as userProfile" class="container">
     <div *ngIf="venueSpaces$ | async as venueSpaces">
-      <hr class="thin-br"/>
       <app-create-recurring-class-form
         [studentsOrClasses]=studentsOrClasses
         [userProfile]=userProfile
