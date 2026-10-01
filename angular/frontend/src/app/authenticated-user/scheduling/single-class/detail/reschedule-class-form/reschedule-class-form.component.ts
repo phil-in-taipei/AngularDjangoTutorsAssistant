@@ -1,5 +1,6 @@
 import { Component, Input, EventEmitter, OnInit, Output } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 
 import { DurationOptionsInterface } from 'src/app/models/time-related.model';
@@ -24,7 +25,8 @@ import {
 })
 export class RescheduleClassFormComponent implements OnInit{
 
-  dateModel: Date;
+  dateModel: NgbDateStruct | null = null;
+  startTime: NgbTimeStruct = { hour: 13, minute: 0, second: 0 };
   @Input() scheduledClass: ScheduledClassModel;
   @Output() closeFormEvent = new EventEmitter<boolean>();
   classDurationOptions: DurationOptionsInterface[];
@@ -48,21 +50,25 @@ export class RescheduleClassFormComponent implements OnInit{
       this.closeFormEvent.emit(false);
       return;
     }
-    let startTimeStr = getFormattedTime(form.value.hour, form.value.minute);
-    let durationArr = form.value.duration.split(',')
-    let dt = new Date();
-    dt.setHours(form.value.hour);
-    dt.setMinutes(form.value.minute);
-    let finishTimeStr = getFinishTime(dt, durationArr);
-    let submissionForm: RescheduleClassModel = {
+    const { hour, minute } = form.value.startTime;
+    const d = form.value.date;
+    const startTimeStr = getFormattedTime(hour, minute);
+    const durationArr = form.value.duration.split(',');
+
+    const dt = new Date();
+    dt.setHours(hour, minute, 0, 0);
+    const finishTimeStr = getFinishTime(dt, durationArr);
+
+    const submissionForm: RescheduleClassModel = {
       id: this.scheduledClass.id,
       student_or_class: this.scheduledClass.student_or_class,
       teacher: this.scheduledClass.teacher,
-      date: `${form.value.date.year}-${form.value.date.month}-${form.value.date.day}`,
+      date: `${d.year}-${String(d.month).padStart(2, '0')}-${String(d.day).padStart(2, '0')}`,
       start_time: startTimeStr,
       finish_time: finishTimeStr,
       location: this.scheduledClass.location
-    }
+    };
+
     this.store.dispatch(new RescheduleClassSubmitted(
       { id: this.scheduledClass.id, scheduledClass: submissionForm }
     ));

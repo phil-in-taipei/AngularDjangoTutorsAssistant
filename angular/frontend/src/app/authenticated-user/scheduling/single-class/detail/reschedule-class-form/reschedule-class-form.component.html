@@ -1,77 +1,72 @@
-<div>
-    <form (submit)="onSubmitRescheduledClass(rescheduledClassForm)" #rescheduledClassForm="ngForm">
-      <div class="input-group">
-        <input class="form-control" placeholder="yyyy-mm-dd"
-               name="date" [(ngModel)]="dateModel" ngbDatepicker #date="ngbDatepicker">
-        <div class="input-group-append">
-          <button class="btn btn-outline-secondary calendar" (click)="date.toggle()" type="button">
-          Select Date</button>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <label>Hour</label>
-          <input
-          class="form-control"
-          type="number"
-          min="01"
-          max="23"
-          rows="4"
-          name="hour"
-          ngModel
-          required
-          placeholder="13"
-          #hour="ngModel"
-          >
-          <div *ngIf="hour.touched && hour.invalid">
-            Please enter an hour.
+<div class="container bg-transparent py-4">
+  <div class="row bg-transparent justify-content-center">
+    <div class="col-12 col-md-12 col-lg-10 col-xl-8 bg-transparent">
+      <form (submit)="onSubmitRescheduledClass(rescheduledClassForm)"
+            #rescheduledClassForm="ngForm" novalidate class="bg-transparent">
+
+        <!-- Row 1: Date -->
+        <div class="row bg-transparent g-3 mb-3">
+          <div class="col-12 bg-transparent">
+            <label for="date" class="form-label">Date</label>
+            <div class="input-group bg-transparent">
+              <input id="date" class="form-control bg-transparent text-secondary border-secondary"
+                     placeholder="yyyy-mm-dd" name="date" [(ngModel)]="dateModel" required
+                     ngbDatepicker #datepicker="ngbDatepicker" #dateCtrl="ngModel"
+                     [class.is-invalid]="dateCtrl.touched && dateCtrl.invalid">
+              <button class="btn btn-outline-secondary" (click)="datepicker.toggle()" type="button">
+                <span class="visually-hidden">Select date</span>📅
+              </button>
+            </div>
+            <div class="invalid-feedback d-block" *ngIf="dateCtrl.touched && dateCtrl.invalid">
+              Please enter a valid date.
+            </div>
           </div>
         </div>
-        <div class="col">
-          <label>Minute</label>
-          <input
-          class="form-control"
-          type="number"
-          min="00"
-          max="59"
-          rows="4"
-          name="minute"
-          ngModel
-          required
-          step='01'
-          placeholder="59"
-          #minute="ngModel"
-          >
-          <div *ngIf="minute.touched && minute.invalid">
-            Please enter minutes.
+
+        <!-- Row 2: Start time + duration -->
+        <div class="row bg-transparent g-3 mb-3">
+          <div class="col-12 col-md-6 bg-transparent">
+            <label class="form-label">Start Time</label>
+            <div class="d-flex justify-content-center bg-transparent">
+              <ngb-timepicker
+                name="startTime"
+                [(ngModel)]="startTime"
+                [spinners]="true"
+                [minuteStep]="5"
+                [meridian]="false"
+                required
+                #startTimeCtrl="ngModel">
+              </ngb-timepicker>
+            </div>
+            <div class="invalid-feedback d-block" *ngIf="startTimeCtrl.touched && startTimeCtrl.invalid">
+              Please enter a start time.
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 bg-transparent">
+            <label for="duration" class="form-label">Class Duration</label>
+            <hr class="thin-br" />
+            <select id="duration" class="form-select bg-transparent text-secondary border-secondary"
+                    name="duration" ngModel required #duration="ngModel"
+                    [class.is-invalid]="duration.touched && duration.invalid">
+              <option [ngValue]="null" disabled>Choose a duration...</option>
+              <option *ngFor="let opt of classDurationOptions" [value]="opt.timeArr">
+                {{ opt.stringVal }}
+              </option>
+            </select>
+            <div class="invalid-feedback">Please choose a duration.</div>
+            <hr class="thin-br" />
           </div>
         </div>
-      </div>
-      <br />
-      <div>
-        <label>Class Duration</label>
-          <select
-          class="form-control"
-          name="duration"
-          class="form-control"
-          ngModel
-          required
-          #duration="ngModel"
-          >
-          <option *ngFor="let opt of classDurationOptions"
-              [value]=opt.timeArr
-          >{{ opt.stringVal }}</option>
-          </select>
-          <div *ngIf="duration.touched && duration.invalid">
-            Please enter duration.
-          </div>
+
+        <hr class="thin-br" />
+
+        <!-- Submit -->
+        <div class="d-grid d-md-flex justify-content-md-start bg-transparent">
+          <button class="btn btn-outline-danger px-4" type="submit">Submit</button>
         </div>
-        <br /> 
-        <div>
-        <button class="btn btn-outline-danger" type="submit">
-          Submit
-        </button>
-      </div>
-    </form>
-    <br />
+
+      </form>
+    </div>
   </div>
+</div>
