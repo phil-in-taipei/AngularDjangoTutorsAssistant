@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 
 import { CreateScheduledClassModel } from 'src/app/models/scheduled-class.model';
@@ -29,6 +30,7 @@ export class ScheduleSingleClassFormComponent implements OnInit{
   @Input() userProfile: UserProfileModel;
   @Input() venueSpaces: VenueSpaceModel[];
   dateModel: Date;
+  startTime: NgbTimeStruct = { hour: 13, minute: 0, second: 0 };
   classDurationOptions: DurationOptionsInterface[];
 
   constructor(private store: Store<ScheduledClassesState>) { }
@@ -47,11 +49,12 @@ export class ScheduleSingleClassFormComponent implements OnInit{
       form.reset();
       return;
     }
-    let startTimeStr = getFormattedTime(form.value.hour, form.value.minute);
+    const { hour, minute } = form.value.startTime;
+    let startTimeStr = getFormattedTime(hour, minute);
     let durationArr = form.value.duration.split(',')
     let dt = new Date();
-    dt.setHours(form.value.hour);
-    dt.setMinutes(form.value.minute);
+    dt.setHours(hour);
+    dt.setMinutes(minute);
     let finishTimeStr = getFinishTime(dt, durationArr);
     let submissionForm: CreateScheduledClassModel = {
       student_or_class: +form.value.student_or_class,
@@ -65,6 +68,6 @@ export class ScheduleSingleClassFormComponent implements OnInit{
         { scheduledClass: submissionForm }
       )
     );
-    form.resetForm()
+    form.resetForm({ startTime: { hour: 13, minute: 0, second: 0 } })
   }  
 }

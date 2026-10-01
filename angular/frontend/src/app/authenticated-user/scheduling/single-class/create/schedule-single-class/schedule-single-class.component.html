@@ -1,5 +1,5 @@
 <br />
-<h3>Schedule a Class</h3>
+<h2>Schedule a Class</h2>
 <div *ngIf="classSubmitErrMsg$ | async as classErrMsg" class="container">
   <div class="alert alert-danger alert-dismissible fade show" role="alert">
     <h5 class="text-center">{{ classErrMsg }}</h5>
@@ -18,7 +18,6 @@
 <div *ngIf="studentsOrClasses$ | async as studentsOrClasses">
   <div *ngIf="userProfile$ | async as userProfile" class="container">
     <div *ngIf="venueSpaces$ | async as venueSpaces">
-    <hr class="thin-br"/>
       <app-schedule-single-class-form
         [studentsOrClasses]=studentsOrClasses
         [userProfile]=userProfile
