@@ -12,7 +12,9 @@ from .pagination import SmallSetPagination
 from .serializers import ScheduledClassSerializer, ScheduledClassGoogleCalendarSerializer
 from .utils import (
     class_is_double_booked,
+    create_teacher_double_booking_error_message,
     determine_transaction_type,
+    get_double_booked_classes_data,
     is_client_school_account,
     is_freelance_account,
     handle_client_school_purchased_hours_modification,
@@ -120,16 +122,20 @@ class ScheduledClassViewSet(viewsets.ModelViewSet):
                 teacher_id=booked_teacher
             )
         )
-        if class_is_double_booked(
-                classes_booked_on_date=[
-                    c for c in classes_booked_on_date_by_teacher
-                    if c.class_status not in CANCELLED_STATUSES
-                ],
-                starting_time=start_time,
-                finishing_time=finish_time
-        ):
+        teacher_double_booking_data = get_double_booked_classes_data(
+            classes_booked_on_date=[
+                c for c in classes_booked_on_date_by_teacher
+                if c.class_status not in CANCELLED_STATUSES
+            ],
+            starting_time=start_time,
+            finishing_time=finish_time
+        )
+        if teacher_double_booking_data['class_is_double_booked']:
+            error_message = create_teacher_double_booking_error_message(
+                date, teacher_double_booking_data['double_booked_classes']
+            )
             return Response(
-                {"Error": "The teacher is unavailable for this time frame!"},
+                {"Error": error_message },
                 status=status.HTTP_400_BAD_REQUEST
             )
         

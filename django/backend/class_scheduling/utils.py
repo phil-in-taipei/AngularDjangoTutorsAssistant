@@ -141,6 +141,87 @@ def class_is_double_booked(
     return len(classes_during_date_and_time) > 0
 
 
+def get_list_of_double_booked_classes(
+        classes_booked_on_date, starting_time, finishing_time
+):
+    class_starts_during_time_frame = [
+        scheduled_class for scheduled_class in classes_booked_on_date
+        if starting_time <= scheduled_class.start_time <= finishing_time
+    ]
+
+    class_finishes_during_time_frame = [
+        scheduled_class for scheduled_class in classes_booked_on_date
+        if starting_time <= scheduled_class.finish_time <= finishing_time
+    ]
+
+    time_frame_occurs_during_a_booked_class = [
+        scheduled_class for scheduled_class in classes_booked_on_date
+        if starting_time >= scheduled_class.start_time
+        and finishing_time <= scheduled_class.finish_time
+    ]
+
+    classes_during_date_and_time = [
+        scheduled_class for scheduled_class in classes_booked_on_date
+        if scheduled_class in class_starts_during_time_frame or
+        scheduled_class in class_finishes_during_time_frame or
+        scheduled_class in time_frame_occurs_during_a_booked_class
+    ]
+
+    return classes_during_date_and_time
+
+
+def get_double_booked_classes_data(
+        classes_booked_on_date, starting_time, finishing_time
+    ):
+    double_booked_classes = get_list_of_double_booked_classes(
+        classes_booked_on_date, starting_time, finishing_time
+    )
+    return {
+        "class_is_double_booked": len(double_booked_classes) > 0,
+        "double_booked_classes": double_booked_classes,
+    }
+
+
+def create_teacher_double_booking_error_message(date, double_booked_classes):
+    """
+    Build an error message for a teacher who has been double booked.
+
+    Args:
+        date: a date object (or anything with strftime) for the booking date.
+        double_booked_classes: a list of ScheduledClass objects that clash.
+
+    Returns:
+        A string such as:
+        1 item:  "Teacher double booked Anna (09:00-10:00) on 2026-10-05"
+        2 items: "Teacher double booked Anna (09:00-10:00) and Ben (09:30-10:30) on 2026-10-05"
+        3+ items: "Teacher double booked Anna (09:00-10:00), Ben (09:30-10:30), and Class C (10:00-11:00) on 2026-10-05"
+    """
+    def describe(scheduled_class):
+        return "{} ({}-{})".format(
+            scheduled_class.student_or_class.student_or_class_name,
+            scheduled_class.start_time.strftime("%H:%M"),
+            scheduled_class.finish_time.strftime("%H:%M"),
+        )
+
+    descriptions = [describe(sc) for sc in double_booked_classes]
+
+    if not descriptions:
+        raise ValueError("double_booked_classes must contain at least one item.")
+
+    if len(descriptions) == 1:
+        classes_text = descriptions[0]
+    elif len(descriptions) == 2:
+        classes_text = "{} and {}".format(*descriptions)
+    else:
+        classes_text = "{}, and {}".format(
+            ", ".join(descriptions[:-1]), descriptions[-1]
+        )
+
+    return "Double booking: {} on {}".format(
+        classes_text, date.strftime("%Y-%m-%d")
+    )
+
+
 def create_purchased_hours_modification_record(
         student_or_class, transaction_type, scheduled_class,
         previous_number_of_purchased_hours, new_number_of_purchased_hours
