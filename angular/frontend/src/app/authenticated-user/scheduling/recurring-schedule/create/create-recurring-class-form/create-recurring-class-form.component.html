@@ -13,13 +13,13 @@
                     name="day_of_week" ngModel required #day_of_week="ngModel"
                     [class.is-invalid]="day_of_week.touched && day_of_week.invalid">
               <option [ngValue]="null" disabled>Choose a day...</option>
-              <option value="0">Monday</option>
-              <option value="1">Tuesday</option>
-              <option value="2">Wednesday</option>
-              <option value="3">Thursday</option>
-              <option value="4">Friday</option>
-              <option value="5">Saturday</option>
-              <option value="6">Sunday</option>
+              <option [ngValue]="0">Monday</option>
+              <option [ngValue]="1">Tuesday</option>
+              <option [ngValue]="2">Wednesday</option>
+              <option [ngValue]="3">Thursday</option>
+              <option [ngValue]="4">Friday</option>
+              <option [ngValue]="5">Saturday</option>
+              <option [ngValue]="6">Sunday</option>
             </select>
             <div class="invalid-feedback">Please choose a day of the week.</div>
           </div>

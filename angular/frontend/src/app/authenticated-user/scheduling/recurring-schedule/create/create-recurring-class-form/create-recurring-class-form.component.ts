@@ -64,7 +64,7 @@ export class CreateRecurringClassFormComponent implements OnInit {
     const submissionForm: RecurringClassCreateModel = {
       teacher: this.userProfile.id,
       student_or_class: form.value.student_or_class,
-      recurring_day_of_week: +form.value.day_of_week,
+      recurring_day_of_week: form.value.day_of_week,
       recurring_finish_time: finishTimeStr,
       recurring_start_time: startTimeStr,
       recurring_location: form.value.recurring_location ? +form.value.recurring_location : null,
