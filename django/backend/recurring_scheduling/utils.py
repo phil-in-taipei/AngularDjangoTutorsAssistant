@@ -111,3 +111,94 @@ def recurring_class_is_double_booked(
     #print(classes_during_day_of_week_and_time)
 
     return len(classes_during_day_of_week_and_time) > 0
+
+
+def get_list_of_double_booked_recurring_classes(
+        recurring_classes_booked_on_day_of_week, recurring_start_time, recurring_finish_time
+):
+    class_starts_during_time_frame = [
+        recurring_class for recurring_class in recurring_classes_booked_on_day_of_week
+        if recurring_start_time <= recurring_class.recurring_start_time <= recurring_finish_time
+    ]
+
+    class_finishes_during_time_frame = [
+        recurring_class for recurring_class in recurring_classes_booked_on_day_of_week
+        if recurring_start_time <= recurring_class.recurring_finish_time <= recurring_finish_time
+    ]
+
+    time_frame_occurs_during_a_booked_class = [
+        recurring_class for recurring_class in recurring_classes_booked_on_day_of_week
+        if recurring_start_time >= recurring_class.recurring_start_time
+        and recurring_finish_time <= recurring_class.recurring_finish_time
+    ]
+
+    classes_during_day_of_week_and_time = [
+        recurring_class for recurring_class in recurring_classes_booked_on_day_of_week
+        if recurring_class in class_starts_during_time_frame or
+        recurring_class in class_finishes_during_time_frame or
+        recurring_class in time_frame_occurs_during_a_booked_class
+    ]
+    #print(classes_during_day_of_week_and_time)
+
+    return classes_during_day_of_week_and_time
+
+
+def get_double_booked_recurring_classes_data(
+    recurring_classes_booked_on_day_of_week, recurring_start_time, recurring_finish_time
+):
+    double_booked_classes = get_list_of_double_booked_recurring_classes(
+        recurring_classes_booked_on_day_of_week,
+        recurring_start_time,
+        recurring_finish_time,
+    )
+    return {
+        "class_is_double_booked": len(double_booked_classes) > 0,
+        "double_booked_classes": double_booked_classes,
+    }
+
+
+def create_teacher_recurring_double_booking_error_message(
+    day_of_week, double_booked_classes
+):
+    """
+    Build an error message for a teacher who has been double booked
+    on a recurring day of the week.
+
+    Args:
+        day_of_week: integer 0-6 (Monday=0 ... Sunday=6).
+        double_booked_classes: a list of RecurringScheduledClass objects
+            that clash.
+
+    Returns:
+        1 item:   "Teacher double booked Anna (09:00-10:00) on Monday"
+        2 items:  "Teacher double booked Anna (09:00-10:00) and Ben (09:30-10:30) on Monday"
+        3+ items: "Teacher double booked Anna (09:00-10:00), Ben (09:30-10:30), and Class C (10:00-11:00) on Monday"
+    """
+    def format_time(time_value):
+        return time_value.strftime("%H:%M") if time_value else "??:??"
+
+    def describe(recurring_class):
+        return "{} ({}-{})".format(
+            recurring_class.student_or_class.student_or_class_name,
+            format_time(recurring_class.recurring_start_time),
+            format_time(recurring_class.recurring_finish_time),
+        )
+
+    descriptions = [describe(rc) for rc in double_booked_classes]
+
+    if not descriptions:
+        raise ValueError("double_booked_classes must contain at least one item.")
+
+    if len(descriptions) == 1:
+        classes_text = descriptions[0]
+    elif len(descriptions) == 2:
+        classes_text = "{} and {}".format(*descriptions)
+    else:
+        classes_text = "{}, and {}".format(
+            ", ".join(descriptions[:-1]), descriptions[-1]
+        )
+
+    return "Double booking: {} on {}".format(
+        classes_text, day_of_week
+    )
+

@@ -2,16 +2,21 @@ from rest_framework import generics, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import RecurringScheduledClass, RecurringClassAppliedMonthly
+from .models import RecurringScheduledClass, RecurringClassAppliedMonthly, DAYS_OF_WEEK_INTEGERS
 from .serializers import RecurringClassSerializer, RecurringClassAppliedMonthlySerializer, RecurringClassGoogleSheetsSerializer
 from .utils import (
     create_date_list,
+    create_teacher_recurring_double_booking_error_message,
     book_classes_for_specified_month,
     get_classes_for_deletion_for_specified_month,
+    get_double_booked_recurring_classes_data,
     recurring_class_applied_monthly_has_double_booked_location,
     recurring_class_applied_monthly_has_scheduling_conflict,
     recurring_class_is_double_booked
 )
+
+DAY_OF_WEEK_NAMES = dict(DAYS_OF_WEEK_INTEGERS)
+
 
 
 # no put or patch -- user must delete and create a new object
@@ -139,19 +144,26 @@ class RecurringScheduledClassViewSet(viewsets.ModelViewSet):
         booked_teacher = serializer.validated_data['teacher']
         recurring_location = serializer.validated_data['recurring_location']
 
-        recurring_classes_booked_by_teacher_on_day_of_week =  (
+        recurring_classes_booked_by_teacher_on_day_of_week =  list(
             RecurringScheduledClass.custom_query.teacher_already_booked_classes_on_day_of_week(
                 query_day_of_week=recurring_day_of_week,
                 teacher_id=booked_teacher
             )
         )
-        if recurring_class_is_double_booked(
-                recurring_classes_booked_on_day_of_week=recurring_classes_booked_by_teacher_on_day_of_week,
-                recurring_start_time=recurring_start_time,
-                recurring_finish_time=recurring_finish_time
-        ):
+
+        teacher_double_booking_data = get_double_booked_recurring_classes_data(
+            recurring_classes_booked_by_teacher_on_day_of_week,
+            recurring_start_time, recurring_finish_time
+        )
+
+        if teacher_double_booking_data['class_is_double_booked']:
+            day_of_week = DAY_OF_WEEK_NAMES[int(recurring_day_of_week)]
+            error_message = create_teacher_recurring_double_booking_error_message(
+                day_of_week, teacher_double_booking_data['double_booked_classes']
+            )
+
             return Response(
-                {"Error": "The teacher is unavailable for this time frame!"},
+                {"Error": error_message },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
