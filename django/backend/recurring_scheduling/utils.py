@@ -202,3 +202,25 @@ def create_teacher_recurring_double_booking_error_message(
         classes_text, day_of_week
     )
 
+
+def get_list_of_recurring_locations_from_list_of_recurring_classes(list_of_recurring_classes):
+    return [rc.recurring_location for rc in list_of_recurring_classes]
+
+
+def get_double_booked_recurring_classes_location_data(
+    recurring_classes_booked_on_day_of_week,
+    recurring_start_time, recurring_finish_time,
+    recurring_location
+):
+    potential_double_booked_classes = get_list_of_double_booked_recurring_classes(
+        recurring_classes_booked_on_day_of_week,
+        recurring_start_time,
+        recurring_finish_time,
+    )
+    locations_booked_during_recurring_time = get_list_of_recurring_locations_from_list_of_recurring_classes(
+        list_of_recurring_classes=potential_double_booked_classes
+    )
+    return {
+        "class_is_double_booked": recurring_location in locations_booked_during_recurring_time,
+        "booked_locations_at_venue": locations_booked_during_recurring_time,
+    }

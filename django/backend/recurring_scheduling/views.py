@@ -8,6 +8,7 @@ from .utils import (
     create_date_list,
     create_teacher_recurring_double_booking_error_message,
     book_classes_for_specified_month,
+    get_double_booked_recurring_classes_location_data,
     get_classes_for_deletion_for_specified_month,
     get_double_booked_recurring_classes_data,
     recurring_class_applied_monthly_has_double_booked_location,
@@ -168,6 +169,26 @@ class RecurringScheduledClassViewSet(viewsets.ModelViewSet):
             )
 
         if recurring_location:
+            recurring_classes_at_venue_booked_on_day_of_week = list(
+                RecurringScheduledClass.custom_query.classes_already_booked_at_venue_on_day_of_week(
+                    query_day_of_week=recurring_day_of_week,
+                    venue_id=recurring_location.venue.id
+                )
+            )
+            print("--------------------------------------------------------------------------------------")
+            print("These are the rcs at {} on {}".format(recurring_location.venue.venue_name, recurring_day_of_week))
+            print("--------------------------------------------------------------------------------------")
+            print(recurring_classes_at_venue_booked_on_day_of_week)
+            print("--------------------------------------------------------------------------------------")
+            location_availability_data = get_double_booked_recurring_classes_location_data(
+                recurring_classes_booked_on_day_of_week=recurring_classes_at_venue_booked_on_day_of_week,
+                recurring_start_time=recurring_start_time,
+                recurring_finish_time=recurring_finish_time,
+                recurring_location=recurring_location
+            )
+
+            print(location_availability_data)
+
             recurring_classes_in_location_booked_on_day_of_week = (
                 RecurringScheduledClass.custom_query.location_already_booked_for_classes_on_day_of_week(
                     query_day_of_week=recurring_day_of_week,

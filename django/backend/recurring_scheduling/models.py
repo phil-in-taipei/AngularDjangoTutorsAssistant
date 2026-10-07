@@ -72,6 +72,14 @@ class RecurringScheduledClassManager(models.Manager):
             recurring_location_id=recurring_location_id
         )
 
+    def classes_already_booked_at_venue_on_day_of_week(
+            self, query_day_of_week, venue_id
+    ):
+        return self.get_queryset().filter(
+            recurring_day_of_week=query_day_of_week,
+            recurring_location__venue_id=venue_id,
+        ).select_related('recurring_location')
+
 
 class RecurringScheduledClass(models.Model):
     custom_query = RecurringScheduledClassManager()
