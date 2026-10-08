@@ -2,6 +2,7 @@ from calendar import monthrange
 from datetime import datetime, timedelta
 
 from class_scheduling.models import ScheduledClass
+from venues.utils import get_available_spaces_at_venue
 
 
 def create_date_list(year, month, day_of_week):
@@ -165,7 +166,7 @@ def create_teacher_recurring_double_booking_error_message(
     on a recurring day of the week.
 
     Args:
-        day_of_week: integer 0-6 (Monday=0 ... Sunday=6).
+        day_of_week: string.
         double_booked_classes: a list of RecurringScheduledClass objects
             that clash.
 
@@ -224,3 +225,42 @@ def get_double_booked_recurring_classes_location_data(
         "class_is_double_booked": recurring_location in locations_booked_during_recurring_time,
         "booked_locations_at_venue": locations_booked_during_recurring_time,
     }
+
+
+def create_venue_space_recurring_double_booking_error_message(venue, booked_spaces):
+    """
+    Build an error message for a teacher who has tried to schedule a class
+    in a venue space that is already booked.
+
+    Args:
+        venue: a Venue instance.
+        booked_spaces: an iterable of VenueSpace instances (or a QuerySet)
+            that are already booked at the venue for the time period.
+
+    Returns:
+        0 available: "Venue space already booked at Cafe Luna. No other spaces are available during that time."
+        1 available: "Venue space already booked at Cafe Luna. Available space: Table 1"
+        2 available: "Venue space already booked at Cafe Luna. Available spaces: Table 1 and Table 2"
+        3+ available: "Venue space already booked at Cafe Luna. Available spaces: Table 1, Table 2, and Table 3"
+    """
+    available_spaces = get_available_spaces_at_venue(venue, booked_spaces)
+    names = [space.space_name for space in available_spaces]
+
+    base_message = "Space already booked at {}.".format(venue.venue_name)
+
+    if not names:
+        return "{} No other spaces are available during that time.".format(
+            base_message
+        )
+
+    if len(names) == 1:
+        spaces_text = names[0]
+        label = "Available space"
+    elif len(names) == 2:
+        spaces_text = "{} and {}".format(*names)
+        label = "Available spaces"
+    else:
+        spaces_text = "{}, and {}".format(", ".join(names[:-1]), names[-1])
+        label = "Available spaces"
+
+    return "{} {}: {}".format(base_message, label, spaces_text)
