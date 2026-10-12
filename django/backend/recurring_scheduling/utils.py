@@ -2,6 +2,10 @@ from calendar import monthrange
 from datetime import datetime, timedelta
 
 from class_scheduling.models import ScheduledClass
+from class_scheduling.utils import (
+    get_double_booked_classes_data,
+    create_teacher_double_booking_error_message
+)
 from venues.utils import get_available_spaces_at_venue
 
 
@@ -29,11 +33,21 @@ def book_classes_for_specified_month(date_list, recurring_class):
             student_or_class=recurring_class.student_or_class,
             teacher=recurring_class.teacher,
             location=recurring_class.recurring_location
-            )
+        )
         #print(new_booking_obj)
         #print(created)
         if created:
             new_booking_obj.save()
+
+
+def combine_double_booking_strings(items, prefix="Double booking: "):
+    stripped = [
+        item[len(prefix):] if item.startswith(prefix) else item
+        for item in items
+    ]
+    if not stripped:
+        return ""
+    return prefix + ", ".join(stripped)
 
 
 def get_classes_for_deletion_for_specified_month(date_list, recurring_class):
@@ -59,13 +73,46 @@ def recurring_class_applied_monthly_has_scheduling_conflict(
     for date in list_of_dates_on_day_in_given_month:
         #print(date)
         if ScheduledClass.custom_query.teacher_already_booked_classes_during_date_and_time(
-            query_date=date, 
-            starting_time=recurring_class.recurring_start_time, 
-            finishing_time=recurring_class.recurring_finish_time, 
-            teacher_id=recurring_class.teacher
+                query_date=date,
+                starting_time=recurring_class.recurring_start_time,
+                finishing_time=recurring_class.recurring_finish_time,
+                teacher_id=recurring_class.teacher
         ):
             return True
     return False
+
+
+def get_recurring_class_applied_monthly_double_booked_classes_data(
+        list_of_dates_on_day_in_given_month,
+        recurring_class
+):
+    list_of_dates_with_double_booked_classes_data = []
+    for date in list_of_dates_on_day_in_given_month:
+        double_booked_classes_on_date = list(
+            ScheduledClass.custom_query
+            .get_teacher_already_booked_classes_during_date_and_time(
+                query_date=date,
+                starting_time=recurring_class.recurring_start_time,
+                finishing_time=recurring_class.recurring_finish_time,
+                teacher_id=recurring_class.teacher
+            )
+        )
+        if len(double_booked_classes_on_date) > 0:
+            list_of_dates_with_double_booked_classes_data.append((date, double_booked_classes_on_date))
+    return list_of_dates_with_double_booked_classes_data
+
+
+def create_recurring_class_applied_monthly_double_booking_error_message(
+        list_of_dates_with_double_booked_classes_data
+):
+    double_booking_messages = []
+    for double_booking_date_and_data in list_of_dates_with_double_booked_classes_data:
+        double_booking_messages.append(
+            create_teacher_double_booking_error_message(
+                double_booking_date_and_data[0], double_booking_date_and_data[1]
+            )
+        )
+    return combine_double_booking_strings(items=double_booking_messages)
 
 
 def recurring_class_applied_monthly_has_double_booked_location(
@@ -75,10 +122,10 @@ def recurring_class_applied_monthly_has_double_booked_location(
     for date in list_of_dates_on_day_in_given_month:
         #print(date)
         if ScheduledClass.custom_query.location_already_booked_during_date_and_time(
-            query_date=date,
-            starting_time=recurring_class.recurring_start_time,
-            finishing_time=recurring_class.recurring_finish_time,
-            location_id=recurring_class.recurring_location
+                query_date=date,
+                starting_time=recurring_class.recurring_start_time,
+                finishing_time=recurring_class.recurring_finish_time,
+                location_id=recurring_class.recurring_location
         ):
             return True
     return False
@@ -100,14 +147,14 @@ def recurring_class_is_double_booked(
     time_frame_occurs_during_a_booked_class = [
         recurring_class for recurring_class in recurring_classes_booked_on_day_of_week
         if recurring_start_time >= recurring_class.recurring_start_time
-        and recurring_finish_time <= recurring_class.recurring_finish_time
+           and recurring_finish_time <= recurring_class.recurring_finish_time
     ]
 
     classes_during_day_of_week_and_time = [
         recurring_class for recurring_class in recurring_classes_booked_on_day_of_week
         if recurring_class in class_starts_during_time_frame or
-        recurring_class in class_finishes_during_time_frame or
-        recurring_class in time_frame_occurs_during_a_booked_class
+           recurring_class in class_finishes_during_time_frame or
+           recurring_class in time_frame_occurs_during_a_booked_class
     ]
     #print(classes_during_day_of_week_and_time)
 
@@ -130,14 +177,14 @@ def get_list_of_double_booked_recurring_classes(
     time_frame_occurs_during_a_booked_class = [
         recurring_class for recurring_class in recurring_classes_booked_on_day_of_week
         if recurring_start_time >= recurring_class.recurring_start_time
-        and recurring_finish_time <= recurring_class.recurring_finish_time
+           and recurring_finish_time <= recurring_class.recurring_finish_time
     ]
 
     classes_during_day_of_week_and_time = [
         recurring_class for recurring_class in recurring_classes_booked_on_day_of_week
         if recurring_class in class_starts_during_time_frame or
-        recurring_class in class_finishes_during_time_frame or
-        recurring_class in time_frame_occurs_during_a_booked_class
+           recurring_class in class_finishes_during_time_frame or
+           recurring_class in time_frame_occurs_during_a_booked_class
     ]
     #print(classes_during_day_of_week_and_time)
 
@@ -145,7 +192,7 @@ def get_list_of_double_booked_recurring_classes(
 
 
 def get_double_booked_recurring_classes_data(
-    recurring_classes_booked_on_day_of_week, recurring_start_time, recurring_finish_time
+        recurring_classes_booked_on_day_of_week, recurring_start_time, recurring_finish_time
 ):
     double_booked_classes = get_list_of_double_booked_recurring_classes(
         recurring_classes_booked_on_day_of_week,
@@ -159,7 +206,7 @@ def get_double_booked_recurring_classes_data(
 
 
 def create_teacher_recurring_double_booking_error_message(
-    day_of_week, double_booked_classes
+        day_of_week, double_booked_classes
 ):
     """
     Build an error message for a teacher who has been double booked
@@ -175,6 +222,7 @@ def create_teacher_recurring_double_booking_error_message(
         2 items:  "Teacher double booked Anna (09:00-10:00) and Ben (09:30-10:30) on Monday"
         3+ items: "Teacher double booked Anna (09:00-10:00), Ben (09:30-10:30), and Class C (10:00-11:00) on Monday"
     """
+
     def format_time(time_value):
         return time_value.strftime("%H:%M") if time_value else "??:??"
 
@@ -209,9 +257,9 @@ def get_list_of_recurring_locations_from_list_of_recurring_classes(list_of_recur
 
 
 def get_double_booked_recurring_classes_location_data(
-    recurring_classes_booked_on_day_of_week,
-    recurring_start_time, recurring_finish_time,
-    recurring_location
+        recurring_classes_booked_on_day_of_week,
+        recurring_start_time, recurring_finish_time,
+        recurring_location
 ):
     potential_double_booked_classes = get_list_of_double_booked_recurring_classes(
         recurring_classes_booked_on_day_of_week,

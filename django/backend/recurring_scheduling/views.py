@@ -9,6 +9,8 @@ from .utils import (
     create_teacher_recurring_double_booking_error_message,
     create_venue_space_recurring_double_booking_error_message,
     book_classes_for_specified_month,
+    get_recurring_class_applied_monthly_double_booked_classes_data,
+    create_recurring_class_applied_monthly_double_booking_error_message,
     get_double_booked_recurring_classes_location_data,
     get_classes_for_deletion_for_specified_month,
     get_double_booked_recurring_classes_data,
@@ -41,12 +43,17 @@ class RecurringClassAppliedMonthlyViewSet(viewsets.ModelViewSet):
             day_of_week=recurring_class.recurring_day_of_week
         )
 
-        if recurring_class_applied_monthly_has_scheduling_conflict(
+        list_of_dates_with_double_booked_classes_data = get_recurring_class_applied_monthly_double_booked_classes_data(
             list_of_dates_on_day_in_given_month=monthly_booking_date_list,
             recurring_class=recurring_class
-        ):
+        )
+
+        if len(list_of_dates_with_double_booked_classes_data) > 0:
+            error_message = create_recurring_class_applied_monthly_double_booking_error_message(
+                list_of_dates_with_double_booked_classes_data=list_of_dates_with_double_booked_classes_data
+            )
             return Response(
-                    { "Error": "Teacher scheduling conflict" },
+                    { "Error": error_message },
                     status=status.HTTP_400_BAD_REQUEST
                 )
         
