@@ -7,6 +7,7 @@ from client_school_accounting.models import (
 )
 from client_school_transactions.models import CSPurchasedHoursModification
 from client_school_group_attendance.utils import handle_creation_of_group_class_enrollment_records
+from venues.utils import get_available_spaces_at_venue
 
 
 def determine_transaction_type(previous_class_status, updated_class_status):
@@ -220,6 +221,53 @@ def create_teacher_double_booking_error_message(date, double_booked_classes):
     return "Double booking: {} on {}".format(
         classes_text, date.strftime("%Y-%m-%d")
     )
+
+
+def get_list_of_locations_from_list_of_scheduled_classes(list_of_scheduled_classes):
+    return [sc.location for sc in list_of_scheduled_classes]
+
+
+# note: this is mostly code from recurring class utils function: refactor and consolidate
+def create_venue_space_double_booking_error_message(venue, booked_spaces):
+    """
+    Build an error message for a teacher who has tried to schedule a class
+    in a venue space that is already booked.
+
+    Args:
+        venue: a Venue instance.
+        booked_spaces: an iterable of VenueSpace instances (or a QuerySet)
+            that are already booked at the venue for the time period.
+
+    Returns:
+        0 available: "Venue space already booked at Cafe Luna. No other spaces are available during that time."
+        1 available: "Venue space already booked at Cafe Luna. Available space: Table 1"
+        2 available: "Venue space already booked at Cafe Luna. Available spaces: Table 1 and Table 2"
+        3+ available: "Venue space already booked at Cafe Luna. Available spaces: Table 1, Table 2, and Table 3"
+    """
+    available_spaces = get_available_spaces_at_venue(venue, booked_spaces)
+    names = [space.space_name for space in available_spaces]
+
+    base_message = "Space already booked at {}.".format(venue.venue_name)
+
+    if not names:
+        return "{} No other spaces are available during that time.".format(
+            base_message
+        )
+
+    if len(names) == 1:
+        spaces_text = names[0]
+        label = "Available space"
+    elif len(names) == 2:
+        spaces_text = "{} and {}".format(*names)
+        label = "Available spaces"
+    else:
+        spaces_text = "{}, and {}".format(", ".join(names[:-1]), names[-1])
+        label = "Available spaces"
+
+    return "{} {}: {}".format(base_message, label, spaces_text)
+
+
+
 
 
 def create_purchased_hours_modification_record(
