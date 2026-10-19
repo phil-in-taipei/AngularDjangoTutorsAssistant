@@ -165,26 +165,11 @@ class ScheduledClassViewSet(viewsets.ModelViewSet):
                 error_message = create_venue_space_double_booking_error_message(
                     venue=location.venue, booked_spaces=double_booked_spaces
                 )
-                #error_message = create_teacher_double_booking_error_message(
-                #    date, teacher_double_booking_data['double_booked_classes']
-                #)
+
                 return Response(
                     {"Error": error_message },
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            #print(classes_booked_on_date_in_location)
-            #if class_is_double_booked(
-            #    classes_booked_on_date=[
-            #        c for c in classes_booked_on_date_in_location
-            #        if c.class_status not in CANCELLED_STATUSES
-            #    ],
-            #    starting_time=start_time,
-            #    finishing_time=finish_time
-            #):
-            #    return Response(
-            #        {"Error": "The location is unavailable for this time frame!"},
-            #        status=status.HTTP_400_BAD_REQUEST
-            #    )
         
         new_class = serializer.save()
         daily_classes_list = list(classes_booked_on_date_by_teacher)
@@ -211,11 +196,7 @@ class ScheduledClassViewSet(viewsets.ModelViewSet):
         finish_time = serializer.validated_data['finish_time']
         booked_teacher = serializer.validated_data['teacher']
         obj_id = instance.id
-        # change later to on serializer
-        #location = instance.location
         location = serializer.validated_data['location']
-        #print("*************This is the location data************")
-        #print(location)
 
         classes_booked_by_teacher_on_date = list(
             ScheduledClass.custom_query.teacher_already_booked_classes_on_date(
@@ -263,26 +244,11 @@ class ScheduledClassViewSet(viewsets.ModelViewSet):
                 error_message = create_venue_space_double_booking_error_message(
                     venue=location.venue, booked_spaces=double_booked_spaces
                 )
-                #error_message = create_teacher_double_booking_error_message(
-                #    date, teacher_double_booking_data['double_booked_classes']
-                #)
+
                 return Response(
                     {"Error": error_message },
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            #print(classes_booked_on_date_in_location)
-            #if class_is_double_booked(
-            #    classes_booked_on_date=[
-            #        c for c in classes_booked_on_date_in_location
-            #        if c.class_status not in CANCELLED_STATUSES
-            #    ],
-            #    starting_time=start_time,
-            #    finishing_time=finish_time
-            #):
-            #    return Response(
-            #        {"Error": "The location is unavailable for this time frame!"},
-            #        status=status.HTTP_400_BAD_REQUEST
-            #    )
 
         new_class = serializer.save()
         daily_classes_list = list(classes_booked_by_teacher_on_date)
