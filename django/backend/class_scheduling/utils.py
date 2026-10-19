@@ -227,6 +227,21 @@ def get_list_of_locations_from_list_of_scheduled_classes(list_of_scheduled_class
     return [sc.location for sc in list_of_scheduled_classes]
 
 
+def get_double_booked_classes_location_data(
+        classes_booked_at_venue_on_date, starting_time, finishing_time, location
+):
+    overlapping_classes = get_list_of_double_booked_classes(
+        classes_booked_at_venue_on_date, starting_time, finishing_time
+    )
+    booked_locations = get_list_of_locations_from_list_of_scheduled_classes(
+        list_of_scheduled_classes = overlapping_classes
+    )
+    return {
+        "class_is_double_booked": location in booked_locations,
+        "booked_locations_at_venue": booked_locations,
+    }
+
+
 # note: this is mostly code from recurring class utils function: refactor and consolidate
 def create_venue_space_double_booking_error_message(venue, booked_spaces):
     """

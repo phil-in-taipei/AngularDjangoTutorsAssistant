@@ -201,6 +201,14 @@ class ScheduledClassManager(models.Manager):
             location_id=location_id
         )
 
+    def classes_already_booked_at_venue_on_date(self, query_date, venue_id):
+        return self.get_queryset().filter(
+            date=query_date,
+            location__venue_id=venue_id,
+        ).exclude(
+            class_status__in=CANCELLED_STATUSES
+        ).select_related('location')
+
 
 class ScheduledClass(models.Model):
     custom_query = ScheduledClassManager()

@@ -16,6 +16,7 @@ from .utils import (
     create_venue_space_double_booking_error_message,
     determine_transaction_type,
     get_double_booked_classes_data,
+    get_double_booked_classes_location_data,
     get_list_of_locations_from_list_of_scheduled_classes,
     is_client_school_account,
     is_freelance_account,
@@ -142,32 +143,25 @@ class ScheduledClassViewSet(viewsets.ModelViewSet):
             )
         
         if location:
-            classes_booked_on_date_in_location = list(
-                ScheduledClass.custom_query.location_already_booked_classes_on_date(
+            venue = location.venue
+            classes_booked_at_venue_on_date = list(
+                ScheduledClass.custom_query.classes_already_booked_at_venue_on_date(
                     query_date=date,
-                    location_id=location.id
+                    venue_id=venue.id
                 )
             )
-
-            location_double_booking_data = get_double_booked_classes_data(
-                classes_booked_on_date=[
-                    c for c in classes_booked_on_date_in_location
-                    if c.class_status not in CANCELLED_STATUSES
-                ],
+            availability = get_double_booked_classes_location_data(
+                classes_booked_at_venue_on_date=classes_booked_at_venue_on_date,
                 starting_time=start_time,
-                finishing_time=finish_time
+                finishing_time=finish_time,
+                location=location
             )
-
-            if location_double_booking_data['class_is_double_booked']:
-                double_booked_spaces = get_list_of_locations_from_list_of_scheduled_classes(
-                    location_double_booking_data['double_booked_classes']
-                )
+            if availability['class_is_double_booked']:
                 error_message = create_venue_space_double_booking_error_message(
-                    venue=location.venue, booked_spaces=double_booked_spaces
+                    venue=venue, booked_spaces=availability['booked_locations_at_venue']
                 )
-
                 return Response(
-                    {"Error": error_message },
+                    {"Error": error_message},
                     status=status.HTTP_400_BAD_REQUEST
                 )
         
@@ -221,32 +215,25 @@ class ScheduledClassViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         if location:
-            classes_booked_on_date_in_location = list(
-                ScheduledClass.custom_query.location_already_booked_classes_on_date(
+            venue = location.venue
+            classes_booked_at_venue_on_date = list(
+                ScheduledClass.custom_query.classes_already_booked_at_venue_on_date(
                     query_date=date,
-                    location_id=location.id
+                    venue_id=venue.id
                 ).exclude(id=obj_id)
             )
-
-            location_double_booking_data = get_double_booked_classes_data(
-                classes_booked_on_date=[
-                    c for c in classes_booked_on_date_in_location
-                    if c.class_status not in CANCELLED_STATUSES
-                ],
+            availability = get_double_booked_classes_location_data(
+                classes_booked_at_venue_on_date=classes_booked_at_venue_on_date,
                 starting_time=start_time,
-                finishing_time=finish_time
+                finishing_time=finish_time,
+                location=location
             )
-
-            if location_double_booking_data['class_is_double_booked']:
-                double_booked_spaces = get_list_of_locations_from_list_of_scheduled_classes(
-                    location_double_booking_data['double_booked_classes']
-                )
+            if availability['class_is_double_booked']:
                 error_message = create_venue_space_double_booking_error_message(
-                    venue=location.venue, booked_spaces=double_booked_spaces
+                    venue=venue, booked_spaces=availability['booked_locations_at_venue']
                 )
-
                 return Response(
-                    {"Error": error_message },
+                    {"Error": error_message},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
