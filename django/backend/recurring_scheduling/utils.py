@@ -4,7 +4,8 @@ from datetime import datetime, timedelta
 from class_scheduling.models import ScheduledClass
 from class_scheduling.utils import (
     get_double_booked_classes_data,
-    create_teacher_double_booking_error_message
+    create_teacher_double_booking_error_message,
+    get_double_booked_classes_location_data,
 )
 from venues.utils import get_available_spaces_at_venue
 
@@ -129,6 +130,68 @@ def recurring_class_applied_monthly_has_double_booked_location(
         ):
             return True
     return False
+
+
+def get_recurring_class_applied_monthly_double_booked_locations_data(
+        list_of_dates_on_day_in_given_month,
+        recurring_class
+):
+    """
+    Returns a list of (date, available_spaces) tuples, one for each date on which
+    the recurring class's location is already booked during its time slot.
+    """
+    location = recurring_class.recurring_location
+    venue = location.venue
+    dates_with_double_booked_locations_data = []
+
+    for date in list_of_dates_on_day_in_given_month:
+        classes_at_venue_on_date = list(
+            ScheduledClass.custom_query.classes_already_booked_at_venue_on_date(
+                query_date=date,
+                venue_id=venue.id
+            )
+        )
+        availability_data = get_double_booked_classes_location_data(
+            classes_booked_at_venue_on_date=classes_at_venue_on_date,
+            starting_time=recurring_class.recurring_start_time,
+            finishing_time=recurring_class.recurring_finish_time,
+            location=location
+        )
+        if availability_data['class_is_double_booked']:
+            available_spaces = get_available_spaces_at_venue(
+                venue, availability_data['booked_locations_at_venue']
+            )
+            dates_with_double_booked_locations_data.append((date, available_spaces))
+
+    return dates_with_double_booked_locations_data
+
+
+def _join_space_names(names):
+    if len(names) == 1:
+        return names[0]
+    if len(names) == 2:
+        return "{} and {}".format(*names)
+    return "{}, and {}".format(", ".join(names[:-1]), names[-1])
+
+
+def create_recurring_class_applied_monthly_location_double_booking_error_message(
+        venue, dates_with_double_booked_locations_data
+):
+    date_messages = []
+    for date, available_spaces in dates_with_double_booked_locations_data:
+        names = [space.space_name for space in available_spaces]
+        date_text = date.strftime('%a %b %d')  # adjust to match your teacher message format
+        if names:
+            label = "available space" if len(names) == 1 else "available spaces"
+            date_messages.append(
+                "{} ({}: {})".format(date_text, label, _join_space_names(names))
+            )
+        else:
+            date_messages.append("{} (no other spaces available)".format(date_text))
+
+    return "Space already booked at {} on: {}".format(
+        venue.venue_name, "; ".join(date_messages)
+    )
 
 
 def recurring_class_is_double_booked(

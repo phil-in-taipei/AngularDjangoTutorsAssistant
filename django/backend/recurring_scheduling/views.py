@@ -11,9 +11,11 @@ from .utils import (
     book_classes_for_specified_month,
     get_recurring_class_applied_monthly_double_booked_classes_data,
     create_recurring_class_applied_monthly_double_booking_error_message,
+    create_recurring_class_applied_monthly_location_double_booking_error_message,
     get_double_booked_recurring_classes_location_data,
     get_classes_for_deletion_for_specified_month,
     get_double_booked_recurring_classes_data,
+    get_recurring_class_applied_monthly_double_booked_locations_data,
     recurring_class_applied_monthly_has_double_booked_location,
     recurring_class_applied_monthly_has_scheduling_conflict,
     recurring_class_is_double_booked
@@ -56,16 +58,32 @@ class RecurringClassAppliedMonthlyViewSet(viewsets.ModelViewSet):
                     { "Error": error_message },
                     status=status.HTTP_400_BAD_REQUEST
                 )
-        
+
         if recurring_class.recurring_location:
-            if recurring_class_applied_monthly_has_double_booked_location(
-                list_of_dates_on_day_in_given_month=monthly_booking_date_list,
-                recurring_class=recurring_class
-            ):
+            dates_with_double_booked_locations_data = (
+                get_recurring_class_applied_monthly_double_booked_locations_data(
+                    list_of_dates_on_day_in_given_month=monthly_booking_date_list,
+                    recurring_class=recurring_class
+                )
+            )
+            if len(dates_with_double_booked_locations_data) > 0:
+                error_message = create_recurring_class_applied_monthly_location_double_booking_error_message(
+                    venue=recurring_class.recurring_location.venue,
+                    dates_with_double_booked_locations_data=dates_with_double_booked_locations_data
+                )
                 return Response(
-                    { "Error": "Location cheduling conflict" },
+                    {"Error": error_message},
                     status=status.HTTP_400_BAD_REQUEST
                 )
+        #if recurring_class.recurring_location:
+        #    if recurring_class_applied_monthly_has_double_booked_location(
+        #        list_of_dates_on_day_in_given_month=monthly_booking_date_list,
+        #        recurring_class=recurring_class
+        #    ):
+        #        return Response(
+        #            { "Error": "Location cheduling conflict" },
+        #            status=status.HTTP_400_BAD_REQUEST
+        #        )
 
         serializer.save()
         # pass function to book classes in the dates for the pay period
