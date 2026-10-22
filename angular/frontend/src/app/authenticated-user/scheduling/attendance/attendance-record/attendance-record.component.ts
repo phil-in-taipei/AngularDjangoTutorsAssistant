@@ -5,7 +5,9 @@ import { select, Store } from '@ngrx/store';
 import { ActivatedRoute } from '@angular/router';
 
 import { AttendanceService } from '../service/attendance.service';
-import { ScheduledClassModel } from 'src/app/models/scheduled-class.model';
+import { 
+  ScheduledClassModel, StudentOrClassAttendancePageState 
+} from 'src/app/models/scheduled-class.model';
 import { 
   selectStudentOrClassById 
 } from 'src/app/authenticated-user/student-or-class/state/student-or-class.selectors';

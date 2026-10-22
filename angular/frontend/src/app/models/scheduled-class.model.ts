@@ -51,6 +51,11 @@ export interface ScheduledClassModel {
     group_class_meeting_record: number | null;
 }
 
+export interface StudentOrClassAttendancePageState {
+  loading: boolean;
+  classes: ScheduledClassModel[];
+}
+
 export interface StudentOrClassAttendanceRecordResponse {
     count: number,
     next: string | null | undefined,
