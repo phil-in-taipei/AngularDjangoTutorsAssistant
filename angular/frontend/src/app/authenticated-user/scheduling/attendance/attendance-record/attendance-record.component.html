@@ -58,7 +58,90 @@
       </div>
     </div>
   </div>
-  <div *ngIf="pastClasses$ | async as pastClasses; else no_attendance" class="container bg-transparent">
+
+<div *ngIf="pageState$ | async as state" class="bg-transparent">
+
+  <!-- Spinner while fetching -->
+  <div *ngIf="state.loading" class="text-center my-5 bg-transparent">
+    <div class="spinner-border text-secondary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Records table -->
+  <div *ngIf="!state.loading && state.classes.length" class="container bg-transparent">
+    <hr class="thin-br"/>
+    <div class="table-responsive bg-transparent">
+      <table class="table bg-transparent">
+        <thead class="table bg-transparent">
+          <tr class="row bg-transparent">
+            <th class="col bg-transparent"><p>Date</p></th>
+            <th class="col bg-transparent"><p>Time</p></th>
+            <th class="col bg-transparent"><p>Attendance</p></th>
+            <th class="col hidden-small"><p>Content</p></th>
+          </tr>
+        </thead>
+        <tbody class="table bg-transparent">
+          <tr class="row bg-transparent" *ngFor="let pastClass of state.classes">
+            <th class="col bg-transparent">
+              <p><a [routerLink]="['/', 'authenticated-user', 'scheduling', 'schedule-daily', pastClass.date]">
+                {{ pastClass.date }}
+              </a></p>
+            </th>
+            <th class="col bg-transparent">
+              <p>
+                {{ pastClass.start_time.slice(0, -3) }}-{{ pastClass.finish_time.slice(0, -3) }}
+              </p>
+            </th>
+            <th class="col bg-transparent hidden-small">
+              <p class="capitalize">{{ pastClass.class_status.toString().split('_').join(' ') }}</p>
+            </th>
+            <th class="col bg-transparent small-scr">
+              <p
+                *ngIf="pastClass.class_status !== 'same_day_cancellation'; else no_show"
+                class="capitalize"
+              >
+                {{ pastClass.class_status.toString().split('_').join(' ') }}
+              </p>
+              <ng-template #no_show>
+                <p>No Show</p>
+              </ng-template>
+            </th>
+            <th class="col hidden-small">
+              <p>{{ pastClass.class_content }}</p>
+            </th>
+          </tr>
+        </tbody>
+      </table>
+      <hr class="thin-br"/>
+    </div>
+  </div>
+
+  <!-- Empty, first page: no records at all -->
+  <div *ngIf="!state.loading && !state.classes.length && pageNum === 1"
+       class="bg-transparent">
+    <br />
+    <h3 class="text-center">No previous attendance records</h3>
+    <hr class="thin-br"/>
+    <div class="text-center">
+      <button class="btn btn-sm btn-outline-secondary text"
+        [routerLink]="['/authenticated-user/scheduling/schedule-single-class']">
+        Schedule a Class
+      </button>
+    </div>
+    <hr class="thin-br"/>
+  </div>
+
+  <!-- Empty, later page: paged past the end -->
+  <div *ngIf="!state.loading && !state.classes.length && pageNum > 1"
+       class="bg-transparent">
+    <br />
+    <h3 class="text-center">No more records</h3>
+    <hr class="thin-br"/>
+  </div>
+
+</div>
+  <!-- <div *ngIf="pastClasses$ | async as pastClasses; else no_attendance" class="container bg-transparent">
     <hr class="thin-br"/>
     <div class="table-responsive bg-transparent">
       <table class="table bg-transparent bg-transparent">
@@ -117,4 +200,4 @@
     </button>
   </div>
   <hr class="thin-br"/>
-</ng-template>
+</ng-template> -->
