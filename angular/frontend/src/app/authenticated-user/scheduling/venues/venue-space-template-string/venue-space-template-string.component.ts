@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core'; //OnInit,
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { of, Observable } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 
@@ -17,11 +17,7 @@ export class VenueSpaceTemplateStringComponent implements OnChanges {
   venueSpace$: Observable<VenueSpaceModel | undefined> = of(undefined);
   @Input() venueSpaceId: number;
 
-  //ngOnInit(): void {
-  //  this.venueSpace$ = this.store.pipe(select(
-  //    selectVenueSpaceById(this.venueSpaceId)
-  //  ));
-  //}
+  
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['venueSpaceId']) {
       this.venueSpace$ = this.store.pipe(select(

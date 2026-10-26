@@ -44,9 +44,6 @@ export class AttendanceRecordComponent {
     this.studentOrClass$ = this.store.pipe(
       select(selectStudentOrClassById(this.idFromRouteData))
     );
-    //this.pastClasses$ = this.attendanceService.fetchPastClassesByStudentOrClass(
-    //  this.idFromRouteData, this.pageNum
-    //);
     this.loadPage();
   }
 
@@ -63,18 +60,12 @@ export class AttendanceRecordComponent {
 
   onNextPagRequest() {
     this.pageNum += 1;
-    //this.pastClasses$ = this.attendanceService.fetchPastClassesByStudentOrClass(
-    //  this.idFromRouteData, this.pageNum
-    //);
     this.loadPage();
   }
 
   onPrevPageRequest() {
     if (this.pageNum > 1) {
       this.pageNum -= 1;
-      //this.pastClasses$ = this.attendanceService.fetchPastClassesByStudentOrClass(
-      //  this.idFromRouteData, this.pageNum
-      //);
       this.loadPage();
     }
   }
