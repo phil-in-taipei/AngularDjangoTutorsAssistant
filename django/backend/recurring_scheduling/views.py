@@ -232,6 +232,81 @@ class RecurringScheduledClassViewSet(viewsets.ModelViewSet):
             "message": "Recurring Class successfully deleted!"}
         )
 
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+
+        # On a PATCH (partial update) some fields may be missing from the
+        # request, so fall back to the instance's current values.
+        validated = serializer.validated_data
+        recurring_day_of_week = validated.get(
+            'recurring_day_of_week', instance.recurring_day_of_week
+        )
+        recurring_start_time = validated.get(
+            'recurring_start_time', instance.recurring_start_time
+        )
+        recurring_finish_time = validated.get(
+            'recurring_finish_time', instance.recurring_finish_time
+        )
+        booked_teacher = validated.get('teacher', instance.teacher)
+        recurring_location = validated.get(
+            'recurring_location', instance.recurring_location
+        )
+        obj_id = instance.id
+
+        recurring_classes_booked_by_teacher_on_day_of_week = list(
+            RecurringScheduledClass.custom_query.teacher_already_booked_classes_on_day_of_week(
+                query_day_of_week=recurring_day_of_week,
+                teacher_id=booked_teacher
+            ).exclude(id=obj_id)
+        )
+
+        teacher_double_booking_data = get_double_booked_recurring_classes_data(
+            recurring_classes_booked_by_teacher_on_day_of_week,
+            recurring_start_time, recurring_finish_time
+        )
+
+        if teacher_double_booking_data['class_is_double_booked']:
+            day_of_week = DAY_OF_WEEK_NAMES[int(recurring_day_of_week)]
+            error_message = create_teacher_recurring_double_booking_error_message(
+                day_of_week, teacher_double_booking_data['double_booked_classes']
+            )
+            return Response(
+                {"Error": error_message},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if recurring_location:
+            venue = recurring_location.venue
+            recurring_classes_at_venue_booked_on_day_of_week = list(
+                RecurringScheduledClass.custom_query.classes_already_booked_at_venue_on_day_of_week(
+                    query_day_of_week=recurring_day_of_week,
+                    venue_id=venue.id
+                ).exclude(id=obj_id)
+            )
+
+            location_availability_data = get_double_booked_recurring_classes_location_data(
+                recurring_classes_booked_on_day_of_week=recurring_classes_at_venue_booked_on_day_of_week,
+                recurring_start_time=recurring_start_time,
+                recurring_finish_time=recurring_finish_time,
+                recurring_location=recurring_location
+            )
+
+            if location_availability_data['class_is_double_booked']:
+                error_message = create_venue_space_recurring_double_booking_error_message(
+                    venue=venue,
+                    booked_spaces=location_availability_data['booked_locations_at_venue']
+                )
+                return Response(
+                    {"Error": error_message},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+
     queryset = RecurringScheduledClass.objects.all()
     serializer_class = RecurringClassSerializer
     lookup_field = 'id'
