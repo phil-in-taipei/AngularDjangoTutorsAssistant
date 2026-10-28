@@ -1,12 +1,14 @@
 <tr class="row" > 
     <th class="col">
         <p>
-          {{ recurringClass.day_of_week_string.slice(0, 3) }} 
-          {{ 
-            recurringClass.recurring_start_time.slice(0, -3) 
-          }}-{{ 
-            recurringClass.recurring_finish_time|addMinute 
-          }}
+          <a [routerLink]="['../edit', recurringClass.id]">
+            {{ recurringClass.day_of_week_string.slice(0, 3) }} 
+            {{ 
+              recurringClass.recurring_start_time.slice(0, -3) 
+            }}-{{ 
+              recurringClass.recurring_finish_time|addMinute 
+            }}
+          </a>
         </p>
     </th>
     <th class="col">

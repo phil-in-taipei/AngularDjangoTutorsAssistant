@@ -1,4 +1,4 @@
 export interface DurationOptionsInterface {
     stringVal: string;
-    timeArr: Number[];
+    timeArr: number[];
 }

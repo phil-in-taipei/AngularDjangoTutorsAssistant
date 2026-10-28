@@ -15,6 +15,12 @@ import {
   CreateRecurringClassFormComponent 
 } from './create/create-recurring-class-form/create-recurring-class-form.component';
 import { 
+  EditRecurringClassComponent 
+} from './edit/edit-recurring-class/edit-recurring-class.component';
+import { 
+  EditRecurringClassFormComponent 
+} from './edit/edit-recurring-class-form/edit-recurring-class-form.component';
+import { 
   RecurringClassAppliedMonthlyComponent 
 } from './applied-monthly/recurring-class-applied-monthly/recurring-class-applied-monthly.component';
 import { 
@@ -61,6 +67,8 @@ import {
     ApplyRecurringClassMonthlyFormComponent,
     CreateRecurringClassComponent,
     CreateRecurringClassFormComponent,
+    EditRecurringClassComponent,
+    EditRecurringClassFormComponent,
     RecurringClassAppliedMonthlyComponent,
     RecurringClassComponent,
     RecurringClassDeletionResponseComponent,

@@ -50,7 +50,12 @@
           <table class="table bg-transparent">
             <thead class="table bg-transparent">
               <tr class="row">
-                <th class="col"><p>Time</p></th>
+                <th class="col">
+                  <p>
+                    Time<br />
+                    <small class="text-secondary">(click to edit)</small>
+                  </p>
+                </th>
                 <th class="col"><p>Student Or Class</p></th>
                 <ng-container
                   *ngIf="{ value: deletionModeForRecurringClassesActivated$ | async } as context"
@@ -63,6 +68,7 @@
                   </th>
                 </ng-container>
               </tr>
+            
             </thead>
             <tbody class="bg-transparent">
               <div class="bg-transparent"
