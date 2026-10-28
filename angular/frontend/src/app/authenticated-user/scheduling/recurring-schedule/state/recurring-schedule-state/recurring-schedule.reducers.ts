@@ -94,7 +94,6 @@ function compareRecurringClasses(
           errorMessage: errMsg
         }
 
-
       case RecurringClassesActionTypes.RecurringClassDeletionModeActivated:
         return {
               ...state, 
@@ -127,6 +126,29 @@ function compareRecurringClasses(
           ...state, successMessage: undefined,
           errorMessage: undefined
         }
+
+      case RecurringClassesActionTypes.RecurringClassUpdated:
+        // updateOne merges the server's version into the existing entity and
+        // re-sorts, so a changed day/start time moves it to the right place.
+        return adapter.updateOne(
+          {
+            id: action.payload.recurringClass.id,
+            changes: action.payload.recurringClass
+          },
+          {
+            ...state,
+            errorMessage: undefined,
+            successMessage: 'Recurring Class successfully updated!'
+          }
+        );
+
+      case RecurringClassesActionTypes.RecurringClassUpdateCancelled:
+        return {
+          ...state,
+          successMessage: undefined,
+          errorMessage:
+            action.payload.err?.error?.Error ?? 'Error updating recurring class!'
+        };
   
       default: {
         return state

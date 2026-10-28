@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
 import { of } from 'rxjs';
-import { catchError, filter, map, mergeMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, concatMap, filter, map, mergeMap, withLatestFrom } from 'rxjs/operators';
 
 import { RecurringClassesState } from './recurring-schedule.reducers';
 
@@ -17,7 +17,10 @@ import {
   RecurringClassDeletionSaved,
   RecurringClassesLoaded,
   RecurringClassesRequestCancelled,
-  RecurringClassesRequested
+  RecurringClassesRequested,
+  RecurringClassUpdateSubmitted,
+  RecurringClassUpdated,
+  RecurringClassUpdateCancelled,
 } from './recurring-schedule.actions';
 import { RecurringScheduleService } from '../../recurring-schedule-service/recurring-schedule.service';
 
@@ -90,6 +93,22 @@ export class RecurringClassesEffects {
           recurringClass => new RecurringClassAdded(
             { recurringClass }
           ),
+        )
+      )
+  });
+
+  updateRecurringClass$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType<RecurringClassUpdateSubmitted>(
+          RecurringClassesActionTypes.RecurringClassUpdateSubmitted
+        ),
+        concatMap(action => this.recurringClassService
+          .updateRecurringClass(action.payload.id, action.payload.changes)
+          .pipe(
+            map(recurringClass => new RecurringClassUpdated({ recurringClass })),
+            catchError(err => of(new RecurringClassUpdateCancelled({ err })))
+          )
         )
       )
   });

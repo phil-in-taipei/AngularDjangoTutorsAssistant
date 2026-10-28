@@ -40,3 +40,10 @@ export interface RecurringClassModel {
     day_of_week_string: string;
     recurring_location: number | null;
 }
+
+export interface RecurringClassUpdateModel {
+    recurring_start_time: string;
+    recurring_finish_time: string;
+    recurring_day_of_week: number;
+    recurring_location: number | null;
+}

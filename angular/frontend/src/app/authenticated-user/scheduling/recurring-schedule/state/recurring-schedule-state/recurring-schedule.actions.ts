@@ -1,7 +1,9 @@
 import { Action} from "@ngrx/store";
 
 import { 
-    RecurringClassCreateModel, RecurringClassModel 
+    RecurringClassCreateModel, 
+    RecurringClassModel, 
+    RecurringClassUpdateModel
 } from "src/app/models/recurring-schedule.model";
 
 export enum RecurringClassesActionTypes {
@@ -18,6 +20,9 @@ export enum RecurringClassesActionTypes {
   RecurringClassDeletionRequested = '[Recurring Classes  Page]  Removal of Recurring Class Requested',
   RecurringClassDeletionSaved = '[Recurring Classes Page] Recurring Class Removed',
   RecurringClassesMessagesCleared = '[Recurring Class List, and Submission Pages] Recurring Class Messages Cleared',
+  RecurringClassUpdateSubmitted = '[Edit Recurring Class Page] Recurring Class Update Submitted',
+  RecurringClassUpdated = '[Recurring Class API] Recurring Class Updated',
+  RecurringClassUpdateCancelled = '[Edit Recurring Class Page] Recurring Class Update Cancelled',
 }
 
 export class RecurringClassesCleared implements Action {
@@ -94,10 +99,34 @@ export class RecurringClassesMessagesCleared implements Action {
   readonly type = RecurringClassesActionTypes.RecurringClassesMessagesCleared;
 }
 
+export class RecurringClassUpdateSubmitted implements Action {
+  readonly type = RecurringClassesActionTypes.RecurringClassUpdateSubmitted;
+
+  constructor(
+    public payload: { id: number, changes: RecurringClassUpdateModel }
+  ) {}
+}
+
+export class RecurringClassUpdated implements Action {
+  readonly type = RecurringClassesActionTypes.RecurringClassUpdated;
+
+  constructor(
+    public payload: { recurringClass: RecurringClassModel }
+  ) {}
+}
+
+export class RecurringClassUpdateCancelled implements Action {
+  readonly type = RecurringClassesActionTypes.RecurringClassUpdateCancelled;
+
+  constructor(public payload: { err: any }) {}
+}
+
 export type RecurringClassActions = RecurringClassesCleared |
   RecurringClassesLoaded | RecurringClassesRequestCancelled |
   RecurringClassesRequested | RecurringClassCreateSubmitted |
   RecurringClassAdded | RecurringClassCreationCancelled |
   RecurringClassDeletionCancelled | RecurringClassDeletionModeDeactivated |
   RecurringClassDeletionModeActivated | RecurringClassDeletionRequested |
-  RecurringClassDeletionSaved | RecurringClassesMessagesCleared;
+  RecurringClassDeletionSaved | RecurringClassesMessagesCleared | 
+  RecurringClassUpdateSubmitted | RecurringClassUpdated |
+  RecurringClassUpdateCancelled;

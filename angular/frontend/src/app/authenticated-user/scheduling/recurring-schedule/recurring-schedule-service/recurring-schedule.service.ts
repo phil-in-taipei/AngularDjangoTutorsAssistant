@@ -6,7 +6,9 @@ import { AuthService } from 'src/app/authentication/auth.service';
 import { DeletionResponse } from 'src/app/models/deletion-response';
 import { environment } from 'src/environments/environment';
 import { 
-  RecurringClassCreateModel, RecurringClassModel 
+  RecurringClassCreateModel, 
+  RecurringClassModel, 
+  RecurringClassUpdateModel
 } from 'src/app/models/recurring-schedule.model';
 import { 
   RecurringClassAppliedMonthlyCreateModel,
@@ -89,6 +91,19 @@ export class RecurringScheduleService {
     let token = this.authService.getAuthToken();
     return this.http.post<RecurringClassModel>(
       `${environment.apiUrl}/api/recurring/recurring-class/`, submissionForm,
+      {
+        headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
+      });
+  }
+
+  updateRecurringClass(
+    id: number,
+    updateForm: RecurringClassUpdateModel
+  ): Observable<RecurringClassModel> {
+    const token = this.authService.getAuthToken();
+    return this.http.patch<RecurringClassModel>(
+      `${environment.apiUrl}/api/recurring/recurring-class/${id}/`,
+      updateForm,
       {
         headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
       });
