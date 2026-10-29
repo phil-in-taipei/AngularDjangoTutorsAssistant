@@ -112,8 +112,18 @@
       <table class="table bg-transparent">
         <thead class="table bg-transparent">
           <tr class="row bg-transparent">
-            <th class="col bg-transparent"><p>Time</p></th>
-            <th class="col bg-transparent"><p>Student/Class</p></th>
+            <th class="col bg-transparent">
+              <p>
+                Time<br />
+                <small class="text-secondary">(click to edit/confirm)</small>
+              </p>
+            </th>
+            <th class="col bg-transparent">
+              <p>
+                Student/Class<br />
+                <small class="text-secondary">(click for attendance)</small>
+              </p>
+            </th>
             <ng-container
             *ngIf="{ value: deletionModeForScheduledClassesActivated$ | async } as context"
           >
