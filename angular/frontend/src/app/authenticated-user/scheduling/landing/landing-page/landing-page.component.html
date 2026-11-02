@@ -50,9 +50,16 @@
     <h3>Today's Schedule</h3>
     <h5>{{ todaysClasses.length }} Class(es) Scheduled Today</h5>
     <hr class="thin-br"/>
-    <app-classes-on-current-date 
+    <!--<app-classes-on-current-date 
       [scheduledClasses]=todaysClasses class="bg-transparent">
-    </app-classes-on-current-date>
+    </app-classes-on-current-date> !-->
+    <h5 class="text-center">
+      <button class="btn btn-outline-secondary" type="button"
+        (click)="navToSelectedDate()"
+      >
+        View Today's Schedule
+      </button>
+    </h5>
   </div>
 </div>
 
