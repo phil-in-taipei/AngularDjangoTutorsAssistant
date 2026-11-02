@@ -45,10 +45,18 @@
     color: #758d97 !important;
   }
   
-  
   .mydropnav {
       color: #758d97 !important;
   }
+
+/* code for datesearch styling */
+.brand-slot {
+  min-height: 38px; /* keeps navbar height stable between the two modes */
+}
+
+.date-input {
+  width: 150px;
+}
 
 /* styles.css or your component's style file */
 .dropdown-submenu {

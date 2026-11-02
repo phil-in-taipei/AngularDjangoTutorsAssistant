@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { EffectsModule } from '@ngrx/effects';
@@ -103,6 +104,7 @@ import {
   imports: [
     CommonModule,
     FormsModule,
+    NgbModule,
     AuthenticatedUserRoutingModule,
     StoreModule.forFeature('user', userProfileReducer),
     EffectsModule.forFeature([UserEffects]),

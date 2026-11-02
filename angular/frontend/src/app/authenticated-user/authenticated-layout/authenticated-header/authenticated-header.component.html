@@ -1,11 +1,51 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand mydropnav hidden-small-and-medium" 
-        routerLink="/authenticated-user/scheduling/landing" 
-        routerLinkActive
-      >
-        Tutor's Assistant
-      </a>
+
+      <div class="brand-slot d-none d-lg-flex align-items-center">
+
+        <!-- Brand text (normal mode) -->
+        <a *ngIf="!searchMode"
+          class="navbar-brand mydropnav me-2"
+          routerLink="/authenticated-user/scheduling/landing"
+          routerLinkActive>
+          Tutor's Assistant
+        </a>
+
+        <!-- Date input (search mode) -->
+        <input *ngIf="searchMode"
+              class="form-control form-control-sm date-input me-2"
+              placeholder="yyyy-mm-dd"
+              name="dp"
+              [(ngModel)]="dateModel"
+              ngbDatepicker
+              #d="ngbDatepicker"
+              container="body"
+              navigation="select"
+              [outsideDays]="'collapsed'"
+              [showWeekNumbers]="false"
+              [firstDayOfWeek]="7"
+              [autoClose]="false"
+              [displayMonths]="1">
+
+        <!-- Search / Go button: same icon in both modes -->
+        <button type="button"
+                class="btn btn-sm btn-outline-secondary"
+                (click)="onSearchClick()"
+                [attr.aria-label]="searchMode ? 'Go to selected date' : 'Search by date'">
+          <i class="bi bi-search"></i>
+        </button>
+
+        <!-- Return arrow (search mode only) -->
+        <button *ngIf="searchMode"
+                type="button"
+                class="btn btn-sm btn-outline-success ms-2"
+                (click)="exitSearchMode()"
+                aria-label="Cancel date search">
+          <i class="bi bi-arrow-return-left"></i>
+        </button>
+      </div>
+
+
       <button class="navbar-toggler" type="button" 
         data-bs-toggle="collapse" 
         data-bs-target="#navbarSupportedContent" 
@@ -22,7 +62,7 @@
               routerLink="/authenticated-user/scheduling/landing"
               (click)="closeNavbar()" 
               routerLinkActive
-            >Home
+            >Date Search/Homepage
             </a>
           </li>
 

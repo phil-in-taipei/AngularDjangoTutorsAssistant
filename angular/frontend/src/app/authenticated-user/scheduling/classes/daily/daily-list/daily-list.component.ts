@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, map, of } from 'rxjs';
 import { select, Store } from '@ngrx/store';
@@ -34,6 +35,8 @@ export class DailyListComponent implements OnInit {
   tmrwRouterStr: string;
   ystrdyRouterStr: string;
 
+  private destroyRef = inject(DestroyRef);
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -41,9 +44,6 @@ export class DailyListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.dateFromRouteData = this.route.snapshot.params['date'];
-    this.tmrwRouterStr = this.getTmrwRouterStr(this.dateFromRouteData);
-    this.ystrdyRouterStr = this.getYstrdyRouterStr(this.dateFromRouteData);
     this.deletionModeForScheduledClassesActivated$ = this.store.pipe(
       select(deletionModeForScheduledClassesActivated)
     );
@@ -51,14 +51,25 @@ export class DailyListComponent implements OnInit {
       select(fetchingClassesInProgress)
     );
   
-    this.dailyScheduledClasses$ = this.store.pipe(
-      select(selectScheduledClassesByDate(this.dateFromRouteData)))
+    // Runs once on init and again every time the :date param changes,
+    // whether from the prev/next buttons, the navbar search, or the browser's back button.
+    this.route.paramMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(params => {
+        this.dateFromRouteData = params.get('date')!;
+        this.tmrwRouterStr = this.getTmrwRouterStr(this.dateFromRouteData);
+        this.ystrdyRouterStr = this.getYstrdyRouterStr(this.dateFromRouteData);
+        this.dailyScheduledClasses$ = this.buildDailyClasses$(this.dateFromRouteData);
+      });
+  }
+
+  private buildDailyClasses$(date: string): Observable<ScheduledClassModel[] | undefined> {
+    return this.store.pipe(
+      select(selectScheduledClassesByDate(date)))
       .pipe(map((scheduledClasses: ScheduledClassModel[] | undefined) => {
         if (scheduledClasses !== undefined) {
           if (!scheduledClasses.length) {
-            this.store.dispatch(new DailyClassesRequested(
-              {date: this.dateFromRouteData }
-            ));
+            this.store.dispatch(new DailyClassesRequested({ date }));
           }
         }
         return scheduledClasses;
@@ -92,40 +103,10 @@ export class DailyListComponent implements OnInit {
 
   navToTmrrow() {
     this.router.navigate(['/', 'authenticated-user', 'scheduling', 'schedule-daily',  this.tmrwRouterStr]);
-    this.dateFromRouteData = this.tmrwRouterStr;
-    this.tmrwRouterStr = this.getTmrwRouterStr(this.dateFromRouteData);
-    this.ystrdyRouterStr = this.getYstrdyRouterStr(this.dateFromRouteData);
-    this.dailyScheduledClasses$ = this.store.pipe(
-      select(selectScheduledClassesByDate(this.dateFromRouteData)))
-      .pipe(map((scheduledClasses: ScheduledClassModel[] | undefined) => {
-        if (scheduledClasses !== undefined) {
-          if (!scheduledClasses.length) {
-            this.store.dispatch(new DailyClassesRequested(
-              {date: this.dateFromRouteData }
-            ));
-          }
-        }
-        return scheduledClasses;
-      }));
   }
 
   navToYsdtrdy() {
     this.router.navigate(['/', 'authenticated-user', 'scheduling', 'schedule-daily',  this.ystrdyRouterStr]);
-    this.dateFromRouteData = this.ystrdyRouterStr;
-    this.tmrwRouterStr = this.getTmrwRouterStr(this.dateFromRouteData);
-    this.ystrdyRouterStr = this.getYstrdyRouterStr(this.dateFromRouteData);
-    this.dailyScheduledClasses$ = this.store.pipe(
-      select(selectScheduledClassesByDate(this.dateFromRouteData)))
-      .pipe(map((scheduledClasses: ScheduledClassModel[] | undefined) => {
-        if (scheduledClasses !== undefined) {
-          if (!scheduledClasses.length) {
-            this.store.dispatch(new DailyClassesRequested(
-              {date: this.dateFromRouteData }
-            ));
-          }
-        }
-        return scheduledClasses;
-      }));
   }
 
   onActivateScheduledClassDeletionMode(): void {
