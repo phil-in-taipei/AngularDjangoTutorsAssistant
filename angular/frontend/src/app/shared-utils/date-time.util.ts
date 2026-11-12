@@ -1,5 +1,20 @@
 import { DurationOptionsInterface } from "../models/time-related.model";
 
+
+export function getDayOfWeekRouterStr(dateFromRouteData: string): string {
+  const date = new Date(dateFromRouteData);
+  const days = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
+  return days[date.getUTCDay()];
+}
+
 export function calculateTimeStringsDifferenceinNumbers(
   time1: string, time2: string
 ): number {
@@ -21,6 +36,8 @@ export function calculateTimeStringsDifferenceinNumbers(
   
   return diffHours;
 }
+
+
 
 export function getClassDurationsOptions(): DurationOptionsInterface[] {
   const classDurationOptions: DurationOptionsInterface[] = [

@@ -245,6 +245,10 @@ class ScheduledClass(models.Model):
             str(self.student_or_class).title()
         )
 
+    @property
+    def day_of_week(self):
+        return self.date.strftime('%A') if self.date else ''
+
     class Meta:
         verbose_name_plural = 'Scheduled Classes'
         ordering = ['-date', 'teacher', 'start_time']

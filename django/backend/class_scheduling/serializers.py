@@ -9,6 +9,7 @@ from venues.models import VenueSpace
 
 class ScheduledClassSerializer(serializers.ModelSerializer):
     group_class_meeting_record = serializers.PrimaryKeyRelatedField(read_only=True)
+    day_of_week = serializers.ReadOnlyField()
     location = serializers.PrimaryKeyRelatedField(
         queryset=VenueSpace.objects.all(),
         allow_null=True,
@@ -19,7 +20,7 @@ class ScheduledClassSerializer(serializers.ModelSerializer):
         model = ScheduledClass
         fields = (
             'id', 'student_or_class',
-            'date', 'teacher',
+            'date', 'day_of_week', 'teacher',
             'start_time', 'finish_time', 
             'location', 'class_status', 
             'teacher_notes', 'class_content',

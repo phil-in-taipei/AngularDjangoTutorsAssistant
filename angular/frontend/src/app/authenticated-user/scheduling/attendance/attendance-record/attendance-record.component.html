@@ -85,7 +85,7 @@
           <tr class="row bg-transparent" *ngFor="let pastClass of state.classes">
             <th class="col bg-transparent">
               <p><a [routerLink]="['/', 'authenticated-user', 'scheduling', 'schedule-daily', pastClass.date]">
-                {{ pastClass.date }}
+                {{ pastClass.date }} ({{ pastClass.day_of_week.substring(0, 3) }})
               </a></p>
             </th>
             <th class="col bg-transparent">

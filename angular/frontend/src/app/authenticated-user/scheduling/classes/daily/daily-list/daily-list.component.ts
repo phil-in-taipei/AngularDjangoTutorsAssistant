@@ -14,7 +14,9 @@ import {
   ScheduledClassDeletionModeActivated, 
   ScheduledClassDeletionModeDeactivated 
 } from '../../../classes-state/scheduled-classes.actions';
-import { getDateString, monthsAndIntegers } from 'src/app/shared-utils/date-time.util';
+import { 
+  getDateString, getDayOfWeekRouterStr, monthsAndIntegers 
+} from 'src/app/shared-utils/date-time.util';
 import { 
   selectScheduledClassesByDate, fetchingClassesInProgress 
 } from '../../../classes-state/scheduled-classes.selectors';
@@ -28,6 +30,7 @@ import {
 export class DailyListComponent implements OnInit {
 
   dateFromRouteData: string;
+  dayOfWeekString: string;
   dailyScheduledClasses$: Observable<ScheduledClassModel[] | undefined>;
   deletionModeForScheduledClassesActivated$: Observable<boolean> = of(false);
   fetchingClasses$: Observable<boolean> = of(false);
@@ -57,6 +60,7 @@ export class DailyListComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(params => {
         this.dateFromRouteData = params.get('date')!;
+        this.dayOfWeekString = getDayOfWeekRouterStr(this.dateFromRouteData);
         this.tmrwRouterStr = this.getTmrwRouterStr(this.dateFromRouteData);
         this.ystrdyRouterStr = this.getYstrdyRouterStr(this.dateFromRouteData);
         this.dailyScheduledClasses$ = this.buildDailyClasses$(this.dateFromRouteData);

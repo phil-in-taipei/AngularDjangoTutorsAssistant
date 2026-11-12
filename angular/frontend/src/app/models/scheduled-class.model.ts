@@ -40,6 +40,7 @@ export interface ScheduledClassBatchDeletionDataModel {
 export interface ScheduledClassModel {
     id: number;
     date: string;
+    day_of_week: string;
     start_time: string;
     finish_time: string;
     student_or_class: number;

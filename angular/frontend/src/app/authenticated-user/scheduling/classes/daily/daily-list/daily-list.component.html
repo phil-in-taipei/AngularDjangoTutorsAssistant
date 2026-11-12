@@ -6,6 +6,7 @@
     </div>
     <div class="col bg-transparent">
       <h3>
+        {{ dayOfWeekString }},
         {{ 
           (dateFromRouteData.split('-') || []).length === 3 ? 
           monthsAndIntegers[(+dateFromRouteData.split('-')[1]) - 1][0] + ' ' + 
@@ -21,7 +22,8 @@
     </div>
   </div>
   <div class="small-scr bg-transparent">
-    <h3>                    
+    <h3> 
+      {{ dayOfWeekString }},                    
       {{ 
         (dateFromRouteData.split('-') || []).length === 3 ? 
         monthsAndIntegers[(+dateFromRouteData.split('-')[1]) - 1][0] + ' ' + 
