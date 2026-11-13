@@ -3,7 +3,7 @@ import {select, Store} from '@ngrx/store';
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
 
-import { getDateString } from 'src/app/shared-utils/date-time.util';
+import { getDateString, getDayOfWeekRouterStr, monthsAndIntegers } from 'src/app/shared-utils/date-time.util';
 import { 
   LandingPageScheduleRequested, UnconfirmedScheduledClassesRequested
 } from '../../classes-state/scheduled-classes.actions';
@@ -27,7 +27,10 @@ import { UserProfileModel } from 'src/app/models/user-profile.model';
 export class LandingPageComponent implements OnInit {
 
   dateModel = {year: 0, month: 0, day: 0};
+  readonly monthsAndIntegers = monthsAndIntegers;
   todaysClasses$: Observable<ScheduledClassModel[] | undefined>;
+  dayOfWeekString: string;
+  todayDateStr: string;
   unconfirmedPastClasses$: Observable<ScheduledClassModel[] | undefined>;
   userProfile$: Observable<UserProfileModel | undefined>;
 
@@ -43,11 +46,12 @@ export class LandingPageComponent implements OnInit {
     this.dateModel.year = dateTimeObj.getUTCFullYear();
     this.dateModel.month = dateTimeObj.getUTCMonth() + 1;
     this.dateModel.day = dateTimeObj.getUTCDate();
-    let todayDateStr = this.getTodayDateString();
+    this.todayDateStr = this.getTodayDateString();
+    this.dayOfWeekString = getDayOfWeekRouterStr(this.todayDateStr);
     this.todaysClasses$ = this.store.pipe(
-      select(selectScheduledClassesByDate(todayDateStr)));
+      select(selectScheduledClassesByDate(this.todayDateStr)));
     this.unconfirmedPastClasses$ = this.store.pipe(
-      select(selectUnconfirmedPastScheduledClasses(todayDateStr)));
+      select(selectUnconfirmedPastScheduledClasses(this.todayDateStr)));
     this.userProfile$ = this.store.pipe(select(selectUserProfile));
   }
 

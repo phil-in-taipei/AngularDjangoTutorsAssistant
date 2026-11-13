@@ -47,7 +47,16 @@
 <div *ngIf="todaysClasses$ | async as todaysClasses" class="container">
   <div class="m-3 p-2">
     <hr class="thin-br"/>
-    <h3>Today's Schedule</h3>
+    <h3>
+      {{ dayOfWeekString }},
+      {{ 
+        (todayDateStr.split('-') || []).length === 3 ? 
+        monthsAndIntegers[(+todayDateStr.split('-')[1]) - 1][0] + ' ' + 
+        (+todayDateStr.split('-')[2]) + ', ' + 
+        todayDateStr.split('-')[0] : 
+        todayDateStr 
+      }}
+    </h3>
     <h5>{{ todaysClasses.length }} Class(es) Scheduled Today</h5>
     <hr class="thin-br"/>
     <!--<app-classes-on-current-date 
