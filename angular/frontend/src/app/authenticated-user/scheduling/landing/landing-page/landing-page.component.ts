@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
+import { NgbDateStruct, NgbInputDatepicker } from '@ng-bootstrap/ng-bootstrap';
 
-import { getDateString, getDayOfWeekRouterStr, monthsAndIntegers } from 'src/app/shared-utils/date-time.util';
+import { 
+  getDateString, getDayOfWeekRouterStr, monthsAndIntegers 
+} from 'src/app/shared-utils/date-time.util';
 import { 
   LandingPageScheduleRequested, UnconfirmedScheduledClassesRequested
 } from '../../classes-state/scheduled-classes.actions';
@@ -26,7 +29,12 @@ import { UserProfileModel } from 'src/app/models/user-profile.model';
 })
 export class LandingPageComponent implements OnInit {
 
-  dateModel = {year: 0, month: 0, day: 0};
+  //dateModel = {year: 0, month: 0, day: 0};
+  searchMode = false;
+  dateModel: NgbDateStruct | null = this.todayStruct();
+
+  @ViewChild('dSmall') datepicker?: NgbInputDatepicker;
+
   readonly monthsAndIntegers = monthsAndIntegers;
   todaysClasses$: Observable<ScheduledClassModel[] | undefined>;
   dayOfWeekString: string;
@@ -42,12 +50,14 @@ export class LandingPageComponent implements OnInit {
   ngOnInit(): void {
     this.store.dispatch(new LandingPageScheduleRequested());
     this.store.dispatch(new UnconfirmedScheduledClassesRequested());
-    let dateTimeObj = new Date();
-    this.dateModel.year = dateTimeObj.getUTCFullYear();
-    this.dateModel.month = dateTimeObj.getUTCMonth() + 1;
-    this.dateModel.day = dateTimeObj.getUTCDate();
-    this.todayDateStr = this.getTodayDateString();
+    //let dateTimeObj = new Date();
+    //this.dateModel.year = dateTimeObj.getUTCFullYear();
+    //this.dateModel.month = dateTimeObj.getUTCMonth() + 1;
+    //this.dateModel.day = dateTimeObj.getUTCDate();
+    const today = this.todayStruct();
+    this.todayDateStr = getDateString(today.day, today.month, today.year);
     this.dayOfWeekString = getDayOfWeekRouterStr(this.todayDateStr);
+
     this.todaysClasses$ = this.store.pipe(
       select(selectScheduledClassesByDate(this.todayDateStr)));
     this.unconfirmedPastClasses$ = this.store.pipe(
@@ -55,24 +65,71 @@ export class LandingPageComponent implements OnInit {
     this.userProfile$ = this.store.pipe(select(selectUserProfile));
   }
 
-  getTodayDateString(): string {
+  private todayStruct(): NgbDateStruct {
+    const now = new Date();
+    return {
+      year: now.getFullYear(),
+      month: now.getMonth() + 1,
+      day: now.getDate()
+    };
+  }
+
+  //getTodayDateString(): string {
+  //  const dateString = getDateString(
+  //    this.dateModel.day,
+  //    this.dateModel.month,
+  //    this.dateModel.year
+  //  );
+  //  return dateString;
+  //}
+  onSearchClick(): void {
+    if (!this.searchMode) {
+      this.searchMode = true;
+      this.dateModel = this.todayStruct();
+      // wait for *ngIf to render the input, then open the calendar
+      setTimeout(() => this.datepicker?.open());
+      return;
+    }
+    this.navToSelectedDateWithToggle();
+  }
+
+  navToSelectedDateWithToggle(): void {
+    if (!this.dateModel) { return; }
     const dateString = getDateString(
       this.dateModel.day,
       this.dateModel.month,
       this.dateModel.year
     );
-    return dateString;
+    this.router.navigate(
+      ['authenticated-user', 'scheduling', 'schedule-daily', dateString]
+    );
+    this.exitSearchMode();
   }
 
   navToSelectedDate(): void {
-    let dateString = getDateString(
-      this.dateModel.day,
-      this.dateModel.month,
-      this.dateModel.year
-    );
+    let dateString = this.todayDateStr
+    if (this.dateModel) {
+      dateString = getDateString(
+        this.dateModel.day,
+        this.dateModel.month,
+        this.dateModel.year
+      );
+    }
     this.router.navigate(
       ['authenticated-user', 'scheduling', 'schedule-daily',  dateString]
     );
+  }
+
+  // Used by the "View Today's Schedule" button
+  navToToday(): void {
+    this.router.navigate(
+      ['authenticated-user', 'scheduling', 'schedule-daily', this.todayDateStr]
+    );
+  }
+
+  exitSearchMode(): void {
+    this.datepicker?.close();
+    this.searchMode = false;
   }
 
   trackByFn(index: number, item: any) {

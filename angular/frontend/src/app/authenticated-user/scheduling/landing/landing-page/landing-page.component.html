@@ -1,11 +1,11 @@
 <br/><br/>
-<div class="container date-search">
+<div class="container date-search hidden-small">
     <div class="text-center">
       <form class="form-inline">
         <div class="form-group">
           <div class="input-group">
             <input class="form-control" placeholder="yyyy-mm-dd"
-                  name="dp" [(ngModel)]="dateModel" ngbDatepicker #d="ngbDatepicker"
+                  name="dpLarge" [(ngModel)]="dateModel" ngbDatepicker #dLarge="ngbDatepicker"
                   navigation="select"
                   [outsideDays]="'collapsed'"
                   [showWeekNumbers]="false"
@@ -15,7 +15,7 @@
             >
             <br />
             <div class="input-group-append">
-              <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button">
+              <button class="btn btn-outline-secondary calendar" (click)="dLarge.toggle()" type="button">
                 Search Date
               </button>
             </div>
@@ -24,11 +24,57 @@
       </form>
     </div>
 </div>
+
+
 <br />
-<div class="text-center">
+<div class="text-center hidden-small">
     <button class="btn btn-sm btn-outline-secondary middle"
       (click)="navToSelectedDate()">Go To Scheduled Date
     </button>
+</div>
+
+<div class="container date-search small-scr">
+  <div class="d-flex justify-content-center align-items-center brand-slot">
+    <h2>
+      <!-- Placeholder label (normal mode) -->
+      <span *ngIf="!searchMode" class="search-label me-2">
+        Search by date
+      </span>
+    </h2>
+
+    <!-- Date input (search mode) -->
+    <input *ngIf="searchMode"
+           class="form-control form-control-sm date-input me-2"
+           placeholder="yyyy-mm-dd"
+           name="dpSmall"
+           [(ngModel)]="dateModel"
+           ngbDatepicker
+           #dSmall="ngbDatepicker"
+           container="body"
+           navigation="select"
+           [outsideDays]="'collapsed'"
+           [showWeekNumbers]="false"
+           [firstDayOfWeek]="7"
+           [autoClose]="false"
+           [displayMonths]="1">
+
+    <!-- Search / Go button: same icon in both modes -->
+    <button type="button"
+            class="btn btn-sm btn-outline-secondary"
+            (click)="onSearchClick()"
+            [attr.aria-label]="searchMode ? 'Go to selected date' : 'Search by date'">
+      <i class="bi bi-search"></i>
+    </button>
+
+    <!-- Return arrow (search mode only) -->
+    <button *ngIf="searchMode"
+            type="button"
+            class="btn btn-sm btn-outline-success ms-2"
+            (click)="exitSearchMode()"
+            aria-label="Cancel date search">
+      <i class="bi bi-arrow-return-left"></i>
+    </button>
+  </div>
 </div>
 
 <div *ngIf="unconfirmedPastClasses$ | async as unconfirmedPastClasses" class="container">
@@ -64,7 +110,7 @@
     </app-classes-on-current-date> !-->
     <h5 class="text-center">
       <button class="btn btn-outline-secondary" type="button"
-        (click)="navToSelectedDate()"
+        (click)="navToToday()"
       >
         View Today's Schedule
       </button>

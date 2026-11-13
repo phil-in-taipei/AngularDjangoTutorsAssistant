@@ -17,5 +17,17 @@ h3, h5 {
 .date-search {
     max-width: 550px;
   }
+
+.brand-slot {
+  min-height: 38px; /* keeps layout stable between the two modes */
+}
+
+.date-input {
+  width: 150px;
+}
+
+.search-label {
+  color: #758d97;
+}
   
 
