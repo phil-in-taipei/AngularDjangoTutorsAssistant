@@ -53,6 +53,20 @@ export const selectUnconfirmedPastScheduledClasses = (currentDate: string) => cr
     }
 );
 
+export const selectFutureScheduledClassesForStudentOrClass = (
+  currentDate: string,
+  studentOrClassId: number
+) => createSelector(
+  selectAllScheduledClasses,
+  scheduledClasses => {
+    return scheduledClasses.filter(
+      scheduledClass =>
+        scheduledClass.date > currentDate &&
+        scheduledClass.student_or_class === studentOrClassId
+    );
+  }
+);
+
 export const fetchingClassesInProgress = createSelector(
     selectScheduledClassesState,
     scheduledClassesState => scheduledClassesState.fetchingClassesInProgress
