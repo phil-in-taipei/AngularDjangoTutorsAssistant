@@ -1,5 +1,8 @@
 import datetime
 from bisect import insort
+from django.db.models import Subquery
+from django.utils import timezone
+from rest_framework import generics
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status, viewsets
@@ -11,13 +14,13 @@ from .models import ScheduledClass, CANCELLED_STATUSES
 from .pagination import SmallSetPagination
 from .serializers import ScheduledClassSerializer, ScheduledClassGoogleCalendarSerializer
 from .utils import (
-    class_is_double_booked,
+    #class_is_double_booked,
     create_teacher_double_booking_error_message,
     create_venue_space_double_booking_error_message,
     determine_transaction_type,
     get_double_booked_classes_data,
     get_double_booked_classes_location_data,
-    get_list_of_locations_from_list_of_scheduled_classes,
+    #get_list_of_locations_from_list_of_scheduled_classes,
     is_client_school_account,
     is_freelance_account,
     handle_client_school_purchased_hours_modification,
@@ -415,3 +418,40 @@ class ScheduledClassByStudentOrClassIDCodeFromDateViewSet(generics.ListAPIView):
             Q(class_status='completed') | Q(class_status='same_day_cancellation')
         )
         return queryset.order_by('date', 'start_time')
+
+
+class FutureScheduledClassesByStudentView(generics.ListAPIView):
+    """
+    Returns every class the requesting teacher has on any future date
+    (from tomorrow onward) on which the given student has a class with them.
+    This includes the student's own classes plus the teacher's other classes
+    on those same dates, so the front end can cache complete days by date.
+    """
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ScheduledClassSerializer
+    pagination_class = None  # a page cut could leave a day incomplete in the ngrx cache
+
+    def get_queryset(self):
+        student_id = self.kwargs["student_id"]
+        user = self.request.user
+        today = timezone.localdate()
+
+        # Dates (after today) on which this student has a class with this teacher
+        student_dates = (
+            ScheduledClass.objects
+            .filter(
+                teacher__user=user,
+                student_or_class_id=student_id,
+                date__gt=today,
+            )
+            .values("date")
+        )
+
+        # All of this teacher's classes on those dates
+        return (
+            ScheduledClass.objects
+            .filter(teacher__user=user, date__in=Subquery(student_dates))
+            # .select_related("group_class_meeting_record")  # only if it's a reverse one-to-one
+            .order_by("date", "start_time")
+        )
+

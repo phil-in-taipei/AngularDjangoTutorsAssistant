@@ -12,7 +12,8 @@ from .views import (
     ScheduledClassGoogleCalendarViewSet,
     ScheduledClassByTeacherGoogleCalendarViewSet,
     StudentOrClassAttendanceViewSet,
-    UnconfirmedStatusClassesViewSet
+    UnconfirmedStatusClassesViewSet,
+    FutureScheduledClassesByStudentView
 )
 
 app_name = "class_scheduling"
@@ -65,5 +66,10 @@ urlpatterns = [
         'classes/confirmed-since-date/by-account-id/<str:date>/<str:account_id>/',
         ScheduledClassByStudentOrClassIDCodeFromDateViewSet.as_view(),
         name='class-scheduling-by-teacher-by-date'
+    ),
+    path(
+        "scheduled-classes/future/by-student/<int:student_id>/",
+        FutureScheduledClassesByStudentView.as_view(),
+        name="future-scheduled-classes-by-student",
     ),
 ]
