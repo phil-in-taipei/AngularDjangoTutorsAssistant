@@ -45,6 +45,7 @@ export interface ScheduledClassesState extends EntityState<ScheduledClassModel> 
     dateRange: [string, string] | undefined | null;
     deletionModeActivated: boolean;
     fetchingClassesInProgress: boolean;
+    fetchingFutureClassesInProgress: boolean;
     errorMessage: string | undefined,
     monthlyScheduledClassesLoaded: boolean,
     landingPageScheduledClassesLoaded: boolean,
@@ -66,6 +67,7 @@ export const initialScheduledClassesState: ScheduledClassesState =
         deletionModeActivated: false,
         errorMessage: undefined,
         fetchingClassesInProgress: false,
+        fetchingFutureClassesInProgress: false,
         monthlyScheduledClassesLoaded: false,
         landingPageScheduledClassesLoaded: false,
         successMessage: undefined,
@@ -130,6 +132,32 @@ export function scheduledClassesReducer(
                 return {
                     ...state,  successMessage: undefined,
                     errorMessage: dailyScheduleErrorMessage
+                }
+
+
+            case ScheduledClassesActionTypes.FutureSOCClassesRequested:
+                return {
+                    ...state, 
+                    fetchingFutureClassesInProgress: true
+                }
+    
+            case ScheduledClassesActionTypes.FutureSOCClassesLoaded:
+                return adapter.upsertMany(action.payload.scheduledClasses, 
+                    {...state,
+                        errorMessage: undefined,
+                        fetchingFutureClassesInProgress: false
+                    }
+                );
+    
+            case ScheduledClassesActionTypes.FutureSOCClassesRequestCancelled:
+                let futureClassesErrorMessage: string = "Error fetching future classes!";
+                if (action.payload.err.error.Error) {
+                    dailyScheduleErrorMessage = action.payload.err.error.Error;
+                }
+                return {
+                    ...state,  successMessage: undefined,
+                    errorMessage: futureClassesErrorMessage,
+                    fetchingFutureClassesInProgress: false
                 }
 
             case ScheduledClassesActionTypes.LandingPageScheduleLoaded:

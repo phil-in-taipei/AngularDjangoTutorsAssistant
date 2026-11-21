@@ -54,6 +54,20 @@ export class ClassesService {
         })
   }
 
+  // note: in addition to the individual classes scheduled for a student-or-class after 
+  // the current date, the api call will also fetch all classes scheduled by a teacher 
+  // on the given dates that the student-or-class is scheduled. This is due to the way 
+  // scheduled classes are cached and retrieved by date in ngrx state
+  fetchFutureClassesByStudentOrClass(id: number): Observable<ScheduledClassModel[]> {
+    let token = this.authService.getAuthToken();
+    return this.http.get<ScheduledClassModel[]>(
+      `${environment.apiUrl}/api/scheduling/scheduled-classes/future/by-student/${id}/`,
+      {
+        headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
+      })
+  }
+
+
   fetchClassesByMonth(month: number, year: number) {
     let token = this.authService.getAuthToken();
     return this.http.get<ScheduledClassModel[]>(

@@ -15,6 +15,9 @@ export enum ScheduledClassesActionTypes {
     DailyClassesLoaded = '[Daily Classes API] Daily Batch Loaded',
     DailyClassesRequestCancelled= '[Daily Classes Page] Daily Batch Request Cancelled',
     DailyClassesRequested = '[Daily Classes Page] Daily Batch Requested',
+    FutureSOCClassesLoaded = '[Future SOCs Page] Future SOC Scheduled Classes Loaded',
+    FutureSOCClassesRequestCancelled = '[Future SOCs Page] Future SOC Scheduled Classes Request Cancelled',    
+    FutureSOCClassesRequested = '[Future SOCs Page] Future SOC Scheduled Classes Requested',
     LandingPageScheduleLoaded = '[User Landing Page] Landing Page Daily Scheduled Classes Loaded',
     LandingPageScheduleRequestCancelled = '[User Landing Page] Landing Page Scheduled Classes Request Cancelled',    
     LandingPageScheduleRequested = '[User Landing Page] Landing Daily Scheduled Classes Requested',
@@ -89,6 +92,26 @@ export class DailyClassesRequested implements Action {
     readonly type = ScheduledClassesActionTypes.DailyClassesRequested;
   
     constructor(public payload: { date: string }) {}
+}
+
+export class FutureSOCClassesLoaded implements Action {
+    readonly type = ScheduledClassesActionTypes.FutureSOCClassesLoaded;
+  
+    constructor(
+        public payload: { scheduledClasses: ScheduledClassModel[] }
+    ) {}
+}
+
+export class FutureSOCClassesRequestCancelled implements Action {
+    readonly type = ScheduledClassesActionTypes.FutureSOCClassesRequestCancelled;
+  
+    constructor(public payload: {  err: any }) {}
+}
+
+export class FutureSOCClassesRequested implements Action {
+    readonly type = ScheduledClassesActionTypes.FutureSOCClassesRequested;
+  
+    constructor(public payload: { id: number }) {}
 }
 
 export class LandingPageScheduleLoaded implements Action {
@@ -251,6 +274,8 @@ export class UnconfirmedScheduledClassesRequested implements Action {
 export type ScheduledClassesActions = ClientSchoolAccountingUpdateMessageCleared | 
     ClassStatusUpdateCancelled | ClassStatusUpdateSaved | 
     ClassStatusUpdateSubmitted | DailyClassesLoaded | 
+    FutureSOCClassesLoaded | FutureSOCClassesRequested |
+    FutureSOCClassesRequestCancelled |
     DailyClassesRequestCancelled | DailyClassesRequested | 
     LandingPageScheduleLoaded | LandingPageScheduleRequestCancelled | 
     LandingPageScheduleRequested | MonthlyClassesRequested | 
