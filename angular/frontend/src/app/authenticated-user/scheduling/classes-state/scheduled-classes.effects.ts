@@ -11,7 +11,9 @@ import {
     ClassStatusUpdateCancelled,
     ClassStatusUpdateSaved, ClassStatusUpdateSubmitted,
     DailyClassesLoaded, DailyClassesRequestCancelled, 
-    DailyClassesRequested, LandingPageScheduleLoaded,
+    DailyClassesRequested, FutureSOCClassesLoaded, 
+    FutureSOCClassesRequestCancelled, 
+    FutureSOCClassesRequested, LandingPageScheduleLoaded,
     LandingPageScheduleRequestCancelled, LandingPageScheduleRequested, 
     MonthlyClassesRequested, MonthlyClassesRequestCancelled, MonthlyClassesLoaded,
     RescheduleClassCancelled, RescheduleClassSubmitted, 
@@ -100,6 +102,29 @@ export class ScheduledClassesEffects {
                 catchError(err => {
                   this.store.dispatch(
                       new DailyClassesRequestCancelled({ err })
+                  );
+                  return of();
+                })
+              )
+            )
+          )
+      });
+
+
+    fetchFutureSOCClasses$ = createEffect(() => {
+        return this.actions$
+          .pipe(
+            ofType<FutureSOCClassesRequested>(
+                ScheduledClassesActionTypes.FutureSOCClassesRequested
+            ),
+            mergeMap(action => this.scheduledClassesService.fetchFutureClassesByStudentOrClass(
+                action.payload.id
+              )
+              .pipe(
+                map(scheduledClasses => new FutureSOCClassesLoaded({ scheduledClasses })),
+                catchError(err => {
+                  this.store.dispatch(
+                      new FutureSOCClassesRequestCancelled({ err })
                   );
                   return of();
                 })
