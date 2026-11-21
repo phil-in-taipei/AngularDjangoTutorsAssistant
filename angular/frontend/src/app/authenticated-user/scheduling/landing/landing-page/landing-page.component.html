@@ -35,7 +35,7 @@
 
 <div class="container date-search small-scr">
   <div class="d-flex justify-content-center align-items-center brand-slot">
-    <h1 class="text-center fw-bold">
+    <h1 class="text-center fw-bold mb-0">
       <span *ngIf="!searchMode" class="search-label me-2">
         Tutor's Assistant
       </span>
@@ -76,8 +76,22 @@
   </div>
 </div>
 
+<div class="m-3 p-1">
+  <hr class="thin-br"/>
+  <h3>
+      {{ dayOfWeekString }},
+      {{ 
+        (todayDateStr.split('-') || []).length === 3 ? 
+        monthsAndIntegers[(+todayDateStr.split('-')[1]) - 1][0] + ' ' + 
+        (+todayDateStr.split('-')[2]) + ', ' + 
+        todayDateStr.split('-')[0] : 
+        todayDateStr 
+      }}
+    </h3>
+</div>
+
 <div *ngIf="unconfirmedPastClasses$ | async as unconfirmedPastClasses" class="container">
-  <div *ngIf="unconfirmedPastClasses.length > 0" class="m-3 p-2">
+  <div *ngIf="unconfirmedPastClasses.length > 0" class="m-3 p-1">
     <hr class="thin-br"/>
     <h3>Unconfirmed Classes</h3>
     <h5>{{ unconfirmedPastClasses.length }} Unconfirmed Class(es)</h5>
@@ -90,19 +104,12 @@
 </div>
 
 <div *ngIf="todaysClasses$ | async as todaysClasses" class="container">
-  <div class="m-3 p-2">
+  <div class="m-3 p-1">
     <hr class="thin-br"/>
     <h3>
-      {{ dayOfWeekString }},
-      {{ 
-        (todayDateStr.split('-') || []).length === 3 ? 
-        monthsAndIntegers[(+todayDateStr.split('-')[1]) - 1][0] + ' ' + 
-        (+todayDateStr.split('-')[2]) + ', ' + 
-        todayDateStr.split('-')[0] : 
-        todayDateStr 
-      }}
+      Today's Schedule
     </h3>
-    <h5>{{ todaysClasses.length }} Class(es) Scheduled Today</h5>
+    <h5>{{ todaysClasses.length }} Class(es)</h5>
     <hr class="thin-br"/>
     <h5 class="text-center">
       <button class="btn btn-outline-secondary" type="button"
