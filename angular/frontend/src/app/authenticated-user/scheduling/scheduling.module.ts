@@ -60,6 +60,12 @@ import {
   TimeInHoursComponent 
 } from './single-class/detail/time-in-hours/time-in-hours.component';
 import { UnconfirmedClassesComponent } from './landing/unconfirmed-classes/unconfirmed-classes.component';
+import { 
+  UpcomingClassComponent 
+} from './classes/upcoming/upcoming-class/upcoming-class.component';
+import { 
+  UpcomingClassesByStudentComponent 
+} from './classes/upcoming/upcoming-classes-by-student/upcoming-classes-by-student.component';
 import { UserEffects } from '../user/user-state/user.effects';
 import { userProfileReducer } from '../user/user-state/user.reducers';
 import { 
@@ -93,6 +99,8 @@ import { venueSpacesReducer } from './venues/state/venues.reducers';
     StudentOrClassTemplateStringComponent,
     TimeInHoursComponent,
     UnconfirmedClassesComponent,
+    UpcomingClassComponent,
+    UpcomingClassesByStudentComponent,
     VenueSpaceTemplateStringComponent
   ],
   imports: [
