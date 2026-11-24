@@ -1,12 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, map, of } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { Observable, of } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 import { getDateString } from 'src/app/shared-utils/date-time.util';
 import { ScheduledClassModel } from 'src/app/models/scheduled-class.model';
 import { ScheduledClassesState } from '../../../classes-state/scheduled-classes.reducers';
+import { StudentOrClassModel } from 'src/app/models/student-or-class.model';
+import { 
+  selectStudentOrClassById 
+} from 'src/app/authenticated-user/student-or-class/state/student-or-class.selectors';
+import { 
+  StudentsOrClassesState 
+} from 'src/app/authenticated-user/student-or-class/state/student-or-class.reducers';
 import { 
   FutureSOCClassesRequested,
   ScheduledClassDeletionModeActivated, 
@@ -25,41 +32,48 @@ import {
   templateUrl: './upcoming-classes-by-student.component.html',
   styleUrl: './upcoming-classes-by-student.component.css'
 })
-export class UpcomingClassesByStudentComponent {
+export class UpcomingClassesByStudentComponent implements OnInit {
 
   fetchingClasses$: Observable<boolean> = of(false);
-  studentOrClassIdFromRouteDate: string;
+  studentOrClassIdFromRoute: string;
+  studentOrClass$: Observable<StudentOrClassModel | undefined> = of(undefined);
   todayDateStr: string;
   upcomingScheduledClasses$: Observable<ScheduledClassModel[] | undefined>;
 
   constructor(
     private route: ActivatedRoute,
-    private store: Store<ScheduledClassesState>
+    private scheduledClassesStore: Store<ScheduledClassesState>,
+    private stodentsOrClassesStore: Store<StudentsOrClassesState>
   ) { }
 
 
   ngOnInit(): void {
-    this.studentOrClassIdFromRouteDate = this.route.snapshot.params['id'];
+    this.studentOrClassIdFromRoute = this.route.snapshot.params['student_or_class_id'];
+    this.scheduledClassesStore.dispatch(new FutureSOCClassesRequested({
+      id: +this.studentOrClassIdFromRoute
+    }));
+    this.fetchingClasses$ = this.stodentsOrClassesStore.pipe(
+      select(fetchingFutureClassesInProgress)
+    );
+    this.studentOrClass$ = this.stodentsOrClassesStore.pipe(
+      select(selectStudentOrClassById(+this.studentOrClassIdFromRoute))
+    );
     const today = this.todayStruct();
     this.todayDateStr = getDateString(today.day, today.month, today.year);
 
-    this.store.dispatch(new FutureSOCClassesRequested({
-      id: +this.studentOrClassIdFromRouteDate
+    this.scheduledClassesStore.dispatch(new FutureSOCClassesRequested({
+      id: +this.studentOrClassIdFromRoute
     }));
 
-    this.upcomingScheduledClasses$ = this.store.pipe(
+    this.upcomingScheduledClasses$ = this.scheduledClassesStore.pipe(
       select(selectFutureScheduledClassesForStudentOrClass(
         this.todayDateStr,
-        +this.studentOrClassIdFromRouteDate
+        +this.studentOrClassIdFromRoute
       ))
     );
     
   }
 
-
-
-  //currentDate: string,
-  //studentOrClassId: number
 
   private todayStruct(): NgbDateStruct {
     const now = new Date();

@@ -12,6 +12,9 @@ import { ScheduleSingleClassComponent } from './single-class/create/schedule-sin
 import { 
   SingleClassInfoComponent 
 } from './single-class/detail/single-class-info/single-class-info.component';
+import { 
+  UpcomingClassesByStudentComponent 
+} from './classes/upcoming/upcoming-classes-by-student/upcoming-classes-by-student.component';
 
 const routes: Routes = [{ path: '', component: SchedulingComponent, children: [
   { path: 'accounting', loadChildren: () => import('./accounting/accounting.module')
@@ -23,13 +26,16 @@ const routes: Routes = [{ path: '', component: SchedulingComponent, children: [
     .then(m => m.ClientSchoolsModule) 
   },
   { path: 'landing', component: LandingPageComponent },
+  { 
+    path: 'recurring-schedule', loadChildren: () => import('./recurring-schedule/recurring-schedule.module')
+    .then(m => m.RecurringScheduleModule) 
+  },
   { path: 'schedule-daily/:date', component: DailyListComponent },
   { path: 'schedule-single-class', component: ScheduleSingleClassComponent },
   { path: 'single-class/:id', component: SingleClassInfoComponent },
-] },
-  { path: 'recurring-schedule', loadChildren: () => import('./recurring-schedule/recurring-schedule.module')
-    .then(m => m.RecurringScheduleModule) }
-  ];
+  { path: 'upcoming/:student_or_class_id', component: UpcomingClassesByStudentComponent },
+  ] },
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
