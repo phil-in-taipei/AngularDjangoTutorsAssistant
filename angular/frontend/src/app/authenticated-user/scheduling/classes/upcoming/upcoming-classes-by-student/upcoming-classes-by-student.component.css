@@ -1,0 +1,62 @@
+h3, h5, p {
+    text-align: center;
+    color: #758d97; 
+    background-color: black !important;
+}
+
+table {
+    border-collapse: collapse;
+    background-color: black !important;
+}
+
+.table {
+    padding-left: 0px;
+    padding-right: 0px;
+    background-color: black !important;
+}
+
+.table .tr {
+    background-color: black !important;
+}
+
+.table .td {
+    background-color: black;
+}
+
+.table .th {
+    background-color: black !important;
+}
+
+.row {
+    color: #758d97; 
+    background-color: black;
+}
+
+.col {
+    color: #758d97; 
+}
+
+.date-search {
+    max-width: 550px;
+  }
+  
+
+
+  
+.small-scr {
+    display: none;
+  }
+    
+.capitalize {
+    text-transform: capitalize;
+}
+    
+@media screen and (max-width: 767px) {
+    .small-scr {
+      display: block;
+    }
+    
+    .large-scr {
+      display: none;
+    }
+}

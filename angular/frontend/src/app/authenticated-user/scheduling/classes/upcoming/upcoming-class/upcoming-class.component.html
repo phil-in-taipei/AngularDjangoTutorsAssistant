@@ -1,1 +1,70 @@
-<p>upcoming-class works!</p>
+<tr class="row" >
+    <th class="col">
+      <p *ngIf="scheduledClass.class_status==='cancelled' || scheduledClass.class_status==='same_day_cancellation'; else not_cancelled" 
+        class="cross-out">
+        <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'schedule-daily', scheduledClass.date]">
+            {{ scheduledClass.date }} ({{ scheduledClass.day_of_week.substring(0, 3) }})
+        </a>
+      </p>
+      <ng-template #not_cancelled>
+        <p>
+          <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'schedule-daily', scheduledClass.date]">
+            {{ scheduledClass.date }} ({{ scheduledClass.day_of_week.substring(0, 3) }})
+          </a>
+        </p>
+      </ng-template>
+    </th>
+    <th class="col">
+        <p *ngIf="scheduledClass.class_status==='cancelled' || scheduledClass.class_status==='same_day_cancellation'; else not_cancelled_red" 
+        class="cross-out-alert">
+          <a class="text-danger" 
+              [routerLink]="['/authenticated-user/scheduling/single-class', scheduledClass.id]">
+              {{ scheduledClass.start_time.slice(0, -3) }}-{{ scheduledClass.finish_time|addMinute }}
+          </a>
+        </p>
+        <ng-template #not_cancelled_red>
+          <p *ngIf="scheduledClass.class_status==='scheduled'">
+            <a [routerLink]="['/authenticated-user/scheduling/single-class', scheduledClass.id]">
+              {{ scheduledClass.start_time.slice(0, -3) }}-{{ scheduledClass.finish_time|addMinute }}
+            </a>
+          </p>
+          <p *ngIf="scheduledClass.class_status==='completed'">
+            <a [routerLink]="['/authenticated-user/scheduling/single-class', scheduledClass.id]">
+              {{ scheduledClass.start_time.slice(0, -3) }}-{{ scheduledClass.finish_time|addMinute  }} <span class="checkmark">✓</span>
+            </a>
+          </p>
+        </ng-template>
+    </th>
+    <ng-container
+      *ngIf="{ value: deletionModeForScheduledClassesActivated$ | async } as context"
+    >
+    <th *ngIf="context.value" class="col hidden-small">
+      <div *ngIf="!deletionPopupVisible; else delAccount" 
+        class="col text-left">
+        <button
+          class="btn btn-sm btn-outline-danger"
+          (click)="showDeletionPopup()"
+          >
+          Remove
+        </button>
+      </div>
+      <ng-template #delAccount class="row">
+        <div class="col text-secondary">
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            (click)="hideDeletionPopup()">
+            Cancel Deletion
+          </button>
+        </div>
+        <div class="col text-secondary">
+          <button
+            class="btn btn-sm btn-outline-danger"
+            (click)="onScheduledClassDeletion()"
+            >
+            Confirm Removal
+          </button>
+        </div>
+      </ng-template>
+    </th>
+    </ng-container>
+</tr>

@@ -78,7 +78,7 @@
 
 <div class="m-3 p-1">
   <hr class="thin-br"/>
-  <h3>
+  <h2>
       {{ dayOfWeekString }},
       {{ 
         (todayDateStr.split('-') || []).length === 3 ? 
@@ -87,7 +87,7 @@
         todayDateStr.split('-')[0] : 
         todayDateStr 
       }}
-    </h3>
+    </h2>
 </div>
 
 <div *ngIf="unconfirmedPastClasses$ | async as unconfirmedPastClasses" class="container">

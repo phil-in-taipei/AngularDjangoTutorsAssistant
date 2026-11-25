@@ -1,1 +1,127 @@
-<p>upcoming-classes-by-student works!</p>
+<br />
+<div *ngIf="studentOrClass$ | async as studentOrClass" class="container bg-transparent">
+    <h3 class="text-center" *ngIf="studentOrClass.school">
+        <a [routerLink]="['/authenticated-user/school', studentOrClass.school]">
+            <app-school-template-str 
+              [schoolId]=studentOrClass.school class="bg-transparent"
+            >
+            </app-school-template-str>
+        </a>          
+    </h3>
+    <h3><a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', studentOrClass.id]">
+      {{ studentOrClass.student_or_class_name}}</a>
+    </h3>
+    <h6 class="text-danger text-center"  
+    (click)="navToPastClasses(studentOrClass.id)"
+    >
+      (Click for Attendance)
+    </h6>
+</div>
+
+<ng-container *ngIf="{value: fetchingClasses$ | async} as context">
+  <div *ngIf="context.value">
+    <div class="text-center">
+      <div class="spinner-border text-secondary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <br />
+    </div>
+    <br />
+  </div>
+</ng-container>
+
+<div *ngIf="upcomingScheduledClasses$ | async as scheduledClasses" class="container">
+    <hr class="thin-br"/>
+    <h5>{{ scheduledClasses.length }} Class(es) Scheduled</h5>
+    <hr class="thin-br" />
+    <ng-container *ngIf="{ value: deletionModeForScheduledClassesActivated$ | async } as context">
+      <div *ngIf="context.value">
+        <div class="text-center">
+            <h4 class="text-center text-danger">
+              Warning
+            </h4>
+            <h5 class="text-center text-danger">
+              Deleting a Class May Influence
+            </h5>
+            <h5 class="text-center text-danger">
+              Past Monthly Earnings Estimates
+            </h5>
+            <p class="text-center text-danger small-scr">
+              (Turn Horizontal to Delete)
+            </p>
+            <button class="btn btn-outline-danger" 
+            (click)="onDeactivateScheduledClassDeletionMode()" type="button">
+              Deactivate Deletion Mode
+            </button>
+          <br />
+        </div>
+        <br />
+      </div>
+    </ng-container>
+    <ng-container 
+    *ngIf="{ value: deletionModeForScheduledClassesActivated$ | async } as context"
+  >
+    <div *ngIf="!context.value">
+      <div class="text-center">
+          <button class="btn btn-outline-danger middle" 
+          (click)="onActivateScheduledClassDeletionMode()" type="button">
+            Activate Deletion Mode
+          </button>
+        <br />
+      </div>
+      <br />
+    </div>
+  </ng-container>
+    
+    <div *ngIf="scheduledClasses.length > 0; else no_daily"
+        class="table-responsive"
+      >
+      <hr class="thin-br"/>
+      <table class="table bg-transparent">
+        <thead class="table bg-transparent">
+          <tr class="row bg-transparent">
+            <th class="col bg-transparent">
+              <p>
+                Date<br />
+                <small class="text-secondary">(go to date)</small>
+              </p>
+            </th>
+            <th class="col bg-transparent">
+              <p>
+                 Time<br />
+                <small class="text-secondary">(click to edit/confirm)</small>
+              </p>
+            </th>
+            <ng-container
+            *ngIf="{ value: deletionModeForScheduledClassesActivated$ | async } as context"
+          >
+            <th *ngIf="context.value" class="col bg-transparent hidden-small"
+            >
+            <p>
+              Delete
+            </p>
+          </th>
+          </ng-container>
+          </tr>
+        </thead>
+        <tbody class="table bg-transparent">
+          <div 
+            class="bg-transparent" 
+            *ngFor="let scheduledClass of scheduledClasses trackBy: trackByFn"
+          >
+            <app-upcoming-class [scheduledClass]=scheduledClass class="bg-transparent">
+            </app-upcoming-class>
+          </div>
+        </tbody>
+      </table>
+      </div>
+      <ng-template #no_daily>
+        <div class="text-center m-3 p-2">
+          <button class="btn btn-md btn-outline-secondary text" id="forwardDateButton" 
+          [routerLink]="['/', 'authenticated-user', 'scheduling', 'schedule-single-class']">
+              Click to Schedule a Class
+          </button>
+        </div>
+      </ng-template>
+      <hr class="thin-br"/>
+</div>

@@ -1,0 +1,24 @@
+h3, h5, p {
+    text-align: center;
+    color: #758d97; 
+    background-color: black !important;
+}
+
+.cross-out-alert {
+    text-decoration: line-through;
+    color: #dc1616;
+  }
+  
+.cross-out {
+    text-decoration: line-through;
+    color: #dc1616;
+}
+ 
+.row {
+    text-align: center;
+    background-color: black !important;
+}
+  
+.small-scr-tbl {
+    display: none;
+}

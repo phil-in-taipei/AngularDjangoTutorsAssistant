@@ -13,7 +13,7 @@
     </th>
     <th class="col">
         <p *ngIf="recurringClass.recurring_location">
-          <a [routerLink]="['/authenticated-user/student-or-class', recurringClass.student_or_class]">
+          <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', recurringClass.student_or_class]">
             <app-student-or-class-templ-string 
               [studentOrClassId]=recurringClass.student_or_class class="bg-transparent"
             >
@@ -25,7 +25,7 @@
           </a>
         </p>
         <p *ngIf="!recurringClass.recurring_location">
-          <a [routerLink]="['/authenticated-user/student-or-class', recurringClass.student_or_class]">
+          <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', recurringClass.student_or_class]">
             <app-student-or-class-templ-string 
               [studentOrClassId]=recurringClass.student_or_class class="bg-transparent"
             >
