@@ -43,7 +43,7 @@
         class="col text-left">
         <button
           class="btn btn-sm btn-outline-danger"
-          (click)="showDeletionPopup()"
+          (click)="showDelPopup()"
           >
           Remove
         </button>
@@ -52,14 +52,14 @@
         <div class="col text-secondary">
           <button
             class="btn btn-sm btn-outline-secondary"
-            (click)="hideDeletionPopup()">
+            (click)="hideDelPopup()">
             Cancel Deletion
           </button>
         </div>
         <div class="col text-secondary">
           <button
             class="btn btn-sm btn-outline-danger"
-            (click)="onScheduledClassDeletion()"
+            (click)="onFutureClassDeletion()"
             >
             Confirm Removal
           </button>

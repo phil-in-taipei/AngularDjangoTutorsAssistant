@@ -50,7 +50,7 @@
               (Turn Horizontal to Delete)
             </p>
             <button class="btn btn-outline-danger" 
-            (click)="onDeactivateScheduledClassDeletionMode()" type="button">
+            (click)="onDeactivateFutureClassDeletionMode()" type="button">
               Deactivate Deletion Mode
             </button>
           <br />
@@ -64,7 +64,7 @@
     <div *ngIf="!context.value">
       <div class="text-center">
           <button class="btn btn-outline-danger middle" 
-          (click)="onActivateScheduledClassDeletionMode()" type="button">
+          (click)="onActivateFutureClassDeletionMode()" type="button">
             Activate Deletion Mode
           </button>
         <br />

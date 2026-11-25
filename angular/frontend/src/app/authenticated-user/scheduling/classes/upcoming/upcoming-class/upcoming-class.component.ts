@@ -32,15 +32,15 @@ export class UpcomingClassComponent implements OnInit {
     );
   }
 
-  showDeletionPopup() {
+  showDelPopup() {
     this.deletionPopupVisible = true;
   }
 
-  hideDeletionPopup() {
+  hideDelPopup() {
     this.deletionPopupVisible = false;
   }
 
-  onScheduledClassDeletion() {
+  onFutureClassDeletion() {
     const payload = { id: this.scheduledClass.id };
     this.store.dispatch(
       new ScheduledClassDeletionRequested(payload)

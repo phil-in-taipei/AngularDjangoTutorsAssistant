@@ -83,13 +83,13 @@ export class UpcomingClassesByStudentComponent implements OnInit {
     );
   }
 
-  onActivateScheduledClassDeletionMode(): void {
+  onActivateFutureClassDeletionMode(): void {
     this.scheduledClassesStore.dispatch(
       new ScheduledClassDeletionModeActivated()
     );
   }
 
-  onDeactivateScheduledClassDeletionMode(): void {
+  onDeactivateFutureClassDeletionMode(): void {
     this.scheduledClassesStore.dispatch(
       new ScheduledClassDeletionModeDeactivated()
     );
