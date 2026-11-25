@@ -4,7 +4,7 @@ import {
 } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { AttendanceService } from '../service/attendance.service';
 import { 
@@ -35,6 +35,7 @@ export class AttendanceRecordComponent {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private attendanceService: AttendanceService,
     private store: Store<StudentsOrClassesState>
   ) { }
@@ -56,6 +57,12 @@ export class AttendanceRecordComponent {
         catchError(() => of({ loading: false, classes: [] })),
         startWith({ loading: true, classes: [] })
       );
+  }
+
+  navToFutureClasses(student_or_class_id: number): void {
+    this.router.navigate(
+      ['authenticated-user', 'scheduling', 'upcoming', student_or_class_id]
+    );
   }
 
   onNextPagRequest() {

@@ -1,8 +1,20 @@
 <br />
 <div *ngIf="studentOrClass$ | async as studentOrClass" class="container bg-transparent">
-    <h3>Attendance for <a [routerLink]="['/', 'authenticated-user', 'student-or-class', studentOrClass.id]">
+    <h3 class="text-center" *ngIf="studentOrClass.school">
+        <a [routerLink]="['/authenticated-user/school', studentOrClass.school]">
+            <app-school-template-str 
+              [schoolId]=studentOrClass.school class="bg-transparent"
+            >
+            </app-school-template-str>
+        </a>          
+    </h3>
+    <h3>Attendance for <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'upcoming', studentOrClass.id]">
       {{ studentOrClass.student_or_class_name}}</a>
     </h3>
+    <h6 class="text-danger text-center"
+        (click)="navToFutureClasses(studentOrClass.id)">
+      (Click for Upcoming Classes)
+    </h6>
     <div class="large-scr row bg-transparent">
         <div class="col text-center bg-transparent">
           <button class="btn btn-sm btn-outline-secondary middle bg-transparent"
@@ -11,14 +23,6 @@
         <div class="col bg-transparent">
           <h4 class="text-center" *ngIf="studentOrClass.purchased_class_hours">
             Remaining Hours: {{ studentOrClass.purchased_class_hours }}
-          </h4>
-          <h4 class="text-center" *ngIf="studentOrClass.school">
-            <a [routerLink]="['/authenticated-user/school', studentOrClass.school]">
-              <app-school-template-str 
-                [schoolId]=studentOrClass.school class="bg-transparent"
-              >
-              </app-school-template-str>
-            </a>          
           </h4>
         </div>
         <div class="col text-center bg-transparent">
@@ -29,14 +33,6 @@
     <div class="small-scr bg-transparent">
       <h4 class="text-center" *ngIf="studentOrClass.purchased_class_hours">
         Remaining Hours: {{ studentOrClass.purchased_class_hours }}
-      </h4>
-      <h4 class="text-center" *ngIf="studentOrClass.school">
-        <a [routerLink]="['/authenticated-user/school', studentOrClass.school]">
-            <app-school-template-str 
-              [schoolId]=studentOrClass.school class="bg-transparent"
-            >
-            </app-school-template-str>
-        </a>          
       </h4>
       <div class="row bg-transparent">
         <div class="col bg-transparent">
