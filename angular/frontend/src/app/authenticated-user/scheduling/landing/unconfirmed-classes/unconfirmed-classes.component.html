@@ -14,18 +14,12 @@
         <thead class="table bg-transparent">
           <tr class="row bg-transparent">
             <th class="col bg-transparent">
-              <p>
-                Date<br />
-                <small class="text-secondary">(go to daily schedule)</small>
-              </p>
-            </th>
-            <th class="col bg-transparent hidden-small">
-              <p>Time<br />
+              <p class="mb-0">Date/Time<br />
                 <small class="text-secondary">(click to edit/confirm)</small>
               </p>
             </th>
             <th class="col bg-transparent">
-              <p>
+              <p class="mb-0">
                 Student/Class<br />
                 <small class="text-secondary">(click for attendance)</small>
               </p>
@@ -36,21 +30,19 @@
           <tr class="row bg-transparent" 
             *ngFor="let unconfirmedClass of unconfirmedClasses trackBy: trackByFn">
             <th class="col bg-transparent">
-                <p>
-                  <a [routerLink]="['/authenticated-user/scheduling/schedule-daily', unconfirmedClass.date]">
+                <p class="mb-0">
+                  <a class="d-block"
+                    [routerLink]="['/authenticated-user/scheduling/schedule-daily', unconfirmedClass.date]">
                     {{ unconfirmedClass.date }}
+                  </a>  
+                  <a class="d-block"
+                      [routerLink]="['/authenticated-user/scheduling/single-class', unconfirmedClass.id]">
+                      {{ unconfirmedClass.start_time.slice(0, -3) }} - {{ unconfirmedClass.finish_time|addMinute }}
                   </a>
                 </p>
             </th>
-            <th class="col bg-transparent hidden-small">
-                <p>
-                    <a [routerLink]="['/authenticated-user/scheduling/single-class', unconfirmedClass.id]">
-                      {{ unconfirmedClass.start_time.slice(0, -3) }} - {{ unconfirmedClass.finish_time|addMinute }}
-                    </a>
-                </p>
-            </th>
             <th class="col bg-transparent">
-              <p>
+              <p class="mb-0">
                 <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', unconfirmedClass.student_or_class]">
                   <app-student-or-class-template-string 
                   [studentOrClassId]=unconfirmedClass.student_or_class class="bg-transparent"
