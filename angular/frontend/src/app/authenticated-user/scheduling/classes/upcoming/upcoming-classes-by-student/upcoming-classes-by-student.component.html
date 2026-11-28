@@ -8,8 +8,10 @@
             </app-school-template-str>
         </a>          
     </h3>
-    <h3><a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', studentOrClass.id]">
-      {{ studentOrClass.student_or_class_name}}</a>
+    <h3>
+      Upcoming for <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', studentOrClass.id]">
+        {{ studentOrClass.student_or_class_name}}
+      </a>
     </h3>
     <h6 class="text-danger text-center"  
     (click)="navToPastClasses(studentOrClass.id)"
