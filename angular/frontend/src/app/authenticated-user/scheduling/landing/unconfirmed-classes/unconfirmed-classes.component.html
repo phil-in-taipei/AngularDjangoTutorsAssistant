@@ -10,6 +10,46 @@
         id="collapseUnconfirmed"
         class="collapse table-responsive"
     >
+
+    <hr class="thin-br" />
+    <ng-container *ngIf="{ value: deletionModeForUnconfirmedClassesActivated$ | async } as context">
+      <div *ngIf="context.value">
+        <div class="text-center">
+            <h4 class="text-center text-danger">
+              Warning
+            </h4>
+            <h5 class="text-center text-danger">
+              Deleting a Class May Influence
+            </h5>
+            <h5 class="text-center text-danger">
+              Past Monthly Earnings Estimates
+            </h5>
+            <p class="text-center text-danger small-scr">
+              (Turn Horizontal to Delete)
+            </p>
+            <button class="btn btn-outline-danger" 
+            (click)="onDeactivateUnconfirmedClassDeletionMode()" type="button">
+              Deactivate Deletion Mode
+            </button>
+          <br />
+        </div>
+        <br />
+      </div>
+    </ng-container>
+    <ng-container 
+    *ngIf="{ value: deletionModeForUnconfirmedClassesActivated$ | async } as context"
+  >
+    <div *ngIf="!context.value">
+      <div class="text-center">
+          <button class="btn btn-outline-danger middle" 
+          (click)="onActivateUnconfirmedlassDeletionMode()" type="button">
+            Activate Deletion Mode
+          </button>
+        <br />
+      </div>
+      <br />
+    </div>
+  </ng-container>
     <table class="table bg-transparent">
         <thead class="table bg-transparent">
           <tr class="row bg-transparent">
@@ -24,34 +64,27 @@
                 <small class="text-secondary">(click for attendance)</small>
               </p>
             </th>
-          </tr>
-        </thead>
-        <tbody class="table bg-transparent">
-          <tr class="row bg-transparent" 
-            *ngFor="let unconfirmedClass of unconfirmedClasses trackBy: trackByFn">
-            <th class="col bg-transparent">
-                <p class="mb-0">
-                  <a class="d-block"
-                    [routerLink]="['/authenticated-user/scheduling/schedule-daily', unconfirmedClass.date]">
-                    {{ unconfirmedClass.date }}
-                  </a>  
-                  <a class="d-block"
-                      [routerLink]="['/authenticated-user/scheduling/single-class', unconfirmedClass.id]">
-                      {{ unconfirmedClass.start_time.slice(0, -3) }} - {{ unconfirmedClass.finish_time|addMinute }}
-                  </a>
-                </p>
-            </th>
-            <th class="col bg-transparent">
-              <p class="mb-0">
-                <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', unconfirmedClass.student_or_class]">
-                  <app-student-or-class-template-string 
-                  [studentOrClassId]=unconfirmedClass.student_or_class class="bg-transparent"
-                  >
-                  </app-student-or-class-template-string>
-                </a>
+            <ng-container
+              *ngIf="{ value: deletionModeForUnconfirmedClassesActivated$ | async } as context"
+            >
+              <th *ngIf="context.value" class="col bg-transparent hidden-small"
+              >
+              <p>
+                Delete
               </p>
             </th>
-        </tr>
+            </ng-container>
+          </tr>
+        </thead>
+        <tbody class="table bg-transparent"
+
+        >
+          <div class="row bg-transparent" 
+            *ngFor="let unconfirmedClass of unconfirmedClasses trackBy: trackByFn"
+          >
+            <app-unconfirmed-class [unconfirmedClass]=unconfirmedClass class="bg-transparent">
+            </app-unconfirmed-class>
+          </div>
         </tbody>
     </table>
 </div>

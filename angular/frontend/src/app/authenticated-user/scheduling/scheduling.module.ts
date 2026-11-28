@@ -61,6 +61,9 @@ import {
 } from './single-class/detail/time-in-hours/time-in-hours.component';
 import { UnconfirmedClassesComponent } from './landing/unconfirmed-classes/unconfirmed-classes.component';
 import { 
+  UnconfirmedClassComponent 
+} from './landing/unconfirmed-class/unconfirmed-class.component';
+import { 
   UpcomingClassComponent 
 } from './classes/upcoming/upcoming-class/upcoming-class.component';
 import { 
@@ -98,6 +101,7 @@ import { venueSpacesReducer } from './venues/state/venues.reducers';
     SchedulingComponent,
     StudentOrClassTemplateStringComponent,
     TimeInHoursComponent,
+    UnconfirmedClassComponent,
     UnconfirmedClassesComponent,
     UpcomingClassComponent,
     UpcomingClassesByStudentComponent,

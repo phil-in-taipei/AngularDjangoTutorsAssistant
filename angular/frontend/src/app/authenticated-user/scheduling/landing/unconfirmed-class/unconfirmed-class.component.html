@@ -1,0 +1,57 @@
+<tr class="row bg-transparent" >
+    <th class="col bg-transparent">
+        <p class="mb-0">
+            <a class="d-block"
+            [routerLink]="['/authenticated-user/scheduling/schedule-daily', unconfirmedClass.date]">
+            {{ unconfirmedClass.date }}
+            </a>  
+            <a class="d-block"
+                [routerLink]="['/authenticated-user/scheduling/single-class', unconfirmedClass.id]">
+                {{ unconfirmedClass.start_time.slice(0, -3) }} - {{ unconfirmedClass.finish_time|addMinute }}
+            </a>
+        </p>
+    </th>
+    <th class="col bg-transparent">
+        <p class="mb-0">
+        <a [routerLink]="['/', 'authenticated-user', 'scheduling', 'attendance', unconfirmedClass.student_or_class]">
+            <app-student-or-class-template-string 
+                [studentOrClassId]=unconfirmedClass.student_or_class class="bg-transparent"
+             >
+            </app-student-or-class-template-string>
+        </a>
+        </p>
+    </th>
+
+    <ng-container
+      *ngIf="{ value: delModeActivated$ | async } as context"
+    >
+    <th *ngIf="context.value" class="col hidden-small">
+      <div *ngIf="!delPopupVisible; else delAccount" 
+        class="col text-center">
+        <button
+          class="btn btn-sm btn-outline-danger"
+          (click)="showDelPU()"
+          >
+          Remove
+        </button>
+      </div>
+      <ng-template #delAccount class="row">
+        <div class="col text-secondary text-center">
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            (click)="hideDelPU()">
+            Cancel Deletion
+          </button>
+        </div>
+        <div class="col text-secondary text-center">
+          <button
+            class="btn btn-sm btn-outline-danger"
+            (click)="onUnconfirmedClassDeletion()"
+            >
+            Confirm Removal
+          </button>
+        </div>
+      </ng-template>
+    </th>
+    </ng-container>
+</tr>
